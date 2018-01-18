@@ -1,1 +1,1 @@
-# IKON-projector
+# IKON-projektor
