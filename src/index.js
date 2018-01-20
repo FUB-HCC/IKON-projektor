@@ -4,9 +4,9 @@ import {BrowserRouter} from 'react-router-dom'
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-import {Provider} from 'react-redux';
-import { createStore } from 'redux';
-//import reducer from 'xy/z'
+// import {Provider} from 'react-redux';
+// import { createStore } from 'redux';
+// import reducer from 'xy/z'
 
 //const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
