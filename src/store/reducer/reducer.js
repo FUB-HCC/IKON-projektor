@@ -15,15 +15,14 @@ const initialState = {
   complete: '' // “Completeness” (int, size of project-array)
 }
 
+// Keep the reducer switch lean by outsourcing the actual code below
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.UPDATE_FILTER: return updateState(state, {[action.key]: action.value})
-    default:
-      return urlUpdatesState(state)
+    default: return urlUpdatesState(state)
   }
 }
-
-// Keep the reducer switch lean by outsourcing the actual code below
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesState = (state) => {
