@@ -15,8 +15,8 @@ Both should print their respective version numbers</p>
 <code>npm install --save react-scripts</code> (optional)</p>
 <h3><a id="Launch_Instructions_27"></a>Launch Instructions:</h3>
 <ul>
-<li>navigate your console in your project folder</li>
-<li>Start the development server with <code>npm start</code></li>
+<li>navigate your console to your project folder</li>
+<li>start the development server with <code>npm start</code></li>
 <li>the project is now hosted locally and in your network</li>
-<li>usually the port is 3000: <a href="http://localhost:3000/">localhost:3000</a></li>
+<li>usually the port is: <a href="http://localhost:3000/">http://localhost:3000/</a></li>
 </ul>
