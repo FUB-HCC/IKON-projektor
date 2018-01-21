@@ -1,0 +1,1 @@
+export const URL_UPDATES_STATE = 'URL_UPDATES_STATE'
