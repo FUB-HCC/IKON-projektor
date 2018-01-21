@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
-
-import classes from './App.css'
+import GraphView from './containers/GraphView/GraphView'
 
 class App extends Component {
   render () {
     return (
-      <div className={classes.AppIntro}>
-        <p className={classes.Ikon}>IKON</p>
-      </div>
+      <GraphView/>
     )
   }
 }
