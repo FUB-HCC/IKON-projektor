@@ -3,18 +3,13 @@
 
 ### Prerequisites:
 
+Node
 
-   Node
-    
+Installation for Mac via Homebrew
+```brew install node```
 
-   Installation for Mac via Homebrew
-
-   ```brew install node```
-    
-
-   Alternative without a package manager:
-
-   [nodejs.org](https://nodejs.org/en/)
+Alternative without a package manager:
+[nodejs.org](https://nodejs.org/en/)
 
     
    Make sure you are set
@@ -30,7 +25,6 @@
 
     
    After successfully installing node and npm run following code in your shell
-
    ```npm install --save react```
 
    ```npm install --save react-scripts``` (optional)
