@@ -1,6 +1,6 @@
 <h1><a id="IKONprojektor_0"></a>IKON-projektor</h1>
 <h3><a id="Prerequisites_3"></a>Prerequisites:</h3>
-<p><img src="https://ih1.redbubble.net/image.109336634.1604/flat,50x50,075,f.u1.jpg" alt="Node" title="Node"></p>
+<h3 style=„lineHeight: 100%; textAlign: center;“><a id="Node_Nodehttpsih1redbubblenetimage1093366341604flat40x40075fu1jpg_Node_5"></a>Node <img src="https://ih1.redbubble.net/image.109336634.1604/flat,40x40,075,f.u1.jpg" alt="Node" title="Node"></h3>
 <p>Installation for Mac via Homebrew<br>
 <code>brew install node</code></p>
 <p>Alternative without a package manager:<br>
