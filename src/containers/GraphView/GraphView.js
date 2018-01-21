@@ -21,7 +21,7 @@ class GraphView extends Component {
         Graph = (<AreaGraph/>)
         break
       default:
-        Graph = null
+        Graph = (<PetridishGraph/>)
     }
     return (
       <div className={classes.BackGradient}>
