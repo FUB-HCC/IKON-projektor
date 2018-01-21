@@ -1,4 +1,10 @@
 <h1><a id="IKONprojektor_0"></a>IKON-projektor</h1>
+<style>
+	h3 {
+		display: flex;
+		align-items: center;
+	}
+</style>
 <h3><a id="Prerequisites_3"></a>Prerequisites:</h3>
 <h3 style=„display: flex; align-items: center;“>Node  <img src="https://ih1.redbubble.net/image.109336634.1604/flat,40x40,075,f.u1.jpg" alt="Node" title="Node"></h3>
 <p>Installation for Mac via Homebrew<br>
