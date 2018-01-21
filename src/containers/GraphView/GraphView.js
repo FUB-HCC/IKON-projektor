@@ -6,7 +6,7 @@ import classes from './GraphView.css'
 
 class GraphView extends Component {
   render () {
-    let Graph = 1 // render conditional according to state
+    let Graph = 0 // render conditional according to state
     switch (Graph) {
       case 0:
         Graph = (<PetridishGraph/>)
