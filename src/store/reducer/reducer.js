@@ -6,20 +6,20 @@ const queryString = require('query-string') // queryString import
 
 const initialState = {
   graph: '0',
-  researchField: 'String', // Forschungsbereiche (String)
-  topic: 'String', // Topics (String)
-  funding: 'String', // Geldgeber (String)
-  researchRegion: 'String', // Forschungsregionen (String)
-  cooperations: 'String', // Kooperationspartner (String)
-  researchObjects: 'String', // Forschungsobjekte (String)
-  completness: 2 // “Completeness” (int, size of project-array)
+  field: '', // Forschungsbereiche (String)
+  topic: '', // Topics (String)
+  funding: '', // Geldgeber (String)
+  region: '', // Forschungsregionen (String)
+  coop: '', // Kooperationspartner (String)
+  objects: '', // Forschungsobjekte (String)
+  complete: '' // “Completeness” (int, size of project-array)
 }
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.STATE_UPDATES_URL: return updateState(state, {funding: 'ForTestingAndDebugging'})
     default:
-      return urlUpdatesState(state) // is this not genius?
+      return urlUpdatesState(state)
   }
 }
 
