@@ -1,3 +1,5 @@
+// update the state in an immutable way and update the url without refreshing the page
+
 export const updateState = (oldObject, updatedProperties) => {
   const queryString = require('query-string') // queryString import
   const newState = {
@@ -8,5 +10,3 @@ export const updateState = (oldObject, updatedProperties) => {
   history.pushState(null, null, newUrl)
   return newState
 }
-
-// update the state in an immutable way and update the url

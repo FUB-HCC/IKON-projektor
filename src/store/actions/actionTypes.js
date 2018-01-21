@@ -1,1 +1,1 @@
-export const STATE_UPDATES_URL = 'STATE_UPDATES_URL'
+export const UPDATE_FILTER = 'UPDATE_FILTER'

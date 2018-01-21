@@ -25,7 +25,11 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
-        <div className={classes.GraphContainer} onClick={this.props.testingOfUrl}>
+        <div className={classes.GraphContainer}>
+          {/* added Buttons for Filter Testing */}
+          <button onClick={() => this.props.testingOfFilterUp('graph', '0')}> Petri </button>
+          <button onClick={() => this.props.testingOfFilterUp('graph', '1')}> Time </button>
+          <button onClick={() => this.props.testingOfFilterUp('graph', '2')}> Area </button>
           {Graph}
         </div>
       </div>
@@ -41,7 +45,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    testingOfUrl: () => dispatch(actions.stateUpdatesUrl())
+    testingOfFilterUp: (key, value) => dispatch(actions.updateFilter(key, value))
   }
 }
 

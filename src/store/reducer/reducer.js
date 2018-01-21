@@ -17,7 +17,7 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.STATE_UPDATES_URL: return updateState(state, {funding: 'ForTestingAndDebugging'})
+    case actionTypes.UPDATE_FILTER: return updateState(state, {[action.key]: action.value})
     default:
       return urlUpdatesState(state)
   }
