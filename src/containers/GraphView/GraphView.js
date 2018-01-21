@@ -25,7 +25,7 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
-        <div className={classes.GraphContainer} onClick={this.props.onHistoryChange}>
+        <div className={classes.GraphContainer} onClick={this.props.testingOfUrl}>
           {Graph}
         </div>
       </div>
@@ -41,7 +41,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onHistoryChange: () => dispatch(actions.urlUpdatesState())
+    testingOfUrl: () => dispatch(actions.stateUpdatesUrl())
   }
 }
 

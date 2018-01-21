@@ -17,21 +17,18 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.URL_UPDATES_STATE: return updateState(state, {})
+    case actionTypes.STATE_UPDATES_URL: return updateState(state, {funding: 'ForTestingAndDebugging'})
     default:
       return urlUpdatesState(state) // is this not genius?
   }
 }
 
-// Keep the switch lean by outsourcing the actual code below
+// Keep the reducer switch lean by outsourcing the actual code below
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesState = (state) => {
   const parsedObj = queryString.parse(location.search)
-  return {
-    ...state,
-    ...parsedObj
-  }
+  return updateState(state, parsedObj)
 }
 
 export default reducer

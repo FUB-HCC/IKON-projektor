@@ -4,8 +4,8 @@ export const updateState = (oldObject, updatedProperties) => {
     ...oldObject,
     ...updatedProperties
   }
-  const newUrl = queryString.stringify(newState)
-  location.search = newUrl
+  const newUrl = '?' + queryString.stringify(newState)
+  history.pushState(null, null, newUrl)
   return newState
 }
 

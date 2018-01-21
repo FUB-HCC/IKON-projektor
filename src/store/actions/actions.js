@@ -2,8 +2,8 @@ import * as actionTypes from './actionTypes'
 
 // action emitters to keep the containers clean
 
-export const urlUpdatesState = () => {
+export const stateUpdatesUrl = () => {
   return {
-    type: actionTypes.URL_UPDATES_STATE
+    type: actionTypes.STATE_UPDATES_URL
   }
 }
