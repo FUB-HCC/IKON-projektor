@@ -9,10 +9,9 @@ import * as actions from '../../store/actions/actions'
 
 class GraphView extends Component {
   render () {
-    let Graph = this.props.graph // render conditional according to state
-    switch (Graph) {
+    let Graph = (<PetridishGraph/>) // render conditional according to state. Petridish rendered as default
+    switch (this.props.graph) {
       case '0':
-        Graph = (<PetridishGraph/>)
         break
       case '1':
         Graph = (<TimeGraph/>)
@@ -21,7 +20,7 @@ class GraphView extends Component {
         Graph = (<AreaGraph/>)
         break
       default:
-        Graph = (<PetridishGraph/>)
+        break
     }
     return (
       <div className={classes.BackGradient}>
