@@ -1,0 +1,33 @@
+@font-face {
+    font-family: CooperHewitt-Light;
+    src: url(./assets/CooperHewitt-Light.otf);
+    font-weight:300;
+}
+@font-face {
+    font-family: CooperHewitt-LightItalic;
+    src: url(./assets/CooperHewitt-LightItalic.otf);
+    font-weight:300;
+    font-style: italic;
+}
+@font-face {
+    font-family: CooperHewitt-Book;
+    src: url(./assets/CooperHewitt-Book.otf);
+    font-weight:400;
+}
+@font-face {
+    font-family: CooperHewitt-Medium;
+    src: url(./assets/CooperHewitt-Medium.otf);
+    font-weight:500;
+}
+@font-face {
+    font-family: CooperHewitt-MediumItalic;
+    src: url(./assets/CooperHewitt-MediumItalic.otf);
+    font-weight:500;
+    font-style: italic;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: CooperHewitt-Medium, sans-serif; /* project default */
+}
