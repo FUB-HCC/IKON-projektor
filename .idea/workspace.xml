@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ac94a63b-68e1-4208-8141-52a55f6a7f7b" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/containers/GraphView/GraphView.css" afterPath="$PROJECT_DIR$/src/containers/GraphView/GraphView.css" />
-    </list>
+    <list default="true" id="ac94a63b-68e1-4208-8141-52a55f6a7f7b" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -62,8 +59,8 @@
       <file leaf-file-name="GraphView.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/containers/GraphView/GraphView.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1100">
-              <caret line="55" column="0" lean-forward="false" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+            <state relative-caret-position="290">
+              <caret line="29" column="35" lean-forward="true" selection-start-line="29" selection-start-column="35" selection-end-line="29" selection-end-column="35" />
               <folding />
             </state>
           </provider>
@@ -304,12 +301,12 @@
       <workItem from="1516532550107" duration="901000" />
       <workItem from="1516533568679" duration="17206000" />
       <workItem from="1516563108148" duration="613000" />
-      <workItem from="1516891029493" duration="105000" />
+      <workItem from="1516891029493" duration="230000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21197000" />
+    <option name="totallyTimeSpent" value="21322000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
@@ -770,8 +767,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/containers/GraphView/GraphView.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1100">
-          <caret line="55" column="0" lean-forward="false" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+        <state relative-caret-position="290">
+          <caret line="29" column="35" lean-forward="true" selection-start-line="29" selection-start-column="35" selection-end-line="29" selection-end-column="35" />
           <folding />
         </state>
       </provider>
