@@ -1,5 +1,4 @@
 import React from 'react'
-import * as actions from '../../store/actions/actions'
 import {connect} from 'react-redux'
 import {select as d3Select, event as d3Event} from 'd3-selection'
 import {scaleBand as d3ScaleBand, scaleTime as d3ScaleTime} from 'd3-scale'
@@ -251,18 +250,13 @@ const mapStateToProps = state => {
       'background': '#434058'
     }
   }
-  const processedData = processData(state.data, graphColors)
+  console.log(state.filteredData)
+  const processedData = processData(state.filteredData, graphColors)
   console.log(processedData)
   return {
     graph: state.graph,
     data: processedData,
     colors: graphColors
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    testingOfFilterUp: (key, value) => dispatch(actions.updateFilter(key, value))
   }
 }
 
@@ -278,6 +272,7 @@ const processData = (data, colors) => {
    (Possibly split up into a different function for each Visualisation type)
  */
   // Stage 1 create baseData and split by FB
+  if (!data) return []
   let splitFbs = [[], [], [], []]
 
   Object.keys(data).forEach(pId => {
@@ -351,4 +346,4 @@ const endDateSort = (a, b) => {
   return new Date(a.endDate).getTime() - new Date(b.endDate).getTime()
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TimeGraph)
+export default connect(mapStateToProps)(TimeGraph)

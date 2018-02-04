@@ -1,39 +1,62 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateFilter} from '../utility'
+import {updateUrl} from '../utility'
 import {getData} from '../../assets/data'
-// import { updateState } from '../utility'  ONLY UPDATE STATE WITH THIS FUNCTION usage: updateObject(state, newObjToMergeWithState)
+import {parse as queryStringParse} from 'query-string'
 
-const queryString = require('query-string') // queryString import
 const data = getData()
 
+const applyFilters = (data, filter) => {
+  let filteredData = data
+  filter.forEach(f => {
+    let newFilteredData = {}
+    filteredData = Object.keys(filteredData).forEach(d => {
+      if (f.type === 'a') {
+        if (f.value.some(value => value === filteredData[d][f.key])) newFilteredData[d] = filteredData[d]
+      } else {
+        if (filteredData[d][f.key].includes(f.value)) newFilteredData[d] = filteredData[d]
+      }
+    })
+    filteredData = newFilteredData
+  })
+  return filteredData
+}
+
 const initialState = {
-  filter: {
-    graph: '0',
-    field: '', // Forschungsbereiche (String)
-    topic: '' // Topics (String)
-  },
-  data: data
+  filter: [
+    {name: 'field', key: 'forschungsbereich', type: 'a', value: ['1', '2', '3', '4']},
+    {name: 'topic', key: 'hauptthema', type: 'a', value: ['Perspektiven auf Natur - PAN', 'Biodiversitäts- und Geoinformatik', 'Sammlungsentwicklung', 'Biodiversitätsentdeckung', 'Evolutionäre Morphologie']},
+    {name: 'sponsor', key: 'geldgeber', type: 's', value: ''}
+  ],
+  graph: '0',
+  data: data,
+  filteredData: data
 }
 
 // Keep the reducer switch lean by outsourcing the actual code below
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.UPDATE_FILTER:
-      return {
+    case actionTypes.CHANGE_GRAPH:
+      const newState = {
         ...state,
-        filter: updateFilter(state.filter, {[action.key]: action.value})
+        graph: action.value,
+        filteredData: applyFilters(state.data, state.filter)
       }
+      updateUrl(state.filter, state.graph)
+      return newState
     default: return urlUpdatesFilters(state)
   }
 }
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesFilters = (state) => {
-  const parsedObj = queryString.parse(location.search)
+  const urlData = queryStringParse(location.search)
+  const dataFromUrl = updateUrl(state.filter, state.graph, urlData)
   return {
     ...state,
-    filter: updateFilter(state.filter, parsedObj)
+    filter: dataFromUrl.filter,
+    graph: dataFromUrl.graph,
+    filteredData: applyFilters(state.data, state.filter)
   }
 }
 
