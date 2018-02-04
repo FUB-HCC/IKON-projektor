@@ -1,12 +1,12 @@
 // update the state in an immutable way and update the url without refreshing the page
+import {stringify as queryStringify} from 'query-string'
 
-export const updateState = (oldObject, updatedProperties) => {
-  const queryString = require('query-string') // queryString import
-  const newState = {
+export const updateFilter = (oldObject, updatedProperties) => {
+  const newFilter = {
     ...oldObject,
     ...updatedProperties
   }
-  const newUrl = '?' + queryString.stringify(newState)
+  const newUrl = '?' + queryStringify(newFilter)
   history.pushState(null, null, newUrl)
-  return newState
+  return newFilter
 }

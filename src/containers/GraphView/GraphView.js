@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 
 import PetridishGraph from '../../components/PetridishGraph/PetridishGraph'
 import AreaGraph from '../../components/AreaGraph/AreaGraph'
-import TimeGraph from '../../components/TimeGraph/TimeGraph'
+import TimeGraph from './TimeGraph'
 import classes from './GraphView.css'
 import * as actions from '../../store/actions/actions'
 
@@ -39,7 +39,7 @@ class GraphView extends Component {
 
 const mapStateToProps = state => {
   return {
-    graph: state.graph
+    graph: state.filter.graph
   }
 }
 
