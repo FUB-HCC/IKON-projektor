@@ -1,1 +1,1 @@
-export const UPDATE_FILTER = 'UPDATE_FILTER'
+export const CHANGE_GRAPH = 'CHANGE_GRAPH'
