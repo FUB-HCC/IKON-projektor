@@ -42,7 +42,7 @@ const reducer = (state = initialState, action) => {
         graph: action.value,
         filteredData: applyFilters(state.data, state.filter)
       }
-      updateUrl(state.filter, state.graph)
+      updateUrl(newState.filter, newState.graph)
       return newState
     default: return urlUpdatesFilters(state)
   }
