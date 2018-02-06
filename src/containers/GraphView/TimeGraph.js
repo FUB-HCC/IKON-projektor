@@ -10,12 +10,10 @@ import classes from './TimeGraph.css'
 class TimeGraph extends React.Component {
   componentDidMount () {
     this.setupTimeGraph('#graph', this.props.data)
-    console.log('SETUP DONE')
   }
 
   componentDidUpdate () {
     this.updateTimeGraph(this.props.data)
-    console.log('TIMEGRAPH UPDATED')
   }
 
   render () {
@@ -250,9 +248,7 @@ const mapStateToProps = state => {
       'background': '#434058'
     }
   }
-  console.log(state.filteredData)
   const processedData = processData(state.filteredData, graphColors)
-  console.log(processedData)
   return {
     graph: state.graph,
     data: processedData,

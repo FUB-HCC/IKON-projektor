@@ -1,1 +1,2 @@
 export const CHANGE_GRAPH = 'CHANGE_GRAPH'
+export const FILTER_CHANGE = 'FILTER_CHANGE'

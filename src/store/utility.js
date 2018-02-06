@@ -2,7 +2,6 @@
 import {stringify as queryStringify} from 'query-string'
 
 export const updateUrl = (filterState, graphState, urlData = {}) => {
-  console.log(urlData, filterState, graphState)
   let newUrlData = {}
   urlData.graph ? newUrlData.graph = urlData.graph : newUrlData.graph = graphState
 
@@ -25,6 +24,5 @@ export const updateUrl = (filterState, graphState, urlData = {}) => {
       value: filterValues[i]
     }))
   }
-  console.log(updatedData)
   return updatedData
 }
