@@ -6,6 +6,7 @@ import AreaGraph from '../../components/AreaGraph/AreaGraph'
 import TimeGraph from './TimeGraph'
 import classes from './GraphView.css'
 import * as actions from '../../store/actions/actions'
+import Navigation from '../../components/Navigation/Navigation'
 
 class GraphView extends Component {
   render () {
@@ -25,12 +26,18 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
+
         <div className={classes.FilterWrapper}>
           <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('0')}> Petri </button>
           <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('1')}> Time </button>
           <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('2')}> Area </button>
           <FilterBox type={0}/>
         </div>
+
+        <Navigation onChange={this.props.testingOfFilterUp}>
+
+        </Navigation>
+
         <div className={classes.GraphContainer}>
           {/* added Buttons for Filter Testing */}
           {Graph}
