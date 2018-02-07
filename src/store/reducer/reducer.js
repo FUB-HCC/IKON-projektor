@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateUrl} from '../utility'
+import {updateUrl, fieldsStringToInt} from '../utility'
 import {getData} from '../../assets/data'
 import {parse as queryStringParse} from 'query-string'
 
@@ -24,7 +24,7 @@ const applyFilters = (data, filter) => {
 const initialState = {
   filter: [
     {name: 'field', key: 'forschungsbereich', type: 'a', value: ['1', '2', '3', '4']},
-    {name: 'topic', key: 'hauptthema', type: 'a', value: ['Wissenschaftsdatenmanagement', 'Biodiversitäts- und Geoinformatik', 'Perspektiven auf Natur - PAN', 'Historische Arbeitsstelle', 'Sammlungsentwicklung', 'Wissenschaft in der Gesellschaft', 'Bildung und Vermittlung', 'Evolutionäre Morphologie', 'Ausstellung und Wissenstransfer', 'Mikroevolution', 'Impakt- und Meteoritenforschung', 'Diversitätsdynamik', 'Biodiversitätsentdeckung', 'IT- Forschungsinfrastrukturen']},
+    {name: 'topic', key: 'hauptthema', type: 'a', value: ['Wissenschaftsdatenmanagement', 'Biodiversitäts- und Geoinformatik', 'Perspektiven auf Natur - PAN', 'Historische Arbeitsstelle', 'Sammlungsentwicklung', 'Wissenschaft in der Gesellschaft', 'Bildung und Vermittlung', 'Evolutionäre Morphologie', 'Ausstellung und Wissenstransfer', 'Mikroevolution', 'Impakt- und Meteoritenforschung', 'Diversitätsdynamik', 'Biodiversitätsentdeckung', 'IT- Forschungsinfrastrukturen', 'Kompetenzzentrum Sammlung']},
     {name: 'sponsor', key: 'geldgeber', type: 's', value: ''}
   ],
   graph: '0',
@@ -37,6 +37,7 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.CHANGE_GRAPH:
+      console.log('STATE CHANGE: ', action.type, action)
       const newState = {
         ...state,
         graph: action.value,
@@ -45,9 +46,13 @@ const reducer = (state = initialState, action) => {
       updateUrl(newState.filter, newState.graph)
       return newState
 
-    case actionTypes.FILTER_CHANGE: return changeFilter(state, action)
+    case actionTypes.FILTER_CHANGE:
+      console.log('STATE CHANGE: ', action.type, action)
+      return changeFilter(state, action)
 
-    default: return urlUpdatesFilters(state)
+    default:
+      console.log('STATE CHANGE: DEFAULT')
+      return urlUpdatesFilters(state)
   }
 }
 
@@ -56,10 +61,12 @@ const changeFilter = (state, action) => {
   if (action.form === 's') {
     newFilter[action.id].value = action.value
   } else {
-    if (state.filter[action.id].value.some(e => e === action.value)) {
-      newFilter[action.id].value = state.filter[action.id].value.filter(key => key !== action.value)
+    let actionValue
+    action.id === 0 ? actionValue = fieldsStringToInt(action.value) : actionValue = action.value
+    if (state.filter[action.id].value.some(e => e === actionValue)) {
+      newFilter[action.id].value = state.filter[action.id].value.filter(key => key !== actionValue)
     } else {
-      newFilter[action.id].value.push(action.value)
+      newFilter[action.id].value.push(actionValue)
     }
   }
   const filteredData = applyFilters(state.data, newFilter)

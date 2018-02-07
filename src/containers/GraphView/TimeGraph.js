@@ -25,6 +25,7 @@ class TimeGraph extends React.Component {
   }
 
   setupTimeGraph (svgId, data, type = 'default', config = {}) {
+    console.log('VISUALIZATION CHANGE: SETUP TIMELINE')
     /*
       Public
       Creates all nessecary data and shows the Visulisation
@@ -73,6 +74,7 @@ class TimeGraph extends React.Component {
   }
 
   updateTimeGraph (data) {
+    console.log('VISUALIZATION CHANGE: UPDATE TIMELINE')
     /*
       Public
       Updates The Visulisation with the new Data

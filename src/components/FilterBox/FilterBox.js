@@ -4,6 +4,7 @@ import FilterModuleBig from './FilterModuleBig'
 import FilterModuleFree from './FilterModuleFree'
 import {connect} from 'react-redux'
 import {getData} from '../../assets/data'
+import {fieldsIntToString} from '../../store/utility'
 import classes from './FilterBox.css'
 import * as actions from '../../store/actions/actions'
 
@@ -71,7 +72,10 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps, mapDispatchToProps)(FilterBox)
 
 const getFilter = (keys, name, id, changeHandler, value) => {
-  if (keys.length < 6) return <FilterModuleSmall changeHandler={changeHandler} name={name} id={id} keys={keys} value={value} />
-  else if (keys.length < 16) return <FilterModuleBig changeHandler={changeHandler} name={name} id={id} keys={keys} value={value}/>
-  else return <FilterModuleFree changeHandler={changeHandler} name={name} id={id} keys={keys}/>
+  let filterKeys, filterValue
+  id === 0 ? filterKeys = keys.map(k => fieldsIntToString(k)) : filterKeys = keys
+  id === 0 ? filterValue = value.map(v => fieldsIntToString(v)) : filterValue = value
+  if (keys.length < 6) return <FilterModuleSmall changeHandler={changeHandler} name={name} id={id} keys={filterKeys} value={filterValue} />
+  else if (keys.length < 16) return <FilterModuleBig changeHandler={changeHandler} name={name} id={id} keys={filterKeys} value={filterValue}/>
+  else return <FilterModuleFree changeHandler={changeHandler} name={name} id={id} keys={filterKeys}/>
 }
