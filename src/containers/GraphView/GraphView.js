@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-
+import FilterBox from '../../components/FilterBox/FilterBox'
 import PetridishGraph from '../../components/PetridishGraph/PetridishGraph'
 import AreaGraph from '../../components/AreaGraph/AreaGraph'
 import TimeGraph from './TimeGraph'
@@ -25,11 +25,14 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
+        <div className={classes.FilterWrapper}>
+          <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('0')}> Petri </button>
+          <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('1')}> Time </button>
+          <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('2')}> Area </button>
+          <FilterBox type={0}/>
+        </div>
         <div className={classes.GraphContainer}>
           {/* added Buttons for Filter Testing */}
-          <button onClick={() => this.props.testingOfFilterUp('0')}> Petri </button>
-          <button onClick={() => this.props.testingOfFilterUp('1')}> Time </button>
-          <button onClick={() => this.props.testingOfFilterUp('2')}> Area </button>
           {Graph}
         </div>
       </div>

@@ -19,6 +19,14 @@
     background-color: rgba(0,0,0,0);
 }
 
+.FilterWrapper{
+    position: absolute;
+    top: 50%;
+    width: 10%;
+    left: 5%;
+    height: 30%;
+}
+
 @-webkit-keyframes Gradient {
     0% {
         background-position: 0% 50%

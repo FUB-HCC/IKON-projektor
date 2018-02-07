@@ -10,18 +10,16 @@ import classes from './TimeGraph.css'
 class TimeGraph extends React.Component {
   componentDidMount () {
     this.setupTimeGraph('#graph', this.props.data)
-    console.log('SETUP DONE')
   }
 
   componentDidUpdate () {
     this.updateTimeGraph(this.props.data)
-    console.log('TIMEGRAPH UPDATED')
   }
 
   render () {
     return (
       <div>
-        <svg id="graph" width="800" height="800"> </svg>
+        <svg id="graph" width="1200" height="800"></svg>
       </div>
     )
   }
@@ -37,7 +35,7 @@ class TimeGraph extends React.Component {
     */
     this.transitionTime = 1000
     // Delays data change to let removed elements fade out and new Elements fade in.
-    this.delayTime = 500
+    this.delayTime = 0
     this.tooltipTransitionTime = 200
     this.colors = this.props.colors
     /*
@@ -91,9 +89,15 @@ class TimeGraph extends React.Component {
       Updates all nessecary D3 functions (e.g. ForceSimulation, Scales)
       Uses the globally defined Data in this.visData
     */
-    this.xScale.domain(this.visData.map(function (d) { return d.num }))
-    this.yScale.domain([d3Min(this.visData, function (d) { return d.startDate }),
-      d3Max(this.visData, function (d) { return d.endDate })])
+    this.xScale.domain(this.visData.map(function (d) {
+      return d.num
+    }))
+    this.yScale.domain([d3Min(this.visData, function (d) {
+      return d.startDate
+    }),
+    d3Max(this.visData, function (d) {
+      return d.endDate
+    })])
   }
 
   updateSvgElements () {
@@ -158,8 +162,11 @@ class TimeGraph extends React.Component {
       (possibly seperate Class)
     */
     const that = this
-    let bars = this.g.selectAll('.bar')
-      .data(this.visData, function (d) { return d.projectId })
+    const bars = this.g.selectAll('.' + classes.bar)
+      .data(this.visData, function (d) {
+        return d.projectId
+      })
+
     // Delete old elements
     bars.exit().transition()
       .duration(this.transitionTime)
@@ -188,10 +195,11 @@ class TimeGraph extends React.Component {
         tmp.setDate(tmp.getDate() - 600)
         return that.yScale(tmp)
       })
-      .attr('height', function (d) { return that.yScale(d.startDate) - that.yScale(d.endDate) })
+      .attr('height', function (d) {
+        return that.yScale(d.startDate) - that.yScale(d.endDate)
+      })
       .on('click', function (d) {
-        // TODO HREF
-        document.location.href = '/hrefIsNotUsed'
+        // TODO DISPATCH
       })
       .on('mouseover', function (d) {
         d3Select(this).style('cursor', 'pointer')
@@ -220,7 +228,21 @@ class TimeGraph extends React.Component {
       })
       .transition().delay(this.delayTime).duration(this.transitionTime)
       .style('opacity', 1)
-      .attr('y', function (d) { return that.yScale(d.endDate) })
+      .attr('y', function (d) {
+        return that.yScale(d.endDate)
+      })
+
+    bars
+      .transition().delay(this.delayTime).duration(this.transitionTime)
+      .attr('x', d => that.xScale(d.num) + 'px')
+      .attr('width', this.xScale.bandwidth() - 3)
+      .attr('y', function (d) {
+        return that.yScale(d.endDate)
+      })
+      .attr('height', function (d) {
+        return that.yScale(d.startDate) - that.yScale(d.endDate)
+      })
+      .style('opacity', 1)
   }
 }
 
@@ -250,9 +272,7 @@ const mapStateToProps = state => {
       'background': '#434058'
     }
   }
-  console.log(state.filteredData)
   const processedData = processData(state.filteredData, graphColors)
-  console.log(processedData)
   return {
     graph: state.graph,
     data: processedData,

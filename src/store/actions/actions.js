@@ -8,3 +8,12 @@ export const changeGraph = (value) => {
     value: value
   }
 }
+
+export const filterChange = (filterId, value, form) => {
+  return {
+    type: actionTypes.FILTER_CHANGE,
+    id: filterId,
+    value: value,
+    form: form
+  }
+}

@@ -2,7 +2,6 @@
 import {stringify as queryStringify} from 'query-string'
 
 export const updateUrl = (filterState, graphState, urlData = {}) => {
-  console.log(urlData, filterState, graphState)
   let newUrlData = {}
   urlData.graph ? newUrlData.graph = urlData.graph : newUrlData.graph = graphState
 
@@ -10,7 +9,7 @@ export const updateUrl = (filterState, graphState, urlData = {}) => {
 
   urlData.topic ? newUrlData.topic = urlData.topic : newUrlData.topic = filterState[1].value
 
-  urlData.sponsor ? newUrlData.topic = urlData.sponsor : newUrlData.sponsor = filterState[2].value
+  urlData.sponsor ? newUrlData.sponsor = urlData.sponsor : newUrlData.sponsor = filterState[2].value
 
   const newUrl = '?' + queryStringify(newUrlData)
   history.pushState(null, null, newUrl)
@@ -25,6 +24,5 @@ export const updateUrl = (filterState, graphState, urlData = {}) => {
       value: filterValues[i]
     }))
   }
-  console.log(updatedData)
   return updatedData
 }
