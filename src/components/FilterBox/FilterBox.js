@@ -25,8 +25,8 @@ class FilterBox extends Component {
       return (
         <div key={key} className={classes.Filter1}>
           <div className={classes.ClickListener} onClick={() => this.filterClickHandler(key)}/>
-          {filter.name}
-          {this.state.activePopover === key ? getFilter(filter.keys, filter.name, key, this.props.filterChangeHandler) : null}
+          <span className={classes.filterText}> {filter.name} </span>
+          {this.state.activePopover === key ? getFilter(filter.keys, filter.name, key, this.props.filterChangeHandler, filter.value) : null}
         </div>
       )
     })
@@ -61,7 +61,7 @@ const mapStateToProps = state => {
         }
       })
     })
-    filters.push({name: filter.name, keys: distinctValues})
+    filters.push({name: filter.name, keys: distinctValues, value: filter.value})
   })
   return {
     filters: filters
@@ -70,8 +70,8 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(FilterBox)
 
-const getFilter = (keys, name, id, changeHandler) => {
-  if (keys.length < 6) return <FilterModuleSmall changeHandler={changeHandler} name={name} id={id} keys={keys}/>
-  else if (keys.length < 16) return <FilterModuleBig changeHandler={changeHandler} name={name} id={id} keys={keys}/>
+const getFilter = (keys, name, id, changeHandler, value) => {
+  if (keys.length < 6) return <FilterModuleSmall changeHandler={changeHandler} name={name} id={id} keys={keys} value={value} />
+  else if (keys.length < 16) return <FilterModuleBig changeHandler={changeHandler} name={name} id={id} keys={keys} value={value}/>
   else return <FilterModuleFree changeHandler={changeHandler} name={name} id={id} keys={keys}/>
 }

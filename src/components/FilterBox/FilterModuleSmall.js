@@ -8,7 +8,7 @@ const filterModuleSmall = (props) => {
       <div key={key} >
         <input
           onChange={() => props.changeHandler(props.id, k, 'a')}
-          defaultChecked={true}
+          defaultChecked={props.value.some(v => v === k)}
           className={classes.Input}
           type="checkbox"
           name={k}

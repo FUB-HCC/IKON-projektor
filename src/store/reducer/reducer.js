@@ -75,11 +75,12 @@ const changeFilter = (state, action) => {
 const urlUpdatesFilters = (state) => {
   const urlData = queryStringParse(location.search)
   const dataFromUrl = updateUrl(state.filter, state.graph, urlData)
+  console.log(dataFromUrl)
   return {
     ...state,
     filter: dataFromUrl.filter,
     graph: dataFromUrl.graph,
-    filteredData: applyFilters(state.data, state.filter)
+    filteredData: applyFilters(state.data, dataFromUrl.filter)
   }
 }
 

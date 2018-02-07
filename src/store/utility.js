@@ -9,7 +9,7 @@ export const updateUrl = (filterState, graphState, urlData = {}) => {
 
   urlData.topic ? newUrlData.topic = urlData.topic : newUrlData.topic = filterState[1].value
 
-  urlData.sponsor ? newUrlData.topic = urlData.sponsor : newUrlData.sponsor = filterState[2].value
+  urlData.sponsor ? newUrlData.sponsor = urlData.sponsor : newUrlData.sponsor = filterState[2].value
 
   const newUrl = '?' + queryStringify(newUrlData)
   history.pushState(null, null, newUrl)
