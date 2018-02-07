@@ -7,11 +7,12 @@ export const updateUrl = (filterState, graphState, urlData = {}) => {
 
   urlData.field ? newUrlData.field = urlData.field : newUrlData.field = filterState[0].value
 
-  urlData.topic ? newUrlData.topic = urlData.topic : newUrlData.topic = filterState[1].value
+  urlData.topic ? newUrlData.topic = urlData.topic.map(t => { return topicIntToString(t) }) : newUrlData.topic = filterState[1].value
 
   urlData.sponsor ? newUrlData.sponsor = urlData.sponsor : newUrlData.sponsor = filterState[2].value
 
-  const newUrl = '?' + queryStringify(newUrlData)
+  let minifiedUrlData = {...newUrlData, topic: newUrlData.topic.map(t => topicStringToInt(t))}
+  const newUrl = '?' + queryStringify(minifiedUrlData)
   history.pushState(null, null, newUrl)
 
   const filterValues = [newUrlData.field, newUrlData.topic, newUrlData.sponsor]
@@ -48,7 +49,7 @@ const topicMapping = [
   {name: 'Impakt- und Meteoritenforschung', num: '11'},
   {name: 'Diversitätsdynamik', num: '12'},
   {name: 'Biodiversitätsentdeckung', num: '13'},
-  {name: 'IT-Forschungsinfratrukturen', num: '14'},
+  {name: 'IT- Forschungsinfrastrukturen', num: '14'},
   {name: 'Kompetenzzentrum Sammlung', num: '15'}
 ]
 
