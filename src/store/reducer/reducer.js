@@ -37,7 +37,7 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.CHANGE_GRAPH:
-      console.log('STATE CHANGE: ', action.type, action)
+      // console.log('STATE CHANGE: ', action.type, action)
       const newState = {
         ...state,
         graph: action.value,
@@ -47,20 +47,19 @@ const reducer = (state = initialState, action) => {
       return newState
 
     case actionTypes.FILTER_CHANGE:
-      console.log('STATE CHANGE: ', action.type, action)
+      // console.log('STATE CHANGE: ', action.type, action)
       return changeFilter(state, action)
 
     default:
-      console.log('STATE CHANGE: DEFAULT')
+      // console.log('STATE CHANGE: DEFAULT')
       return urlUpdatesFilters(state)
   }
 }
 
 const changeFilter = (state, action) => {
   let newFilter = state.filter.slice()
-  if (action.form === 's') {
-    newFilter[action.id].value = action.value
-  } else {
+  if (action.form === 's') newFilter[action.id].value = action.value
+  else {
     let actionValue
     action.id === 0 ? actionValue = fieldsStringToInt(action.value) : actionValue = action.value
     if (state.filter[action.id].value.some(e => e === actionValue)) {

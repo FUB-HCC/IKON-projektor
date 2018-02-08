@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
-import FilterModuleSmall from './FilterModuleSmall'
-import FilterModuleBig from './FilterModuleBig'
-import FilterModuleFree from './FilterModuleFree'
+import RadioModule from './RadioModule'
+import FreeModule from './FreeModule'
 import {connect} from 'react-redux'
 import {getData} from '../../assets/data'
 import {fieldsIntToString} from '../../store/utility'
@@ -23,10 +22,11 @@ class FilterBox extends Component {
 
   render () {
     const renderedFilters = this.props.filters.map((filter, key) => {
+      const activeStyle = this.state.activePopover === key ? {borderLeft: 'white solid 1px'} : null
       return (
         <div key={key} className={classes.Filter1}>
-          <div className={classes.ClickListener} onClick={() => this.filterClickHandler(key)}/>
-          <span className={classes.filterText}> {filter.name} </span>
+          <div style={activeStyle} className={classes.ClickListener} onClick={() => this.filterClickHandler(key)}/>
+          {filter.name}
           {this.state.activePopover === key ? getFilter(filter.keys, filter.name, key, this.props.filterChangeHandler, filter.value) : null}
         </div>
       )
@@ -75,7 +75,6 @@ const getFilter = (keys, name, id, changeHandler, value) => {
   let filterKeys, filterValue
   id === 0 ? filterKeys = keys.map(k => fieldsIntToString(k)) : filterKeys = keys
   id === 0 ? filterValue = value.map(v => fieldsIntToString(v)) : filterValue = value
-  if (keys.length < 6) return <FilterModuleSmall changeHandler={changeHandler} name={name} id={id} keys={filterKeys} value={filterValue} />
-  else if (keys.length < 16) return <FilterModuleBig changeHandler={changeHandler} name={name} id={id} keys={filterKeys} value={filterValue}/>
-  else return <FilterModuleFree changeHandler={changeHandler} name={name} id={id} keys={filterKeys}/>
+  if (keys.length < 16) return <RadioModule changeHandler={changeHandler} name={name} id={id} keys={filterKeys} value={filterValue}/>
+  else return <FreeModule changeHandler={changeHandler} name={name} id={id} keys={filterKeys}/>
 }
