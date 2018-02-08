@@ -8,26 +8,14 @@ import classes from './FilterBox.css'
 import * as actions from '../../store/actions/actions'
 
 class FilterBox extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {activePopover: -1}
-  }
-
-  filterClickHandler (filter) {
-    const newState = (filter === this.state.activePopover) ? -1 : filter
-    this.setState({
-      activePopover: newState
-    })
-  }
-
   render () {
     const renderedFilters = this.props.filters.map((filter, key) => {
-      const activeStyle = this.state.activePopover === key ? {borderLeft: 'white solid 1px'} : null
+      const activeStyle = this.props.activeBox === key ? {borderLeft: 'white solid 1px'} : null
       return (
         <div key={key} className={classes.Filter1}>
-          <div style={activeStyle} className={classes.ClickListener} onClick={() => this.filterClickHandler(key)}/>
+          <div style={activeStyle} className={classes.ClickListener} onClick={() => this.props.change(key)}/>
           {filter.name}
-          {this.state.activePopover === key ? getFilter(filter.keys, filter.name, key, this.props.filterChangeHandler, filter.value) : null}
+          {this.props.activeBox === key ? getFilter(filter.keys, filter.name, key, this.props.filterChangeHandler, filter.value) : null}
         </div>
       )
     })

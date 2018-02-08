@@ -8,6 +8,7 @@
     animation: Gradient 60s ease infinite;
     overflow: hidden;
     position: fixed;
+    z-index: -999;
 }
 
 .GraphContainer {
