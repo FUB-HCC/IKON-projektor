@@ -22,10 +22,12 @@
 
 .FilterWrapper{
     position: absolute;
-    top: 50%;
-    width: 10%;
+    font-size: 12px;
+    top: 30%;
+    width: 120px;
     left: 5%;
-    height: 30%;
+    height: 250px;
+    letter-spacing: 0.5px;
 }
 
 @-webkit-keyframes Gradient {

@@ -3,7 +3,7 @@ import React from 'react'
 import classes from './RadioModule.css'
 
 const filterModuleBig = (props) => {
-  const margin = '20px'
+  const margin = '15px'
   const height = margin * 2 * props.keys.length + 'px'
   const radioElements = props.keys.map((k, key) => {
     return (
@@ -16,7 +16,8 @@ const filterModuleBig = (props) => {
           name={k}
           key={key}
           id={key}/>
-        <label htmlFor={key}>{k}</label>
+
+        <label style={{display: 'flex', alignItems: 'center', height: '20px'}} htmlFor={key}>{k}</label>
       </div>
     )
   })

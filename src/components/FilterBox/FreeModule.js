@@ -26,6 +26,11 @@ class FilterModuleFree extends Component {
     })
   }
 
+  handleDelete () {
+    this.setState({value: ''})
+    this.props.changeHandler(this.props.id, '', 's')
+  }
+
   render () {
     const inputProps = {
       placeholder: this.props.name,
@@ -34,8 +39,8 @@ class FilterModuleFree extends Component {
     }
     return (
       <div className={classes.Input}>
+        {this.state.value !== '' ? <div onClick={() => this.handleDelete()} className={classes.DeleteButton}><p>x</p></div> : null}
         <Autosuggest
-          className={classes.InputBox}
           suggestions={this.state.suggestions}
           onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.onSuggestionsClearRequested}

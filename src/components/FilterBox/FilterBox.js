@@ -22,7 +22,7 @@ class FilterBox extends Component {
 
     return (
       <div className={classes.FilterBox}>
-        <div className={classes.Header}>Filter</div>
+        <div className={classes.Header}>FILTER</div>
         {renderedFilters}
       </div>
 
@@ -50,7 +50,8 @@ const mapStateToProps = state => {
         }
       })
     })
-    filters.push({name: filter.name, keys: distinctValues, value: filter.value})
+    const name = filter.key.charAt(0).toUpperCase() + filter.key.slice(1)
+    filters.push({name: name, keys: distinctValues, value: filter.value})
   })
   return {
     filters: filters

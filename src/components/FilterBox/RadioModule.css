@@ -1,10 +1,11 @@
 .Module {
     position: absolute;
     left: 100%;
-    bottom: 0;
+    top: 0;
     width: 300px;
-    padding: 12%;
-    background: rgba(67,64,88, 0.5);
+
+    padding-left: 15px;
+    background: rgba(67,64,88, 0.4);
     display: flex;
     align-items: left;
     justify-content: center;
@@ -13,7 +14,7 @@
 
 .Filter {
     display: flex;
-    align-items: center;
+    min-height: 20px;
 }
 
 /*Checkboxes styles*/
@@ -38,8 +39,8 @@ input[type="checkbox"] + label:last-child {
 input[type="checkbox"] + label:before {
     content: "";
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 1px solid #6cc0e5;
     position: absolute;
     left: 0;
