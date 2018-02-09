@@ -16,7 +16,6 @@ const filterModuleBig = (props) => {
           name={k}
           key={key}
           id={key}/>
-
         <label style={{display: 'flex', alignItems: 'center', height: '20px'}} htmlFor={key}>{k}</label>
       </div>
     )

@@ -64,7 +64,7 @@
 .suggestionsContainerOpen {
     display: block;
     position: absolute;
-    top: 51px;
+    top: 54px;
     width: 280px;
     background-color: rgba(67,64,88, 0.4);
     max-height: 150px;
