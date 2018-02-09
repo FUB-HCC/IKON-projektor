@@ -4,7 +4,7 @@ import classes from './Navigation.css'
 const navigation = (props) => {
   const colorActive = '#f0faf0'
   const colorInactive = '#989aa1'
-  
+
   return (
     <div className={classes.Container}>
       ANSICHT
