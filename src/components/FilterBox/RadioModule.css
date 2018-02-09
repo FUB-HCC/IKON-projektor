@@ -4,7 +4,7 @@
     bottom: 0;
     width: 300px;
     padding: 12%;
-    background: #434058;
+    background: rgba(67,64,88, 0.5);
     display: flex;
     align-items: left;
     justify-content: center;

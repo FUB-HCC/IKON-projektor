@@ -4,8 +4,8 @@
     bottom: 0;
     width: 300px;
     height: 70%;
-    background: #434058;
     padding: 12%;
+    background: rgba(67,64,88, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,7 +43,6 @@
     width: 240px;
     height: 30px;
     padding: 10px 20px;
-    font-family: Helvetica, sans-serif;
     font-weight: 300;
     font-size: 16px;
     border: 1px solid #aaa;
@@ -71,7 +70,6 @@
     width: 280px;
     border: 1px solid #aaa;
     background-color: #fff;
-    font-family: Helvetica, sans-serif;
     font-weight: 300;
     font-size: 16px;
     border-bottom-left-radius: 4px;
