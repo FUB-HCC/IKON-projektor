@@ -34,9 +34,7 @@ class GraphView extends Component {
           <FilterBox type={0}/>
         </div>
 
-        <Navigation onChange={this.props.testingOfFilterUp}>
-
-        </Navigation>
+        <Navigation onChange={this.props.testingOfFilterUp} active={this.props.graph}/>
 
         <div className={classes.GraphContainer}>
           {/* added Buttons for Filter Testing */}
