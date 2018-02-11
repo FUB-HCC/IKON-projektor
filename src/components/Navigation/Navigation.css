@@ -3,9 +3,9 @@
     flex-direction: column;
     justify-content: space-between;
     position: absolute;
-    top: 20%;
-    left: 3%;
-    height: 60%;
+    top: 5%;
+    left: 90%;
+    height: 40%;
     width: 10%;
     color: white;
     background-color: rgba(100,100,100,0.5);
@@ -13,10 +13,8 @@
 
 .Circle {
     display: flex;
-    margin: 10px 10px;
-}
-
-.Picture {
+    margin: 5px 5px;
     height: 80%;
     width: 80%;
 }
+

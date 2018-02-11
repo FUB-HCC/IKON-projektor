@@ -8,7 +8,7 @@ const Navigation = (props) => {
       <div onClick={() => props.onChange('graph', '0')} className={classes.Circle}>
         <svg width="100%" height="100%" id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
           <title>Petri</title>
-          <g fill={props.active === 0 ? '#f0faf0' : '#989aa1'} stroke={props.active ? '#f0faf0' : '#989aa1'}>
+          <g fill={props.active === '0' ? '#f0faf0' : '#989aa1'} stroke={props.active === '0' ? '#f0faf0' : '#989aa1'}>
             <path fill='none' strokeWidth='24px' d="M315.6,81.44C381.08,145.23,382,250,318.25,315.5A164.57,164.57,0,0,1,170,362.78"/>
             <path fill='none' strokeWidth='24px' d="M35.16,213.78A165.52,165.52,0,0,1,315.6,81.44"/>
             <path strokeWidth='24px' d="M61.72,290.87a165,165,0,0,1-26.56-77.09"/>
@@ -31,7 +31,7 @@ const Navigation = (props) => {
       <div onClick={() => props.onChange('graph', '1')} className={classes.Circle}>
         <svg width="100%" height="100%" id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
           <title>Process</title>
-          <g fill={props.active === 1 ? '#f0faf0' : '#989aa1'}>
+          <g fill={props.active === '1' ? '#f0faf0' : '#989aa1'}>
             <path d="M339.78,252.68H60.22a10.22,10.22,0,1,1,0-20.44H339.78a10.22,10.22,0,1,1,0,20.44Z"/>
             <path d="M339.34,168.63H60.66a10.22,10.22,0,0,1,0-20.44H339.34a10.22,10.22,0,0,1,0,20.44Z"/>
             <path d="M339.78,84.59H60.25a10.22,10.22,0,0,1,0-20.44H339.78a10.22,10.22,0,1,1,0,20.44Z"/>
@@ -47,7 +47,7 @@ const Navigation = (props) => {
       <div onClick={() => props.onChange('graph', '2')} className={classes.Circle}>
         <svg width="100%" height="100%" id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
           <title>Field</title>
-          <g fill={props.active === 2 ? '#f0faf0' : '#989aa1'}>
+          <g fill={props.active === '2' ? '#f0faf0' : '#989aa1'}>
             <path d="M358.72,346.72H79.19a10.22,10.22,0,1,1,0-20.44H358.72a10.22,10.22,0,0,1,0,20.44Z"/>
             <path d="M59.06,44.23V303.76a10.22,10.22,0,1,1-20.44,0V44.23a10.22,10.22,0,0,1,20.44,0Z"/>
             <polygon points="269.69 174.58 354.16 212.23 391.1 172.02 306.63 134.37 269.69 174.58"/>
