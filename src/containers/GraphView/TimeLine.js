@@ -15,7 +15,7 @@ class TimeLine extends React.Component {
   render () {
     return (
       <div>
-        <svg id={this.props.target} width="1200" height="800"></svg>
+        <svg id={this.props.target} width="1200" height="800"/>
       </div>
     )
   }

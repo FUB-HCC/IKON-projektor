@@ -209,7 +209,7 @@ class TimeLine {
       .on('click', function (d) {
         // TODO DISPATCH
       })
-      .on('mouseover', function (d) {
+      .on('mouseover', function () {
         d3Select(this).style('cursor', 'pointer')
         d3Select(this).transition()
           .duration(that.tooltipTransitionTime)
