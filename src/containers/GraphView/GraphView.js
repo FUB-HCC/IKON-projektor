@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import FilterBox from '../../components/FilterBox/FilterBox'
 import PetridishGraph from '../../components/PetridishGraph/PetridishGraph'
 import AreaGraph from '../../components/AreaGraph/AreaGraph'
-import TimeGraph from './TimeGraph'
+import TimeGraph from './TimeLine'
 import classes from './GraphView.css'
 import * as actions from '../../store/actions/actions'
 
