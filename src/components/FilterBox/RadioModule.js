@@ -1,11 +1,13 @@
 import React from 'react'
 
-import classes from './FilterModuleSmall.css'
+import classes from './RadioModule.css'
 
-const filterModuleSmall = (props) => {
+const filterModuleBig = (props) => {
+  const margin = '15px'
+  const height = margin * 2 * props.keys.length + 'px'
   const radioElements = props.keys.map((k, key) => {
     return (
-      <div key={key} >
+      <div style={{marginTop: margin, marginBottom: margin}} className={classes.Filter} key={key} >
         <input
           onChange={() => props.changeHandler(props.id, k, 'a')}
           defaultChecked={props.value.some(v => v === k)}
@@ -14,11 +16,10 @@ const filterModuleSmall = (props) => {
           name={k}
           key={key}
           id={key}/>
-        <label htmlFor={key}>{k}</label>
+        <label style={{display: 'flex', alignItems: 'center', height: '20px'}} htmlFor={key}>{k}</label>
       </div>
-    ) 
+    )
   })
-  const height = 100 * props.keys.length + 'px'
   return (
     <div style={{height: height}} className={classes.Module} onClick={() => null}>
       <form>
@@ -28,4 +29,4 @@ const filterModuleSmall = (props) => {
   )
 }
 
-export default filterModuleSmall
+export default filterModuleBig

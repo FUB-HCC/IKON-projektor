@@ -1,13 +1,20 @@
 .Module {
     position: absolute;
-    left: 110%;
-    width: 250px;
-    padding: 30px;
-    background: #434058;
+    left: 100%;
+    top: 0;
+    width: 300px;
+
+    padding-left: 15px;
+    background: rgba(67,64,88, 0.4);
     display: flex;
-    align-items: center;
+    align-items: left;
     justify-content: center;
     flex-direction: column;
+}
+
+.Filter {
+    display: flex;
+    min-height: 20px;
 }
 
 /*Checkboxes styles*/
@@ -19,7 +26,6 @@ input[type="checkbox"] + label {
     display: block;
     position: relative;
     padding-left: 35px;
-    margin-bottom: 20px;
     color: #ddd;
     cursor: pointer;
     -webkit-user-select: none;
@@ -28,14 +34,13 @@ input[type="checkbox"] + label {
 }
 
 input[type="checkbox"] + label:last-child {
-    margin-bottom: 0;
 }
 
 input[type="checkbox"] + label:before {
     content: "";
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border: 1px solid #6cc0e5;
     position: absolute;
     left: 0;
