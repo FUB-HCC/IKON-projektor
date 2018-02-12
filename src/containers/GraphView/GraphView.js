@@ -32,7 +32,7 @@ class GraphView extends Component {
         Graph = (<PetridishGraph/>)
         break
       case '1':
-        Graph = (<TimeGraph/>)
+        Graph = (<TimeGraph height={this.state.height}/>)
         break
       case '2':
         Graph = (<AreaGraph/>)
