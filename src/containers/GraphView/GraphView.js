@@ -10,8 +10,12 @@ import * as actions from '../../store/actions/actions'
 class GraphView extends Component {
   constructor (props) {
     super(props)
-    this.state = {activePopover: -1}
+    this.state = {activePopover: -1, height: 0}
     this.filterClickHandler = this.filterClickHandler.bind(this)
+  }
+
+  componentDidMount () {
+    this.setState({height: this.vpHeight.clientHeight})
   }
 
   filterClickHandler (filter) {
@@ -38,7 +42,7 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
-        <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.filterClickHandler(-1)}/>
+        <div style={{width: '100vw', height: '100vh', position: 'absolute'}} ref={ (fullHeightDiv) => (this.vpHeight = fullHeightDiv) } onClick={() => this.filterClickHandler(-1)}/>
         <div className={classes.FilterWrapper}>
           <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('0')}> Petri </button>
           <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('1')}> Time </button>
