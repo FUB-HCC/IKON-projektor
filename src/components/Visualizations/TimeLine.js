@@ -6,7 +6,7 @@ import 'd3-transition'
 import classes from './TimeLine.css'
 
 class TimeLine {
-  setupTimeGraph (svgId, data, type = 'default', config = {}) {
+  setupTimeGraph (svgId, data, height, width, type = 'default', config = {}) {
     console.log('VISUALIZATION CHANGE: SETUP TIMELINE')
     this.colors = {
       fb: {
@@ -54,8 +54,9 @@ class TimeLine {
     */
     this.visData = data
     this.svg = d3Select(svgId)
-    this.width = this.svg.attr('width')
-    this.height = this.svg.attr('height')
+    this.width = width
+    this.height = height
+    this.svg.attr('width', width).attr('height', height)
     this.g = this.svg.append('g')
       .attr('transform', 'translate(' + (this.width / 4) + ',' +
         (this.height / 4) + ')')
@@ -79,13 +80,22 @@ class TimeLine {
     this.updateSvgElements()
   }
 
-  updateTimeGraph (data) {
+  updateTimeGraph (data, height, width) {
     console.log('VISUALIZATION CHANGE: UPDATE TIMELINE')
     /*
       Public
       Updates The Visulisation with the new Data
         data - the newProjects.json set or a subset of it
     */
+    this.width = width
+    this.height = height
+
+    this.svg.attr('width', width).attr('height', height)
+    this.g.attr('transform', 'translate(' + (this.width / 4) + ',' +
+      (this.height / 4) + ')')
+    this.xScale.range([0, this.width / 2])
+    this.yScale.range([this.height / 2, 0])
+
     this.visData = data
     this.updateD3Functions()
     this.updateSvgElements()

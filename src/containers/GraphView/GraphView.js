@@ -10,12 +10,17 @@ import * as actions from '../../store/actions/actions'
 class GraphView extends Component {
   constructor (props) {
     super(props)
-    this.state = {activePopover: -1, height: 0}
+    this.state = {activePopover: -1, height: window.innerHeight, width: window.innerWidth}
     this.filterClickHandler = this.filterClickHandler.bind(this)
   }
 
   componentDidMount () {
-    this.setState({height: this.vpHeight.clientHeight})
+    window.addEventListener('resize', this.resize.bind(this))
+    this.resize()
+  }
+
+  resize () {
+    this.setState({width: window.innerWidth, height: window.innerHeight})
   }
 
   filterClickHandler (filter) {
@@ -32,7 +37,7 @@ class GraphView extends Component {
         Graph = (<PetridishGraph/>)
         break
       case '1':
-        Graph = (<TimeGraph height={this.state.height}/>)
+        Graph = (<TimeGraph height={this.state.height} width={this.state.width}/>)
         break
       case '2':
         Graph = (<AreaGraph/>)
@@ -42,17 +47,14 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
-        <div style={{width: '100vw', height: '100vh', position: 'absolute'}} ref={ (fullHeightDiv) => (this.vpHeight = fullHeightDiv) } onClick={() => this.filterClickHandler(-1)}/>
+        <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.filterClickHandler(-1)}/>
         <div className={classes.FilterWrapper}>
           <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('0')}> Petri </button>
           <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('1')}> Time </button>
           <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('2')}> Area </button>
           <FilterBox activeBox={this.state.activePopover} change={this.filterClickHandler}/>
         </div>
-        <div className={classes.GraphContainer}>
-          {/* added Buttons for Filter Testing */}
-          {Graph}
-        </div>
+        {Graph}
       </div>
     )
   }
