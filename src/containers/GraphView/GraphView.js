@@ -28,13 +28,13 @@ class GraphView extends Component {
       <div className={classes.BackGradient}>
 
         <div className={classes.FilterWrapper}>
-          <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('0')}> Petri </button>
-          <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('1')}> Time </button>
-          <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('2')}> Area </button>
+          <button style={{width: '33%'}} onClick={() => this.props.changeGraph('0')}> Petri </button>
+          <button style={{width: '33%'}} onClick={() => this.props.changeGraph('1')}> Time </button>
+          <button style={{width: '33%'}} onClick={() => this.props.changeGraph('2')}> Area </button>
           <FilterBox type={0}/>
         </div>
 
-        <Navigation onChange={this.props.testingOfFilterUp} active={this.props.graph}/>
+        <Navigation changeGraph={this.props.changeGraph} active={this.props.graph}/>
 
         <div className={classes.GraphContainer}>
           {/* added Buttons for Filter Testing */}
@@ -53,7 +53,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    testingOfFilterUp: (key, value) => dispatch(actions.changeGraph(key, value))
+    changeGraph: (value) => dispatch(actions.changeGraph(value))
   }
 }
 

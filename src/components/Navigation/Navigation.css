@@ -1,20 +1,26 @@
 .Container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    position: absolute;
-    top: 5%;
-    left: 90%;
-    height: 40%;
+    align-items: center;
+    justify-content: space-around;
+    position: relative;
+    top: 3%;
+    left: 5%;
+    height: 45%;
     width: 10%;
     color: white;
     background-color: rgba(100,100,100,0.5);
 }
 
+.Heading {
+    margin: 10px;
+    align-self: flex-start;
+    left: 10px;
+    width: 40%;
+}
+
 .Circle {
-    display: flex;
-    margin: 5px 5px;
-    height: 80%;
-    width: 80%;
+    height: 40%;
+    width: 40%;
 }
 

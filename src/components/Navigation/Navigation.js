@@ -4,8 +4,8 @@ import classes from './Navigation.css'
 const Navigation = (props) => {
   return (
     <div className={classes.Container}>
-      ANSICHT
-      <div onClick={() => props.onChange('graph', '0')} className={classes.Circle}>
+      <div className={classes.Heading}>ANSICHT</div>
+      <div onClick={() => props.changeGraph('0')} className={classes.Circle}>
         <svg width="100%" height="100%" id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
           <title>Petri</title>
           <g fill={props.active === '0' ? '#f0faf0' : '#989aa1'} stroke={props.active === '0' ? '#f0faf0' : '#989aa1'}>
@@ -28,7 +28,7 @@ const Navigation = (props) => {
           </g>
         </svg>
       </div>
-      <div onClick={() => props.onChange('graph', '1')} className={classes.Circle}>
+      <div onClick={() => props.changeGraph('1')} className={classes.Circle}>
         <svg width="100%" height="100%" id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
           <title>Process</title>
           <g fill={props.active === '1' ? '#f0faf0' : '#989aa1'}>
@@ -44,7 +44,7 @@ const Navigation = (props) => {
           </g>
         </svg>
       </div>
-      <div onClick={() => props.onChange('graph', '2')} className={classes.Circle}>
+      <div onClick={() => props.changeGraph('2')} className={classes.Circle}>
         <svg width="100%" height="100%" id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
           <title>Field</title>
           <g fill={props.active === '2' ? '#f0faf0' : '#989aa1'}>
