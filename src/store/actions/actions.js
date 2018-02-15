@@ -17,3 +17,11 @@ export const filterChange = (filterId, value, form) => {
     form: form
   }
 }
+
+export const toggleAllFilters = (key, filters) => {
+  return {
+    type: actionTypes.TOGGLE_FILTERS,
+    key: key,
+    filters: filters
+  }
+}

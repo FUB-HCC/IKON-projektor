@@ -50,6 +50,9 @@ const reducer = (state = initialState, action) => {
       // console.log('STATE CHANGE: ', action.type, action)
       return changeFilter(state, action)
 
+    case actionTypes.TOGGLE_FILTERS:
+      return toggleFilters(state, action)
+
     default:
       // console.log('STATE CHANGE: DEFAULT')
       return urlUpdatesFilters(state)
@@ -77,11 +80,26 @@ const changeFilter = (state, action) => {
   }
 }
 
+const toggleFilters = (state, action) => {
+  const badCode = action.filters.map(fil => ['Evolution und Geoprozesse', 'Sammlungsentwicklung und Biodiversitätsentdeckung', 'Digitale Welt und Informationswissenschaft', 'Wissenskommunikation und Wissensforschung'].some(e => e === fil) ? fieldsStringToInt(fil) : fil)
+  console.log(badCode)
+  const newFilter = state.filter.map(fil => {
+    if (fil.key === action.key) fil.value = badCode
+    return fil
+  })
+  const newFilteredData = applyFilters(state.data, newFilter)
+  updateUrl(newFilter, state.graph)
+  return {
+    ...state,
+    filter: newFilter,
+    filteredData: newFilteredData
+  }
+}
+
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesFilters = (state) => {
   const urlData = queryStringParse(location.search)
   const dataFromUrl = updateUrl(state.filter, state.graph, urlData)
-  console.log(dataFromUrl)
   return {
     ...state,
     filter: dataFromUrl.filter,

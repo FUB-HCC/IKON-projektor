@@ -14,8 +14,8 @@ class FilterBox extends Component {
       return (
         <div key={key} className={classes.Filter1}>
           <div style={activeStyle} className={classes.ClickListener} onClick={() => this.props.change(key)}/>
-          {filter.name}
-          {this.props.activeBox === key ? getFilter(filter.keys, filter.name, key, this.props.filterChangeHandler, filter.value) : null}
+          {filter.name.charAt(0).toUpperCase() + filter.name.slice(1)}
+          {this.props.activeBox === key ? getFilter(filter.keys, filter.name, key, this.props.toggleAllFilters, this.props.filterChangeHandler, filter.value) : null}
         </div>
       )
     })
@@ -32,7 +32,8 @@ class FilterBox extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    filterChangeHandler: (filterId, value, form) => dispatch(actions.filterChange(filterId, value, form))
+    filterChangeHandler: (filterId, value, form) => dispatch(actions.filterChange(filterId, value, form)),
+    toggleAllFilters: (key, filters) => dispatch(actions.toggleAllFilters(key, filters))
   }
 }
 
@@ -50,8 +51,8 @@ const mapStateToProps = state => {
         }
       })
     })
-    const name = filter.key.charAt(0).toUpperCase() + filter.key.slice(1)
-    filters.push({name: name, keys: distinctValues, value: filter.value})
+
+    filters.push({name: filter.key, keys: distinctValues, value: filter.value})
   })
   return {
     filters: filters
@@ -60,10 +61,10 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(FilterBox)
 
-const getFilter = (keys, name, id, changeHandler, value) => {
+const getFilter = (keys, name, id, toggleHandler, changeHandler, value) => {
   let filterKeys, filterValue
   id === 0 ? filterKeys = keys.map(k => fieldsIntToString(k)) : filterKeys = keys
   id === 0 ? filterValue = value.map(v => fieldsIntToString(v)) : filterValue = value
-  if (keys.length < 16) return <RadioModule changeHandler={changeHandler} name={name} id={id} keys={filterKeys} value={filterValue}/>
-  else return <FreeModule changeHandler={changeHandler} name={name} id={id} keys={filterKeys}/>
+  if (keys.length < 16) return <RadioModule toggleHandler={toggleHandler} changeHandler={changeHandler} name={name} id={id} keys={filterKeys} value={filterValue}/>
+  else return <FreeModule changeHandler={changeHandler} name={name} id={id} keys={filterKeys} value={value}/>
 }

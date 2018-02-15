@@ -5,7 +5,7 @@ import Autosuggest from 'react-autosuggest'
 class FilterModuleFree extends Component {
   constructor (props) {
     super(props)
-    this.state = {value: '', suggestions: remapSuggestions(this.props.keys)}
+    this.state = {value: this.props.value, suggestions: remapSuggestions(this.props.keys)}
     this.handleChange = this.handleChange.bind(this)
     this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this)
     this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this)
@@ -33,7 +33,7 @@ class FilterModuleFree extends Component {
 
   render () {
     const inputProps = {
-      placeholder: this.props.name,
+      placeholder: this.props.name.charAt(0).toUpperCase() + this.props.name.slice(1),
       onChange: this.handleChange,
       value: this.state.value
     }
@@ -67,7 +67,7 @@ const getSuggestionValue = (suggestion) => {
 }
 
 const remapSuggestions = (suggestions) => {
-  let reMaped = []
+  const reMaped = []
   suggestions.map(e => reMaped.push({name: e, value: e}))
   return reMaped
 }
