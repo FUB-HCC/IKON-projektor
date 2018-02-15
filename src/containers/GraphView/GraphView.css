@@ -1,30 +1,27 @@
 .BackGradient {
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(60deg, #434058, #522B2C, #434058, #313B0C, #434058, #2C3315, #434058, #21222B);
+    background: linear-gradient(60deg, #76738B, #855E5F, #76738B, #646E3F, #76738B, #5F6648, #76738B, #54555E); /*background: linear-gradient(60deg, #434058, #522B2C, #434058, #313B0C, #434058, #2C3315, #434058, #21222B);*/
     background-size: 800% 800%;
     -webkit-animation: Gradient 60s ease infinite;
     -moz-animation: Gradient 60s ease infinite;
     animation: Gradient 60s ease infinite;
     overflow: hidden;
     position: fixed;
-}
-
-.GraphContainer {
+    z-index: -999;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0);
 }
 
 .FilterWrapper{
     position: absolute;
-    top: 50%;
-    width: 10%;
+    font-size: 12px;
+    top: 30%;
+    width: 120px;
     left: 5%;
-    height: 30%;
+    height: 250px;
+    letter-spacing: 0.5px;
 }
 
 @-webkit-keyframes Gradient {

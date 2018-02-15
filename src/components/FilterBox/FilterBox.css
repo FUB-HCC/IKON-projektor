@@ -1,5 +1,5 @@
 .FilterBox{
-    background: #434058;
+    background: rgba(67,64,88, 0.4);
     width: 100%;
     height: 100%;
     color: white;
@@ -9,25 +9,21 @@
     width: 100%;
     height: 15%;
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
+    padding-left: 10px;
+
 }
 
 .Filter1, .Filter2, .Filter3 {
     position: relative;
     width: 100%;
     height: 28.34%;
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-}
-
-.filterText{
-    position: absolute;
-    top: 45%;
-    width: 100%;
-    display: block;
-    text-align: center;
-    align-content: center;
+    box-sizing: border-box;
 }
 
 .ClickListener{
@@ -43,12 +39,3 @@
     background: white;
 }
 
-.Filter1{}
-.Filter2{}
-.Filter3{}
-
-.Input{
-    position: absolute;
-    left: 110%;
-    top: 45%;
-}

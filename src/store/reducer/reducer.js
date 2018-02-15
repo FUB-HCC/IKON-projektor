@@ -37,7 +37,7 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.CHANGE_GRAPH:
-      console.log('STATE CHANGE: ', action.type, action)
+      // console.log('STATE CHANGE: ', action.type, action)
       const newState = {
         ...state,
         graph: action.value,
@@ -47,20 +47,22 @@ const reducer = (state = initialState, action) => {
       return newState
 
     case actionTypes.FILTER_CHANGE:
-      console.log('STATE CHANGE: ', action.type, action)
+      // console.log('STATE CHANGE: ', action.type, action)
       return changeFilter(state, action)
 
+    case actionTypes.TOGGLE_FILTERS:
+      return toggleFilters(state, action)
+
     default:
-      console.log('STATE CHANGE: DEFAULT')
+      // console.log('STATE CHANGE: DEFAULT')
       return urlUpdatesFilters(state)
   }
 }
 
 const changeFilter = (state, action) => {
   let newFilter = state.filter.slice()
-  if (action.form === 's') {
-    newFilter[action.id].value = action.value
-  } else {
+  if (action.form === 's') newFilter[action.id].value = action.value
+  else {
     let actionValue
     action.id === 0 ? actionValue = fieldsStringToInt(action.value) : actionValue = action.value
     if (state.filter[action.id].value.some(e => e === actionValue)) {
@@ -78,11 +80,26 @@ const changeFilter = (state, action) => {
   }
 }
 
+const toggleFilters = (state, action) => {
+  const badCode = action.filters.map(fil => ['Evolution und Geoprozesse', 'Sammlungsentwicklung und Biodiversitätsentdeckung', 'Digitale Welt und Informationswissenschaft', 'Wissenskommunikation und Wissensforschung'].some(e => e === fil) ? fieldsStringToInt(fil) : fil)
+  console.log(badCode)
+  const newFilter = state.filter.map(fil => {
+    if (fil.key === action.key) fil.value = badCode
+    return fil
+  })
+  const newFilteredData = applyFilters(state.data, newFilter)
+  updateUrl(newFilter, state.graph)
+  return {
+    ...state,
+    filter: newFilter,
+    filteredData: newFilteredData
+  }
+}
+
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesFilters = (state) => {
   const urlData = queryStringParse(location.search)
   const dataFromUrl = updateUrl(state.filter, state.graph, urlData)
-  console.log(dataFromUrl)
   return {
     ...state,
     filter: dataFromUrl.filter,
