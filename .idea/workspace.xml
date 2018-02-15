@@ -3,11 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="ac94a63b-68e1-4208-8141-52a55f6a7f7b" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/components/FilterBox/FilterBox.css" afterPath="$PROJECT_DIR$/src/components/FilterBox/FilterBox.css" />
+      <change beforePath="$PROJECT_DIR$/src/components/FilterBox/RadioModule.css" afterPath="$PROJECT_DIR$/src/components/FilterBox/RadioModule.css" />
       <change beforePath="$PROJECT_DIR$/src/components/Navigation/Navigation.css" afterPath="$PROJECT_DIR$/src/components/Navigation/Navigation.css" />
-      <change beforePath="$PROJECT_DIR$/src/components/Navigation/Navigation.js" afterPath="$PROJECT_DIR$/src/components/Navigation/Navigation.js" />
-      <change beforePath="$PROJECT_DIR$/src/containers/GraphView/GraphView.css" afterPath="$PROJECT_DIR$/src/containers/GraphView/GraphView.css" />
-      <change beforePath="$PROJECT_DIR$/src/containers/GraphView/GraphView.js" afterPath="$PROJECT_DIR$/src/containers/GraphView/GraphView.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -67,11 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Navigation.css" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Navigation.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/Navigation/Navigation.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
-              <caret line="26" column="0" lean-forward="true" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+            <state relative-caret-position="300">
+              <caret line="15" column="26" lean-forward="false" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -89,11 +86,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FilterBox.css" pinned="false" current-in-tab="false">
+      <file leaf-file-name="FilterBox.css" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/FilterBox/FilterBox.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+            <state relative-caret-position="720">
+              <caret line="36" column="8" lean-forward="false" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -102,8 +99,8 @@
       <file leaf-file-name="RadioModule.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/FilterBox/RadioModule.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="220">
-              <caret line="11" column="17" lean-forward="false" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
+            <state relative-caret-position="6">
+              <caret line="32" column="17" lean-forward="true" selection-start-line="32" selection-start-column="17" selection-end-line="32" selection-end-column="17" />
               <folding />
             </state>
           </provider>
@@ -112,8 +109,8 @@
       <file leaf-file-name="RadioModule.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/FilterBox/RadioModule.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="30" column="65" lean-forward="true" selection-start-line="30" selection-start-column="65" selection-end-line="30" selection-end-column="65" />
+            <state relative-caret-position="370">
+              <caret line="22" column="11" lean-forward="false" selection-start-line="22" selection-start-column="11" selection-end-line="22" selection-end-column="11" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
               </folding>
@@ -125,7 +122,7 @@
         <entry file="file://$PROJECT_DIR$/src/components/FilterBox/FilterBox.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="292">
-              <caret line="17" column="93" lean-forward="false" selection-start-line="17" selection-start-column="88" selection-end-line="17" selection-end-column="93" />
+              <caret line="17" column="72" lean-forward="true" selection-start-line="17" selection-start-column="72" selection-end-line="17" selection-end-column="72" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -182,20 +179,20 @@
         <option value="$PROJECT_DIR$/src/components/FilterBox/FreeModule.ts" />
         <option value="$PROJECT_DIR$/src/components/FilterBox/AutosuggesStyles.css" />
         <option value="$PROJECT_DIR$/src/containers/GraphView/TimeLine.js" />
-        <option value="$PROJECT_DIR$/src/components/FilterBox/RadioModule.css" />
         <option value="$PROJECT_DIR$/src/components/FilterBox/FreeModule.css" />
         <option value="$PROJECT_DIR$/src/store/actions/actionTypes.js" />
         <option value="$PROJECT_DIR$/src/store/actions/actions.js" />
         <option value="$PROJECT_DIR$/src/store/utility.js" />
         <option value="$PROJECT_DIR$/src/components/FilterBox/FilterBox.js" />
         <option value="$PROJECT_DIR$/src/store/reducer/reducer.js" />
-        <option value="$PROJECT_DIR$/src/components/FilterBox/RadioModule.js" />
         <option value="$PROJECT_DIR$/src/components/FilterBox/FreeModule.js" />
         <option value="$PROJECT_DIR$/src/containers/GraphView/GraphView.js" />
-        <option value="$PROJECT_DIR$/src/components/FilterBox/FilterBox.css" />
         <option value="$PROJECT_DIR$/src/components/Navigation/Navigation.js" />
         <option value="$PROJECT_DIR$/src/containers/GraphView/GraphView.css" />
         <option value="$PROJECT_DIR$/src/components/Navigation/Navigation.css" />
+        <option value="$PROJECT_DIR$/src/components/FilterBox/RadioModule.js" />
+        <option value="$PROJECT_DIR$/src/components/FilterBox/RadioModule.css" />
+        <option value="$PROJECT_DIR$/src/components/FilterBox/FilterBox.css" />
       </list>
     </option>
   </component>
@@ -411,7 +408,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="60743000" />
+    <option name="totallyTimeSpent" value="61232000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1680" height="1023" extended-state="6" />
@@ -730,58 +727,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/FilterBox/RadioModule.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="30" column="65" lean-forward="true" selection-start-line="30" selection-start-column="65" selection-end-line="30" selection-end-column="65" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/FilterBox/RadioModule.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="11" column="17" lean-forward="false" selection-start-line="11" selection-start-column="17" selection-end-line="11" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/FilterBox/FilterBox.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="17" column="93" lean-forward="false" selection-start-line="17" selection-start-column="88" selection-end-line="17" selection-end-column="93" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/store/reducer/reducer.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1660">
           <caret line="83" column="30" lean-forward="false" selection-start-line="83" selection-start-column="30" selection-end-line="83" selection-end-column="30" />
           <folding>
             <element signature="e#0#53#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/FilterBox/FilterBox.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/containers/GraphView/GraphView.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="52" column="11" lean-forward="false" selection-start-line="52" selection-start-column="11" selection-end-line="52" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -806,8 +757,54 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/Navigation/Navigation.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="26" column="0" lean-forward="true" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+        <state relative-caret-position="300">
+          <caret line="15" column="26" lean-forward="false" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/FilterBox/RadioModule.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="370">
+          <caret line="22" column="11" lean-forward="false" selection-start-line="22" selection-start-column="11" selection-end-line="22" selection-end-column="11" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/FilterBox/RadioModule.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6">
+          <caret line="32" column="17" lean-forward="true" selection-start-line="32" selection-start-column="17" selection-end-line="32" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/containers/GraphView/GraphView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="339">
+          <caret line="52" column="11" lean-forward="false" selection-start-line="52" selection-start-column="11" selection-end-line="52" selection-end-column="11" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/FilterBox/FilterBox.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="17" column="72" lean-forward="true" selection-start-line="17" selection-start-column="72" selection-end-line="17" selection-end-column="72" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/FilterBox/FilterBox.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="36" column="8" lean-forward="false" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="8" />
           <folding />
         </state>
       </provider>
