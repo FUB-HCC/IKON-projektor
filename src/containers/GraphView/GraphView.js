@@ -48,22 +48,14 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
-
+        <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.filterClickHandler(-1)}/>
         <div className={classes.FilterWrapper}>
-          <button style={{width: '33%'}} onClick={() => this.props.changeGraph('0')}> Petri </button>
-          <button style={{width: '33%'}} onClick={() => this.props.changeGraph('1')}> Time </button>
-          <button style={{width: '33%'}} onClick={() => this.props.changeGraph('2')}> Area </button>
-          <FilterBox type={0}/>
+          <Navigation changeGraph={this.props.changeGraph} active={this.props.graph}/>
+          <FilterBox activeBox={this.state.activePopover} change={this.filterClickHandler}/>
         </div>
-
-        <Navigation changeGraph={this.props.changeGraph} active={this.props.graph}/>
-
-        <div className={classes.GraphContainer}>
-          {/* added Buttons for Filter Testing */}
+        <div>
           {Graph}
-
         </div>
-        {Graph}
       </div>
     )
   }

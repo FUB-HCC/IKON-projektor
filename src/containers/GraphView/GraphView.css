@@ -17,10 +17,10 @@
 .FilterWrapper{
     position: absolute;
     font-size: 12px;
-    top: 30%;
+    top: 10%;
     width: 120px;
     left: 5%;
-    height: 250px;
+    height: 500px;
     letter-spacing: 0.5px;
 }
 
