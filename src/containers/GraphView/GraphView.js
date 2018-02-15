@@ -4,6 +4,7 @@ import FilterBox from '../../components/FilterBox/FilterBox'
 import PetridishGraph from '../../components/PetridishGraph/PetridishGraph'
 import AreaGraph from '../../components/AreaGraph/AreaGraph'
 import TimeGraph from './TimeLine'
+import Popover from '../../components/Popover/Popover'
 import classes from './GraphView.css'
 import * as actions from '../../store/actions/actions'
 import Navigation from '../../components/Navigation/Navigation'
@@ -48,6 +49,7 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
+        <Popover hidden={this.props.popover.hidden} data={this.props.popover.element} height={this.state.height}/>
         <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.filterClickHandler(-1)}/>
         <div className={classes.FilterWrapper}>
           <Navigation changeGraph={this.props.changeGraph} active={this.props.graph}/>
@@ -63,7 +65,8 @@ class GraphView extends Component {
 
 const mapStateToProps = state => {
   return {
-    graph: state.graph
+    graph: state.graph,
+    popover: state.popover
   }
 }
 

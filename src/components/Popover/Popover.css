@@ -1,0 +1,14 @@
+.popover_body{
+    background-color: rgba(67,64,88, 0.8);
+    z-index: 10;
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+}
+.row{
+    width: 100%;
+    display: flex;
+}
+.cell{
+    height: 100%;
+}

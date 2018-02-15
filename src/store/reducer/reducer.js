@@ -29,7 +29,11 @@ const initialState = {
   ],
   graph: '0',
   data: data,
-  filteredData: data
+  filteredData: data,
+  popover: {
+    hidden: false,
+    element: data['110051']
+  }
 }
 
 // Keep the reducer switch lean by outsourcing the actual code below

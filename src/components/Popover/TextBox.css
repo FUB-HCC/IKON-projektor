@@ -1,0 +1,15 @@
+.box{
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    width:100%;
+    height:100%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+.text{
+    align-self: center;
+    display: flex;
+    padding: 5%;
+}
