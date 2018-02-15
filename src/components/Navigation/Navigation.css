@@ -1,0 +1,26 @@
+.Container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    position: relative;
+    top: 3%;
+    left: 5%;
+    height: 45%;
+    width: 10%;
+    color: white;
+    background-color: rgba(100,100,100,0.5);
+}
+
+.Heading {
+    margin: 10px;
+    align-self: flex-start;
+    left: 10px;
+    width: 40%;
+}
+
+.Circle {
+    height: 40%;
+    width: 40%;
+}
+

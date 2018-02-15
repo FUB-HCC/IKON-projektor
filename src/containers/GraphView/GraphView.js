@@ -6,6 +6,7 @@ import AreaGraph from '../../components/AreaGraph/AreaGraph'
 import TimeGraph from './TimeLine'
 import classes from './GraphView.css'
 import * as actions from '../../store/actions/actions'
+import Navigation from '../../components/Navigation/Navigation'
 
 class GraphView extends Component {
   constructor (props) {
@@ -47,12 +48,20 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
-        <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.filterClickHandler(-1)}/>
+
         <div className={classes.FilterWrapper}>
-          <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('0')}> Petri </button>
-          <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('1')}> Time </button>
-          <button style={{width: '33%'}} onClick={() => this.props.testingOfFilterUp('2')}> Area </button>
-          <FilterBox activeBox={this.state.activePopover} change={this.filterClickHandler}/>
+          <button style={{width: '33%'}} onClick={() => this.props.changeGraph('0')}> Petri </button>
+          <button style={{width: '33%'}} onClick={() => this.props.changeGraph('1')}> Time </button>
+          <button style={{width: '33%'}} onClick={() => this.props.changeGraph('2')}> Area </button>
+          <FilterBox type={0}/>
+        </div>
+
+        <Navigation changeGraph={this.props.changeGraph} active={this.props.graph}/>
+
+        <div className={classes.GraphContainer}>
+          {/* added Buttons for Filter Testing */}
+          {Graph}
+
         </div>
         {Graph}
       </div>
@@ -68,7 +77,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    testingOfFilterUp: (key, value) => dispatch(actions.changeGraph(key, value))
+    changeGraph: (value) => dispatch(actions.changeGraph(value))
   }
 }
 
