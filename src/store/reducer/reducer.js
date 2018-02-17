@@ -3,9 +3,10 @@ import {updateUrl, fieldsStringToInt, fieldsIntToString} from '../utility'
 import {getData} from '../../assets/data'
 import {parse as queryStringParse} from 'query-string'
 
-const data = Object.keys(getData()).map(d => (
-  {...d,
-    forschungsbereich: fieldsIntToString(d.forschungsbereich)
+const initData = getData()
+const data = Object.keys(initData).map(d => (
+  {...initData[d],
+    forschungsbereich: fieldsIntToString(initData[d].forschungsbereich)
   }))
 
 const applyFilters = (data, filter) => {
@@ -71,8 +72,7 @@ const changeFilter = (state, action) => {
   let newFilter = state.filter.slice()
   if (action.form === 's') newFilter[action.id].value = action.value
   else {
-    let actionValue
-    action.id === 0 ? actionValue = fieldsStringToInt(action.value) : actionValue = action.value
+    const actionValue = action.value
     if (state.filter[action.id].value.some(e => e === actionValue)) {
       newFilter[action.id].value = state.filter[action.id].value.filter(key => key !== actionValue)
     } else {
