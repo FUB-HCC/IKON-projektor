@@ -92,7 +92,6 @@ const changeFilter = (state, action) => {
 
 const toggleFilters = (state, action) => {
   const badCode = action.filters.map(fil => ['Evolution und Geoprozesse', 'Sammlungsentwicklung und Biodiversitätsentdeckung', 'Digitale Welt und Informationswissenschaft', 'Wissenskommunikation und Wissensforschung'].some(e => e === fil) ? fieldsStringToInt(fil) : fil)
-  console.log(badCode)
   const newFilter = state.filter.map(fil => {
     if (fil.key === action.key) fil.value = badCode
     return fil
