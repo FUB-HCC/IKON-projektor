@@ -65,7 +65,7 @@ export const fieldsStringToInt = (str) => {
 }
 
 export const topicIntToString = (number) => {
-  return topicMapping.find(e => e.num === number) ? topicMapping.find(e => e.num === number).name : number
+  return topicMapping.find(e => e.num === number) ? topicMapping.find(e => e.num === number).name : 'Other'
 }
 
 export const topicStringToInt = (str) => {

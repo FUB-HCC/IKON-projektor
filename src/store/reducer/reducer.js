@@ -1,9 +1,12 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateUrl, fieldsStringToInt} from '../utility'
+import {updateUrl, fieldsStringToInt, fieldsIntToString} from '../utility'
 import {getData} from '../../assets/data'
 import {parse as queryStringParse} from 'query-string'
 
-const data = getData()
+const data = Object.keys(getData()).map(d => (
+  {...d,
+    forschungsbereich: fieldsIntToString(d.forschungsbereich)
+  }))
 
 const applyFilters = (data, filter) => {
   let filteredData = data
@@ -23,18 +26,14 @@ const applyFilters = (data, filter) => {
 
 const initialState = {
   filter: [
-    {name: 'field', key: 'forschungsbereich', type: 'a', value: ['1', '2', '3', '4']},
+    {name: 'field', key: 'forschungsbereich', type: 'a', value: ['Evolution und Geoprozesse', 'Sammlungsentwicklung und Biodiversitätsentdeckung', 'Digitale Welt und Informationswissenschaft', 'Wissenskommunikation und Wissensforschung']},
     {name: 'topic', key: 'hauptthema', type: 'a', value: ['Wissenschaftsdatenmanagement', 'Biodiversitäts- und Geoinformatik', 'Perspektiven auf Natur - PAN', 'Historische Arbeitsstelle', 'Sammlungsentwicklung', 'Wissenschaft in der Gesellschaft', 'Bildung und Vermittlung', 'Evolutionäre Morphologie', 'Ausstellung und Wissenstransfer', 'Mikroevolution', 'Impakt- und Meteoritenforschung', 'Diversitätsdynamik', 'Biodiversitätsentdeckung', 'IT- Forschungsinfrastrukturen', 'Kompetenzzentrum Sammlung']},
     {name: 'sponsor', key: 'geldgeber', type: 's', value: ''}
   ],
   graph: '0',
   data: data,
   filteredData: data,
-  selectedProject: undefined,
-  popover: {
-    hidden: true,
-    element: data['130064']
-  }
+  selectedProject: undefined
 }
 
 // Keep the reducer switch lean by outsourcing the actual code below
@@ -109,11 +108,7 @@ const toggleFilters = (state, action) => {
 const activatePopover = (state, action) => {
   const newState = {
     ...state,
-    popover: {
-      hidden: !data[action.element.projectId],
-      element: data[action.element.projectId] ? data[action.element.projectId] : state.popover.element
-    },
-    selectedProject: action.element.projectId ? action.element.projectId : state.selectedProject
+    selectedProject: data[action.element.projectId] ? action.element.projectId : state.selectedProject
   }
   updateUrl(newState)
   return newState
@@ -128,11 +123,7 @@ const urlUpdatesFilters = (state) => {
     filter: dataFromUrl.filter,
     graph: dataFromUrl.graph,
     filteredData: applyFilters(state.data, dataFromUrl.filter),
-    selectedProject: dataFromUrl.selectedProject,
-    popover: {
-      hidden: !dataFromUrl.selectedProject,
-      element: data[dataFromUrl.selectedProject] ? data[dataFromUrl.selectedProject] : state.popover.element
-    }
+    selectedProject: dataFromUrl.selectedProject
   }
 }
 

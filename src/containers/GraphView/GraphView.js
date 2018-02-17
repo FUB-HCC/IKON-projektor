@@ -58,8 +58,8 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
-        {!this.props.popover.hidden &&
-        <ProjectModal hidden={this.props.popover.hidden} data={this.props.popover.element} height={this.state.height}/>
+        {this.props.selectedProject &&
+        <ProjectModal data={this.props.selectedDataPoint} height={this.state.height}/>
         }
         <FilterModal/>
         <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.filterClickHandler(-1)}/>
@@ -78,7 +78,8 @@ class GraphView extends Component {
 const mapStateToProps = state => {
   return {
     graph: state.graph,
-    popover: state.popover
+    selectedProject: state.selectedProject,
+    selectedDataPoint: state.selectedProject ? state.data[state.selectedProject] : undefined
   }
 }
 
