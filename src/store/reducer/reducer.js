@@ -30,6 +30,7 @@ const initialState = {
   graph: '0',
   data: data,
   filteredData: data,
+  selectedProject: undefined,
   popover: {
     hidden: true,
     element: data['130064']
@@ -47,7 +48,7 @@ const reducer = (state = initialState, action) => {
         graph: action.value,
         filteredData: applyFilters(state.data, state.filter)
       }
-      updateUrl(newState.filter, newState.graph)
+      updateUrl(newState)
       return newState
 
     case actionTypes.FILTER_CHANGE:
@@ -59,13 +60,7 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.ACTIVATE_POPOVER:
       console.log('STATE CHANGE: ', action.type, action)
-      return {
-        ...state,
-        popover: {
-          hidden: !data[action.element.projectId],
-          element: data[action.element.projectId] ? data[action.element.projectId] : state.popover.element
-        }
-      }
+      return activatePopover(state, action)
 
     default:
       // console.log('STATE CHANGE: DEFAULT')
@@ -86,12 +81,13 @@ const changeFilter = (state, action) => {
     }
   }
   const filteredData = applyFilters(state.data, newFilter)
-  updateUrl(newFilter, state.graph)
-  return {
+  const newState = {
     ...state,
     filter: newFilter,
     filteredData: filteredData
   }
+  updateUrl(newState)
+  return newState
 }
 
 const toggleFilters = (state, action) => {
@@ -102,23 +98,42 @@ const toggleFilters = (state, action) => {
     return fil
   })
   const newFilteredData = applyFilters(state.data, newFilter)
-  updateUrl(newFilter, state.graph)
-  return {
+  const newState = {
     ...state,
     filter: newFilter,
     filteredData: newFilteredData
   }
+  updateUrl(newState)
+  return newState
+}
+
+const activatePopover = (state, action) => {
+  const newState = {
+    ...state,
+    popover: {
+      hidden: !data[action.element.projectId],
+      element: data[action.element.projectId] ? data[action.element.projectId] : state.popover.element
+    },
+    selectedProject: action.element.projectId ? action.element.projectId : state.selectedProject
+  }
+  updateUrl(newState)
+  return newState
 }
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesFilters = (state) => {
   const urlData = queryStringParse(location.search)
-  const dataFromUrl = updateUrl(state.filter, state.graph, urlData)
+  const dataFromUrl = updateUrl(state, urlData)
   return {
     ...state,
     filter: dataFromUrl.filter,
     graph: dataFromUrl.graph,
-    filteredData: applyFilters(state.data, dataFromUrl.filter)
+    filteredData: applyFilters(state.data, dataFromUrl.filter),
+    selectedProject: dataFromUrl.selectedProject,
+    popover: {
+      hidden: !dataFromUrl.selectedProject,
+      element: data[dataFromUrl.selectedProject] ? data[dataFromUrl.selectedProject] : state.popover.element
+    }
   }
 }
 

@@ -1,31 +1,33 @@
 // update the state in an immutable way and update the url without refreshing the page
 import {stringify as queryStringify} from 'query-string'
 
-export const updateUrl = (filterState, graphState, urlData = {}) => {
+export const updateUrl = (newState, urlData = {}) => {
   let newUrlData = {}
-  urlData.graph ? newUrlData.graph = urlData.graph : newUrlData.graph = graphState
+  urlData.graph ? newUrlData.graph = urlData.graph : newUrlData.graph = newState.graph
 
-  urlData.field ? newUrlData.field = urlData.field : newUrlData.field = filterState[0].value
+  urlData.field ? newUrlData.field = urlData.field : newUrlData.field = newState.filter[0].value
 
-  urlData.topic ? newUrlData.topic = urlData.topic.map(t => { return topicIntToString(t) }) : newUrlData.topic = filterState[1].value
+  urlData.topic ? newUrlData.topic = urlData.topic.map(t => { return topicIntToString(t) }) : newUrlData.topic = newState.filter[1].value
 
-  urlData.sponsor ? newUrlData.sponsor = urlData.sponsor : newUrlData.sponsor = filterState[2].value
+  urlData.sponsor ? newUrlData.sponsor = urlData.sponsor : newUrlData.sponsor = newState.filter[2].value
+
+  urlData.selectedProject ? newUrlData.selectedProject = urlData.selectedProject : newUrlData.selectedProject = newState.selectedProject
 
   let minifiedUrlData = {...newUrlData, topic: newUrlData.topic.map(t => topicStringToInt(t))}
   const newUrl = '?' + queryStringify(minifiedUrlData)
   history.pushState(null, null, newUrl)
 
   const filterValues = [newUrlData.field, newUrlData.topic, newUrlData.sponsor]
-  const updatedData = {
+  return {
     graph: newUrlData.graph,
-    filter: filterState.map((f, i) => ({
+    filter: newState.filter.map((f, i) => ({
       name: f.name,
       key: f.key,
       type: f.type,
       value: filterValues[i]
-    }))
+    })),
+    selectedProject: newUrlData.selectedProject
   }
-  return updatedData
 }
 
 const fieldsMapping = [
