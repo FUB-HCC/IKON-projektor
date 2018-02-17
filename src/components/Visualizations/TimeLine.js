@@ -6,7 +6,7 @@ import 'd3-transition'
 import classes from './TimeLine.css'
 
 class TimeLine {
-  setupTimeGraph (svgId, data, height, width, type = 'default', config = {}) {
+  setupTimeGraph (svgId, data, height, width, popoverFunction, type = 'default', config = {}) {
     console.log('VISUALIZATION CHANGE: SETUP TIMELINE')
     this.colors = {
       fb: {
@@ -52,6 +52,7 @@ class TimeLine {
             num is used to put two or more objects in the same row to Optimize space
             [{num:,color:,startDate:, endDate:,projectId:},...]
     */
+    this.popoverFunction = popoverFunction
     this.visData = data
     this.svg = d3Select(svgId)
     this.width = width
@@ -217,7 +218,8 @@ class TimeLine {
         return that.yScale(d.startDate) - that.yScale(d.endDate)
       })
       .on('click', function (d) {
-        // TODO DISPATCH
+        // dispatch popover
+        that.popoverFunction(d)
       })
       .on('mouseover', function () {
         d3Select(this).style('cursor', 'pointer')

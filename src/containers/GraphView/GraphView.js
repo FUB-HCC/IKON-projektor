@@ -49,13 +49,15 @@ class GraphView extends Component {
     }
     return (
       <div className={classes.BackGradient}>
+        {!this.props.popover.hidden &&
         <Popover hidden={this.props.popover.hidden} data={this.props.popover.element} height={this.state.height}/>
+        }
         <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.filterClickHandler(-1)}/>
         <div className={classes.FilterWrapper}>
           <Navigation changeGraph={this.props.changeGraph} active={this.props.graph}/>
           <FilterBox activeBox={this.state.activePopover} change={this.filterClickHandler}/>
         </div>
-        <div>
+        <div className={classes.graphFrame}>
           {Graph}
         </div>
       </div>

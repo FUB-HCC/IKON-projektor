@@ -31,7 +31,7 @@ const initialState = {
   data: data,
   filteredData: data,
   popover: {
-    hidden: false,
+    hidden: true,
     element: data['130064']
   }
 }
@@ -56,6 +56,16 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.TOGGLE_FILTERS:
       return toggleFilters(state, action)
+
+    case actionTypes.ACTIVATE_POPOVER:
+      console.log('STATE CHANGE: ', action.type, action)
+      return {
+        ...state,
+        popover: {
+          hidden: !data[action.element.projectId],
+          element: data[action.element.projectId] ? data[action.element.projectId] : state.popover.element
+        }
+      }
 
     default:
       // console.log('STATE CHANGE: DEFAULT')

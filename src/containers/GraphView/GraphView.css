@@ -24,6 +24,10 @@
     letter-spacing: 0.5px;
 }
 
+.graphFrame{
+    z-index:0;
+}
+
 @-webkit-keyframes Gradient {
     0% {
         background-position: 0% 50%
