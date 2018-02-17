@@ -1,9 +1,9 @@
 .popover_body{
     background-color: rgba(67,64,88, 0.8);
-    z-index: 10;
     position: absolute;
     display: flex;
     flex-wrap: wrap;
+    z-index: 99;
 }
 .row{
     width: 100%;
@@ -11,4 +11,12 @@
 }
 .cell{
     height: 100%;
+}
+.logo{
+    width: 100%;
+    height: 92%;
+    margin-top: 3.5%;
+}
+.logoCell{
+    border: #aaaaaa solid 2px;
 }

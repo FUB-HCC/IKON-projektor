@@ -5,13 +5,13 @@ const TextBox = (props) => {
   let fontSize
   switch (props.fontSize) {
     case 1:
-      fontSize = '18px'
+      fontSize = '0.7vh'
       break
     case 2:
-      fontSize = '24px'
+      fontSize = '1.3vh'
       break
     default:
-      fontSize = '14px'
+      fontSize = '0.9vh'
   }
   const borderColor = props.color ? props.color : '#aaaaaa'
   const textColor = props.color ? props.color : '#dddddd'

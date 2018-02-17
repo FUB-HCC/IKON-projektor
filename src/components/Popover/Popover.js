@@ -1,6 +1,8 @@
 import React from 'react'
 import TextBox from './TextBox'
+import ListBox from './ListBox'
 import classes from './Popover.css'
+import petriImg from '../../assets/Petri.png'
 
 const Popover = (props) => {
   const height = props.height * 0.6
@@ -22,12 +24,15 @@ const Popover = (props) => {
   const cooperationPartnerText = data.kooperationspartner ? data.kooperationspartner : 'keine Kooperation'
   const wikiLinkText = data.href ? data.href : 'kein Link'
 
-  const Icon = (<div className={classes.cell} style ={{width: '25%'}}></div>)
+  const sideTopicList = data.nebenthemen ? generateSideTopicList(data.nebenthemen) : undefined
+  // If data gets 'other links' category links-list needs to be defined here
+
+  const Icon = (<div className={classes.logoCell} style ={{width: '25%'}}><img src={petriImg} className={classes.logo}/></div>)
   const Title = (<div className={classes.cell} style ={{width: '75%'}}><TextBox text={titleText} fontSize={2}/></div>)
 
-  const ResearchArea = (<div className={classes.cell} style ={{width: '33.3%'}}><TextBox text={researchAreaText}/></div>)
-  const ProjectLead = (<div className={classes.cell} style ={{width: '33.3%'}}><TextBox text={projectLeadText}/></div>)
-  const Petitioner = (<div className={classes.cell} style ={{width: '33.3%'}}><TextBox text ={petitionerText}/></div>)
+  const ResearchArea = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text={researchAreaText}/></div>)
+  const ProjectLead = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text={projectLeadText}/></div>)
+  const Petitioner = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text ={petitionerText}/></div>)
 
   const MainTopic = (<div className={classes.cell} style ={{width: '50.0%'}}><TextBox text={mainTopicText}/></div>)
   const Start = (<div className={classes.cell} style ={{width: '25%'}}><TextBox text={startText}/></div>)
@@ -35,13 +40,12 @@ const Popover = (props) => {
 
   const Description = (<div className={classes.cell} style ={{width: '100%'}}><TextBox text={descriptionText}/></div>)
 
-  const FundingSource = (<div className={classes.cell} style ={{width: '33.3%'}}><TextBox text={fundingSourceText}/></div>)
-  const CooperationPartner = (<div className={classes.cell} style ={{width: '33.3%'}}><TextBox text={cooperationPartnerText}/></div>)
-  const WikiLink = (<div className={classes.cell} style ={{width: '33.3%'}}><TextBox text={wikiLinkText}/></div>)
+  const FundingSource = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text={fundingSourceText}/></div>)
+  const CooperationPartner = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text={cooperationPartnerText}/></div>)
+  const WikiLink = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text={wikiLinkText} fontSize={1}/></div>)
 
-  const SideTopics = (<div className={classes.cell} style ={{width: '100%'}}></div>)
-
-  const OtherLinks = (<div className={classes.cell} style ={{width: '100%'}}></div>)
+  const SideTopics = (<div className={classes.cell} style ={{width: '100%'}}><ListBox title={'NEBENTHEMEN'} list={sideTopicList}/></div>)
+  const OtherLinks = (<div className={classes.cell} style ={{width: '100%'}}><ListBox title={'LINKS'}/></div>)
 
   return (
     <div hidden={props.hidden} className={classes.popover_body} style={{width: width, height: height}}>
@@ -54,6 +58,10 @@ const Popover = (props) => {
       <div className={classes.row} style={{height: 1.5 * standardHeight}}>{OtherLinks}</div>
     </div>
   )
+}
+
+const generateSideTopicList = (sideTopics) => {
+  return sideTopics.map(t => ({name: t, color: '#AAA'}))
 }
 
 export default Popover
