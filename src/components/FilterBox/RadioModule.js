@@ -4,7 +4,7 @@ import classes from './RadioModule.css'
 import {topicToField} from '../../store/utility'
 
 const radioElement = (props) => {
-  const margin = '10px'
+  const margin = '9px'
   const height = margin * 2 * props.keys.length + 'px'
   const radioElements = props.keys.sort(compare).map((k, key) => {
     return (

@@ -13,6 +13,7 @@ class GraphView extends Component {
     super(props)
     this.state = {activePopover: -1, height: window.innerHeight, width: window.innerWidth}
     this.filterClickHandler = this.filterClickHandler.bind(this)
+    this.changeGraphHandler = this.changeGraphHandler.bind(this)
   }
 
   componentDidMount () {
@@ -28,6 +29,13 @@ class GraphView extends Component {
     const newState = (filter === this.state.activePopover) ? -1 : filter
     this.setState({
       activePopover: newState
+    })
+  }
+
+  changeGraphHandler (graph) {
+    this.props.changeGraph(graph)
+    this.setState({
+      activePopover: -1
     })
   }
 
@@ -50,7 +58,7 @@ class GraphView extends Component {
       <div className={classes.BackGradient}>
         <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.filterClickHandler(-1)}/>
         <div className={classes.FilterWrapper}>
-          <Navigation changeGraph={this.props.changeGraph} active={this.props.graph}/>
+          <Navigation active={this.props.graph} changeGraph={this.changeGraphHandler}/>
           <FilterBox activeBox={this.state.activePopover} change={this.filterClickHandler}/>
         </div>
         <div>
