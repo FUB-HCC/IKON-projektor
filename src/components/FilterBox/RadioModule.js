@@ -1,7 +1,7 @@
 import React from 'react'
 
 import classes from './RadioModule.css'
-import {topicToField} from '../../store/utility'
+import {topicToField, getTopicColor, getFieldColor} from '../../store/utility'
 
 const radioElement = (props) => {
   const margin = '10px'
@@ -18,7 +18,7 @@ const radioElement = (props) => {
             name={k}
             key={key}
             id={key}/>
-          <label style={{background: typeof topicColorMap[k] !== 'undefined' ? topicColorMap[k] : '#B0B0B0'}} htmlFor={key}/>
+          <label style={{backgroundColor: getTopicColor(k) === '#B0B0B0' ? getFieldColor(k) : getTopicColor(k)}} htmlFor={key}/>
         </div>
         {k}
       </div>
@@ -52,26 +52,4 @@ const compare = (a, b) => {
   if (topicToField(a) < topicToField(b)) return -1
   if (topicToField(a) > topicToField(b)) return 1
   return 0
-}
-
-const topicColorMap = {
-  'Digitale Welt und Informationswissenschaft': '#8184a7',
-  'Wissenskommunikation und Wissensforschung': '#ed9798',
-  'Sammlungsentwicklung und Biodiversitätsentdeckung': '#d9ef36',
-  'Evolution und Geoprozesse': '#7d913c',
-  'Wissenschaftsdatenmanagement': '#8184a7',
-  'Biodiversitäts- und Geoinformatik': '#8184a7',
-  'Perspektiven auf Natur - PAN': '#ed9798',
-  'Historische Arbeitsstelle': '#ed9798',
-  'Sammlungsentwicklung': '#d9ef36',
-  'Wissenschaft in der Gesellschaft': '#ed9798',
-  'Bildung und Vermittlung': '#ed9798',
-  'Evolutionäre Morphologie': '#7d913c',
-  'Ausstellung und Wissenstransfer': '#ed9798',
-  'Mikroevolution': '#7d913c',
-  'Impakt- und Meteoritenforschung': '#7d913c',
-  'Diversitätsdynamik': '#7d913c',
-  'Biodiversitätsentdeckung': '#d9ef36',
-  'IT- Forschungsinfrastrukturen': '#8184a7',
-  'Kompetenzzentrum Sammlung': '#d9ef36'
 }

@@ -13,7 +13,7 @@ const TextBox = (props) => {
     default:
       fontSize = '0.9vh'
   }
-  const borderColor = props.color ? props.color : '#aaaaaa'
+  const borderColor = props.color ? props.color : '#B0B0B0'
   const textColor = props.color ? props.color : '#dddddd'
 
   return (

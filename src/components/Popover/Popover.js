@@ -63,7 +63,7 @@ const Popover = (props) => {
 }
 
 const generateSideTopicList = (sideTopics) => {
-  return sideTopics.map(t => ({name: t, color: '#AAA'}))
+  return sideTopics.map(t => ({name: t, color: '#B0B0B0'}))
 }
 
 export default Popover

@@ -2,9 +2,9 @@ import React from 'react'
 import classes from './ListBox.css'
 
 const ListBox = (props) => {
-  const borderColor = props.color ? props.color : '#aaaaaa'
+  const borderColor = props.color ? props.color : '#B0B0B0'
   const title = props.title ? props.title : 'TITLE'
-  const list = props.list ? props.list : [{name: 'Chip-Name', color: '#AAA'}]
+  const list = props.list ? props.list : [{name: 'Chip-Name', color: '#B0B0B0'}]
 
   const chips = list.map((l, i) => {
     return <div key={i} className={classes.chip} style={{backgroundColor: l.color}}>{l.name}</div>
