@@ -25,3 +25,10 @@ export const toggleAllFilters = (key, filters) => {
     filters: filters
   }
 }
+
+export const activatePopover = (datapoint) => {
+  return {
+    type: actionTypes.ACTIVATE_POPOVER,
+    element: datapoint
+  }
+}

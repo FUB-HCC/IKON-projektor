@@ -1,0 +1,19 @@
+.box{
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: solid;
+    width:100%;
+    height:100%;
+    display: flex;
+    justify-content: center;
+    overflow: scroll;
+    overflow-scrolling: auto;
+}
+.text{
+    margin:auto;
+    align-self: center;
+    display: flex;
+    padding: 5%;
+    padding-top: 3%;
+    padding-bottom: 3%;
+}

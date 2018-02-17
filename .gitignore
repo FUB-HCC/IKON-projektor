@@ -67,3 +67,5 @@ typings/
 
 /src/assets/data.js
 
+#Apple File System
+.DS_Store

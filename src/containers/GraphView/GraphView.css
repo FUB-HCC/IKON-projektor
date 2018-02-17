@@ -22,6 +22,11 @@
     left: 5%;
     height: 500px;
     letter-spacing: 0.5px;
+    z-index: 1;
+}
+
+.graphFrame{
+    z-index:0;
 }
 
 @-webkit-keyframes Gradient {
