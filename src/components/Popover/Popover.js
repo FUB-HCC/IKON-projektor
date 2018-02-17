@@ -3,9 +3,10 @@ import TextBox from './TextBox'
 import ListBox from './ListBox'
 import classes from './Popover.css'
 import petriImg from '../../assets/Petri.png'
+import MailIcon from '../../assets/envelope.svg'
 
 const Popover = (props) => {
-  const height = props.height * 0.6
+  const height = props.height * 0.65
   const width = height * (3 / 5)
   const standardHeight = height / 12
 
@@ -56,6 +57,7 @@ const Popover = (props) => {
       <div className={classes.row} style={{height: standardHeight}}>{FundingSource}{CooperationPartner}{WikiLink}</div>
       <div className={classes.row} style={{height: 1.5 * standardHeight}}>{SideTopics}</div>
       <div className={classes.row} style={{height: 1.5 * standardHeight}}>{OtherLinks}</div>
+      <div className={classes.mailbutton} style={{height: 0.8 * standardHeight, width: 0.8 * standardHeight}}><img src={MailIcon} className={classes.mailicon}/></div>
     </div>
   )
 }

@@ -32,7 +32,7 @@ const initialState = {
   filteredData: data,
   popover: {
     hidden: false,
-    element: data['120003']
+    element: data['130064']
   }
 }
 

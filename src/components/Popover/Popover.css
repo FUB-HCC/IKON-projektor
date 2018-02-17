@@ -20,3 +20,18 @@
 .logoCell{
     border: #aaaaaa solid 2px;
 }
+.mailbutton{
+    background-color: rgba(67,64,88, 0.8);
+    border: #aaaaaa solid 2px;
+    border-radius: 50%;
+    margin-top: 3%;
+    margin-left: 85%;
+    display: flex;
+}
+.mailicon{
+    align-self: center;
+    margin: auto;
+    width: 50%;
+    height: 50%;
+
+}
