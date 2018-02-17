@@ -1,6 +1,8 @@
 import React from 'react'
 import TextBox from './TextBox'
 import ListBox from './ListBox'
+import {getFieldColor, getTopicColor, fieldsIntToString} from '../../store/utility'
+
 import classes from './Popover.css'
 import petriImg from '../../assets/Petri.png'
 import MailIcon from '../../assets/envelope.svg'
@@ -28,14 +30,16 @@ const Popover = (props) => {
   const sideTopicList = data.nebenthemen ? generateSideTopicList(data.nebenthemen) : undefined
   // If data gets 'other links' category links-list needs to be defined here
 
-  const Icon = (<div className={classes.logoCell} style ={{width: '25%'}}><img src={petriImg} className={classes.logo}/></div>)
-  const Title = (<div className={classes.cell} style ={{width: '75%'}}><TextBox text={titleText} fontSize={2}/></div>)
+  const fieldColor = getFieldColor(fieldsIntToString(data.forschungsbereich))
 
-  const ResearchArea = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text={researchAreaText}/></div>)
+  const Icon = (<div className={classes.logoCell} style ={{width: '25%'}}><img src={petriImg} className={classes.logo}/></div>)
+  const Title = (<div className={classes.cell} style ={{width: '75%'}}><TextBox text={titleText} fontSize={2} color={fieldColor}/></div>)
+
+  const ResearchArea = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text={researchAreaText} color={fieldColor}/></div>)
   const ProjectLead = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text={projectLeadText}/></div>)
   const Petitioner = (<div className={classes.cell} style ={{width: '33.33%'}}><TextBox text ={petitionerText}/></div>)
 
-  const MainTopic = (<div className={classes.cell} style ={{width: '50.0%'}}><TextBox text={mainTopicText}/></div>)
+  const MainTopic = (<div className={classes.cell} style ={{width: '50.0%'}}><TextBox text={mainTopicText} color={getTopicColor(data.hauptthema)}/></div>)
   const Start = (<div className={classes.cell} style ={{width: '25%'}}><TextBox text={startText}/></div>)
   const Finish = (<div className={classes.cell} style ={{width: '25%'}}><TextBox text={finishText}/></div>)
 
@@ -63,7 +67,7 @@ const Popover = (props) => {
 }
 
 const generateSideTopicList = (sideTopics) => {
-  return sideTopics.map(t => ({name: t, color: '#B0B0B0'}))
+  return sideTopics.map(t => ({name: t, color: getTopicColor(t)}))
 }
 
 export default Popover

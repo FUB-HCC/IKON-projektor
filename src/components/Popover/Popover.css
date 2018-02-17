@@ -27,6 +27,7 @@
     margin-top: 3%;
     margin-left: 85%;
     display: flex;
+    cursor: pointer;
 }
 .mailicon{
     color: #B0B0B0;
@@ -34,5 +35,4 @@
     margin: auto;
     width: 50%;
     height: 50%;
-
 }
