@@ -8,7 +8,7 @@ import petriImg from '../../assets/Petri.png'
 import MailIcon from '../../assets/envelope.svg'
 
 const Popover = (props) => {
-  const height = props.height * 0.7
+  const height = props.height * 0.75
   const width = height * (3 / 5)
   const standardHeight = height / 12
 

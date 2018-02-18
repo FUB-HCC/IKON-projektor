@@ -121,8 +121,6 @@ class ProjectGraph {
       (this.height / 4) + ')')
     this.background.attr('cx', this.width / 2)
       .attr('cy', this.height / 2).attr('r', this.height / 4)
-    this.force.force('center', d3ForceCenter(this.width / 2, this.height / 2))
-      .force('collide', d3ForceCollide(this.height / 55))// ForceStrength?
 
     this.visData = this._processData(data, this.type)
     this._updateD3Functions()
@@ -136,8 +134,12 @@ class ProjectGraph {
     this.polygon = [{'x': -3 * scale, 'y': -1 * scale}, {'x': -3 * scale, 'y': 1 * scale}, {'x': -1 * scale, 'y': 3 * scale},
       {'x': 1 * scale, 'y': 3 * scale}, {'x': 3 * scale, 'y': 1 * scale}, {'x': 3 * scale, 'y': -1 * scale},
       {'x': 1 * scale, 'y': -3 * scale}, {'x': -1 * scale, 'y': -3 * scale}]
+    this.force.force('center', d3ForceCenter(this.width / 2, this.height / 2))
     this.force.force('collide', d3ForceCollide(radius)).nodes(this.visData)
+    this.force.nodes(this.visData)
+      .on('tick', this._tick(this))
   }
+
   updateType (type) {
     /*
       Public
@@ -262,46 +264,6 @@ class ProjectGraph {
       .style('opacity', 1)
       .style('stroke-width', '1px')
       .on('click', function (d) {
-        console.log(d)
-        that.onProjectClick(d, 2)
-      })
-      .on('mouseover', function (d) {
-        d3Select(this).style('cursor', 'pointer')
-        d3Select(this).transition()
-          .duration(500)
-          .style('stroke', that.colors.system.active)
-          .style('fill', that.colors.system.active)
-        let svgPos = {x: 0, y: 0}
-        that.tooltip.transition()
-          .duration(500)
-          .style('opacity', 0.8)
-        that.tooltip.html(d.project.id)
-          .style('color', that.colors.system.active)
-          .style('left', (svgPos.x + d.x) + 'px')
-          .style('top', (svgPos.y + d.y - 32) + 'px')
-      })
-      .on('mouseout', function (d) {
-        d3Select(this).style('cursor', 'default')
-        d3Select(this).transition()
-          .duration(500)
-          .style('stroke', d.color)
-          .style('fill', d.color)
-        that.tooltip.transition()
-          .duration(500)
-          .style('opacity', 0)
-      })
-
-    nodes
-      .attr('fill', function (d) {
-        return d.color
-      })
-      .attr('stroke', function (d) {
-        return d.color
-      })
-      .style('opacity', 1)
-      .style('stroke-width', '1px')
-      .on('click', function (d) {
-        console.log(d)
         that.onProjectClick(d, 2)
       })
       .on('mouseover', function (d) {
@@ -351,7 +313,7 @@ class ProjectGraph {
           return d.x + ' ' + d.y
         })
         .attr('points', function (d) {
-          if (!ProjectGraph._isInSector(d.sector.startAngle,
+          if (!that._isInSector(d.sector.startAngle,
             d.sector.endAngle,
             that.outerRadius,
             that.circleMiddle,
@@ -374,14 +336,14 @@ class ProjectGraph {
   /*
     Only for this._isInSector which is only used in this._tick
   */
-  static _vecMinus (v1, v2) {
+  _vecMinus (v1, v2) {
     return {x: (v1.x - v2.x), y: (v1.y - v2.y)}
   }
-  static _distance (p1, p2) {
+  _distance (p1, p2) {
     return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2))
   }
 
-  static _radBetweenVectors (v1, v2) {
+  _radBetweenVectors (v1, v2) {
     let dot = v1.x * v2.x + v1.y * v2.y
     let det = v1.x * v2.y - v1.y * v2.x
     let angle = Math.atan2(det, dot)// -180, 180
@@ -392,11 +354,15 @@ class ProjectGraph {
 
     return angle
   }
-  static _isInSector (startAngleRad, endAngleRad, radius, middle, point) {
-    let angle = ProjectGraph._radBetweenVectors(ProjectGraph._vecMinus(point, middle), {x: -1, y: 0})
-    let dist = ProjectGraph._distance(middle, point)
+  _isInSector (startAngleRad, endAngleRad, radius, middle, point) {
+    let angle = this._radBetweenVectors(this._vecMinus(point, middle), {x: -1, y: 0})
+    let dist = this._distance(middle, point)
     // +(Math.PI*2)/4 weil es bei uns links anfängt
-    return startAngleRad + (Math.PI * 2) / 4 < angle && angle < endAngleRad + (Math.PI * 2) / 4 && dist <= radius
+    if (startAngleRad + (Math.PI * 2) / 4 < angle && angle < endAngleRad + (Math.PI * 2) / 4 && dist <= radius) {
+      return true
+    } else {
+      return false
+    }
   }
 }
 

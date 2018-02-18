@@ -11,11 +11,11 @@ const distSponsor = []
 Object.keys(data).map(dataEntry => {
   data[dataEntry] = {
     ...data[dataEntry],
-    fieldName: fieldsIntToString(data[dataEntry].forschungsbereich)
+    forschungsbereichstr: fieldsIntToString(data[dataEntry].forschungsbereich)
   }
   Object.keys(data[dataEntry]).map(dataKey => {
     const val = data[dataEntry][dataKey]
-    if (dataKey === 'fieldName') {
+    if (dataKey === 'forschungsbereichstr') {
       if (!distFields.some(e => e === val)) distFields.push(val)
     } else if (dataKey === 'hauptthema') {
       if (!distTopics.some(e => e === val)) distTopics.push(val)
@@ -31,9 +31,9 @@ const applyFilters = (data, filter) => {
     let newFilteredData = {}
     filteredData = Object.keys(filteredData).forEach(d => {
       if (f.type === 'a') {
-        if (f.value.some(value => value === filteredData[d][f.key])) newFilteredData[d] = filteredData[d]
+        if (f.value.some(value => value === filteredData[d][f.filterKey])) newFilteredData[d] = filteredData[d]
       } else {
-        if (filteredData[d][f.key].includes(f.value)) newFilteredData[d] = filteredData[d]
+        if (filteredData[d][f.filterKey].includes(f.value)) newFilteredData[d] = filteredData[d]
       }
     })
     filteredData = newFilteredData
@@ -42,9 +42,9 @@ const applyFilters = (data, filter) => {
 }
 const initialState = {
   filter: [
-    {name: 'field', key: 'fieldName', type: 'a', value: distFields},
-    {name: 'topic', key: 'hauptthema', type: 'a', value: distTopics},
-    {name: 'sponsor', key: 'geldgeber', type: 'a', value: distSponsor}
+    {name: 'f', filterKey: 'forschungsbereichstr', type: 'a', distCount: distFields.length, value: distFields},
+    {name: 't', filterKey: 'hauptthema', type: 'a', distCount: distTopics.length, value: distTopics},
+    {name: 's', filterKey: 'geldgeber', type: 'a', distCount: distSponsor.length, value: distSponsor}
   ],
   graph: '0',
   data: data,
@@ -128,7 +128,6 @@ const activatePopover = (state, action) => {
       ...state,
       selectedProject: state.data[action.element.project.id] ? action.element.project.id : state.selectedProject
     }
-    console.log(state.data[action.element.project.id], action.element.project.id)
     updateUrl(newState)
     return newState
   }

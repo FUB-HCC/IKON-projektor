@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {getFieldColor} from '../../store/utility'
+import {fieldsIntToString, getFieldColor} from '../../store/utility'
 import {default as TimeLineGraph} from '../../components/Visualizations/TimeLine'
 
 class TimeLine extends React.Component {
@@ -55,7 +55,7 @@ const processData = (data, colors) => {
   Object.keys(data).forEach(pId => {
     let d = {
       num: 0,
-      color: getFieldColor(data[pId].forschungsbereich),
+      color: getFieldColor(fieldsIntToString(data[pId].forschungsbereich)),
       startDate: new Date(data[pId].start),
       endDate: new Date(data[pId].end),
       projectId: pId,

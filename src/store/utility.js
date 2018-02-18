@@ -22,8 +22,9 @@ export const updateUrl = (newState, urlData = {}) => {
     graph: newUrlData.graph,
     filter: newState.filter.map((f, i) => ({
       name: f.name,
-      key: f.key,
+      filterKey: f.filterKey,
       type: f.type,
+      distCount: f.distCount,
       value: filterValues[i]
     })),
     selectedProject: newUrlData.selectedProject

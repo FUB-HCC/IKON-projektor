@@ -6,7 +6,8 @@ import 'd3-transition'
 import classes from './TimeLine.css'
 
 class TimeLine {
-  setupTimeGraph (svgId, data, height, width, popoverFunction, type = 'default', config = {}) {
+  setupTimeGraph (svgId, data, height, width, onProjectClick, type = 'default', config = {}) {
+    console.log(data)
     console.log('VISUALIZATION CHANGE: SETUP TIMELINE')
     this.colors = {
       system: {
@@ -23,7 +24,7 @@ class TimeLine {
         type  - String defining the Visualisation Type
         config- Json with variables defining the Style properties
     */
-    this.transitionTime = 1000
+    this.transitionTime = 800
     // Delays data change to let removed elements fade out and new Elements fade in.
     this.delayTime = 0
     this.tooltipTransitionTime = 200
@@ -34,7 +35,7 @@ class TimeLine {
             num is used to put two or more objects in the same row to Optimize space
             [{num:,color:,startDate:, endDate:,projectId:},...]
     */
-    this.popoverFunction = popoverFunction
+    this.onProjectClick = onProjectClick
     this.visData = data
     this.svg = d3Select(svgId)
     this.width = width
@@ -72,7 +73,7 @@ class TimeLine {
     */
     this.width = width
     this.height = height
-
+    console.log(data)
     this.svg.attr('width', width).attr('height', height)
     this.g.attr('transform', 'translate(' + (this.width / 4) + ',' +
       (this.height / 4) + ')')
@@ -200,8 +201,7 @@ class TimeLine {
         return that.yScale(d.startDate) - that.yScale(d.endDate)
       })
       .on('click', function (d) {
-        // dispatch popover
-        that.popoverFunction(d, 1)
+        that.onProjectClick(d, 1)
       })
       .on('mouseover', function () {
         d3Select(this).style('cursor', 'pointer')
@@ -240,10 +240,6 @@ class TimeLine {
       .attr('width', this.xScale.bandwidth() - 3)
       .attr('y', function (d) {
         return that.yScale(d.endDate)
-      })
-      .on('click', function (d) {
-        // dispatch popover
-        that.popoverFunction(d, 1)
       })
       .attr('height', function (d) {
         return that.yScale(d.startDate) - that.yScale(d.endDate)

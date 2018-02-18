@@ -60,15 +60,15 @@ const mapStateToProps = state => {
     const distinctValues = []
     Object.keys(data).forEach(dataEntries => {
       Object.keys(data[dataEntries]).forEach(dataKeys => {
-        if (dataKeys === filter.key) {
-          if (!distinctValues.some(e => e === data[dataEntries][filter.key])) {
-            distinctValues.push(data[dataEntries][filter.key])
+        if (dataKeys === filter.filterKey) {
+          if (!distinctValues.some(e => e === data[dataEntries][filter.filterKey])) {
+            distinctValues.push(data[dataEntries][filter.filterKey])
           }
         }
       })
     })
 
-    filters.push({name: filter.key, type: filter.type, keys: distinctValues, value: filter.value})
+    filters.push({name: filter.filterKey, type: filter.type, keys: distinctValues, value: filter.value})
   })
   return {
     filters: filters
