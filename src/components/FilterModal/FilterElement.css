@@ -11,6 +11,7 @@
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+
 }
 
 .Title {
@@ -35,23 +36,24 @@
 }
 
 .Indicator {
-    display: inline;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    padding: 6px;
-    background: #989aa1;
-    color: white;
-    text-align: center;
-    font-size: 18px;
     margin-left: 20px;
+    background: #989aa1;
+    width: 30px;
+    height: 27px;
+    color: white;
+    border-radius: 50%;
+    line-height: 30px;
+    text-align: center;
+    font-size: 15px;
+    padding-top: 2px;
 }
+
+
 
 .Filter {
     display: flex;
     align-items: center;
     justify-content: left;
-    width: 25%;
     height: 80px;
     color: white;
 
@@ -82,8 +84,8 @@
     border: 1px solid #b0b0b0;
     display: inline-block;
     vertical-align: middle;
-    width: 20px;
-    height: 20px;
+    width: 2vh;
+    height: 2vh;
     padding: 4px;
     margin-right: 5px;
     text-align: center;

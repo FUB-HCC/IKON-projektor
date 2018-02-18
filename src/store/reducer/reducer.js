@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateUrl, fieldsStringToInt, fieldsIntToString} from '../utility'
+import {updateUrl, fieldsIntToString} from '../utility'
 import {getData} from '../../assets/data'
 import {parse as queryStringParse} from 'query-string'
 
@@ -8,7 +8,20 @@ const data = Object.keys(initData).map(d => (
   {...initData[d],
     forschungsbereich: fieldsIntToString(initData[d].forschungsbereich)
   }))
+const distFields = []
+const distTopics = []
+const distSponsor = []
 
+data.map(dataEntry => (Object.keys(dataEntry).map(dataKey => {
+  const val = dataEntry[dataKey]
+  if (dataKey === 'forschungsbereich') {
+    if (!distFields.some(e => e === val)) distFields.push(val)
+  } else if (dataKey === 'hauptthema') {
+    if (!distTopics.some(e => e === val)) distTopics.push(val)
+  } else if (dataKey === 'geldgeber') {
+    if (!distSponsor.some(e => e === val)) distSponsor.push(val)
+  }
+})))
 const applyFilters = (data, filter) => {
   let filteredData = data
   filter.forEach(f => {
@@ -27,9 +40,9 @@ const applyFilters = (data, filter) => {
 
 const initialState = {
   filter: [
-    {name: 'field', key: 'forschungsbereich', type: 'a', value: ['Evolution und Geoprozesse', 'Sammlungsentwicklung und Biodiversitätsentdeckung', 'Digitale Welt und Informationswissenschaft', 'Wissenskommunikation und Wissensforschung']},
-    {name: 'topic', key: 'hauptthema', type: 'a', value: ['Wissenschaftsdatenmanagement', 'Biodiversitäts- und Geoinformatik', 'Perspektiven auf Natur - PAN', 'Historische Arbeitsstelle', 'Sammlungsentwicklung', 'Wissenschaft in der Gesellschaft', 'Bildung und Vermittlung', 'Evolutionäre Morphologie', 'Ausstellung und Wissenstransfer', 'Mikroevolution', 'Impakt- und Meteoritenforschung', 'Diversitätsdynamik', 'Biodiversitätsentdeckung', 'IT- Forschungsinfrastrukturen', 'Kompetenzzentrum Sammlung']},
-    {name: 'sponsor', key: 'geldgeber', type: 's', value: ''}
+    {name: 'field', key: 'forschungsbereich', type: 'a', value: distFields},
+    {name: 'topic', key: 'hauptthema', type: 'a', value: distTopics},
+    {name: 'sponsor', key: 'geldgeber', type: 'a', value: distSponsor}
   ],
   graph: '0',
   data: data,
@@ -69,41 +82,36 @@ const reducer = (state = initialState, action) => {
 }
 
 const changeFilter = (state, action) => {
-  let newFilter = state.filter.slice()
-  if (action.form === 's') newFilter[action.id].value = action.value
-  else {
-    const actionValue = action.value
-    if (state.filter[action.id].value.some(e => e === actionValue)) {
-      newFilter[action.id].value = state.filter[action.id].value.filter(key => key !== actionValue)
-    } else {
-      newFilter[action.id].value.push(actionValue)
-    }
+  const newFilter = state.filter.slice()
+  const actionValue = action.value
+  if (state.filter[action.id].value.some(e => e === actionValue)) {
+    newFilter[action.id].value = state.filter[action.id].value.filter(key => key !== actionValue)
+  } else {
+    newFilter[action.id].value.push(actionValue)
   }
-  const filteredData = applyFilters(state.data, newFilter)
   const newState = {
     ...state,
     filter: newFilter,
-    filteredData: filteredData
+    filteredData: applyFilters(state.data, newFilter)
   }
   updateUrl(newState)
   return newState
 }
 
-const toggleFilters = (state, action) => {
-  const badCode = action.filters.map(fil => ['Evolution und Geoprozesse', 'Sammlungsentwicklung und Biodiversitätsentdeckung', 'Digitale Welt und Informationswissenschaft', 'Wissenskommunikation und Wissensforschung'].some(e => e === fil) ? fieldsStringToInt(fil) : fil)
-  const newFilter = state.filter.map(fil => {
-    if (fil.key === action.key) fil.value = badCode
-    return fil
-  })
-  const newFilteredData = applyFilters(state.data, newFilter)
-  const newState = {
-    ...state,
-    filter: newFilter,
-    filteredData: newFilteredData
-  }
-  updateUrl(newState)
-  return newState
-}
+const toggleFilters = (state, action) => state
+//   const newFilter = state.filter.map(fil => {
+//     if (fil.key === action.key) fil.value = action.filters
+//     return fil
+//   })
+//   const newFilteredData = applyFilters(state.data, newFilter)
+//   const newState = {
+//     ...state,
+//     filter: newFilter,
+//     filteredData: newFilteredData
+//   }
+//   updateUrl(newState)
+//   return newState
+// }
 
 const activatePopover = (state, action) => {
   const newState = {

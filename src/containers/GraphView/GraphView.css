@@ -54,9 +54,6 @@
     height: 31%;
 }
 
-.graphFrame{
-    z-index:0;
-}
 
 @-webkit-keyframes Gradient {
     0% {

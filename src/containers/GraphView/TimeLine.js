@@ -2,12 +2,11 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {getFieldColor, fieldsStringToInt} from '../../store/utility'
 import {default as TimeLineGraph} from '../../components/Visualizations/TimeLine'
-import * as actions from '../../store/actions/actions'
 
 class TimeLine extends React.Component {
   componentDidMount () {
     this.Graph = new TimeLineGraph()
-    this.Graph.setupTimeGraph('#' + this.props.target, this.props.data, this.props.height, this.props.width, this.props.activatePopover)
+    this.Graph.setupTimeGraph('#' + this.props.target, this.props.data, this.props.height, this.props.width, this.props.onProjectClick)
   }
 
   componentDidUpdate () {
@@ -35,12 +34,6 @@ const mapStateToProps = state => {
     data: processedData,
     target: 'graph',
     colors: graphColors
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    activatePopover: (value) => dispatch(actions.activatePopover(value))
   }
 }
 
@@ -130,4 +123,4 @@ const endDateSort = (a, b) => {
   return new Date(a.endDate).getTime() - new Date(b.endDate).getTime()
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TimeLine)
+export default connect(mapStateToProps)(TimeLine)

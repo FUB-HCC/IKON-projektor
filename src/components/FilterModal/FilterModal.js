@@ -22,7 +22,6 @@ class FilterModal extends Component {
 
   handleInputChange (event) {
     this.setState({value: event.target.value})
-    this.props.filterChangeHandler('2', event.target.value, 's')
   }
 
   render () {

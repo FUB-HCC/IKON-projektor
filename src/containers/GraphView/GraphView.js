@@ -16,6 +16,7 @@ class GraphView extends Component {
     this.state = {activePopover: this.props.selectedProjects ? 1 : -1, height: window.innerHeight, width: window.innerWidth}
     this.changeModalHandler = this.changeModalHandler.bind(this)
     this.changeGraphHandler = this.changeGraphHandler.bind(this)
+    this.projectClickHandler = this.projectClickHandler.bind(this)
   }
 
   componentDidMount () {
@@ -34,6 +35,11 @@ class GraphView extends Component {
     })
   }
 
+  projectClickHandler (project) {
+    this.props.activatePopover(project)
+    this.changeModalHandler(1)
+  }
+
   changeGraphHandler (graph) {
     this.props.changeGraph(graph)
     this.setState({
@@ -48,7 +54,7 @@ class GraphView extends Component {
         Graph = (<PetridishGraph/>)
         break
       case '1':
-        Graph = (<TimeGraph height={this.state.height} width={this.state.width}/>)
+        Graph = (<TimeGraph height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
         break
       case '2':
         Graph = (<AreaGraph/>)
@@ -103,7 +109,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    changeGraph: (value) => dispatch(actions.changeGraph(value))
+    changeGraph: (value) => dispatch(actions.changeGraph(value)),
+    activatePopover: (value) => dispatch(actions.activatePopover(value))
   }
 }
 
