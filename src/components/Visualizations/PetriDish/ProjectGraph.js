@@ -1,7 +1,7 @@
 import {select as d3Select} from 'd3-selection'
 import {scaleLinear as d3ScaleLinear} from 'd3-scale'
 import {forceSimulation as d3ForceSimulation, forceCollide as d3ForceCollide, forceCenter as d3ForceCenter} from 'd3-force'
-import {fieldsIntToString, getFieldColor} from '../../../store/utility'
+import {fieldsIntToString, fieldsStringToInt, getFieldColor} from '../../../store/utility'
 
 class ProjectGraph {
   /*
@@ -16,7 +16,7 @@ class ProjectGraph {
       Tooltip not disapearing und update
   */
 
-  constructor (svgId, data, width, height, type = 'forschungsbereiche', config = {}) {
+  constructor (svgId, data, width, height, onProjectClick, type = 'forschungsbereiche', config = {}) {
     /*
       Public
       updates all nessecary data and shows the Visulisation
@@ -50,7 +50,7 @@ class ProjectGraph {
         'background': '#434058'
       }
     }
-
+    this.onProjectClick = onProjectClick
     this.flowPointRadius = 90
     this.animationTime = 1500
     this.delayTime = 0
@@ -178,7 +178,7 @@ class ProjectGraph {
     let projectCount = 0
     let pId
     for (pId in data) {
-      fbPercent[data[pId].forschungsbereich - 1]++
+      fbPercent[fieldsStringToInt(data[pId].forschungsbereich) - 1]++
       projectCount++
     }
     for (let i = 0; i < fbPercent.length; i++) {
@@ -188,7 +188,7 @@ class ProjectGraph {
 
     let pointData = []
     for (pId in data) {
-      let fb = data[pId].forschungsbereich - 1
+      let fb = fieldsStringToInt(data[pId].forschungsbereich) - 1
       let point = {
         color: getFieldColor(fieldsIntToString(fb + 1)),
         project: data[pId],
@@ -262,7 +262,7 @@ class ProjectGraph {
       .style('opacity', 1)
       .style('stroke-width', '1px')
       .on('click', function (d) {
-        // TODO DISPATCH
+        that.onProjectClick(d)
       })
       .on('mouseover', function (d) {
         d3Select(this).style('cursor', 'pointer')

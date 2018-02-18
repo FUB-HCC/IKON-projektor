@@ -51,7 +51,7 @@ class GraphView extends Component {
     let Graph = (<PetriDishGraph/>) // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
       case '0':
-        Graph = (<PetriDishGraph height={this.state.height} width={this.state.width}/>)
+        Graph = (<PetriDishGraph height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
         break
       case '1':
         Graph = (<TimeGraph height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)

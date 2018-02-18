@@ -6,7 +6,7 @@ class PetriDish {
     Description
   */
 
-  constructor (svgId, data, width, height, type = 'forschungsbereiche', config = {}) {
+  constructor (svgId, data, width, height, onProjectClick, type = 'forschungsbereiche', config = {}) {
     /*
       Public
       updates all nessecary data and shows the Visulisation
@@ -16,7 +16,7 @@ class PetriDish {
         config- Json with variables defining the Style properties
     */
     this.pieChart = new PieChart(svgId, data, width, height, type, config)
-    this.projectGraph = new ProjectGraph(svgId, data, width, height, type, config)
+    this.projectGraph = new ProjectGraph(svgId, data, width, height, onProjectClick, type, config)
   }
   updateData (data, width, height) {
     /*

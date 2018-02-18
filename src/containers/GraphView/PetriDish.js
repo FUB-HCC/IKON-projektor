@@ -5,7 +5,7 @@ import * as actions from '../../store/actions/actions'
 
 class PetriDish extends React.Component {
   componentDidMount () {
-    this.Graph = new PetriDishGraph('#' + this.props.target, this.props.data, this.props.width, this.props.height)
+    this.Graph = new PetriDishGraph('#' + this.props.target, this.props.data, this.props.width, this.props.height, this.props.onProjectClick)
   }
 
   componentDidUpdate () {

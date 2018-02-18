@@ -1,7 +1,7 @@
 import {pie as d3Pie, arc as d3Arc} from 'd3-shape'
 import {select as d3Select} from 'd3-selection'
 import {interpolate as d3Interpolate} from 'd3-interpolate'
-import {getFieldColor, fieldsIntToString} from '../../../store/utility'
+import {getFieldColor, fieldsIntToString, fieldsStringToInt} from '../../../store/utility'
 
 class PieChart {
   /*
@@ -145,7 +145,7 @@ class PieChart {
     // Count Number of Projects per fb
     let pId
     for (pId in data) {
-      splitFbs[data[pId].forschungsbereich - 1].count++
+      splitFbs[fieldsStringToInt(data[pId].forschungsbereich) - 1].count++
     }
     return splitFbs
   }
