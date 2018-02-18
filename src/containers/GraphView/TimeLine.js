@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {getFieldColor, fieldsStringToInt} from '../../store/utility'
+import {getFieldColor} from '../../store/utility'
 import {default as TimeLineGraph} from '../../components/Visualizations/TimeLine'
 
 class TimeLine extends React.Component {
@@ -61,7 +61,7 @@ const processData = (data, colors) => {
       projectId: pId,
       foundFit: false // needed to optimize Spacing (later deleted)
     }
-    splitFbs[fieldsStringToInt(data[pId].forschungsbereich) - 1].push(d)
+    splitFbs[data[pId].forschungsbereich - 1].push(d)
   })
 
   // Stage 2 Optimize space for each fb and insert spacing between fbs

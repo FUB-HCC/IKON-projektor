@@ -201,7 +201,7 @@ class TimeLine {
       })
       .on('click', function (d) {
         // dispatch popover
-        that.popoverFunction(d)
+        that.popoverFunction(d, 1)
       })
       .on('mouseover', function () {
         d3Select(this).style('cursor', 'pointer')
@@ -240,6 +240,10 @@ class TimeLine {
       .attr('width', this.xScale.bandwidth() - 3)
       .attr('y', function (d) {
         return that.yScale(d.endDate)
+      })
+      .on('click', function (d) {
+        // dispatch popover
+        that.popoverFunction(d, 1)
       })
       .attr('height', function (d) {
         return that.yScale(d.startDate) - that.yScale(d.endDate)

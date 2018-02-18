@@ -1,18 +1,14 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateUrl, fieldsIntToString} from '../utility'
+import {updateUrl} from '../utility'
 import {getData} from '../../assets/data'
 import {parse as queryStringParse} from 'query-string'
 
-const initData = getData()
-const data = Object.keys(initData).map(d => (
-  {...initData[d],
-    forschungsbereich: fieldsIntToString(initData[d].forschungsbereich)
-  }))
+const data = getData()
 const distFields = []
 const distTopics = []
 const distSponsor = []
 
-data.map(dataEntry => (Object.keys(dataEntry).map(dataKey => {
+Object.keys(data).map(dataEntry => (Object.keys(dataEntry).map(dataKey => {
   const val = dataEntry[dataKey]
   if (dataKey === 'forschungsbereich') {
     if (!distFields.some(e => e === val)) distFields.push(val)
@@ -114,12 +110,22 @@ const toggleFilters = (state, action) => state
 // }
 
 const activatePopover = (state, action) => {
-  const newState = {
-    ...state,
-    selectedProject: data[action.element.projectId] ? action.element.projectId : state.selectedProject
+  if (action.vis === 1) {
+    const newState = {
+      ...state,
+      selectedProject: state.data[action.element.projectId] ? action.element.projectId : state.selectedProject
+    }
+    updateUrl(newState)
+    return newState
+  } else {
+    const newState = {
+      ...state,
+      selectedProject: state.data[action.element.project.id] ? action.element.project.id : state.selectedProject
+    }
+    console.log(state.data[action.element.project.id], action.element.project.id)
+    updateUrl(newState)
+    return newState
   }
-  updateUrl(newState)
-  return newState
 }
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading

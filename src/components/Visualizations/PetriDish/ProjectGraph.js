@@ -1,7 +1,7 @@
 import {select as d3Select} from 'd3-selection'
 import {scaleLinear as d3ScaleLinear} from 'd3-scale'
 import {forceSimulation as d3ForceSimulation, forceCollide as d3ForceCollide, forceCenter as d3ForceCenter} from 'd3-force'
-import {fieldsIntToString, fieldsStringToInt, getFieldColor} from '../../../store/utility'
+import {fieldsIntToString, getFieldColor} from '../../../store/utility'
 
 class ProjectGraph {
   /*
@@ -178,7 +178,7 @@ class ProjectGraph {
     let projectCount = 0
     let pId
     for (pId in data) {
-      fbPercent[fieldsStringToInt(data[pId].forschungsbereich) - 1]++
+      fbPercent[data[pId].forschungsbereich - 1]++
       projectCount++
     }
     for (let i = 0; i < fbPercent.length; i++) {
@@ -188,7 +188,7 @@ class ProjectGraph {
 
     let pointData = []
     for (pId in data) {
-      let fb = fieldsStringToInt(data[pId].forschungsbereich) - 1
+      let fb = data[pId].forschungsbereich - 1
       let point = {
         color: getFieldColor(fieldsIntToString(fb + 1)),
         project: data[pId],
@@ -244,7 +244,7 @@ class ProjectGraph {
   _updateNodes () {
     let that = this
     let nodes = this.svg.selectAll('.nodes')
-      .data(this.visData, function (d) { return Math.random() })
+      .data(this.visData)
 
     nodes.exit()
       .style('opacity', 0)
@@ -262,7 +262,47 @@ class ProjectGraph {
       .style('opacity', 1)
       .style('stroke-width', '1px')
       .on('click', function (d) {
-        that.onProjectClick(d)
+        console.log(d)
+        that.onProjectClick(d, 2)
+      })
+      .on('mouseover', function (d) {
+        d3Select(this).style('cursor', 'pointer')
+        d3Select(this).transition()
+          .duration(500)
+          .style('stroke', that.colors.system.active)
+          .style('fill', that.colors.system.active)
+        let svgPos = {x: 0, y: 0}
+        that.tooltip.transition()
+          .duration(500)
+          .style('opacity', 0.8)
+        that.tooltip.html(d.project.id)
+          .style('color', that.colors.system.active)
+          .style('left', (svgPos.x + d.x) + 'px')
+          .style('top', (svgPos.y + d.y - 32) + 'px')
+      })
+      .on('mouseout', function (d) {
+        d3Select(this).style('cursor', 'default')
+        d3Select(this).transition()
+          .duration(500)
+          .style('stroke', d.color)
+          .style('fill', d.color)
+        that.tooltip.transition()
+          .duration(500)
+          .style('opacity', 0)
+      })
+
+    nodes
+      .attr('fill', function (d) {
+        return d.color
+      })
+      .attr('stroke', function (d) {
+        return d.color
+      })
+      .style('opacity', 1)
+      .style('stroke-width', '1px')
+      .on('click', function (d) {
+        console.log(d)
+        that.onProjectClick(d, 2)
       })
       .on('mouseover', function (d) {
         d3Select(this).style('cursor', 'pointer')

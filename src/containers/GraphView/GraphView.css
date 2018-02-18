@@ -19,9 +19,9 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: 1vh;
     top: 10%;
-    width: 120px;
+    width: 12vh;
     left: 5%;
     height: 45vh;
     letter-spacing: 0.5px;

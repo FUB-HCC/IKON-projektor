@@ -35,8 +35,8 @@ class GraphView extends Component {
     })
   }
 
-  projectClickHandler (project) {
-    this.props.activatePopover(project)
+  projectClickHandler (project, vis) {
+    this.props.activatePopover(project, vis)
     this.changeModalHandler(1)
   }
 
@@ -111,7 +111,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     changeGraph: (value) => dispatch(actions.changeGraph(value)),
-    activatePopover: (value) => dispatch(actions.activatePopover(value))
+    activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis))
   }
 }
 
