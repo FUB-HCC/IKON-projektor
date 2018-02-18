@@ -1,12 +1,12 @@
 import React from 'react'
 import {connect} from 'react-redux'
+import {getFieldColor, fieldsStringToInt} from '../../store/utility'
 import {default as TimeLineGraph} from '../../components/Visualizations/TimeLine'
-import * as actions from '../../store/actions/actions'
 
 class TimeLine extends React.Component {
   componentDidMount () {
     this.Graph = new TimeLineGraph()
-    this.Graph.setupTimeGraph('#' + this.props.target, this.props.data, this.props.height, this.props.width, this.props.activatePopover)
+    this.Graph.setupTimeGraph('#' + this.props.target, this.props.data, this.props.height, this.props.width, this.props.onProjectClick)
   }
 
   componentDidUpdate () {
@@ -21,24 +21,6 @@ class TimeLine extends React.Component {
 }
 
 const graphColors = {
-  fb: {
-    '1': '#7d913c',
-    '2': '#d9ef36',
-    '3': '#8184a7',
-    '4': '#985152'
-  },
-  fbLight: {
-    '1': '',
-    '2': '',
-    '3': '',
-    '4': ''
-  },
-  fbDark: {
-    '1': '',
-    '2': '',
-    '3': '',
-    '4': ''
-  },
   system: {
     'active': '#f0faf0',
     'inactive': '#989aa1',
@@ -52,12 +34,6 @@ const mapStateToProps = state => {
     data: processedData,
     target: 'graph',
     colors: graphColors
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    activatePopover: (value) => dispatch(actions.activatePopover(value))
   }
 }
 
@@ -79,13 +55,13 @@ const processData = (data, colors) => {
   Object.keys(data).forEach(pId => {
     let d = {
       num: 0,
-      color: colors.fb[data[pId].forschungsbereich],
+      color: getFieldColor(data[pId].forschungsbereich),
       startDate: new Date(data[pId].start),
       endDate: new Date(data[pId].end),
       projectId: pId,
       foundFit: false // needed to optimize Spacing (later deleted)
     }
-    splitFbs[data[pId].forschungsbereich - 1].push(d)
+    splitFbs[fieldsStringToInt(data[pId].forschungsbereich) - 1].push(d)
   })
 
   // Stage 2 Optimize space for each fb and insert spacing between fbs
@@ -147,4 +123,4 @@ const endDateSort = (a, b) => {
   return new Date(a.endDate).getTime() - new Date(b.endDate).getTime()
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TimeLine)
+export default connect(mapStateToProps)(TimeLine)

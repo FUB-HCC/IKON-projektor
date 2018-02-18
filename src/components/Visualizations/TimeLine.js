@@ -9,24 +9,6 @@ class TimeLine {
   setupTimeGraph (svgId, data, height, width, popoverFunction, type = 'default', config = {}) {
     console.log('VISUALIZATION CHANGE: SETUP TIMELINE')
     this.colors = {
-      fb: {
-        '1': '#7d913c',
-        '2': '#d9ef36',
-        '3': '#8184a7',
-        '4': '#985152'
-      },
-      fbLight: {
-        '1': '',
-        '2': '',
-        '3': '',
-        '4': ''
-      },
-      fbDark: {
-        '1': '',
-        '2': '',
-        '3': '',
-        '4': ''
-      },
       system: {
         'active': '#f0faf0',
         'inactive': '#989aa1',

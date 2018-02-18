@@ -65,7 +65,7 @@ export const fieldsStringToInt = (str) => {
 }
 
 export const topicIntToString = (number) => {
-  return topicMapping.find(e => e.num === number) ? topicMapping.find(e => e.num === number).name : number
+  return topicMapping.find(e => e.num === number) ? topicMapping.find(e => e.num === number).name : 'Other'
 }
 
 export const topicStringToInt = (str) => {
@@ -77,9 +77,9 @@ export const topicToField = (topic) => {
 }
 
 export const getFieldColor = (field) => {
-  return fieldsMapping.find(e => e.name === field) ? fieldsMapping.find(e => e.name === field).color : '#B0B0B0'
+  return fieldsMapping.find(e => e.name === field) ? fieldsMapping.find(e => e.name === field).color : '#989aa1'
 }
 
 export const getTopicColor = (topic) => {
-  return topicMapping.find(e => e.name === topic) ? topicMapping.find(e => e.name === topic).color : '#B0B0B0'
+  return topicMapping.find(e => e.name === topic) ? topicMapping.find(e => e.name === topic).color : '#989aa1'
 }
