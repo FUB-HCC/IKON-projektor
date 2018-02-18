@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateUrl} from '../utility'
+import {updateUrl, fieldsIntToString} from '../utility'
 import {getData} from '../../assets/data'
 import {parse as queryStringParse} from 'query-string'
 
@@ -8,16 +8,23 @@ const distFields = []
 const distTopics = []
 const distSponsor = []
 
-Object.keys(data).map(dataEntry => (Object.keys(data[dataEntry]).map(dataKey => {
-  const val = data[dataEntry][dataKey]
-  if (dataKey === 'forschungsbereich') {
-    if (!distFields.some(e => e === val)) distFields.push(val)
-  } else if (dataKey === 'hauptthema') {
-    if (!distTopics.some(e => e === val)) distTopics.push(val)
-  } else if (dataKey === 'geldgeber') {
-    if (!distSponsor.some(e => e === val)) distSponsor.push(val)
+Object.keys(data).map(dataEntry => {
+  data[dataEntry] = {
+    ...data[dataEntry],
+    fieldName: fieldsIntToString(data[dataEntry].forschungsbereich)
   }
-})))
+  Object.keys(data[dataEntry]).map(dataKey => {
+    const val = data[dataEntry][dataKey]
+    if (dataKey === 'fieldName') {
+      if (!distFields.some(e => e === val)) distFields.push(val)
+    } else if (dataKey === 'hauptthema') {
+      if (!distTopics.some(e => e === val)) distTopics.push(val)
+    } else if (dataKey === 'geldgeber') {
+      if (!distSponsor.some(e => e === val)) distSponsor.push(val)
+    }
+  })
+})
+console.log(distFields)
 const applyFilters = (data, filter) => {
   let filteredData = data
   filter.forEach(f => {
@@ -35,7 +42,7 @@ const applyFilters = (data, filter) => {
 }
 const initialState = {
   filter: [
-    {name: 'field', key: 'forschungsbereich', type: 'a', value: distFields},
+    {name: 'field', key: 'fieldName', type: 'a', value: distFields},
     {name: 'topic', key: 'hauptthema', type: 'a', value: distTopics},
     {name: 'sponsor', key: 'geldgeber', type: 'a', value: distSponsor}
   ],

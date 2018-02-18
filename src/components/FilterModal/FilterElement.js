@@ -2,12 +2,11 @@
 import React from 'react'
 
 import classes from './FilterElement.css'
-import {getFieldColor, getTopicColor, topicToField, fieldsIntToString} from '../../store/utility'
+import {getFieldColor, getTopicColor, topicToField} from '../../store/utility'
 
 const filterElement = (props) => {
   const filters = props.keys.sort(compare).map((k, key) => {
-    const name = props.name === 'forschungsbereich' ? fieldsIntToString(k) : k
-    const color = getTopicColor(name) === '#989aa1' ? getFieldColor(name) : getTopicColor(name)
+    const color = getTopicColor(k) === '#989aa1' ? getFieldColor(k) : getTopicColor(k)
     return (
       <div style={{width: props.keys.length > 15 ? '20%' : '25%', fontSize: props.keys.length > 15 ? '1.2vh' : '1.5vh'}} className={classes.Filter} key={key} >
         <input
@@ -15,11 +14,11 @@ const filterElement = (props) => {
           checked={props.value.some(v => v === k)}
           className={classes.CheckBox}
           type="checkbox"
-          name={name}
+          name={k}
           key={key}
-          id={name}/>
-        <label className={classes.CheckBoxLabel} htmlFor={name}/>
-        <span style={{color: color}}>{name}</span>
+          id={k}/>
+        <label className={classes.CheckBoxLabel} htmlFor={k}/>
+        <span style={{color: color}}>{k}</span>
       </div>
     )
   })
