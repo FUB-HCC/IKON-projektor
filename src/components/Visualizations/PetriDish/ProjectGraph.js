@@ -245,6 +245,7 @@ class ProjectGraph {
   }
   _updateNodes () {
     let that = this
+    this.svg.selectAll('.nodes').remove()
     let nodes = this.svg.selectAll('.nodes')
       .data(this.visData)
 

@@ -7,7 +7,6 @@ import classes from './TimeLine.css'
 
 class TimeLine {
   setupTimeGraph (svgId, data, height, width, onProjectClick, type = 'default', config = {}) {
-    console.log(data)
     console.log('VISUALIZATION CHANGE: SETUP TIMELINE')
     this.colors = {
       system: {
@@ -73,7 +72,6 @@ class TimeLine {
     */
     this.width = width
     this.height = height
-    console.log(data)
     this.svg.attr('width', width).attr('height', height)
     this.g.attr('transform', 'translate(' + (this.width / 4) + ',' +
       (this.height / 4) + ')')

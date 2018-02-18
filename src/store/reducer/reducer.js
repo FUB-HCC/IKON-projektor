@@ -24,7 +24,6 @@ Object.keys(data).map(dataEntry => {
     }
   })
 })
-console.log(distFields)
 const applyFilters = (data, filter) => {
   let filteredData = data
   filter.forEach(f => {
