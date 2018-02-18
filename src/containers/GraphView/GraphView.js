@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import PetridishGraph from '../../components/PetridishGraph/PetridishGraph'
+import {default as PetriDishGraph} from './PetriDish'
 import AreaGraph from '../../components/AreaGraph/AreaGraph'
 import TimeGraph from './TimeLine'
 import ProjectModal from '../../components/Popover/Popover'
@@ -48,10 +48,10 @@ class GraphView extends Component {
   }
 
   render () {
-    let Graph = (<PetridishGraph/>) // render conditional according to state. Petridish rendered as default
+    let Graph = (<PetriDishGraph/>) // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
       case '0':
-        Graph = (<PetridishGraph/>)
+        Graph = (<PetriDishGraph height={this.state.height} width={this.state.width}/>)
         break
       case '1':
         Graph = (<TimeGraph height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
