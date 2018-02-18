@@ -356,11 +356,7 @@ class ProjectGraph {
     let angle = ProjectGraph._radBetweenVectors(ProjectGraph._vecMinus(point, middle), {x: -1, y: 0})
     let dist = ProjectGraph._distance(middle, point)
     // +(Math.PI*2)/4 weil es bei uns links anfängt
-    if (startAngleRad + (Math.PI * 2) / 4 < angle && angle < endAngleRad + (Math.PI * 2) / 4 && dist <= radius) {
-      return true
-    } else {
-      return false
-    }
+    return startAngleRad + (Math.PI * 2) / 4 < angle && angle < endAngleRad + (Math.PI * 2) / 4 && dist <= radius
   }
 }
 
