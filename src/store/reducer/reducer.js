@@ -8,8 +8,8 @@ const distFields = []
 const distTopics = []
 const distSponsor = []
 
-Object.keys(data).map(dataEntry => (Object.keys(dataEntry).map(dataKey => {
-  const val = dataEntry[dataKey]
+Object.keys(data).map(dataEntry => (Object.keys(data[dataEntry]).map(dataKey => {
+  const val = data[dataEntry][dataKey]
   if (dataKey === 'forschungsbereich') {
     if (!distFields.some(e => e === val)) distFields.push(val)
   } else if (dataKey === 'hauptthema') {
@@ -33,7 +33,6 @@ const applyFilters = (data, filter) => {
   })
   return filteredData
 }
-
 const initialState = {
   filter: [
     {name: 'field', key: 'forschungsbereich', type: 'a', value: distFields},
