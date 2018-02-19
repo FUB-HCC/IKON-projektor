@@ -111,7 +111,7 @@ const mapStateToProps = state => {
 
 const calculateActiveFilterCount = (filter) => {
   let activeFilterCount = 0
-  filter.forEach(f => { activeFilterCount += (f.distCount !== f.value.length ? 1 : 0) })
+  filter.forEach(f => { activeFilterCount += (f.distValues.length !== f.value.length ? 1 : 0) })
   return activeFilterCount
 }
 

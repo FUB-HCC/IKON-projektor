@@ -3,28 +3,28 @@ import {stringify as queryStringify} from 'query-string'
 
 export const updateUrl = (newState, urlData = {}) => {
   let newUrlData = {}
-  urlData.graph ? newUrlData.graph = urlData.graph : newUrlData.graph = newState.graph
+  urlData.graph ? newUrlData.g = urlData.graph : newUrlData.g = newState.graph
 
-  urlData.field ? newUrlData.field = urlData.field : newUrlData.field = newState.filter[0].value
+  urlData.f ? newUrlData.f = urlData.f.map(t => { return topicIntToString(t) }) : newUrlData.f = newState.filter[0].value
 
-  urlData.topic ? newUrlData.topic = urlData.topic.map(t => { return topicIntToString(t) }) : newUrlData.topic = newState.filter[1].value
+  urlData.t ? newUrlData.t = urlData.t.map(t => { return topicIntToString(t) }) : newUrlData.t = newState.filter[1].value
 
-  urlData.sponsor ? newUrlData.sponsor = urlData.sponsor : newUrlData.sponsor = newState.filter[2].value
+  urlData.s ? newUrlData.s = urlData.s : newUrlData.s = newState.filter[2].value
 
   urlData.selectedProject ? newUrlData.selectedProject = urlData.selectedProject : newUrlData.selectedProject = newState.selectedProject
 
-  let minifiedUrlData = {...newUrlData, topic: newUrlData.topic.map(t => topicStringToInt(t))}
+  let minifiedUrlData = {...newUrlData, t: newUrlData.t.map(t => topicStringToInt(t)), f: newUrlData.f.map(t => fieldsStringToInt(t))}
   const newUrl = '?' + queryStringify(minifiedUrlData)
   history.pushState(null, null, newUrl)
 
-  const filterValues = [newUrlData.field, newUrlData.topic, newUrlData.sponsor]
+  const filterValues = [newUrlData.f, newUrlData.t, newUrlData.s]
   return {
-    graph: newUrlData.graph,
+    graph: newUrlData.g,
     filter: newState.filter.map((f, i) => ({
       name: f.name,
       filterKey: f.filterKey,
       type: f.type,
-      distCount: f.distCount,
+      distValues: f.distValues,
       value: filterValues[i]
     })),
     selectedProject: newUrlData.selectedProject

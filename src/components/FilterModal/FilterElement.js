@@ -2,10 +2,10 @@
 import React from 'react'
 
 import classes from './FilterElement.css'
-import {getFieldColor, getTopicColor, topicToField} from '../../store/utility'
+import {getFieldColor, getTopicColor} from '../../store/utility'
 
 const filterElement = (props) => {
-  const filters = props.keys.sort(compare).map((k, key) => {
+  const filters = props.keys.map((k, key) => {
     const color = getTopicColor(k) === '#989aa1' ? getFieldColor(k) : getTopicColor(k)
     return (
       <div style={{width: props.keys.length > 15 ? '20%' : '25%', fontSize: props.keys.length > 15 ? '1.2vh' : '1.5vh'}} className={classes.Filter} key={key} >
@@ -43,9 +43,3 @@ const filterElement = (props) => {
 }
 
 export default filterElement
-
-const compare = (a, b) => {
-  if (topicToField(a) < topicToField(b)) return -1
-  if (topicToField(a) > topicToField(b)) return 1
-  return 0
-}
