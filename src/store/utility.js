@@ -5,7 +5,7 @@ export const updateUrl = (newState, urlData = {}) => {
   let newUrlData = {}
   urlData.graph ? newUrlData.g = urlData.graph : newUrlData.g = newState.graph
 
-  urlData.f ? newUrlData.f = urlData.f.map(t => { return topicIntToString(t) }) : newUrlData.f = newState.filter[0].value
+  urlData.f ? newUrlData.f = urlData.f.map(t => { return fieldsIntToString(t) }) : newUrlData.f = newState.filter[0].value
 
   urlData.t ? newUrlData.t = urlData.t.map(t => { return topicIntToString(t) }) : newUrlData.t = newState.filter[1].value
 

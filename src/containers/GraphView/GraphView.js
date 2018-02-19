@@ -13,7 +13,7 @@ import Aux from '../../hoc/AuxComponent/AuxComponent'
 class GraphView extends Component {
   constructor (props) {
     super(props)
-    this.state = {activePopover: this.props.selectedProjects ? 1 : -1, height: window.innerHeight, width: window.innerWidth}
+    this.state = {activePopover: this.props.selectedProject ? 1 : -1, height: window.innerHeight, width: window.innerWidth}
     this.changeModalHandler = this.changeModalHandler.bind(this)
     this.changeGraphHandler = this.changeGraphHandler.bind(this)
     this.projectClickHandler = this.projectClickHandler.bind(this)
