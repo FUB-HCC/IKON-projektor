@@ -12,6 +12,7 @@ pids
 *.pid.lock
 
 # User-specific stuff:
+.idea/inspectionProfiles
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/dictionaries
@@ -66,3 +67,5 @@ typings/
 
 /src/assets/data.js
 
+#Apple File System
+.DS_Store

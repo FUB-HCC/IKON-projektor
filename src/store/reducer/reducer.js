@@ -1,35 +1,54 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateUrl, fieldsStringToInt} from '../utility'
+import {updateUrl, fieldsIntToString} from '../utility'
 import {getData} from '../../assets/data'
 import {parse as queryStringParse} from 'query-string'
 
 const data = getData()
+const distFields = []
+const distTopics = []
+const distSponsor = []
 
+Object.keys(data).map(dataEntry => {
+  data[dataEntry] = {
+    ...data[dataEntry],
+    forschungsbereichstr: fieldsIntToString(data[dataEntry].forschungsbereich)
+  }
+  Object.keys(data[dataEntry]).map(dataKey => {
+    const val = data[dataEntry][dataKey]
+    if (dataKey === 'forschungsbereichstr') {
+      if (!distFields.some(e => e === val)) distFields.push(val)
+    } else if (dataKey === 'hauptthema') {
+      if (!distTopics.some(e => e === val)) distTopics.push(val)
+    } else if (dataKey === 'geldgeber') {
+      if (!distSponsor.some(e => e === val)) distSponsor.push(val)
+    }
+  })
+})
 const applyFilters = (data, filter) => {
   let filteredData = data
   filter.forEach(f => {
     let newFilteredData = {}
     filteredData = Object.keys(filteredData).forEach(d => {
       if (f.type === 'a') {
-        if (f.value.some(value => value === filteredData[d][f.key])) newFilteredData[d] = filteredData[d]
+        if (f.value.some(value => value === filteredData[d][f.filterKey])) newFilteredData[d] = filteredData[d]
       } else {
-        if (filteredData[d][f.key].includes(f.value)) newFilteredData[d] = filteredData[d]
+        if (filteredData[d][f.filterKey].includes(f.value)) newFilteredData[d] = filteredData[d]
       }
     })
     filteredData = newFilteredData
   })
   return filteredData
 }
-
 const initialState = {
   filter: [
-    {name: 'field', key: 'forschungsbereich', type: 'a', value: ['1', '2', '3', '4']},
-    {name: 'topic', key: 'hauptthema', type: 'a', value: ['Wissenschaftsdatenmanagement', 'Biodiversitäts- und Geoinformatik', 'Perspektiven auf Natur - PAN', 'Historische Arbeitsstelle', 'Sammlungsentwicklung', 'Wissenschaft in der Gesellschaft', 'Bildung und Vermittlung', 'Evolutionäre Morphologie', 'Ausstellung und Wissenstransfer', 'Mikroevolution', 'Impakt- und Meteoritenforschung', 'Diversitätsdynamik', 'Biodiversitätsentdeckung', 'IT- Forschungsinfrastrukturen', 'Kompetenzzentrum Sammlung']},
-    {name: 'sponsor', key: 'geldgeber', type: 's', value: ''}
+    {name: 'f', filterKey: 'forschungsbereichstr', type: 'a', distCount: distFields.length, value: distFields},
+    {name: 't', filterKey: 'hauptthema', type: 'a', distCount: distTopics.length, value: distTopics},
+    {name: 's', filterKey: 'geldgeber', type: 'a', distCount: distSponsor.length, value: distSponsor}
   ],
   graph: '0',
   data: data,
-  filteredData: data
+  filteredData: data,
+  selectedProject: undefined
 }
 
 // Keep the reducer switch lean by outsourcing the actual code below
@@ -37,57 +56,92 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.CHANGE_GRAPH:
-      console.log('STATE CHANGE: ', action.type, action)
+      // console.log('STATE CHANGE: ', action.type, action)
       const newState = {
         ...state,
         graph: action.value,
         filteredData: applyFilters(state.data, state.filter)
       }
-      updateUrl(newState.filter, newState.graph)
+      updateUrl(newState)
       return newState
 
     case actionTypes.FILTER_CHANGE:
-      console.log('STATE CHANGE: ', action.type, action)
+      // console.log('STATE CHANGE: ', action.type, action)
       return changeFilter(state, action)
 
+    case actionTypes.TOGGLE_FILTERS:
+      return toggleFilters(state, action)
+
+    case actionTypes.ACTIVATE_POPOVER:
+      console.log('STATE CHANGE: ', action.type, action)
+      return activatePopover(state, action)
+
     default:
-      console.log('STATE CHANGE: DEFAULT')
+      // console.log('STATE CHANGE: DEFAULT')
       return urlUpdatesFilters(state)
   }
 }
 
 const changeFilter = (state, action) => {
-  let newFilter = state.filter.slice()
-  if (action.form === 's') {
-    newFilter[action.id].value = action.value
+  const newFilter = state.filter.slice()
+  const actionValue = action.value
+  if (state.filter[action.id].value.some(e => e === actionValue)) {
+    newFilter[action.id].value = state.filter[action.id].value.filter(key => key !== actionValue)
   } else {
-    let actionValue
-    action.id === 0 ? actionValue = fieldsStringToInt(action.value) : actionValue = action.value
-    if (state.filter[action.id].value.some(e => e === actionValue)) {
-      newFilter[action.id].value = state.filter[action.id].value.filter(key => key !== actionValue)
-    } else {
-      newFilter[action.id].value.push(actionValue)
-    }
+    newFilter[action.id].value.push(actionValue)
   }
-  const filteredData = applyFilters(state.data, newFilter)
-  updateUrl(newFilter, state.graph)
-  return {
+  const newState = {
     ...state,
     filter: newFilter,
-    filteredData: filteredData
+    filteredData: applyFilters(state.data, newFilter)
+  }
+  updateUrl(newState)
+  return newState
+}
+
+const toggleFilters = (state, action) => state
+//   const newFilter = state.filter.map(fil => {
+//     if (fil.key === action.key) fil.value = action.filters
+//     return fil
+//   })
+//   const newFilteredData = applyFilters(state.data, newFilter)
+//   const newState = {
+//     ...state,
+//     filter: newFilter,
+//     filteredData: newFilteredData
+//   }
+//   updateUrl(newState)
+//   return newState
+// }
+
+const activatePopover = (state, action) => {
+  if (action.vis === 1) {
+    const newState = {
+      ...state,
+      selectedProject: state.data[action.element.projectId] ? action.element.projectId : state.selectedProject
+    }
+    updateUrl(newState)
+    return newState
+  } else {
+    const newState = {
+      ...state,
+      selectedProject: state.data[action.element.project.id] ? action.element.project.id : state.selectedProject
+    }
+    updateUrl(newState)
+    return newState
   }
 }
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesFilters = (state) => {
   const urlData = queryStringParse(location.search)
-  const dataFromUrl = updateUrl(state.filter, state.graph, urlData)
-  console.log(dataFromUrl)
+  const dataFromUrl = updateUrl(state, urlData)
   return {
     ...state,
     filter: dataFromUrl.filter,
     graph: dataFromUrl.graph,
-    filteredData: applyFilters(state.data, dataFromUrl.filter)
+    filteredData: applyFilters(state.data, dataFromUrl.filter),
+    selectedProject: dataFromUrl.selectedProject
   }
 }
 

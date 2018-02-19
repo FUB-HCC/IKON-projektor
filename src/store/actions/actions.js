@@ -17,3 +17,19 @@ export const filterChange = (filterId, value, form) => {
     form: form
   }
 }
+
+export const toggleAllFilters = (key, filters) => {
+  return {
+    type: actionTypes.TOGGLE_FILTERS,
+    key: key,
+    filters: filters
+  }
+}
+
+export const activatePopover = (datapoint, vis) => {
+  return {
+    type: actionTypes.ACTIVATE_POPOVER,
+    element: datapoint,
+    vis: vis
+  }
+}
