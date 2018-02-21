@@ -3,7 +3,7 @@ import {stringify as queryStringify} from 'query-string'
 
 export const updateUrl = (newState, urlData = {}) => {
   let newUrlData = {}
-  urlData.graph ? newUrlData.g = urlData.graph : newUrlData.g = newState.graph
+  urlData.g ? newUrlData.g = urlData.g : newUrlData.g = newState.graph
 
   urlData.f ? newUrlData.f = urlData.f.map(t => { return fieldsIntToString(t) }) : newUrlData.f = newState.filter[0].value
 
