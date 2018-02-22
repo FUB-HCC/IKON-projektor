@@ -119,8 +119,8 @@ class TimeLine {
         .tickSize(this.width / 2))
       .selectAll('.tick text')
       .attr('x', this.xScale.range()[1] + 20)
-    this.g.select('.yTimeLine').selectAll('.tick').attr('class', classes.tick)
-    this.g.select('.yTimeLine').selectAll('.domain').attr('class', classes.domain)
+    this.g.select('.yTimeLine').selectAll('.tick').attr('class', classes.tick + ' tick')
+    this.g.select('.yTimeLine').selectAll('.domain').attr('class', classes.domain + ' domain')
   }
 
   updateCurrentDayIndication () {
@@ -191,7 +191,12 @@ class TimeLine {
       })
       .style('opacity', 0)
       .attr('x', d => that.xScale(d.num) + 'px')
-      .attr('width', this.xScale.bandwidth() - 3)
+      .attr('width', function () {
+        if (that.xScale.bandwidth() - 3 > 0.01) {
+          return that.xScale.bandwidth() - 3
+        }
+        return 0
+      })
       .attr('y', function (d) {
         let tmp = new Date(d.endDate)
         tmp.setDate(tmp.getDate() - 600)
@@ -237,7 +242,12 @@ class TimeLine {
     bars
       .transition().delay(this.delayTime).duration(this.transitionTime)
       .attr('x', d => that.xScale(d.num) + 'px')
-      .attr('width', this.xScale.bandwidth() - 3)
+      .attr('width', function () {
+        if (that.xScale.bandwidth() - 3 > 0.01) {
+          return that.xScale.bandwidth() - 3
+        }
+        return 0
+      })
       .attr('y', function (d) {
         return that.yScale(d.endDate)
       })
