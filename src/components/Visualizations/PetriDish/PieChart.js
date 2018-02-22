@@ -47,8 +47,14 @@ class PieChart {
         'background': '#434058'
       }
     }
-    this.innerRadius = height / 4
-    this.outerRadius = height / 4 * 1.05
+    if (width < height) {
+      this.innerRadius = width / 4
+      this.outerRadius = width / 4 * 1.05
+    } else {
+      this.innerRadius = height / 4
+      this.outerRadius = height / 4 * 1.05
+    }
+
     this.animationTime = 1500
     this.delayTime = 0
     this.type = type
@@ -85,8 +91,13 @@ class PieChart {
     */
     this.width = width
     this.height = height
-    this.innerRadius = height / 4
-    this.outerRadius = height / 4 * 1.05
+    if (width < height) {
+      this.innerRadius = width / 4
+      this.outerRadius = width / 4 * 1.05
+    } else {
+      this.innerRadius = height / 4
+      this.outerRadius = height / 4 * 1.05
+    }
     this.svg.attr('width', this.width).attr('height', this.height)
     this.g.attr('transform', 'translate(' + (this.width / 2) + ',' +
       (this.height / 2) + ')')

@@ -50,19 +50,24 @@ class ProjectGraph {
         'background': '#434058'
       }
     }
-    this.svg = d3Select(svgId)
-    this.width = width
-    this.height = height
 
     // Modifiable
     this.onProjectClick = onProjectClick
-    this.outerRadius = this.height / 4
-    this.flowPointRadius = this.outerRadius / 2
     this.animationTime = 1500
     this.polygonScale = 0.65
     this.delayTime = 0
+
+    this.svg = d3Select(svgId)
+    this.width = width
+    this.height = height
     this.type = type
     this.data = data
+    if (this.width < this.height) {
+      this.outerRadius = this.width / 4
+    } else {
+      this.outerRadius = this.height / 4
+    }
+    this.flowPointRadius = this.outerRadius / 2
 
     this.polygonRadius = null
     this.circleMiddle = {x: this.width / 2, y: this.height / 2}
@@ -73,7 +78,7 @@ class ProjectGraph {
       .attr('class', 'background')
       .style('fill', this.colors.system.active)
       .style('opacity', 0.04)
-      .attr('r', this.height / 4)
+      .attr('r', this.outerRadius)
       .attr('cx', this.width / 2)
       .attr('cy', this.height / 2)
 
@@ -108,7 +113,11 @@ class ProjectGraph {
     this.width = width
     this.height = height
     this.circleMiddle = {x: this.width / 2, y: this.height / 2}
-    this.outerRadius = this.height / 4
+    if (this.width < this.height) {
+      this.outerRadius = this.width / 4
+    } else {
+      this.outerRadius = this.height / 4
+    }
     this.flowPointRadius = this.outerRadius / 2
     this.visData = this._processData(data, this.type)
 
@@ -249,12 +258,10 @@ class ProjectGraph {
       Private
       Updates all nessecary SVG elements
     */
-
+    this.background.attr('cx', this.width / 2).attr('cy', this.height / 2)
+      .attr('r', this.outerRadius)
     this.g.attr('transform', 'translate(' + (this.width / 4) + ',' +
       (this.height / 4) + ')')
-    this.background.attr('cx', this.width / 2)
-      .attr('cy', this.height / 2).attr('r', this.height / 4)
-
     this._updateNodes()
     this._updateLinks()
   }
