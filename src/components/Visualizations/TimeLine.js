@@ -119,6 +119,8 @@ class TimeLine {
         .tickSize(this.width / 2))
       .selectAll('.tick text')
       .attr('x', this.xScale.range()[1] + 20)
+    this.g.select('.yTimeLine').selectAll('.tick').attr('class', classes.tick)
+    this.g.select('.yTimeLine').selectAll('.domain').attr('class', classes.domain)
   }
 
   updateCurrentDayIndication () {
