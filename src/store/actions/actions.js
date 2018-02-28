@@ -33,3 +33,9 @@ export const activatePopover = (datapoint, vis) => {
     vis: vis
   }
 }
+
+export const deactivatePopover = () => {
+  return {
+    type: actionTypes.DEACTIVATE_POPOVER
+  }
+}

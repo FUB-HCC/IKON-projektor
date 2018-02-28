@@ -5,15 +5,19 @@ export const updateUrl = (newState, urlData = {}) => {
   let newUrlData = {}
   urlData.g ? newUrlData.g = urlData.g : newUrlData.g = newState.graph
 
-  urlData.f ? newUrlData.f = urlData.f.map(t => { return fieldsIntToString(t) }) : newUrlData.f = newState.filter[0].value
+  urlData.f ? newUrlData.f = urlData.f.map(f => { return fieldsIntToString(f) }) : newUrlData.f = newState.filter[0].value
 
   urlData.t ? newUrlData.t = urlData.t.map(t => { return topicIntToString(t) }) : newUrlData.t = newState.filter[1].value
 
-  urlData.s ? newUrlData.s = urlData.s : newUrlData.s = newState.filter[2].value
+  urlData.s ? newUrlData.s = urlData.s.map(s => { return sponsorIntToString(newState, s) }) : newUrlData.s = newState.filter[2].value
 
-  urlData.selectedProject ? newUrlData.selectedProject = urlData.selectedProject : newUrlData.selectedProject = newState.selectedProject
+  urlData.sP ? newUrlData.sP = urlData.sP : newUrlData.sP = newState.selectedProject
 
-  let minifiedUrlData = {...newUrlData, t: newUrlData.t.map(t => topicStringToInt(t)), f: newUrlData.f.map(t => fieldsStringToInt(t))}
+  let minifiedUrlData = {
+    ...newUrlData,
+    t: newUrlData.t.map(f => topicStringToInt(f)),
+    f: newUrlData.f.map(t => fieldsStringToInt(t)),
+    s: newUrlData.s.map(s => sponsorStringToInt(newState, s))}
   const newUrl = '?' + queryStringify(minifiedUrlData)
   history.pushState(null, null, newUrl)
 
@@ -27,7 +31,7 @@ export const updateUrl = (newState, urlData = {}) => {
       distValues: f.distValues,
       value: filterValues[i]
     })),
-    selectedProject: newUrlData.selectedProject
+    selectedProject: newUrlData.sP
   }
 }
 
@@ -83,4 +87,12 @@ export const getFieldColor = (field) => {
 
 export const getTopicColor = (topic) => {
   return topicMapping.find(e => e.name === topic) ? topicMapping.find(e => e.name === topic).color : '#989aa1'
+}
+
+export const sponsorStringToInt = (state, str) => {
+  return state.filter[2].distValues.find(e => e === str) ? state.filter[2].distValues.indexOf(str) : str
+}
+
+export const sponsorIntToString = (state, int) => {
+  return state.filter[2].distValues[int] ? state.filter[2].distValues[int] : int
 }

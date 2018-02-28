@@ -43,6 +43,7 @@ const compare = (a, b) => {
   if (topicToField(a) < topicToField(b)) return -1
   else return 1
 }
+
 const initialState = {
   filter: [
     {name: 'Forschungsgebiet', filterKey: 'forschungsbereichstr', type: 'a', distValues: distFields.sort(compare), value: distFields},
@@ -79,6 +80,10 @@ const reducer = (state = initialState, action) => {
     case actionTypes.ACTIVATE_POPOVER:
       console.log('STATE CHANGE: ', action.type, action)
       return activatePopover(state, action)
+
+    case actionTypes.DEACTIVATE_POPOVER:
+      console.log('STATE CHANGE: ', action.type, action)
+      return deactivatePopover(state)
 
     default:
       // console.log('STATE CHANGE: DEFAULT')
@@ -134,6 +139,15 @@ const activatePopover = (state, action) => {
     updateUrl(newState)
     return newState
   }
+}
+
+const deactivatePopover = (state) => {
+  const newState = {
+    ...state,
+    selectedProject: undefined
+  }
+  updateUrl(newState)
+  return newState
 }
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading

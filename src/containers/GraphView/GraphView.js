@@ -33,6 +33,7 @@ class GraphView extends Component {
     this.setState({
       activePopover: newState
     })
+    if (newState === -1) { this.props.deactivatePopover() }
   }
 
   projectClickHandler (project, vis) {
@@ -118,7 +119,8 @@ const calculateActiveFilterCount = (filter) => {
 const mapDispatchToProps = dispatch => {
   return {
     changeGraph: (value) => dispatch(actions.changeGraph(value)),
-    activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis))
+    activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
+    deactivatePopover: () => dispatch(actions.deactivatePopover())
   }
 }
 

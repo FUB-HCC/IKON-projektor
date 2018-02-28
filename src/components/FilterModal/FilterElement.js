@@ -6,9 +6,10 @@ import {getFieldColor, getTopicColor} from '../../store/utility'
 
 const filterElement = (props) => {
   const filters = props.keys.map((k, key) => {
+    const labelString = k.length > 60 ? k.slice(0, 60) + '...' : k
     const color = getTopicColor(k) === '#989aa1' ? getFieldColor(k) : getTopicColor(k)
     return (
-      <div style={{width: props.keys.length > 15 ? '20%' : '25%', fontSize: props.keys.length > 15 ? '1.2vh' : '1.5vh'}} className={classes.Filter} key={key} >
+      <div style={{width: props.keys.length > 15 ? '20%' : '25%', fontSize: props.keys.length > 15 ? '1.0vh' : '1.2vh'}} className={classes.Filter} key={key} >
         <input
           onChange={() => props.change(props.id, k, 'a')}
           checked={props.value.some(v => v === k)}
@@ -18,11 +19,11 @@ const filterElement = (props) => {
           key={key}
           id={k}/>
         <label className={classes.CheckBoxLabel} htmlFor={k}/>
-        <span style={{color: color}}>{k}</span>
+        <span style={{color: color}}>{labelString}</span>
       </div>
     )
   })
-  const expandedHeight = 70 + 85 * (Math.ceil(props.keys.length / 4)) + 'px'
+  const expandedHeight = 70 + 85 * (Math.ceil(props.keys.length / (props.keys.length > 15 ? 5 : 4))) + 'px'
   return (
     <div style={{height: props.open ? expandedHeight : '70px'}} className={classes.FilterElement}>
       <div className={classes.Title}>

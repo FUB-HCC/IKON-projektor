@@ -2,8 +2,8 @@
     position: absolute;
     background: rgba(67, 64, 88, 0.8);
     z-index: 9999;
-    width: 65%;
-    height: 65%;
+    width: 80vh;
+    height: 70vh;
     padding: 2%;
 
 }
