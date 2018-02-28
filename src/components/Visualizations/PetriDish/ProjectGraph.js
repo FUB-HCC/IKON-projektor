@@ -50,16 +50,26 @@ class ProjectGraph {
         'background': '#434058'
       }
     }
+
+    // Modifiable
     this.onProjectClick = onProjectClick
-    this.flowPointRadius = 90
     this.animationTime = 1500
+    this.polygonScale = 0.65
     this.delayTime = 0
-    this.type = type
-    this.data = data
 
     this.svg = d3Select(svgId)
     this.width = width
     this.height = height
+    this.type = type
+    this.data = data
+    if (this.width < this.height) {
+      this.outerRadius = this.width / 4
+    } else {
+      this.outerRadius = this.height / 4
+    }
+    this.flowPointRadius = this.outerRadius / 2
+
+    this.polygonRadius = null
     this.circleMiddle = {x: this.width / 2, y: this.height / 2}
     this.g = this.svg.append('g')
       .attr('transform', 'translate(' + (this.width / 4) + ',' +
@@ -68,7 +78,7 @@ class ProjectGraph {
       .attr('class', 'background')
       .style('fill', this.colors.system.active)
       .style('opacity', 0.04)
-      .attr('r', this.height / 4)
+      .attr('r', this.outerRadius)
       .attr('cx', this.width / 2)
       .attr('cy', this.height / 2)
 
@@ -79,16 +89,9 @@ class ProjectGraph {
       .domain([0, 50])
       .range([500, 0])
 
-    this.outerRadius = this.height / 4
     this.visData = this._processData(data, type)
-    let area = this.outerRadius * this.outerRadius * Math.PI
-    let areaPerElem = (area / this.visData.length) * (80 / 100)
-    let radius = Math.sqrt(areaPerElem / Math.PI)
-    let scale = radius / 5
     this.force = d3ForceSimulation()
-    // .force("link", d3.forceLink().id(function(d) { return d.project.id; }))
-    // .force("charge", d3.forceManyBody().strength(-10))
-      .force('collide', d3ForceCollide(radius))// ForceStrength?
+      .force('collide', d3ForceCollide(0))
       .force('center', d3ForceCenter(this.width / 2, this.height / 2))
       .alphaTarget(1)
     this.tooltip = d3Select('body').append('div')
@@ -96,18 +99,11 @@ class ProjectGraph {
       .style('opacity', 0)
 
     this.visData = this._processData(data, type)
-    this._updateD3Functions()
+
     this._updateSvgElements()
-
-    this.polygon = [{'x': -3 * scale, 'y': -1 * scale}, {'x': -3 * scale, 'y': 1 * scale}, {'x': -1 * scale, 'y': 3 * scale},
-      {'x': 1 * scale, 'y': 3 * scale}, {'x': 3 * scale, 'y': 1 * scale}, {'x': 3 * scale, 'y': -1 * scale},
-      {'x': 1 * scale, 'y': -3 * scale}, {'x': -1 * scale, 'y': -3 * scale}]
-
-    this.force.nodes(this.visData)
-      .on('tick', this._tick(this))
-    /* tmpForce.force("link")
-            .links(linksP); */
+    this._updateD3Functions()
   }
+
   updateData (data, width, height) {
     /*
       Public
@@ -117,27 +113,16 @@ class ProjectGraph {
     this.width = width
     this.height = height
     this.circleMiddle = {x: this.width / 2, y: this.height / 2}
-    this.g.attr('transform', 'translate(' + (this.width / 4) + ',' +
-      (this.height / 4) + ')')
-    this.background.attr('cx', this.width / 2)
-      .attr('cy', this.height / 2).attr('r', this.height / 4)
-
+    if (this.width < this.height) {
+      this.outerRadius = this.width / 4
+    } else {
+      this.outerRadius = this.height / 4
+    }
+    this.flowPointRadius = this.outerRadius / 2
     this.visData = this._processData(data, this.type)
-    this._updateD3Functions()
+
     this._updateSvgElements()
-    this.outerRadius = this.height / 4
-    let area = this.outerRadius * this.outerRadius * Math.PI
-    let areaPerElem = (area / this.visData.length) * (80 / 100)
-    let radius = Math.sqrt(areaPerElem / Math.PI)
-    let scale = radius / 5
-    this.outerRadius = this.outerRadius - radius * (3 / 5)
-    this.polygon = [{'x': -3 * scale, 'y': -1 * scale}, {'x': -3 * scale, 'y': 1 * scale}, {'x': -1 * scale, 'y': 3 * scale},
-      {'x': 1 * scale, 'y': 3 * scale}, {'x': 3 * scale, 'y': 1 * scale}, {'x': 3 * scale, 'y': -1 * scale},
-      {'x': 1 * scale, 'y': -3 * scale}, {'x': -1 * scale, 'y': -3 * scale}]
-    this.force.force('center', d3ForceCenter(this.width / 2, this.height / 2))
-    this.force.force('collide', d3ForceCollide(radius)).nodes(this.visData)
-    this.force.nodes(this.visData)
-      .on('tick', this._tick(this))
+    this._updateD3Functions()
   }
 
   updateType (type) {
@@ -234,12 +219,49 @@ class ProjectGraph {
       Private
       Updates all nessecary D3 funcitons (e.g. ForceSimulation, Scales)
     */
+    this.polygonRadius = this._calculatePolygonRadius()
+    let scaledRadius = (this.polygonRadius * this.polygonScale)
+    this.polygon = [{'x': -1 * scaledRadius, 'y': -1 / 3 * scaledRadius}, {'x': -1 * scaledRadius, 'y': 1 / 3 * scaledRadius}, {'x': -1 / 3 * scaledRadius, 'y': 1 * scaledRadius},
+      {'x': 1 / 3 * scaledRadius, 'y': 1 * scaledRadius}, {'x': 1 * scaledRadius, 'y': 1 / 3 * scaledRadius}, {'x': 1 * scaledRadius, 'y': -1 / 3 * scaledRadius},
+      {'x': 1 / 3 * scaledRadius, 'y': -1 * scaledRadius}, {'x': -1 / 3 * scaledRadius, 'y': -1 * scaledRadius}]
+    this.force.force('center', d3ForceCenter(this.width / 2, this.height / 2))
+    this.force.force('collide', d3ForceCollide(this.polygonRadius)).nodes(this.visData)
+    this.force.nodes(this.visData)
+      .on('tick', this._tick(this))
+    /* tmpForce.force("link")
+            .links(linksP); */
+  }
+  _calculatePolygonRadius () {
+    /*
+      Calculates the Area which every Element will have to determine the radius
+      for each of the Elements
+    */
+    let radiusForResizedDots = this.outerRadius
+
+    // Calculate a radius which is close to the actual value
+    let area = radiusForResizedDots * radiusForResizedDots * Math.PI
+    let areaPerElem = (area / this.visData.length) * (83 / 100)
+    let radius = Math.sqrt(areaPerElem / Math.PI)
+
+    // Subtracts the radius to avoid overlap of the Element sprite over the outerradius
+    radiusForResizedDots = radiusForResizedDots - radius * (3 / 5)
+
+    area = radiusForResizedDots * radiusForResizedDots * Math.PI
+    areaPerElem = (area / this.visData.length) * (83 / 100)
+    radius = Math.sqrt(areaPerElem / Math.PI)
+
+    // Durch 5 damit es Visuell besser stimmt
+    return radius
   }
   _updateSvgElements () {
     /*
       Private
       Updates all nessecary SVG elements
     */
+    this.background.attr('cx', this.width / 2).attr('cy', this.height / 2)
+      .attr('r', this.outerRadius)
+    this.g.attr('transform', 'translate(' + (this.width / 4) + ',' +
+      (this.height / 4) + ')')
     this._updateNodes()
     this._updateLinks()
   }
@@ -316,7 +338,7 @@ class ProjectGraph {
         .attr('points', function (d) {
           if (!that._isInSector(d.sector.startAngle,
             d.sector.endAngle,
-            that.outerRadius,
+            that.outerRadius - that.polygonRadius,
             that.circleMiddle,
             d)) {
             d.vy += (d.sector.flowPoint.y - d.y) / 10
@@ -355,7 +377,9 @@ class ProjectGraph {
 
     return angle
   }
+
   _isInSector (startAngleRad, endAngleRad, radius, middle, point) {
+    // TODO: Improve to get also the circle Radius and clculatie if the whole circle is inside
     let angle = this._radBetweenVectors(this._vecMinus(point, middle), {x: -1, y: 0})
     let dist = this._distance(middle, point)
     // +(Math.PI*2)/4 weil es bei uns links anfängt

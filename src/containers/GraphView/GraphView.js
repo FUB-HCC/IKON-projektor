@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {default as PetriDishGraph} from './PetriDish'
-import AreaGraph from '../../components/AreaGraph/AreaGraph'
+import {default as AreaChart} from './AreaChart'
 import TimeGraph from './TimeLine'
 import ProjectModal from '../../components/Popover/Popover'
 import FilterModal from '../../components/FilterModal/FilterModal'
@@ -57,7 +57,7 @@ class GraphView extends Component {
         Graph = (<TimeGraph height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
         break
       case '2':
-        Graph = (<AreaGraph/>)
+        Graph = (<AreaChart height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
         break
       default:
         break
