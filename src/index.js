@@ -1,14 +1,21 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {BrowserRouter} from 'react-router-dom'
 import './index.css'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 import {Provider} from 'react-redux'
-import { createStore } from 'redux'
+import { createStore, combineReducers } from 'redux'
+import { routerReducer } from 'react-router-redux'
+import { BrowserRouter } from 'react-router-dom'
 import reducer from './store/reducer/reducer'
 
-const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+const store = createStore(
+  combineReducers({
+    main: reducer,
+    routing: routerReducer
+  }),
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 
 ReactDOM.render(
   <Provider store={store}>

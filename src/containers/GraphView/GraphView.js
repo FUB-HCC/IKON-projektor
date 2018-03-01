@@ -10,6 +10,7 @@ import * as actions from '../../store/actions/actions'
 import Navigation from '../../components/Navigation/Navigation'
 import Aux from '../../hoc/AuxComponent/AuxComponent'
 
+
 class GraphView extends Component {
   constructor (props) {
     super(props)

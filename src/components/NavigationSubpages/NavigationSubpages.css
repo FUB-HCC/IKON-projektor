@@ -1,0 +1,17 @@
+.ContainerSub{
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    color: rgba(100,100,100,0.5);
+}
+
+/*.Logo {
+    height: 60%;
+    width: 60%;
+}*/
+
+.active {
+    color: white;
+}
