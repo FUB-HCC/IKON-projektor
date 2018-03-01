@@ -35,17 +35,21 @@
 }
 
 .Indicator {
+    display: flex;
     margin-bottom: 1%;
     margin-left: 20px;
     background: #989aa1;
-    width: 30px;
-    height: 27px;
+    width: 3vh;
+    height: 3vh;
     color: white;
     border-radius: 50%;
-    line-height: 30px;
-    text-align: center;
-    font-size: 15px;
-    padding-top: 2px;
+    line-height: 1.5vh;
+    justify-content: center;
+    font-size: 1.5vh;
+}
+.IndicatorDigit{
+    margin-top: 38%;
+    justify-content: center;
 }
 
 .Filter {

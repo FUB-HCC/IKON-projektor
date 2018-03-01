@@ -3,6 +3,7 @@
     display: flex;
     align-items: center;
     position: absolute;
+    margin: 0%;
     top: 5vh;
     left: 5vh;
     color: rgba(100,100,100,0.5);
