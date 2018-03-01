@@ -7,7 +7,6 @@ class Discoveries extends Component {
     return (
       <div className={classes.BackGradient}>
         <NavigationSubpages/>
-        <h1>Entdeckung</h1>
       </div>
     )
   }

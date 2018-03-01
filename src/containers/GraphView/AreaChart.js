@@ -29,7 +29,7 @@ class AreaChart extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  data: state.filteredData, // zu visualisierende Daten (immer up-to-date)
+  data: state.main.filteredData, // zu visualisierende Daten (immer up-to-date)
   target: 'graph', // id of the target svg tag
   isVisActive: false // change to true for rendering of true visualization
   // this is also a good place to prepare the data since the data given to the visualization is then minimal

@@ -29,7 +29,7 @@ const graphColors = {
 }
 
 const mapStateToProps = state => {
-  const processedData = processData(state.filteredData, graphColors)
+  const processedData = processData(state.main.filteredData, graphColors)
   return {
     data: processedData,
     target: 'graph',

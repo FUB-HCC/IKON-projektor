@@ -6,16 +6,16 @@ const NavigationSubpages = () => {
   return (
     <ul className={classes.ContainerSub}>
       <li>
-        <NavLink activeClassName='active' to='/projects'>PROJEKTE</NavLink>
+        <NavLink className={classes.NavigationElement} activeStyle={{color: '#f0faf0'}} to='/projects'>PROJEKTE</NavLink>
       </li>
       <li>
-        <NavLink activeClassName='active' to='/graphview'>ERKUNDEN</NavLink>
+        <NavLink className={classes.NavigationElement} activeStyle={{color: '#f0faf0'}} to='/explore'>ERKUNDEN</NavLink>
       </li>
       <li>
-        <NavLink activeClassName='active' to='/discoveries'>ENTDECKUNG</NavLink>
+        <NavLink className={classes.NavigationElement} activeStyle={{color: '#f0faf0'}} to='/discoveries'>ENTDECKUNG</NavLink>
       </li>
       <li>
-        <NavLink activeClassName='active' to='/about'>HILFE</NavLink>
+        <NavLink className={classes.NavigationElement} activeStyle={{color: '#f0faf0'}} to='/about'>HILFE</NavLink>
       </li>
     </ul>
   )

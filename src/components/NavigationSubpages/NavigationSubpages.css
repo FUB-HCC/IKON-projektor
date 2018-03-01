@@ -1,16 +1,20 @@
 .ContainerSub{
+    padding: 0%;
     display: flex;
     align-items: center;
     position: absolute;
-    top: 5%;
-    left: 5%;
+    top: 5vh;
+    left: 5vh;
     color: rgba(100,100,100,0.5);
+    list-style: none;
 }
 
-/*.Logo {
-    height: 60%;
-    width: 60%;
-}*/
+.NavigationElement{
+    margin-right: 3vw;
+    text-decoration: none;
+    color: #989aa1;
+    font-size: 2vh;
+}
 
 .active {
     color: white;

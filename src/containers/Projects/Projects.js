@@ -7,7 +7,6 @@ class Projects extends Component {
     return (
       <div className={classes.BackGradient}>
         <NavigationSubpages/>
-        <h1>Projekte</h1>
       </div>
     )
   }
