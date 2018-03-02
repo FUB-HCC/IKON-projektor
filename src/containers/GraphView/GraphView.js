@@ -78,7 +78,7 @@ class GraphView extends Component {
         </Aux>
     }
     return (
-      <div className={classes.BackGradient}>
+      <div>
         {modal}
         <div className={classes.FilterWrapper}>
           <Navigation active={this.props.graph} changeGraph={this.changeGraphHandler}/>
