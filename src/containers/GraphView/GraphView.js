@@ -78,7 +78,7 @@ class GraphView extends Component {
         </Aux>
     }
     return (
-      <div>
+      <div className={classes.OuterDiv}>
         {modal}
         <div className={classes.FilterWrapper}>
           <Navigation active={this.props.graph} changeGraph={this.changeGraphHandler}/>

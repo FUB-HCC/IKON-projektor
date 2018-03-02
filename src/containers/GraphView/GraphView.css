@@ -59,3 +59,8 @@
     color: white;
     font-weight: bold;
 }
+.OuterDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
