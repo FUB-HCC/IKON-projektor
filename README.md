@@ -36,7 +36,7 @@ Both should print their respective version numbers</p>
 <li> let's say you are done with your HTML and you want to render it in the 'About' section of the app:
 <ul>
 <li>navigate to <code>src/containers/about/About.js </code></li>
-<li>let's say your js file is at <code>src/components/staticHTML/about/ </code>import your HTML: <code>import myHTML from '../../components/staticHTML/about/myHTML'</code>
+<li>let's say your js file is at <code>src/components/staticHTML/about/ </code>, then you can import your HTML: <code>import {myHTML} from '../../components/staticHTML/about/myHTML'</code>
 <li>add it between the divs in the <code>render()</code> function of About.js like this: <code> {myHTML}</code></li>
 </ul>
 </ul>
