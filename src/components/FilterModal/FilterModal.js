@@ -55,7 +55,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   return {
-    filters: state.filter
+    filters: state.main.filter
   }
 }
 

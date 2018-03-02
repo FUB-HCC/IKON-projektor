@@ -103,10 +103,10 @@ class GraphView extends Component {
 
 const mapStateToProps = state => {
   return {
-    graph: state.graph,
-    selectedProject: state.selectedProject,
-    selectedDataPoint: state.selectedProject ? state.data[state.selectedProject] : undefined,
-    activeFilterCount: calculateActiveFilterCount(state.filter)
+    graph: state.main.graph,
+    selectedProject: state.main.selectedProject,
+    selectedDataPoint: state.main.selectedProject ? state.main.data[state.main.selectedProject] : undefined,
+    activeFilterCount: calculateActiveFilterCount(state.main.filter)
   }
 }
 
