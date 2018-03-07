@@ -74,7 +74,7 @@ class GraphView extends Component {
       modal =
         <Aux>
           <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.changeModalHandler(-1)}/>
-          <FilterModal/>
+          <FilterModal closeModal = {() => this.changeModalHandler(-1)} />
         </Aux>
     }
     return (

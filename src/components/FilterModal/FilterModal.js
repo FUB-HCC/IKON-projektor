@@ -3,6 +3,7 @@ import classes from './FilterModal.css'
 import FilterElement from './FilterElement'
 import {connect} from 'react-redux'
 import * as actions from '../../store/actions/actions'
+import CloseIcon from '../../assets/Exit.svg'
 
 class FilterModal extends Component {
   constructor (props) {
@@ -41,6 +42,7 @@ class FilterModal extends Component {
             <input onChange={this.handleInputChange} className={classes.Input} type="text"/>
           </div>
         </div>
+        <div className={classes.closebutton} onClick={this.props.closeModal}><img src={CloseIcon}/></div>
       </div>
     )
   }
