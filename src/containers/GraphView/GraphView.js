@@ -5,6 +5,7 @@ import {default as AreaChart} from './AreaChart'
 import TimeGraph from './TimeLine'
 import ProjectModal from '../../components/Popover/Popover'
 import FilterModal from '../../components/FilterModal/FilterModal'
+import FilterChips from '../../components/FilterChips/FilterChips'
 import classes from './GraphView.css'
 import * as actions from '../../store/actions/actions'
 import Navigation from '../../components/Navigation/Navigation'
@@ -96,6 +97,7 @@ class GraphView extends Component {
           </div>
         </div>
         {Graph}
+        <FilterChips amount={this.props.filterAmount}/>
       </div>
     )
   }
@@ -104,6 +106,7 @@ class GraphView extends Component {
 const mapStateToProps = state => {
   return {
     graph: state.main.graph,
+    filterAmount: state.main.filter.length,
     selectedProject: state.main.selectedProject,
     selectedDataPoint: state.main.selectedProject ? state.main.data[state.main.selectedProject] : undefined,
     activeFilterCount: calculateActiveFilterCount(state.main.filter)

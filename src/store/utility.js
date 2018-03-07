@@ -96,3 +96,8 @@ export const sponsorStringToInt = (state, str) => {
 export const sponsorIntToString = (state, int) => {
   return state.filter[2].distValues[int] ? state.filter[2].distValues[int] : int
 }
+
+export const getColor = (input) => {
+  const fColor = getFieldColor(input)
+  return fColor === '#989aa1' ? getTopicColor(input) : fColor
+}

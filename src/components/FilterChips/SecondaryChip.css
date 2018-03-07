@@ -1,0 +1,23 @@
+.Chip {
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-size: 1.2vh;
+    height: 2.5vh;
+    background: white;
+    border-radius: 10px;
+    margin: 1vh 0.5vh 1vh 0.5vh;
+    padding-left: 0.5vh;
+    padding-right: 0.5vh;
+}
+
+.PopButton {
+    position: absolute;
+    top: -0.8vh;
+    right: -0.8vh;
+    width: 1.5vh;
+    height: 1.5vh;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.3);
+    cursor: pointer;
+}
