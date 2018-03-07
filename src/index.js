@@ -12,12 +12,12 @@ import reducer from './store/reducer/reducer'
 export const history = createHistory()
 
 const middleware = routerMiddleware(history)
-
+const mergedReducers = combineReducers({
+  main: reducer,
+  routing: routerReducer
+})
 const store = createStore(
-  combineReducers({
-    main: reducer,
-    routing: routerReducer
-  }),
+  mergedReducers,
   applyMiddleware(middleware),
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )

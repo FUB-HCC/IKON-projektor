@@ -1,0 +1,10 @@
+.FullWidth {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    bottom: 0;
+    left: 5vh;
+    width: calc(100vw - 10vh);
+    height: 16vh;
+    overflow: scroll;
+}
