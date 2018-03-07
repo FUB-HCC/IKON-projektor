@@ -1,0 +1,16 @@
+.outerDiv{
+    width: 100%;
+}
+
+.title{
+    margin-top: 0vh;
+    margin-bottom: 0vh;
+    font-size: 1.1vh;
+}
+
+.content{
+    margin-top: 0.5vh;
+    margin-left: 1vh;
+    font-size: 1.0vh;
+    margin-bottom: 1vh;
+}
