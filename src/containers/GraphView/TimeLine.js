@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {fieldsIntToString, getFieldColor} from '../../store/utility'
-import {default as TimeLineGraph} from '../../components/Visualizations/TimeLine'
+import {default as TimeLineGraph} from '../../components/Visualizations/TimeLine/TimeLine'
 
 class TimeLine extends React.Component {
   componentDidMount () {

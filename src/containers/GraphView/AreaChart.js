@@ -1,7 +1,7 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import aGraph from '../../assets/Field.png'
-import {default as AreaChartVis} from '../../components/Visualizations/AreaChart'
+import {default as AreaChartVis} from '../../components/Visualizations/AreaChart/AreaChart'
 import * as actions from '../../store/actions/actions'
 
 class AreaChart extends React.Component {

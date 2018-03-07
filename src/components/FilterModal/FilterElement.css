@@ -25,7 +25,13 @@
 }
 
 .ButtonCollapsed {
+    height: 3vh;
+    width: 4vh;
     transform: rotate(180deg);
+}
+.ButtonExpanded {
+    height: 3vh;
+    width: 4vh;
 }
 
 .Text{

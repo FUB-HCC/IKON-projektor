@@ -9,6 +9,7 @@ import classes from './GraphView.css'
 import * as actions from '../../store/actions/actions'
 import Navigation from '../../components/Navigation/Navigation'
 import Aux from '../../hoc/AuxComponent/AuxComponent'
+import Statistics from '../../components/Statistics/Statistics'
 
 class GraphView extends Component {
   constructor (props) {
@@ -68,13 +69,13 @@ class GraphView extends Component {
       modal =
         <Aux>
           <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.changeModalHandler(-1)}/>
-          <ProjectModal data={this.props.selectedDataPoint} height={this.state.height}/>
+          <ProjectModal data={this.props.selectedDataPoint} height={this.state.height} closeModal = {() => this.changeModalHandler(-1)}/>
         </Aux>
     } else if (this.state.activePopover === 2) {
       modal =
         <Aux>
           <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.changeModalHandler(-1)}/>
-          <FilterModal/>
+          <FilterModal closeModal = {() => this.changeModalHandler(-1)} />
         </Aux>
     }
     return (
@@ -94,6 +95,9 @@ class GraphView extends Component {
               </div>
             </div>
           </div>
+        </div>
+        <div className={classes.statisticsWrapper}>
+          <Statistics />
         </div>
         {Graph}
       </div>
