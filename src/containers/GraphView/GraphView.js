@@ -97,7 +97,7 @@ class GraphView extends Component {
           </div>
         </div>
         <div className={classes.statisticsWrapper}>
-          <Statistics />
+          <Statistics filter = {this.props.filter} filteredData={this.props.filteredData}/>
         </div>
         {Graph}
       </div>
@@ -110,7 +110,9 @@ const mapStateToProps = state => {
     graph: state.main.graph,
     selectedProject: state.main.selectedProject,
     selectedDataPoint: state.main.selectedProject ? state.main.data[state.main.selectedProject] : undefined,
-    activeFilterCount: calculateActiveFilterCount(state.main.filter)
+    activeFilterCount: calculateActiveFilterCount(state.main.filter),
+    filter: state.main.filter,
+    filteredData: state.main.filteredData
   }
 }
 
