@@ -9,6 +9,7 @@ import classes from './GraphView.css'
 import * as actions from '../../store/actions/actions'
 import Navigation from '../../components/Navigation/Navigation'
 import Aux from '../../hoc/AuxComponent/AuxComponent'
+import Statistics from '../../components/Statistics/Statistics'
 
 class GraphView extends Component {
   constructor (props) {
@@ -94,6 +95,9 @@ class GraphView extends Component {
               </div>
             </div>
           </div>
+        </div>
+        <div className={classes.statisticsWrapper}>
+          <Statistics />
         </div>
         {Graph}
       </div>
