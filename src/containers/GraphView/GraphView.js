@@ -68,7 +68,7 @@ class GraphView extends Component {
       modal =
         <Aux>
           <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.changeModalHandler(-1)}/>
-          <ProjectModal data={this.props.selectedDataPoint} height={this.state.height}/>
+          <ProjectModal data={this.props.selectedDataPoint} height={this.state.height} closeModal = {() => this.changeModalHandler(-1)}/>
         </Aux>
     } else if (this.state.activePopover === 2) {
       modal =
