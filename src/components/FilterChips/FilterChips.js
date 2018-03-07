@@ -22,7 +22,6 @@ class FilterChips extends Component {
     const primaryChips = []
     for (let i = 0; i < this.props.amount; i++) {
       const expanded = this.state.activeChip === i
-      console.log(expanded)
       primaryChips.push(<PrimaryChip key={i} expanded={expanded} toggle={this.toggleSubChips} filtId={i}/>)
     }
     return (
