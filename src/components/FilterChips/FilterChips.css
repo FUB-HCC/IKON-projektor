@@ -7,4 +7,5 @@
     width: calc(100vw - 10vh);
     height: 16vh;
     overflow: scroll;
+    transition: all 2s ease-out;
 }

@@ -7,7 +7,7 @@
     background: white;
     border-radius: 10px;
     padding-left: 0.5vh;
-    transition: all 0.5s ease-out;
+    transition: all 1s ease-out;
     cursor: default;
     margin-right: 0.5vh;
 }
@@ -20,14 +20,15 @@
     position: relative;
     display: flex;
     align-items: center;
-    transition: all 0.25s ease-out;
+    transition: all 1s ease-out;
 }
 
 .SubChips{
     position: relative;
-    width: 0;
+    width: auto;
+    max-width: 0;
     display: flex;
-    transition: all 0.25s ease-out;
+    transition: all 1s ease-out;
     overflow: hidden;
     padding-right: 0.5vh;
 }
