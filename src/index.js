@@ -1,20 +1,30 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {BrowserRouter} from 'react-router-dom'
 import './index.css'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
 import {Provider} from 'react-redux'
-import { createStore } from 'redux'
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+import createHistory from 'history/createBrowserHistory'
+import { routerReducer, routerMiddleware } from 'react-router-redux'
 import reducer from './store/reducer/reducer'
 
-const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+export const history = createHistory()
+
+const middleware = routerMiddleware(history)
+const mergedReducers = combineReducers({
+  main: reducer,
+  routing: routerReducer
+})
+const store = createStore(
+  mergedReducers,
+  applyMiddleware(middleware),
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+)
 
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
-      <App/>
-    </BrowserRouter>
+    <App/>
   </Provider>
   , document.getElementById('root'))
 registerServiceWorker()

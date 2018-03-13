@@ -3,6 +3,7 @@ import classes from './FilterModal.css'
 import FilterElement from './FilterElement'
 import {connect} from 'react-redux'
 import * as actions from '../../store/actions/actions'
+import CloseIcon from '../../assets/Exit.svg'
 
 class FilterModal extends Component {
   constructor (props) {
@@ -26,7 +27,7 @@ class FilterModal extends Component {
 
   render () {
     const filterElements = this.props.filters.map((filter, key) => filter.type === 'a'
-      ? <FilterElement id={key} key={key} name={filter.name} keys={filter.keys} value={filter.value} open={this.state.expandedFilters[key]} change={this.props.filterChangeHandler} expand={this.handleFilterExpand}/> : null)
+      ? <FilterElement id={key} key={key} name={filter.name} keys={filter.distValues} value={filter.value} open={this.state.expandedFilters[key]} change={this.props.filterChangeHandler} expand={this.handleFilterExpand}/> : null)
     return (
       <div className={classes.FilterModal}>
         <div className={classes.CheckBoxes}>
@@ -41,6 +42,7 @@ class FilterModal extends Component {
             <input onChange={this.handleInputChange} className={classes.Input} type="text"/>
           </div>
         </div>
+        <div className={classes.closebutton} onClick={this.props.closeModal}><img src={CloseIcon}/></div>
       </div>
     )
   }
@@ -54,24 +56,8 @@ const mapDispatchToProps = dispatch => {
 }
 
 const mapStateToProps = state => {
-  let filters = []
-  const data = state.data
-  state.filter.map((filter) => {
-    const distinctValues = []
-    Object.keys(data).forEach(dataEntries => {
-      Object.keys(data[dataEntries]).forEach(dataKeys => {
-        if (dataKeys === filter.filterKey) {
-          if (!distinctValues.some(e => e === data[dataEntries][filter.filterKey])) {
-            distinctValues.push(data[dataEntries][filter.filterKey])
-          }
-        }
-      })
-    })
-
-    filters.push({name: filter.filterKey, type: filter.type, keys: distinctValues, value: filter.value})
-  })
   return {
-    filters: filters
+    filters: state.main.filter
   }
 }
 

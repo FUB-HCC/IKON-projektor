@@ -1,0 +1,51 @@
+.BackGradient {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(60deg, #76738B, #855E5F, #76738B, #646E3F, #76738B, #5F6648, #76738B, #54555E); /*background: linear-gradient(60deg, #434058, #522B2C, #434058, #313B0C, #434058, #2C3315, #434058, #21222B);*/
+    background-size: 800% 800%;
+    -webkit-animation: Gradient 60s ease infinite;
+    -moz-animation: Gradient 60s ease infinite;
+    animation: Gradient 60s ease infinite;
+    overflow: hidden;
+    position: fixed;
+    z-index: -999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@-webkit-keyframes Gradient {
+    0% {
+        background-position: 0% 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0% 50%
+    }
+}
+
+@-moz-keyframes Gradient {
+    0% {
+        background-position: 0% 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0% 50%
+    }
+}
+
+@keyframes Gradient {
+    0% {
+        background-position: 0% 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0% 50%
+    }
+}

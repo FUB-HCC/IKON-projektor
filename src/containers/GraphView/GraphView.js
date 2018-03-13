@@ -1,19 +1,21 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {default as PetriDishGraph} from './PetriDish'
-import AreaGraph from '../../components/AreaGraph/AreaGraph'
+import {default as AreaChart} from './AreaChart'
 import TimeGraph from './TimeLine'
 import ProjectModal from '../../components/Popover/Popover'
 import FilterModal from '../../components/FilterModal/FilterModal'
+import FilterChips from '../../components/FilterChips/FilterChips'
 import classes from './GraphView.css'
 import * as actions from '../../store/actions/actions'
 import Navigation from '../../components/Navigation/Navigation'
 import Aux from '../../hoc/AuxComponent/AuxComponent'
+import Statistics from '../../components/Statistics/Statistics'
 
 class GraphView extends Component {
   constructor (props) {
     super(props)
-    this.state = {activePopover: this.props.selectedProjects ? 1 : -1, height: window.innerHeight, width: window.innerWidth}
+    this.state = {activePopover: this.props.selectedProject ? 1 : -1, height: window.innerHeight, width: window.innerWidth}
     this.changeModalHandler = this.changeModalHandler.bind(this)
     this.changeGraphHandler = this.changeGraphHandler.bind(this)
     this.projectClickHandler = this.projectClickHandler.bind(this)
@@ -33,6 +35,7 @@ class GraphView extends Component {
     this.setState({
       activePopover: newState
     })
+    if (newState === -1) { this.props.deactivatePopover() }
   }
 
   projectClickHandler (project, vis) {
@@ -57,7 +60,7 @@ class GraphView extends Component {
         Graph = (<TimeGraph height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
         break
       case '2':
-        Graph = (<AreaGraph/>)
+        Graph = (<AreaChart height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
         break
       default:
         break
@@ -67,17 +70,17 @@ class GraphView extends Component {
       modal =
         <Aux>
           <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.changeModalHandler(-1)}/>
-          <ProjectModal data={this.props.selectedDataPoint} height={this.state.height}/>
+          <ProjectModal data={this.props.selectedDataPoint} height={this.state.height} closeModal = {() => this.changeModalHandler(-1)}/>
         </Aux>
     } else if (this.state.activePopover === 2) {
       modal =
         <Aux>
           <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.changeModalHandler(-1)}/>
-          <FilterModal/>
+          <FilterModal closeModal = {() => this.changeModalHandler(-1)} />
         </Aux>
     }
     return (
-      <div className={classes.BackGradient}>
+      <div className={classes.OuterDiv}>
         {modal}
         <div className={classes.FilterWrapper}>
           <Navigation active={this.props.graph} changeGraph={this.changeGraphHandler}/>
@@ -94,7 +97,11 @@ class GraphView extends Component {
             </div>
           </div>
         </div>
+        <div className={classes.statisticsWrapper}>
+          <Statistics filter = {this.props.filter} filteredData={this.props.filteredData}/>
+        </div>
         {Graph}
+        <FilterChips amount={this.props.filterAmount}/>
       </div>
     )
   }
@@ -102,23 +109,27 @@ class GraphView extends Component {
 
 const mapStateToProps = state => {
   return {
-    graph: state.graph,
-    selectedProject: state.selectedProject,
-    selectedDataPoint: state.selectedProject ? state.data[state.selectedProject] : undefined,
-    activeFilterCount: calculateActiveFilterCount(state.filter)
+    graph: state.main.graph,
+    filterAmount: state.main.filter.length,
+    selectedProject: state.main.selectedProject,
+    selectedDataPoint: state.main.selectedProject ? state.main.data[state.main.selectedProject] : undefined,
+    activeFilterCount: calculateActiveFilterCount(state.main.filter),
+    filter: state.main.filter,
+    filteredData: state.main.filteredData
   }
 }
 
 const calculateActiveFilterCount = (filter) => {
   let activeFilterCount = 0
-  filter.forEach(f => { activeFilterCount += (f.distCount !== f.value.length ? 1 : 0) })
+  filter.forEach(f => { activeFilterCount += (f.distValues.length !== f.value.length ? 1 : 0) })
   return activeFilterCount
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     changeGraph: (value) => dispatch(actions.changeGraph(value)),
-    activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis))
+    activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
+    deactivatePopover: () => dispatch(actions.deactivatePopover())
   }
 }
 

@@ -9,12 +9,11 @@ export const changeGraph = (value) => {
   }
 }
 
-export const filterChange = (filterId, value, form) => {
+export const filterChange = (filterId, value) => {
   return {
     type: actionTypes.FILTER_CHANGE,
     id: filterId,
-    value: value,
-    form: form
+    value: value
   }
 }
 
@@ -31,5 +30,11 @@ export const activatePopover = (datapoint, vis) => {
     type: actionTypes.ACTIVATE_POPOVER,
     element: datapoint,
     vis: vis
+  }
+}
+
+export const deactivatePopover = () => {
+  return {
+    type: actionTypes.DEACTIVATE_POPOVER
   }
 }

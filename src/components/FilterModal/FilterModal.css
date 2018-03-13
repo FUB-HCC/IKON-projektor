@@ -2,9 +2,9 @@
     position: absolute;
     background: rgba(67, 64, 88, 0.8);
     z-index: 9999;
-    width: 65%;
-    height: 65%;
-    padding: 2%;
+    width: 80vh;
+    height: 70vh;
+    padding: 2vh;
 
 }
 .CheckBoxes {
@@ -36,4 +36,13 @@
     color: white;
     font-size: 3vh;
     background: transparent;
+}
+.closebutton{
+    width: 4.7vh;
+    height: 4.7vh;
+    position: absolute;
+    top: 0.2vh;
+    left: 84.2vh;
+    cursor: pointer;
+    margin-left: 2vh;
 }

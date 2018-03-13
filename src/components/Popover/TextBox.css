@@ -5,14 +5,26 @@
     width:100%;
     height:100%;
     display: flex;
-    justify-content: center;
     overflow: scroll;
     overflow-scrolling: auto;
 }
 .text{
     margin:auto;
-    display: flex;
+    position: relative;
+    display: block;
     padding: 5%;
     padding-top: 3%;
     padding-bottom: 3%;
+    z-index: 1;
+
+}
+.title{
+    color: rgba(221,221,221,0.3);
+    height: 15%;
+    padding-top: 1%;
+    padding-left: 1%;
+    font-size: 1vh;
+    display: block;
+    position: absolute;
+    z-index: 0;
 }

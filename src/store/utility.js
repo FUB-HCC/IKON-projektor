@@ -3,31 +3,35 @@ import {stringify as queryStringify} from 'query-string'
 
 export const updateUrl = (newState, urlData = {}) => {
   let newUrlData = {}
-  urlData.graph ? newUrlData.graph = urlData.graph : newUrlData.graph = newState.graph
+  urlData.g ? newUrlData.g = urlData.g : newUrlData.g = newState.graph
 
-  urlData.field ? newUrlData.field = urlData.field : newUrlData.field = newState.filter[0].value
+  urlData.f ? newUrlData.f = urlData.f.map(f => { return fieldsIntToString(f) }) : newUrlData.f = newState.filter[0].value
 
-  urlData.topic ? newUrlData.topic = urlData.topic.map(t => { return topicIntToString(t) }) : newUrlData.topic = newState.filter[1].value
+  urlData.t ? newUrlData.t = urlData.t.map(t => { return topicIntToString(t) }) : newUrlData.t = newState.filter[1].value
 
-  urlData.sponsor ? newUrlData.sponsor = urlData.sponsor : newUrlData.sponsor = newState.filter[2].value
+  urlData.s ? newUrlData.s = urlData.s.map(s => { return sponsorIntToString(newState, s) }) : newUrlData.s = newState.filter[2].value
 
-  urlData.selectedProject ? newUrlData.selectedProject = urlData.selectedProject : newUrlData.selectedProject = newState.selectedProject
+  urlData.sP ? newUrlData.sP = urlData.sP : newUrlData.sP = newState.selectedProject
 
-  let minifiedUrlData = {...newUrlData, topic: newUrlData.topic.map(t => topicStringToInt(t))}
+  let minifiedUrlData = {
+    ...newUrlData,
+    t: newUrlData.t.map(f => topicStringToInt(f)),
+    f: newUrlData.f.map(t => fieldsStringToInt(t)),
+    s: newUrlData.s.map(s => sponsorStringToInt(newState, s))}
   const newUrl = '?' + queryStringify(minifiedUrlData)
   history.pushState(null, null, newUrl)
 
-  const filterValues = [newUrlData.field, newUrlData.topic, newUrlData.sponsor]
+  const filterValues = [newUrlData.f, newUrlData.t, newUrlData.s]
   return {
-    graph: newUrlData.graph,
+    graph: newUrlData.g,
     filter: newState.filter.map((f, i) => ({
       name: f.name,
       filterKey: f.filterKey,
       type: f.type,
-      distCount: f.distCount,
+      distValues: f.distValues,
       value: filterValues[i]
     })),
-    selectedProject: newUrlData.selectedProject
+    selectedProject: newUrlData.sP
   }
 }
 
@@ -83,4 +87,17 @@ export const getFieldColor = (field) => {
 
 export const getTopicColor = (topic) => {
   return topicMapping.find(e => e.name === topic) ? topicMapping.find(e => e.name === topic).color : '#989aa1'
+}
+
+export const sponsorStringToInt = (state, str) => {
+  return state.filter[2].distValues.find(e => e === str) ? state.filter[2].distValues.indexOf(str) : str
+}
+
+export const sponsorIntToString = (state, int) => {
+  return state.filter[2].distValues[int] ? state.filter[2].distValues[int] : int
+}
+
+export const getColor = (input) => {
+  const fColor = getFieldColor(input)
+  return fColor === '#989aa1' ? getTopicColor(input) : fColor
 }

@@ -1,8 +1,9 @@
 .Container {
-    height: 64%;
+    height: 60%;
     width: 100%;
     color: white;
     background: rgba(67,64,88, 0.4);
+    padding-bottom: 1.4vh;
 }
 
 .Header{

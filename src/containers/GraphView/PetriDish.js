@@ -20,7 +20,7 @@ class PetriDish extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  data: state.filteredData,
+  data: state.main.filteredData,
   target: 'graph'
 
 })

@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateUrl, fieldsIntToString} from '../utility'
+import {updateUrl, fieldsIntToString, topicToField} from '../utility'
 import {getData} from '../../assets/data'
 import {parse as queryStringParse} from 'query-string'
 
@@ -39,11 +39,16 @@ const applyFilters = (data, filter) => {
   })
   return filteredData
 }
+const compare = (a, b) => {
+  if (topicToField(a) < topicToField(b)) return -1
+  else return 1
+}
+
 const initialState = {
   filter: [
-    {name: 'f', filterKey: 'forschungsbereichstr', type: 'a', distCount: distFields.length, value: distFields},
-    {name: 't', filterKey: 'hauptthema', type: 'a', distCount: distTopics.length, value: distTopics},
-    {name: 's', filterKey: 'geldgeber', type: 'a', distCount: distSponsor.length, value: distSponsor}
+    {name: 'Forschungsgebiet', filterKey: 'forschungsbereichstr', type: 'a', distValues: distFields.sort(compare), value: distFields},
+    {name: 'Hauptthema', filterKey: 'hauptthema', type: 'a', distValues: distTopics.sort(compare), value: distTopics},
+    {name: 'Geldgeber', filterKey: 'geldgeber', type: 'a', distValues: distSponsor.sort(compare), value: distSponsor}
   ],
   graph: '0',
   data: data,
@@ -75,6 +80,10 @@ const reducer = (state = initialState, action) => {
     case actionTypes.ACTIVATE_POPOVER:
       console.log('STATE CHANGE: ', action.type, action)
       return activatePopover(state, action)
+
+    case actionTypes.DEACTIVATE_POPOVER:
+      console.log('STATE CHANGE: ', action.type, action)
+      return deactivatePopover(state)
 
     default:
       // console.log('STATE CHANGE: DEFAULT')
@@ -130,6 +139,15 @@ const activatePopover = (state, action) => {
     updateUrl(newState)
     return newState
   }
+}
+
+const deactivatePopover = (state) => {
+  const newState = {
+    ...state,
+    selectedProject: undefined
+  }
+  updateUrl(newState)
+  return newState
 }
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
