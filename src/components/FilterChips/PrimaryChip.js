@@ -15,7 +15,7 @@ class PrimaryChip extends Component {
           <span className={classes.Caption}>{filter.name}</span>
           <div className={classes.Indicator}><div className={classes.IndicatorDigit}>{filter.value.length}</div></div>
         </div>
-        <div className={classes.SubChips} style={this.props.expanded ? {maxWidth: '200vw'} : {maxWidth: '0'}}>{secChips}</div>
+        <div className={classes.SubChips} style={this.props.expanded ? {maxWidth: '250vh'} : {maxWidth: '0'}}>{secChips}</div>
         <div className={classes.ExpandCollapse} onClick={() => this.props.toggle(this.props.filtId)}>{this.props.expanded ? '<<' : '>>'}</div>
       </div>
     )

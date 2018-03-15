@@ -35,6 +35,7 @@ export const updateUrl = (newState, urlData = {}) => {
   }
 }
 
+// field colors
 const fieldsMapping = [
   {name: 'Evolution und Geoprozesse', field: 1, color: '#7d913c'},
   {name: 'Sammlungsentwicklung und Biodiversitätsentdeckung', field: 2, color: '#d9ef36'},
@@ -42,6 +43,7 @@ const fieldsMapping = [
   {name: 'Wissenskommunikation und Wissensforschung', field: 4, color: '#ed9798'}
 ]
 
+// topic colors
 const topicMapping = [
   {name: 'Wissenschaftsdatenmanagement', num: '1', field: 3, color: '#8184a7'},
   {name: 'Biodiversitäts- und Geoinformatik', num: '2', field: 3, color: '#8184a7'},
@@ -82,11 +84,11 @@ export const topicToField = (topic) => {
 }
 
 export const getFieldColor = (field) => {
-  return fieldsMapping.find(e => e.name === field) ? fieldsMapping.find(e => e.name === field).color : '#989aa1'
+  return fieldsMapping.find(e => e.name === field) ? fieldsMapping.find(e => e.name === field).color : '#989aa1' // default color field
 }
 
 export const getTopicColor = (topic) => {
-  return topicMapping.find(e => e.name === topic) ? topicMapping.find(e => e.name === topic).color : '#989aa1'
+  return topicMapping.find(e => e.name === topic) ? topicMapping.find(e => e.name === topic).color : '#989aa1' // default color topic
 }
 
 export const sponsorStringToInt = (state, str) => {

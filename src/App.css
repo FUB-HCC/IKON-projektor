@@ -49,3 +49,7 @@
         background-position: 0% 50%
     }
 }
+
+::-webkit-scrollbar {
+    display: none;
+}
