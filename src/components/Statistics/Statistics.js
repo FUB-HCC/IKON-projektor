@@ -22,7 +22,7 @@ const Statistics = (props) => {
 
     const newestProject = props.filteredData[Object.keys(props.filteredData).sort(sortNewest)[0]]
     statisticsRows.push({
-      title: 'NeuestesProjekt',
+      title: 'Neuestes Projekt',
       content: newestProject.titel,
       color: getFieldColor(newestProject.forschungsbereichstr)
     })

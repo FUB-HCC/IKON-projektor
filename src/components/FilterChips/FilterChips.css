@@ -6,8 +6,9 @@
     left: 5vh;
     width: calc(100vw - 10vh);
     height: 16vh;
-    overflow: scroll;
-    transition: all 2s ease-out;
+    overflow-x: auto;
+    overflow-y: hidden;
+    transition: all 1s ease-out;
 
 
 }
