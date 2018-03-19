@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {default as PetriDishGraph} from './PetriDish'
 import {default as AreaChart} from './AreaChart'
 import TimeGraph from './TimeLine'
-import ProjectModal from '../../components/Popover/Popover'
+import ProjectModal from '../../components/ProjectPopover/Popover'
 import FilterModal from '../../components/FilterModal/FilterModal'
 import FilterChips from '../../components/FilterChips/FilterChips'
 import classes from './GraphView.css'
@@ -69,13 +69,13 @@ class GraphView extends Component {
     if (this.state.activePopover === 1) {
       modal =
         <Aux>
-          <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.changeModalHandler(-1)}/>
+          <div style={{width: '100vw', height: '100vh', position: 'absolute', zIndex: '10'}} onClick={() => this.changeModalHandler(-1)}/>
           <ProjectModal data={this.props.selectedDataPoint} height={this.state.height} closeModal = {() => this.changeModalHandler(-1)}/>
         </Aux>
     } else if (this.state.activePopover === 2) {
       modal =
         <Aux>
-          <div style={{width: '100vw', height: '100vh', position: 'absolute'}} onClick={() => this.changeModalHandler(-1)}/>
+          <div style={{width: '100vw', height: '100vh', position: 'absolute', zIndex: '10'}} onClick={() => this.changeModalHandler(-1)}/>
           <FilterModal closeModal = {() => this.changeModalHandler(-1)} />
         </Aux>
     }
