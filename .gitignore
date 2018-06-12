@@ -66,6 +66,10 @@ typings/
 .env
 
 /src/assets/data.js
+/src/assets/data.txt
+/src/assets/projects.json
+
+/build
 
 #Apple File System
 .DS_Store
