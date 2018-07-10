@@ -9,7 +9,12 @@ export const updateUrl = (newState, urlData = {}) => {
 
   urlData.t ? newUrlData.t = urlData.t.map(t => { return topicIntToString(t) }) : newUrlData.t = newState.filter[1].value
 
-  urlData.s ? newUrlData.s = urlData.s.map(s => { return sponsorIntToString(newState, s) }) : newUrlData.s = newState.filter[2].value
+  // Since the sponsor in the new dataset is always the same, the former code resulted in "urlData.s.map is not a function"
+  // This is a workaround for now, until we know what the sponsor filter will become eventually
+  // Check this issue for more information: https://github.com/FUB-HCC/IKON-projektor/issues/34
+  if (urlData.s && urlData.s instanceof Array) {
+    newUrlData.s = urlData.s.map(s => sponsorIntToString(newState, s))
+  } else newUrlData.s = urlData.s && !(urlData.s instanceof Array) ? [sponsorIntToString(newState, urlData.s)] : newState.filter[2].value
 
   urlData.sP ? newUrlData.sP = urlData.sP : newUrlData.sP = newState.selectedProject
 
