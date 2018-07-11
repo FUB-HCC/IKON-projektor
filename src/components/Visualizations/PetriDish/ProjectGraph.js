@@ -165,7 +165,7 @@ class ProjectGraph {
     let projectCount = 0
     let pId
     for (pId in data) {
-      fbPercent[data[pId].forschungsbereich - 1]++
+      fbPercent[data[pId].forschungsbereichNumber - 1]++
       projectCount++
     }
     for (let i = 0; i < fbPercent.length; i++) {
@@ -175,7 +175,7 @@ class ProjectGraph {
 
     let pointData = []
     for (pId in data) {
-      let fb = data[pId].forschungsbereich - 1
+      let fb = data[pId].forschungsbereichNumber - 1
       let point = {
         color: getFieldColor(fieldsIntToString(fb + 1)),
         project: data[pId],

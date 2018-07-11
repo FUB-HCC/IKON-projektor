@@ -55,13 +55,13 @@ const processData = (data, colors) => {
   Object.keys(data).forEach(pId => {
     let d = {
       num: 0,
-      color: getFieldColor(fieldsIntToString(data[pId].forschungsbereich)),
+      color: getFieldColor(fieldsIntToString(data[pId].forschungsbereichNumber)),
       startDate: new Date(data[pId].start),
       endDate: new Date(data[pId].end),
       projectId: pId,
       foundFit: false // needed to optimize Spacing (later deleted)
     }
-    splitFbs[data[pId].forschungsbereich - 1].push(d)
+    splitFbs[data[pId].forschungsbereichNumber - 1].push(d)
   })
 
   // Stage 2 Optimize space for each fb and insert spacing between fbs

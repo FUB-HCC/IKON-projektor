@@ -1,6 +1,6 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateUrl, fieldsIntToString, topicToField} from '../utility'
-import {getData} from '../../assets/data'
+import {updateUrl, fieldsStringToInt, topicToField} from '../utility'
+import {getData} from '../../assets/publicData'
 import {parse as queryStringParse} from 'query-string'
 
 const data = getData()
@@ -11,7 +11,8 @@ const distSponsor = []
 Object.keys(data).map(dataEntry => {
   data[dataEntry] = {
     ...data[dataEntry],
-    forschungsbereichstr: fieldsIntToString(data[dataEntry].forschungsbereich)
+    forschungsbereichstr: data[dataEntry].forschungsbereich,
+    forschungsbereichNumber: fieldsStringToInt(data[dataEntry].forschungsbereich)
   }
   Object.keys(data[dataEntry]).map(dataKey => {
     const val = data[dataEntry][dataKey]
