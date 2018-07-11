@@ -156,7 +156,7 @@ class PieChart {
     // Count Number of Projects per fb
     let pId
     for (pId in data) {
-      splitFbs[data[pId].forschungsbereich - 1].count++
+      splitFbs[data[pId].forschungsbereichNumber - 1].count++
     }
     return splitFbs
   }

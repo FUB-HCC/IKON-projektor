@@ -42,15 +42,19 @@ export const updateUrl = (newState, urlData = {}) => {
 
 // field colors
 const fieldsMapping = [
-  {name: 'Evolution und Geoprozesse', field: 1, color: '#7d913c'},
+  /* {name: 'Evolution und Geoprozesse', field: 1, color: '#7d913c'},
   {name: 'Sammlungsentwicklung und Biodiversitätsentdeckung', field: 2, color: '#d9ef36'},
   {name: 'Digitale Welt und Informationswissenschaft', field: 3, color: '#8184a7'},
-  {name: 'Wissenskommunikation und Wissensforschung', field: 4, color: '#ed9798'}
+  {name: 'Wissenskommunikation und Wissensforschung', field: 4, color: '#ed9798'}, */
+  {name: 'Naturwissenschaften', field: 1, color: '#7d913c'},
+  {name: 'Lebenswissenschaften', field: 2, color: '#d9ef36'},
+  {name: 'Geistes- und Sozialwissenschaften', field: 3, color: '#8184a7'},
+  {name: 'Ingenieurwissenschaften', field: 4, color: '#ed9798'}
 ]
 
-// topic colors
+// topic(hauptthema) colors
 const topicMapping = [
-  {name: 'Wissenschaftsdatenmanagement', num: '1', field: 3, color: '#8184a7'},
+  /* {name: 'Wissenschaftsdatenmanagement', num: '1', field: 3, color: '#8184a7'},
   {name: 'Biodiversitäts- und Geoinformatik', num: '2', field: 3, color: '#8184a7'},
   {name: 'Perspektiven auf Natur - PAN', num: '3', field: 4, color: '#ed9798'},
   {name: 'Historische Arbeitsstelle', num: '4', field: 4, color: '#ed9798'},
@@ -64,7 +68,14 @@ const topicMapping = [
   {name: 'Diversitätsdynamik', num: '12', field: 1, color: '#7d913c'},
   {name: 'Biodiversitätsentdeckung', num: '13', field: 2, color: '#d9ef36'},
   {name: 'IT- Forschungsinfrastrukturen', num: '14', field: 3, color: '#8184a7'},
-  {name: 'Kompetenzzentrum Sammlung', num: '15', field: 2, color: '#d9ef36'}
+  {name: 'Kompetenzzentrum Sammlung', num: '15', field: 2, color: '#d9ef36'}, */
+  {name: 'Geowissenschaften', num: '16', field: 1, color: '#7d913c'},
+  {name: 'Biologie', num: '17', field: 2, color: '#d9ef36'},
+  {name: 'Geisteswissenschaften', num: '18', field: 3, color: '#8184a7'},
+  {name: 'Agrar-, Forstwissenschaften und  Tiermedizin', num: '19', field: 2, color: '#d9ef36'},
+  {name: 'Informatik, System- und Elektrotechnik', num: '20', field: 4, color: '#ed9798'},
+  {name: 'Sozial- und Verhaltenswissenschaften', num: '21', field: 3, color: '#8184a7'}
+
 ]
 
 export const fieldsIntToString = (number) => {
