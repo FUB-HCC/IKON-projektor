@@ -21,7 +21,8 @@ class AreaChart extends React.Component {
 
   render () {
     if (this.props.isVisActive) {
-      return (<svg id={this.props.target}/>)
+      //      return (<svg id={this.props.target}/>)
+      return (<AreaChartVis ></AreaChartVis>)
     } else {
       return (<div><img src={aGraph}/></div>)
     }
@@ -31,7 +32,7 @@ class AreaChart extends React.Component {
 const mapStateToProps = state => ({
   data: state.main.filteredData, // zu visualisierende Daten (immer up-to-date)
   target: 'graph', // id of the target svg tag
-  isVisActive: false // change to true for rendering of true visualization
+  isVisActive: true // change to true for rendering of true visualization
   // this is also a good place to prepare the data since the data given to the visualization is then minimal
 })
 
