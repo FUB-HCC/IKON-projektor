@@ -1,5 +1,4 @@
 import * as actionTypes from '../actions/actionTypes'
-// import {updateUrl, fieldsIntToString, topicToField} from '../utility'
 import {updateUrl, fieldsStringToInt, topicToField} from '../utility'
 import {getData} from '../../assets/publicData'
 import {parse as queryStringParse} from 'query-string'
