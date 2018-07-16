@@ -70,7 +70,8 @@ class AreaChart extends Component {
       geographyPaths: [],
       institutions: [],
       zoomableGroup: null,
-      includedAreas: []
+      includedAreas: [],
+      selectedMarker: null
     }
     this.loadPaths = this.loadPaths.bind(this)
     this.handleZoom = this.handleZoom.bind(this)
@@ -114,7 +115,8 @@ class AreaChart extends Component {
     this.setState({
       zoom: 2,
       center: marker.coordinates,
-      includedAreas: newIncludedAreas
+      includedAreas: newIncludedAreas,
+      selectedMarker: marker
     })
   }
 
@@ -251,28 +253,32 @@ class AreaChart extends Component {
                   }
                 </Geographies>
                 <Markers>
-                  {this.state.institutions.map((institution, i) =>
-                    <Marker
-                      key={`institution-marker-${i}`}
-                      marker={institution}
-                      onClick={this.handleMarkerClick}
-                      style={{
-                        default: {
-                          fill: 'rgba(255,87,34,0.8)',
-                          stroke: '#FFFFFF'
-                        },
-                        hover: {
-                          fill: '#4b9123',
-                          stroke: '#2e2e2e'
-                        },
-                        pressed: {
-                          fill: '#918c45',
-                          stroke: '#2e2e2e'
-                        }
-                      }}>
-                      <circle cx={0} cy={0} r={this.state.zoom * institution.numberProjects / 30}/>
-                    </Marker>
-                  )}
+                  {
+                    this.state.institutions.map((institution, i) => {
+                      let markerFillColor = 'rgba(255,87,34,0.8)'
+                      if (this.state.selectedMarker && this.state.selectedMarker.name === institution.name) markerFillColor = '#4b9123'
+                      return <Marker
+                        key={`institution-marker-${i}`}
+                        marker={institution}
+                        onClick={this.handleMarkerClick}
+                        style={{
+                          default: {
+                            fill: markerFillColor,
+                            stroke: '#FFFFFF'
+                          },
+                          hover: {
+                            fill: '#4b9123',
+                            stroke: '#2e2e2e'
+                          },
+                          pressed: {
+                            fill: '#918c45',
+                            stroke: '#2e2e2e'
+                          }
+                        }}>
+                        <circle cx={0} cy={0} r={this.state.zoom * institution.numberProjects / 30}/>
+                      </Marker>
+                    }
+                    )}
                 </Markers>
                 <Lines>
                   <Line
