@@ -71,7 +71,9 @@ class AreaChart extends Component {
       institutions: [],
       zoomableGroup: null,
       includedAreas: [],
-      selectedMarker: null
+      selectedMarker: null,
+      regionsPaths: [],
+      regionPathToRender: []
     }
     this.loadPaths = this.loadPaths.bind(this)
     this.handleZoom = this.handleZoom.bind(this)
@@ -79,6 +81,7 @@ class AreaChart extends Component {
     this.handleMarkerClick = this.handleMarkerClick.bind(this)
     this.handlerSrollMap = this.handlerSrollMap.bind(this)
     this.buildCurves = this.buildCurves.bind(this)
+    this.handleMoveEnd = this.handleMoveEnd.bind(this)
   }
 
   updateData () {
@@ -87,18 +90,72 @@ class AreaChart extends Component {
 
   componentDidMount () {
     this.loadPaths()
+    this.zoomableGroup.zoomableGroupNode.addEventListener('wheel', this.handlerSrollMap)
   }
 
   loadPaths () {
-    get('./topo/world-110m-simplyfied.json')
-      .then(res => {
-        if (res.status !== 200) return
-        const world = res.data
+    get('./topo/world-110m-simplyfied.json').then(res => {
+      let worldTopo = res
+      if (res.status !== 200) return
+      const world = worldTopo.data
+      // Transform your paths with topojson however you want...
+      const countries = feature(world, world.objects[Object.keys(world.objects)[0]]).features
+      this.setState({geographyPaths: countries, institutions: sampleInstitutes})
+      this.zoomableGroup.zoomableGroupNode.addEventListener('wheel', this.handlerSrollMap)
+    })
+
+    let promises = []
+    // TODO check US and netherlands
+    promises.push(get('./topo/countries/germany/dach-states.json'))
+    promises.push(get('./topo/countries/algeria/algeria-provinces.json'))
+    promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
+    promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
+    promises.push(get('./topo/countries/belgium/benelux-countries.json'))
+    promises.push(get('./topo/countries/china/china-provinces.json'))
+    promises.push(get('./topo/countries/colombia/colombia-departments.json'))
+    promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
+    promises.push(get('./topo/countries/denmark/denmark-counties.json'))
+    promises.push(get('./topo/countries/finland/finland-regions.json'))
+    promises.push(get('./topo/countries/france/fr-departments.json'))
+    promises.push(get('./topo/countries/india/india-states.json'))
+    promises.push(get('./topo/countries/ireland/ireland-counties.json'))
+    promises.push(get('./topo/countries/italy/italy-regions.json'))
+    promises.push(get('./topo/countries/japan/jp-prefectures.json'))
+    promises.push(get('./topo/countries/liberia/liberia-districts.json'))
+    promises.push(get('./topo/countries/nepal/nepal-districts.json'))
+    // promises.push(get('./topo/countries/netherlands/nl-gemeentegrenzen-2016.json'))
+    promises.push(get('./topo/countries/new-zealand/new-zealand-districts.json'))
+    promises.push(get('./topo/countries/norway/norway-counties.json'))
+    promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
+    promises.push(get('./topo/countries/peru/peru-departments.json'))
+    promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
+    promises.push(get('./topo/countries/poland/poland-provinces.json'))
+    promises.push(get('./topo/countries/portugal/portugal-districts.json'))
+    promises.push(get('./topo/countries/romania/romania-counties.json'))
+    promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
+    promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
+    promises.push(get('./topo/countries/sweden/sweden-counties.json'))
+    promises.push(get('./topo/countries/turkey/turkiye.json'))
+    promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
+    promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
+    promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
+    promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json'))
+
+    Promise.all(promises).then(res => {
+      if (res[0].status !== 200) return
+      const regionsPaths = []
+      for (let result of res) {
+        let regionsTopo = result
+        let region = regionsTopo.data
         // Transform your paths with topojson however you want...
-        const countries = feature(world, world.objects[Object.keys(world.objects)[0]]).features
-        this.setState({geographyPaths: countries, institutions: sampleInstitutes})
-        this.zoomableGroup.zoomableGroupNode.addEventListener('wheel', this.handlerSrollMap)
-      })
+        let regionPath = feature(region, region.objects[Object.keys(region.objects)[0]]).features
+        for (let path of regionPath) {
+          regionsPaths.push(path)
+        }
+      }
+
+      this.setState({regionsPaths: regionsPaths})
+    })
   }
 
   handleCountryClick (country) {
@@ -113,7 +170,7 @@ class AreaChart extends Component {
       }
     }
     this.setState({
-      zoom: 2,
+      zoom: 1.3,
       center: marker.coordinates,
       includedAreas: newIncludedAreas,
       selectedMarker: marker
@@ -132,6 +189,7 @@ class AreaChart extends Component {
     this.setState({
       zoom: this.state.zoom * factor
     })
+    this.checkRegionToRender(this.state.center, this.state.zoom)
   }
 
   handleMoveStart (currentCenter) {
@@ -140,6 +198,44 @@ class AreaChart extends Component {
 
   handleMoveEnd (newCenter) {
     console.log('New center: ', newCenter)
+    // TODO Fix center bug
+    /* this.setState({
+      center: [newCenter[0], newCenter[1]]
+    }) */
+    this.checkRegionToRender(newCenter, this.state.zoom)
+  }
+
+  checkRegionToRender (center, zoom) {
+    // calculate grometric center of single countries
+    for (let geographyPath of this.state.geographyPaths) {
+      let long = 0
+      let lat = 0
+      let numberCoordinates = 0
+      for (let coordinateArray of geographyPath.geometry.coordinates) {
+        for (let coordinate of coordinateArray) {
+          long += coordinate[0]
+          lat += coordinate[1]
+          numberCoordinates++
+        }
+      }
+
+      long = long / numberCoordinates
+      lat = lat / numberCoordinates
+
+      // TODO only show country states when zoomed close to a country
+      /* if (Math.abs(long - center[0]) < zoom && Math.abs(lat - center[1]) < zoom) {
+        console.log(geographyPath)
+        console.log(`${geographyPath.properties.NAME} Long: ${long} Lat: ${lat}`)
+        for (let regionPath of this.state.regionsPaths) {
+          if (regionPath[0].properties.ISO === geographyPath.properties.ISO_A3) {
+            this.setState({regionPathToRender: regionPath})
+          }
+        }
+      } */
+    }
+    // console.log(this.state.regionsPaths)
+    // console.log(`center: ${center}`)
+    // console.log(`zoom: ${zoom}`)
   }
 
   // This funtion returns a curve command that builds a quadratic curve.
@@ -162,7 +258,7 @@ class AreaChart extends Component {
       <div style={wrapperStyles}>
         <button onClick={() => this.handleZoom(1.25)}>{'Zoom in'}</button>
         <button onClick={() => this.handleZoom(1 / 1.25)}>{'Zoom out'}</button>
-        <hr/>
+
         <Motion
           defaultStyle={{
             zoom: 1,
@@ -222,6 +318,38 @@ class AreaChart extends Component {
                             fill: '#ff418b',
                             stroke: '#607D8B',
                             strokeWidth: 0.75,
+                            outline: 'none'
+                          }
+                        }}
+                      />
+                    )}
+                </Geographies>
+                <Geographies key={'test'} geography={this.state.regionsPaths} disableOptimization>
+                  {(geographies, projection) =>
+                    geographies.map((geography, i) =>
+                      <Geography
+                        key={`region-${geography.properties.ADM0_A3}-${i}`}
+                        cacheId={`region-path-${geography.properties.ADM0_A3}-${i}`}
+                        round
+                        geography={geography}
+                        projection={projection}
+                        style={{
+                          default: {
+                            fill: '#ECEFF1',
+                            stroke: '#607D8B',
+                            strokeWidth: 0.2,
+                            outline: 'none'
+                          },
+                          hover: {
+                            fill: '#607D8B',
+                            stroke: '#607D8B',
+                            strokeWidth: 0.2,
+                            outline: 'none'
+                          },
+                          pressed: {
+                            fill: '#ff418b',
+                            stroke: '#607D8B',
+                            strokeWidth: 0.2,
                             outline: 'none'
                           }
                         }}
