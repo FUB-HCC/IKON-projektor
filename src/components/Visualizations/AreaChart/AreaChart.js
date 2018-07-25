@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {get} from 'axios'
 import {feature} from 'topojson-client'
+import * as parse from 'csv-parse'
 import {
   ComposableMap,
   ZoomableGroup,
@@ -73,7 +74,8 @@ class AreaChart extends Component {
       includedAreas: [],
       selectedMarker: null,
       regionsPaths: [],
-      regionPathToRender: []
+      regionPathToRender: [],
+      cities: []
     }
     this.loadPaths = this.loadPaths.bind(this)
     this.handleZoom = this.handleZoom.bind(this)
@@ -102,6 +104,20 @@ class AreaChart extends Component {
       const countries = feature(world, world.objects[Object.keys(world.objects)[0]]).features
       this.setState({geographyPaths: countries, institutions: sampleInstitutes})
       this.zoomableGroup.zoomableGroupNode.addEventListener('wheel', this.handlerSrollMap)
+    })
+
+    get('./topo/cities500000.csv').then(res => {
+      console.log(parse())
+      parse(res.data, {columns: true}, (err, cities) => {
+        if (err) { console.error(err) } else {
+          let newCities = []
+          cities.forEach(city => {
+            city.coordinates = [city.longitude, city.latitude]
+            newCities.push(city)
+          })
+          this.setState({cities: newCities})
+        }
+      })
     })
 
     let promises = []
@@ -309,13 +325,13 @@ class AreaChart extends Component {
                             outline: 'none'
                           },
                           hover: {
-                            fill: '#607D8B',
+                            fill: '#ECEFF1',
                             stroke: '#607D8B',
                             strokeWidth: 0.75,
                             outline: 'none'
                           },
                           pressed: {
-                            fill: '#ff418b',
+                            fill: '#ECEFF1',
                             stroke: '#607D8B',
                             strokeWidth: 0.75,
                             outline: 'none'
@@ -341,13 +357,13 @@ class AreaChart extends Component {
                             outline: 'none'
                           },
                           hover: {
-                            fill: '#607D8B',
+                            fill: '#ECEFF1',
                             stroke: '#607D8B',
                             strokeWidth: 0.2,
                             outline: 'none'
                           },
                           pressed: {
-                            fill: '#ff418b',
+                            fill: '#ECEFF1',
                             stroke: '#607D8B',
                             strokeWidth: 0.2,
                             outline: 'none'
@@ -380,6 +396,31 @@ class AreaChart extends Component {
                     })
                   }
                 </Geographies>
+                <Markers>
+                  {
+                    this.state.cities.map((city, i) => {
+                      if (city.population < 5000000 / this.state.zoom) return null
+                      let radius = 1
+                      if (city.population > 500000) radius = 2
+                      if (city.population > 1000000) radius = 3.25
+                      if (city.population > 2500000) radius = 4
+                      if (city.population > 5000000) radius = 5
+                      if (city.population > 7500000) radius = 6
+                      if (city.population > 10000000) radius = 7
+                      return <Marker
+                        key={`city-marker-${i}`}
+                        marker={city}
+                        // onClick={this.handleCityMarkerClick}
+                        style={{
+                          default: {
+                            fill: '#505050'
+                          }
+                        }}>
+                        <circle cx={0} cy={0} r={(1 + (0.25 * (this.state.zoom - 1))) * radius}/>
+                      </Marker>
+                    }
+                    )}
+                </Markers>
                 <Markers>
                   {
                     this.state.institutions.map((institution, i) => {
