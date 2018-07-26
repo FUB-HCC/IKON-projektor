@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {get} from 'axios'
 import {feature} from 'topojson-client'
 import * as parse from 'csv-parse'
+import {connect} from 'react-redux'
 import {
   ComposableMap,
   ZoomableGroup,
@@ -12,7 +13,9 @@ import {
   Lines,
   Line
 } from 'react-simple-maps'
+import { getCenter } from 'geolib'
 import { Motion, spring } from 'react-motion'
+// import * as actions from '../../../store/actions/actions'
 
 const wrapperStyles = {
   width: '100%',
@@ -26,7 +29,6 @@ const sampleInstitutes = [
     numberProjects: 378,
     researchAreas: [ // Country codes as ISO_A3
       {area: 'RUS', number: 100},
-      {area: 'STP', number: 100},
       {area: 'EGY', number: 50},
       {area: 'SOM', number: 50},
       {area: 'CAF', number: 78}
@@ -63,8 +65,8 @@ const sampleInstitutes = [
 ]
 
 class AreaChart extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
     this.state = {
       zoom: 1,
       center: [0, 20],
@@ -106,8 +108,8 @@ class AreaChart extends Component {
       this.zoomableGroup.zoomableGroupNode.addEventListener('wheel', this.handlerSrollMap)
     })
 
+    // Data from here: https://github.com/curran/data/tree/gh-pages/geonames
     get('./topo/cities500000.csv').then(res => {
-      console.log(parse())
       parse(res.data, {columns: true}, (err, cities) => {
         if (err) { console.error(err) } else {
           let newCities = []
@@ -121,9 +123,12 @@ class AreaChart extends Component {
     })
 
     let promises = []
-    // TODO check US and netherlands
+
+    // TODO https://www.react-simple-maps.io/country-map-with-admin-units To learn how to convert shapefiles into
+    // TODO topojson that can be used with react-simple-maps read How to convert and prepare TopoJSON files
+    // TODO for interactive mapping with d3 on medium.
     promises.push(get('./topo/countries/germany/dach-states.json'))
-    promises.push(get('./topo/countries/algeria/algeria-provinces.json'))
+    /* promises.push(get('./topo/countries/algeria/algeria-provinces.json'))
     promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
     promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
     promises.push(get('./topo/countries/belgium/benelux-countries.json'))
@@ -138,9 +143,10 @@ class AreaChart extends Component {
     promises.push(get('./topo/countries/italy/italy-regions.json'))
     promises.push(get('./topo/countries/japan/jp-prefectures.json'))
     promises.push(get('./topo/countries/liberia/liberia-districts.json'))
-    promises.push(get('./topo/countries/nepal/nepal-districts.json'))
+    promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
+    // TODO check US and netherlands
     // promises.push(get('./topo/countries/netherlands/nl-gemeentegrenzen-2016.json'))
-    promises.push(get('./topo/countries/new-zealand/new-zealand-districts.json'))
+    /* promises.push(get('./topo/countries/new-zealand/new-zealand-districts.json'))
     promises.push(get('./topo/countries/norway/norway-counties.json'))
     promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
     promises.push(get('./topo/countries/peru/peru-departments.json'))
@@ -155,7 +161,7 @@ class AreaChart extends Component {
     promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
     promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
     promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
-    promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json'))
+    promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
 
     Promise.all(promises).then(res => {
       if (res[0].status !== 200) return
@@ -222,7 +228,7 @@ class AreaChart extends Component {
   }
 
   checkRegionToRender (center, zoom) {
-    // calculate grometric center of single countries
+    // calculate geometric center of single countries
     for (let geographyPath of this.state.geographyPaths) {
       let long = 0
       let lat = 0
@@ -254,6 +260,28 @@ class AreaChart extends Component {
     // console.log(`zoom: ${zoom}`)
   }
 
+  calculateGeometricCenter (geographyPath) {
+    let allCoordinateArray = [...geographyPath.geometry.coordinates]
+    let depth = 0
+    if (allCoordinateArray[0] instanceof Array) depth = 1
+    if (allCoordinateArray[0] && allCoordinateArray[0][0] instanceof Array) depth = 2
+    if (allCoordinateArray[0] && allCoordinateArray[0][0] && allCoordinateArray[0][0][0] instanceof Array) depth = 3
+    if (allCoordinateArray[0] && allCoordinateArray[0][0] && allCoordinateArray[0][0][0] && allCoordinateArray[0][0][0][0] instanceof Array) depth = 4
+    depth--
+    let i = 0
+    while (i < depth) {
+      allCoordinateArray = [].concat(...allCoordinateArray)
+      i++
+    }
+    let processedArray = []
+    allCoordinateArray.forEach(value => {
+      processedArray.push({latitude: value[1], longitude: value[0]})
+    })
+
+    let center = getCenter(processedArray)
+    return [center.longitude, center.latitude]
+  }
+
   // This funtion returns a curve command that builds a quadratic curve.
   // And depending on the line's curveStyle property it curves in one direction or the other.
   buildCurves (start, end, line) {
@@ -261,12 +289,15 @@ class AreaChart extends Component {
     const x1 = end[0]
     const y0 = start[1]
     const y1 = end[1]
-    const curve = {
+    /* const curve = {
       forceUp: `${x1} ${y0}`,
       forceDown: `${x0} ${y1}`
-    }[line.curveStyle]
+    } */
+    const offset = 30
 
-    return `M ${start.join(' ')} Q ${curve} ${end.join(' ')}`
+    // TODO buld curves for institutions and their research regions
+
+    return `M ${start.join(' ')} Q ${((x0 + x1) / 2) + offset} ${((y0 + y1) / 2) + offset} ${end.join(' ')}`
   }
 
   render () {
@@ -413,7 +444,16 @@ class AreaChart extends Component {
                         // onClick={this.handleCityMarkerClick}
                         style={{
                           default: {
-                            fill: '#505050'
+                            fill: '#505050',
+                            stroke: '#505050'
+                          },
+                          hover: {
+                            fill: '#505050',
+                            stroke: '#505050'
+                          },
+                          pressed: {
+                            fill: '#505050',
+                            stroke: '#505050'
                           }
                         }}>
                         <circle cx={0} cy={0} r={(1 + (0.25 * (this.state.zoom - 1))) * radius}/>
@@ -450,15 +490,32 @@ class AreaChart extends Component {
                     )}
                 </Markers>
                 <Lines>
-                  <Line
-                    line={{
-                      coordinates: {
-                        start: [0, 0],
-                        end: [-99.1, 19.4]
-                      }
-                    }}
-                    buildPath={this.buildCurves}
-                  />
+                  {
+                    this.state.includedAreas.map((area, i) => {
+                      let areaCoordinates = [0, 0]
+                      this.state.geographyPaths.forEach(country => {
+                        if (country.properties.ISO_A3 === area) {
+                          areaCoordinates = this.calculateGeometricCenter(country)
+                        }
+                      })
+                      return <Line
+                        key={`project-line-${i}`}
+                        line={{
+                          coordinates: {
+                            start: this.state.selectedMarker.coordinates,
+                            end: areaCoordinates
+                          }
+                        }}
+                        buildPath={this.buildCurves}
+                        preserveMarkerAspect={false}
+                        style={{
+                          default: { fill: 'rgba(255, 255, 255, 0)', stroke: '#666', strokeWidth: 4 },
+                          hover: { fill: 'rgba(255, 255, 255, 0)', stroke: '#999' },
+                          pressed: { fill: 'rgba(255, 255, 255, 0)', stroke: '#000' }
+                        }}
+                      />
+                    }
+                    )}
                 </Lines>
               </ZoomableGroup>
             </ComposableMap>
@@ -469,4 +526,31 @@ class AreaChart extends Component {
   }
 }
 
-export default AreaChart
+// If this argument is specified, the new component will subscribe to Redux store updates.
+// This means that any time the store is updated, mapStateToProps will be called.
+// The results of mapStateToProps must be a plain object, which will be merged into the component’s props.
+// If you don't want to subscribe to store updates, pass null or undefined in place of mapStateToProps
+const mapStateToProps = (state, ownProps) => {
+  console.log(state) // state
+  console.log(ownProps) // undefined
+  return {
+    test1: 'test1'
+  }
+}
+
+// it will be given dispatch as the first parameter. It’s up to you to return an object that somehow
+// uses dispatch to bind action creators in your own way. (Tip: you may use the bindActionCreators() helper from Redux.)
+// If your mapDispatchToProps function is declared as taking two parameters, it will be called with dispatch as
+// the first parameter and the props passed to the connected component as the second parameter, and will be re-invoked
+// whenever the connected component receives new props. (The second parameter is normally referred to as ownProps by convention.)
+const mapDispatchToProps = dispatch => {
+  return {
+    // activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
+    // deactivatePopover: () => dispatch(actions.deactivatePopover()),
+  }
+}
+
+// Connects a React component to a Redux store. It does not modify the component class
+// passed to it; instead, it returns a new, connected component class for you to use.
+// export default connect(mapStateToProps, mapDispatchToProps)(AreaChart)
+export default connect(mapStateToProps, mapDispatchToProps)(AreaChart)

@@ -1,6 +1,5 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import aGraph from '../../assets/Field.png'
 import {default as AreaChartVis} from '../../components/Visualizations/AreaChart/AreaChart'
 import * as actions from '../../store/actions/actions'
 
@@ -10,7 +9,7 @@ class AreaChart extends React.Component {
     // you can get current height with 'props.height' and width with 'props.width'
     // you can get all props defined below[in mapStateToProps] with 'this.props.<name>'
     // if you need any more you can define them there (and you can take anything from the statevas a prop
-    this.Graph = new AreaChartVis()
+    this.Graph = new AreaChartVis({store: {}})
   }
 
   componentDidUpdate () {
@@ -20,19 +19,13 @@ class AreaChart extends React.Component {
   }
 
   render () {
-    if (this.props.isVisActive) {
-      //      return (<svg id={this.props.target}/>)
-      return (<AreaChartVis ></AreaChartVis>)
-    } else {
-      return (<div><img src={aGraph}/></div>)
-    }
+    return (<AreaChartVis ></AreaChartVis>)
   }
 }
 
 const mapStateToProps = state => ({
   data: state.main.filteredData, // zu visualisierende Daten (immer up-to-date)
-  target: 'graph', // id of the target svg tag
-  isVisActive: true // change to true for rendering of true visualization
+  target: 'graph' // id of the target svg tag
   // this is also a good place to prepare the data since the data given to the visualization is then minimal
 })
 
