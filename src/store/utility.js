@@ -74,7 +74,8 @@ const topicMapping = [
   {name: 'Geisteswissenschaften', num: '18', field: 3, color: '#8184a7'},
   {name: 'Agrar-, Forstwissenschaften und  Tiermedizin', num: '19', field: 2, color: '#d9ef36'},
   {name: 'Informatik, System- und Elektrotechnik', num: '20', field: 4, color: '#ed9798'},
-  {name: 'Sozial- und Verhaltenswissenschaften', num: '21', field: 3, color: '#8184a7'}
+  {name: 'Sozial- und Verhaltenswissenschaften', num: '21', field: 3, color: '#8184a7'},
+  {name: 'b', num: '21', field: 3, color: '#8184a7'}
 
 ]
 

@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {get} from 'axios'
 import {feature} from 'topojson-client'
 import * as parse from 'csv-parse'
-import {connect} from 'react-redux'
+/** import {connect} from 'react-redux' */
 import {
   ComposableMap,
   ZoomableGroup,
@@ -15,6 +15,7 @@ import {
 } from 'react-simple-maps'
 import { getCenter } from 'geolib'
 import { Motion, spring } from 'react-motion'
+import { getInstitutions } from './areaUtility'
 // import * as actions from '../../../store/actions/actions'
 
 const wrapperStyles = {
@@ -23,7 +24,7 @@ const wrapperStyles = {
   margin: '0 auto',
   fontFamily: 'Roboto, sans-serif'
 }
-const sampleInstitutes = [
+/* const sampleInstitutes = [
   {name: 'Tokyo',
     coordinates: [139.6917, 35.6895],
     numberProjects: 378,
@@ -62,7 +63,7 @@ const sampleInstitutes = [
   {name: 'Tianjin', coordinates: [117.3616, 39.3434], numberProjects: 109},
   {name: 'Paris', coordinates: [2.3522, 48.8566], numberProjects: 108},
   {name: 'Lima', coordinates: [-77.0428, -12.0464], numberProjects: 107}
-]
+] */
 
 class AreaChart extends Component {
   constructor (props) {
@@ -77,7 +78,8 @@ class AreaChart extends Component {
       selectedMarker: null,
       regionsPaths: [],
       regionPathToRender: [],
-      cities: []
+      cities: [],
+      projects: []
     }
     this.loadPaths = this.loadPaths.bind(this)
     this.handleZoom = this.handleZoom.bind(this)
@@ -88,8 +90,16 @@ class AreaChart extends Component {
     this.handleMoveEnd = this.handleMoveEnd.bind(this)
   }
 
-  updateData () {
-
+  updateData (data, width, height) {
+    /*
+          Public
+          Updates The Visulisation with the new Data
+            data - the newProjects.json set or a subset of it
+        */
+    // TODO
+    let institutions = getInstitutions(data)
+    console.log(institutions)
+    this.setState({institutions: institutions})
   }
 
   componentDidMount () {
@@ -104,7 +114,7 @@ class AreaChart extends Component {
       const world = worldTopo.data
       // Transform your paths with topojson however you want...
       const countries = feature(world, world.objects[Object.keys(world.objects)[0]]).features
-      this.setState({geographyPaths: countries, institutions: sampleInstitutes})
+      this.setState({geographyPaths: countries})
       this.zoomableGroup.zoomableGroupNode.addEventListener('wheel', this.handlerSrollMap)
     })
 
@@ -186,7 +196,20 @@ class AreaChart extends Component {
 
   handleMarkerClick (marker) {
     let newIncludedAreas = []
-    if (marker.researchAreas) {
+    console.log(marker)
+
+    for (let project of marker.projects) {
+      newIncludedAreas = [...newIncludedAreas, ...project.forschungsregion]
+    }
+
+    this.setState({
+      zoom: 1.3,
+      center: marker.coordinates,
+      includedAreas: newIncludedAreas,
+      selectedMarker: marker
+    })
+
+    /* if (marker.researchAreas) {
       for (let researchArea of marker.researchAreas) {
         newIncludedAreas.push(researchArea.area)
       }
@@ -196,7 +219,7 @@ class AreaChart extends Component {
       center: marker.coordinates,
       includedAreas: newIncludedAreas,
       selectedMarker: marker
-    })
+    }) */
   }
 
   handlerSrollMap (scrollEvent) {
@@ -249,7 +272,7 @@ class AreaChart extends Component {
         console.log(geographyPath)
         console.log(`${geographyPath.properties.NAME} Long: ${long} Lat: ${lat}`)
         for (let regionPath of this.state.regionsPaths) {
-          if (regionPath[0].properties.ISO === geographyPath.properties.ISO_A3) {
+          if (regionPath[0].properties.ISO === geographyPath.properties.ISO_A2) {
             this.setState({regionPathToRender: regionPath})
           }
         }
@@ -406,7 +429,7 @@ class AreaChart extends Component {
                 <Geographies geography={this.state.geographyPaths} disableOptimization>
                   {(geographies, projection) =>
                     geographies.map((geography, i) => {
-                      return this.state.includedAreas.indexOf(geography.properties.ISO_A3) !== -1 && (
+                      return this.state.includedAreas.indexOf(geography.properties.ISO_A2) !== -1 && (
                         <Geography
                           key={`include-${geography.properties.ADM0_A3}-${i}`}
                           cacheId={`include-${geography.properties.ADM0_A3}-${i}`}
@@ -461,6 +484,35 @@ class AreaChart extends Component {
                     }
                     )}
                 </Markers>
+
+                <Lines>
+                  {
+                    this.state.includedAreas.map((area, i) => {
+                      let areaCoordinates = [0, 0]
+                      this.state.geographyPaths.forEach(country => {
+                        if (country.properties.ISO_A2 === area) {
+                          areaCoordinates = this.calculateGeometricCenter(country)
+                        }
+                      })
+                      return <Line
+                        key={`project-line-${i}`}
+                        line={{
+                          coordinates: {
+                            start: this.state.selectedMarker.coordinates,
+                            end: areaCoordinates
+                          }
+                        }}
+                        buildPath={this.buildCurves}
+                        preserveMarkerAspect={false}
+                        style={{
+                          default: { fill: 'rgba(255, 255, 255, 0)', stroke: '#4e0050', strokeWidth: 2.5 / this.state.zoom },
+                          hover: { fill: 'rgba(255, 255, 255, 0)', stroke: '#4b9123', strokeWidth: 2.5 / this.state.zoom },
+                          pressed: { fill: 'rgba(255, 255, 255, 0)', stroke: '#4e0050', strokeWidth: 2.5 / this.state.zoom }
+                        }}
+                      />
+                    }
+                    )}
+                </Lines>
                 <Markers>
                   {
                     this.state.institutions.map((institution, i) => {
@@ -489,34 +541,6 @@ class AreaChart extends Component {
                     }
                     )}
                 </Markers>
-                <Lines>
-                  {
-                    this.state.includedAreas.map((area, i) => {
-                      let areaCoordinates = [0, 0]
-                      this.state.geographyPaths.forEach(country => {
-                        if (country.properties.ISO_A3 === area) {
-                          areaCoordinates = this.calculateGeometricCenter(country)
-                        }
-                      })
-                      return <Line
-                        key={`project-line-${i}`}
-                        line={{
-                          coordinates: {
-                            start: this.state.selectedMarker.coordinates,
-                            end: areaCoordinates
-                          }
-                        }}
-                        buildPath={this.buildCurves}
-                        preserveMarkerAspect={false}
-                        style={{
-                          default: { fill: 'rgba(255, 255, 255, 0)', stroke: '#666', strokeWidth: 4 },
-                          hover: { fill: 'rgba(255, 255, 255, 0)', stroke: '#999' },
-                          pressed: { fill: 'rgba(255, 255, 255, 0)', stroke: '#000' }
-                        }}
-                      />
-                    }
-                    )}
-                </Lines>
               </ZoomableGroup>
             </ComposableMap>
           )}
@@ -530,27 +554,28 @@ class AreaChart extends Component {
 // This means that any time the store is updated, mapStateToProps will be called.
 // The results of mapStateToProps must be a plain object, which will be merged into the component’s props.
 // If you don't want to subscribe to store updates, pass null or undefined in place of mapStateToProps
-const mapStateToProps = (state, ownProps) => {
+/** const mapStateToProps = (state, ownProps) => {
   console.log(state) // state
   console.log(ownProps) // undefined
   return {
     test1: 'test1'
   }
-}
+} */
 
 // it will be given dispatch as the first parameter. It’s up to you to return an object that somehow
 // uses dispatch to bind action creators in your own way. (Tip: you may use the bindActionCreators() helper from Redux.)
 // If your mapDispatchToProps function is declared as taking two parameters, it will be called with dispatch as
 // the first parameter and the props passed to the connected component as the second parameter, and will be re-invoked
 // whenever the connected component receives new props. (The second parameter is normally referred to as ownProps by convention.)
-const mapDispatchToProps = dispatch => {
+/** const mapDispatchToProps = dispatch => {
   return {
-    // activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
-    // deactivatePopover: () => dispatch(actions.deactivatePopover()),
+     activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
+     deactivatePopover: () => dispatch(actions.deactivatePopover()),
   }
-}
+} */
 
 // Connects a React component to a Redux store. It does not modify the component class
 // passed to it; instead, it returns a new, connected component class for you to use.
 // export default connect(mapStateToProps, mapDispatchToProps)(AreaChart)
-export default connect(mapStateToProps, mapDispatchToProps)(AreaChart)
+/** export default connect(mapStateToProps, mapDispatchToProps)(AreaChart) */
+export default AreaChart
