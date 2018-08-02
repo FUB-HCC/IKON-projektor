@@ -12,7 +12,7 @@ export const getInstitutions = (projects) => {
     if (index > -1) {
       institutions[index].projects.push(Object.assign({id: prop}, projects[prop]))
       institutions[index].numberProjects = institutions[index].projects.length
-    } else {
+    } else if (index === -1) {
       institutions.push({
         name: projects[prop].geldgeber,
         projects: [Object.assign({id: prop}, projects[prop])],

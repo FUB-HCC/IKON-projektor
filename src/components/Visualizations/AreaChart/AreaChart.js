@@ -13,9 +13,10 @@ import {
   Lines,
   Line
 } from 'react-simple-maps'
-import { getCenter } from 'geolib'
-import { Motion, spring } from 'react-motion'
-import { getInstitutions } from './areaUtility'
+import {getCenter} from 'geolib'
+import {Motion, spring} from 'react-motion'
+import {getInstitutions} from './areaUtility'
+import ReactTooltip from 'react-tooltip'
 // import * as actions from '../../../store/actions/actions'
 
 const wrapperStyles = {
@@ -24,6 +25,7 @@ const wrapperStyles = {
   margin: '0 auto',
   fontFamily: 'Roboto, sans-serif'
 }
+
 /* const sampleInstitutes = [
   {name: 'Tokyo',
     coordinates: [139.6917, 35.6895],
@@ -79,7 +81,8 @@ class AreaChart extends Component {
       regionsPaths: [],
       regionPathToRender: [],
       cities: [],
-      projects: []
+      projects: [],
+      selectedLine: null
     }
     this.loadPaths = this.loadPaths.bind(this)
     this.handleZoom = this.handleZoom.bind(this)
@@ -88,14 +91,16 @@ class AreaChart extends Component {
     this.handlerSrollMap = this.handlerSrollMap.bind(this)
     this.buildCurves = this.buildCurves.bind(this)
     this.handleMoveEnd = this.handleMoveEnd.bind(this)
+    this.handleLineClick = this.handleLineClick.bind(this)
+    this.handleLineMouseLeave = this.handleLineMouseLeave.bind(this)
   }
 
   updateData (data, width, height) {
     /*
-          Public
-          Updates The Visulisation with the new Data
-            data - the newProjects.json set or a subset of it
-        */
+              Public
+              Updates The Visulisation with the new Data
+                data - the newProjects.json set or a subset of it
+            */
     // TODO
     let institutions = getInstitutions(data)
     console.log(institutions)
@@ -121,7 +126,9 @@ class AreaChart extends Component {
     // Data from here: https://github.com/curran/data/tree/gh-pages/geonames
     get('./topo/cities500000.csv').then(res => {
       parse(res.data, {columns: true}, (err, cities) => {
-        if (err) { console.error(err) } else {
+        if (err) {
+          console.error(err)
+        } else {
           let newCities = []
           cities.forEach(city => {
             city.coordinates = [city.longitude, city.latitude]
@@ -139,39 +146,39 @@ class AreaChart extends Component {
     // TODO for interactive mapping with d3 on medium.
     promises.push(get('./topo/countries/germany/dach-states.json'))
     /* promises.push(get('./topo/countries/algeria/algeria-provinces.json'))
-    promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
-    promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
-    promises.push(get('./topo/countries/belgium/benelux-countries.json'))
-    promises.push(get('./topo/countries/china/china-provinces.json'))
-    promises.push(get('./topo/countries/colombia/colombia-departments.json'))
-    promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
-    promises.push(get('./topo/countries/denmark/denmark-counties.json'))
-    promises.push(get('./topo/countries/finland/finland-regions.json'))
-    promises.push(get('./topo/countries/france/fr-departments.json'))
-    promises.push(get('./topo/countries/india/india-states.json'))
-    promises.push(get('./topo/countries/ireland/ireland-counties.json'))
-    promises.push(get('./topo/countries/italy/italy-regions.json'))
-    promises.push(get('./topo/countries/japan/jp-prefectures.json'))
-    promises.push(get('./topo/countries/liberia/liberia-districts.json'))
-    promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
+        promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
+        promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
+        promises.push(get('./topo/countries/belgium/benelux-countries.json'))
+        promises.push(get('./topo/countries/china/china-provinces.json'))
+        promises.push(get('./topo/countries/colombia/colombia-departments.json'))
+        promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
+        promises.push(get('./topo/countries/denmark/denmark-counties.json'))
+        promises.push(get('./topo/countries/finland/finland-regions.json'))
+        promises.push(get('./topo/countries/france/fr-departments.json'))
+        promises.push(get('./topo/countries/india/india-states.json'))
+        promises.push(get('./topo/countries/ireland/ireland-counties.json'))
+        promises.push(get('./topo/countries/italy/italy-regions.json'))
+        promises.push(get('./topo/countries/japan/jp-prefectures.json'))
+        promises.push(get('./topo/countries/liberia/liberia-districts.json'))
+        promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
     // TODO check US and netherlands
     // promises.push(get('./topo/countries/netherlands/nl-gemeentegrenzen-2016.json'))
     /* promises.push(get('./topo/countries/new-zealand/new-zealand-districts.json'))
-    promises.push(get('./topo/countries/norway/norway-counties.json'))
-    promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
-    promises.push(get('./topo/countries/peru/peru-departments.json'))
-    promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
-    promises.push(get('./topo/countries/poland/poland-provinces.json'))
-    promises.push(get('./topo/countries/portugal/portugal-districts.json'))
-    promises.push(get('./topo/countries/romania/romania-counties.json'))
-    promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
-    promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
-    promises.push(get('./topo/countries/sweden/sweden-counties.json'))
-    promises.push(get('./topo/countries/turkey/turkiye.json'))
-    promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
-    promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
-    promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
-    promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
+        promises.push(get('./topo/countries/norway/norway-counties.json'))
+        promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
+        promises.push(get('./topo/countries/peru/peru-departments.json'))
+        promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
+        promises.push(get('./topo/countries/poland/poland-provinces.json'))
+        promises.push(get('./topo/countries/portugal/portugal-districts.json'))
+        promises.push(get('./topo/countries/romania/romania-counties.json'))
+        promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
+        promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
+        promises.push(get('./topo/countries/sweden/sweden-counties.json'))
+        promises.push(get('./topo/countries/turkey/turkiye.json'))
+        promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
+        promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
+        promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
+        promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
 
     Promise.all(promises).then(res => {
       if (res[0].status !== 200) return
@@ -194,6 +201,23 @@ class AreaChart extends Component {
     console.log('Clicked on country: ', country)
   }
 
+  handleLineClick (coordinates, line, e) {
+    console.log('Mouse entered project line')
+
+    e.nativeEvent.target.setAttribute('data-tip', '')
+    e.nativeEvent.target.setAttribute('data-for', 'happyFace')
+    ReactTooltip.rebuild()
+    this.projectsTooltipNode.showTooltip({currentTarget: e.nativeEvent.target})
+    this.projectsTooltipNode.showTooltip({currentTarget: e.nativeEvent.target})
+  }
+
+  handleLineMouseLeave (e, line) {
+    console.log('Mouse left project line')
+    e.nativeEvent.target.removeAttribute('data-tip', '')
+    e.nativeEvent.target.removeAttribute('data-for', 'happyFace')
+    this.projectsTooltipNode.hideTooltip({currentTarget: e.nativeEvent.target})
+  }
+
   handleMarkerClick (marker) {
     let newIncludedAreas = []
     console.log(marker)
@@ -210,16 +234,16 @@ class AreaChart extends Component {
     })
 
     /* if (marker.researchAreas) {
-      for (let researchArea of marker.researchAreas) {
-        newIncludedAreas.push(researchArea.area)
-      }
-    }
-    this.setState({
-      zoom: 1.3,
-      center: marker.coordinates,
-      includedAreas: newIncludedAreas,
-      selectedMarker: marker
-    }) */
+          for (let researchArea of marker.researchAreas) {
+            newIncludedAreas.push(researchArea.area)
+          }
+        }
+        this.setState({
+          zoom: 1.3,
+          center: marker.coordinates,
+          includedAreas: newIncludedAreas,
+          selectedMarker: marker
+        }) */
   }
 
   handlerSrollMap (scrollEvent) {
@@ -245,8 +269,8 @@ class AreaChart extends Component {
     console.log('New center: ', newCenter)
     // TODO Fix center bug
     /* this.setState({
-      center: [newCenter[0], newCenter[1]]
-    }) */
+          center: [newCenter[0], newCenter[1]]
+        }) */
     this.checkRegionToRender(newCenter, this.state.zoom)
   }
 
@@ -269,14 +293,14 @@ class AreaChart extends Component {
 
       // TODO only show country states when zoomed close to a country
       /* if (Math.abs(long - center[0]) < zoom && Math.abs(lat - center[1]) < zoom) {
-        console.log(geographyPath)
-        console.log(`${geographyPath.properties.NAME} Long: ${long} Lat: ${lat}`)
-        for (let regionPath of this.state.regionsPaths) {
-          if (regionPath[0].properties.ISO === geographyPath.properties.ISO_A2) {
-            this.setState({regionPathToRender: regionPath})
-          }
-        }
-      } */
+              console.log(geographyPath)
+              console.log(`${geographyPath.properties.NAME} Long: ${long} Lat: ${lat}`)
+              for (let regionPath of this.state.regionsPaths) {
+                if (regionPath[0].properties.ISO === geographyPath.properties.ISO_A2) {
+                  this.setState({regionPathToRender: regionPath})
+                }
+              }
+            } */
     }
     // console.log(this.state.regionsPaths)
     // console.log(`center: ${center}`)
@@ -308,19 +332,24 @@ class AreaChart extends Component {
   // This funtion returns a curve command that builds a quadratic curve.
   // And depending on the line's curveStyle property it curves in one direction or the other.
   buildCurves (start, end, line) {
+    const offset = 0
+
     const x0 = start[0]
     const x1 = end[0]
     const y0 = start[1]
     const y1 = end[1]
-    /* const curve = {
-      forceUp: `${x1} ${y0}`,
-      forceDown: `${x0} ${y1}`
-    } */
-    const offset = 30
+    const xMiddle = ((x0 + x1) / 2)
+    const yMiddle = ((y0 + y1) / 2)
 
-    // TODO buld curves for institutions and their research regions
+    const m = (y0 - y1) / (x0 - x1)
+    const b = y0 - m * x0
+    const mOrthogonal = -((x0 - x1) / (y0 - y1))
+    const bOrthogonal = yMiddle - mOrthogonal * xMiddle
+    const bParallel = b - offset
+    const xCp = (bParallel - bOrthogonal) / (mOrthogonal - m)
+    const yCP = m * xCp + bParallel
 
-    return `M ${start.join(' ')} Q ${((x0 + x1) / 2) + offset} ${((y0 + y1) / 2) + offset} ${end.join(' ')}`
+    return `M ${start.join(' ')} Q ${xCp} ${yCP} ${end.join(' ')}`
   }
 
   render () {
@@ -358,7 +387,9 @@ class AreaChart extends Component {
                 onMoveStart={this.handleMoveStart}
                 onMoveEnd={this.handleMoveEnd}
                 onwheel={this.handlerSrollMap}
-                ref={(node) => { this.zoomableGroup = node }}
+                ref={(node) => {
+                  this.zoomableGroup = node
+                }}
                 center={[x, y]}
                 zoom={zoom}>
                 <Geographies geography={this.state.geographyPaths} disableOptimization>
@@ -468,18 +499,19 @@ class AreaChart extends Component {
                         style={{
                           default: {
                             fill: '#505050',
-                            stroke: '#505050'
+                            stroke: '#242424'
                           },
                           hover: {
                             fill: '#505050',
-                            stroke: '#505050'
+                            stroke: '#242424'
                           },
                           pressed: {
                             fill: '#505050',
-                            stroke: '#505050'
+                            stroke: '#242424'
                           }
                         }}>
-                        <circle cx={0} cy={0} r={(1 + (0.25 * (this.state.zoom - 1))) * radius}/>
+                        <circle cx={0} cy={0}
+                          r={(1 + (0.25 * (this.state.zoom - 1))) * radius}/>
                       </Marker>
                     }
                     )}
@@ -489,30 +521,51 @@ class AreaChart extends Component {
                   {
                     this.state.includedAreas.map((area, i) => {
                       let areaCoordinates = [0, 0]
+                      let lineArea = ''
                       this.state.geographyPaths.forEach(country => {
                         if (country.properties.ISO_A2 === area) {
+                          lineArea = country.properties.ISO_A2
                           areaCoordinates = this.calculateGeometricCenter(country)
                         }
                       })
                       return <Line
                         key={`project-line-${i}`}
+                        onClick={(line, coordinates, e) => {
+                          this.setState({selectedLine: line})
+                          this.handleLineClick(coordinates, line, e)
+                        }}
                         line={{
                           coordinates: {
                             start: this.state.selectedMarker.coordinates,
                             end: areaCoordinates
-                          }
+                          },
+                          area: lineArea
                         }}
                         buildPath={this.buildCurves}
                         preserveMarkerAspect={false}
                         style={{
-                          default: { fill: 'rgba(255, 255, 255, 0)', stroke: '#4e0050', strokeWidth: 2.5 / this.state.zoom },
-                          hover: { fill: 'rgba(255, 255, 255, 0)', stroke: '#4b9123', strokeWidth: 2.5 / this.state.zoom },
-                          pressed: { fill: 'rgba(255, 255, 255, 0)', stroke: '#4e0050', strokeWidth: 2.5 / this.state.zoom }
+                          default: {
+                            fill: 'rgba(255, 255, 255, 0)',
+                            stroke: '#4e0050',
+                            strokeWidth: 2.5 / Math.pow(this.state.zoom, 1 / 4)
+                          },
+                          hover: {
+                            fill: 'rgba(255, 255, 255, 0)',
+                            stroke: '#4b9123',
+                            strokeWidth: 2.5 / Math.pow(this.state.zoom, 1 / 4)
+                          },
+                          pressed: {
+                            fill: 'rgba(255, 255, 255, 0)',
+                            stroke: '#4e0050',
+                            strokeWidth: 2.5 / Math.pow(this.state.zoom, 1 / 4)
+                          }
                         }}
                       />
                     }
                     )}
+
                 </Lines>
+
                 <Markers>
                   {
                     this.state.institutions.map((institution, i) => {
@@ -536,7 +589,8 @@ class AreaChart extends Component {
                             stroke: '#2e2e2e'
                           }
                         }}>
-                        <circle cx={0} cy={0} r={this.state.zoom * institution.numberProjects / 30}/>
+                        <circle cx={0} cy={0}
+                          r={this.state.zoom * institution.numberProjects / 30}/>
                       </Marker>
                     }
                     )}
@@ -545,6 +599,16 @@ class AreaChart extends Component {
             </ComposableMap>
           )}
         </Motion>
+
+        <ReactTooltip id='happyFace' delayHide={100000} effect="solid" ref={(projectsTooltipRef) => {
+          this.projectsTooltipNode = projectsTooltipRef
+        }} aria-haspopup='true' role='example'>
+          <p>This is a global react component tooltip</p>
+          <p>You can put every thing here</p>
+          <ul>
+            <li>{'Included research areas: ' + JSON.stringify(this.state.selectedLine)}</li>
+          </ul>
+        </ReactTooltip>
       </div>
     )
   }
