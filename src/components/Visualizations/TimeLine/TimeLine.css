@@ -1,30 +1,22 @@
-rect.bar{
-    fill:none;
-    /*stroke:#985152;*/
-    stroke-width:2;
-    rx:2;
-    ry:2;
+.timelineContainer > .timelineContentContainer > .timelineContentContainerBackgroundRect {
+    fill: rgba(0, 0, 0, 0);
 }
-div.tooltip {
-    position: fixed;
-    text-align: center;
-    width: auto;
-    height: 16px;
-    padding: 4px;
-    font: 14px CHBold;
-    background: #434058;
-    border: 0px;
-    border-radius: 8px;
-    pointer-events: none;
+
+.timelineContainer > .timelineContentContainer .xAxis text {
+    font-size: 8px;
 }
-/*right Axis*/
-.domain{
-    stroke: rgba(0,0,0,0);
+
+.timelineContainer > .timelineContentContainer .yAxis {
 }
-.tick text{
-    fill:#88a;
+
+.timelineContainer > .timelineContentContainer .line path {
+    fill: transparent;
+    stroke: #29b6f6;
+    stroke-width: 2;
 }
-.tick line{
-    stroke: #88a;
-    stroke-dasharray: 2,2;
+
+.timelineContainer > .timelineContentContainer .scatter circle {
+    fill: #5c6bc0;
+    stroke: #fafafa;
+    stroke-width: 2;
 }

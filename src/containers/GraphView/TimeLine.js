@@ -5,18 +5,15 @@ import {default as TimeLineGraph} from '../../components/Visualizations/TimeLine
 
 class TimeLine extends React.Component {
   componentDidMount () {
-    this.Graph = new TimeLineGraph()
-    this.Graph.setupTimeGraph('#' + this.props.target, this.props.data, this.props.height, this.props.width, this.props.onProjectClick)
+    this.Graph.updateTimeGraph(this.props.data, this.props.width, this.props.height, 20)
   }
 
   componentDidUpdate () {
-    this.Graph.updateTimeGraph(this.props.data, this.props.height, this.props.width)
+    this.Graph.updateTimeGraph(this.props.data, this.props.height, this.props.width, 20)
   }
 
   render () {
-    return (
-      <svg id={this.props.target}/>
-    )
+    return (<TimeLineGraph ref={(node) => { this.Graph = node }} width={this.props.width} height={this.props.height} margin={20} ></TimeLineGraph>)
   }
 }
 

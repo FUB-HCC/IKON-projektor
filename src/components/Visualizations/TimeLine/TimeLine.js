@@ -1,260 +1,137 @@
-import {select as d3Select, event as d3Event} from 'd3-selection'
-import {scaleBand as d3ScaleBand, scaleTime as d3ScaleTime} from 'd3-scale'
-import {axisRight as d3AxisRight} from 'd3-axis'
-import {min as d3Min, max as d3Max} from 'd3-array'
 import 'd3-transition'
-import classes from './TimeLine.css'
+import React, {Component} from 'react'
+import SVGWithMargin from './SVGWithMargin'
+import styles from './TimeLine.css'
 
-class TimeLine {
-  setupTimeGraph (svgId, data, height, width, onProjectClick, type = 'default', config = {}) {
-    console.log('VISUALIZATION CHANGE: SETUP TIMELINE')
-    this.colors = {
-      system: {
-        'active': '#f0faf0',
-        'inactive': '#989aa1',
-        'background': '#434058'
-      }
+// Import the D3 libraries we'll be using for the spark line.
+import { extent as d3ArrayExtent } from 'd3-array'
+import {
+  scaleLinear as d3ScaleLinear,
+  scaleTime as d3ScaleTime
+} from 'd3-scale'
+import { line as d3Line } from 'd3-shape'
+// Import the D3 libraries we'll use for the axes.
+import {
+  axisBottom as d3AxisBottom,
+  axisLeft as d3AxisLeft
+} from 'd3-axis'
+import { select as d3Select } from 'd3-selection'
+
+const sampleData = [
+  { 'day': '2017-04-18', 'productPerceivedQuality': '2.8' },
+  { 'day': '2017-04-19', 'productPerceivedQuality': '2.9' },
+  { 'day': '2017-04-20', 'productPerceivedQuality': '2.7' },
+  { 'day': '2017-04-21', 'productPerceivedQuality': '4.3' },
+  { 'day': '2017-04-22', 'productPerceivedQuality': '4.6' },
+  { 'day': '2017-04-23', 'productPerceivedQuality': '5' },
+  { 'day': '2017-04-24', 'productPerceivedQuality': '5.2' },
+  { 'day': '2017-04-25', 'productPerceivedQuality': '5.1' },
+  { 'day': '2017-04-26', 'productPerceivedQuality': '4.8' },
+  { 'day': '2017-04-27', 'productPerceivedQuality': '4.9' },
+  { 'day': '2017-04-28', 'productPerceivedQuality': '5.1' },
+  { 'day': '2017-04-29', 'productPerceivedQuality': '5.3' },
+  { 'day': '2017-04-30', 'productPerceivedQuality': '5.6' },
+  { 'day': '2017-05-01', 'productPerceivedQuality': '6.2' }
+]
+
+class TimeLine extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      data: sampleData,
+      height: props.height * 0.5,
+      width: props.width * 0.5,
+      margin: props.margin
     }
-    /*
-      Public
-      Creates all nessecary data and shows the Visulisation
-        svgId - defines the SVG Id (e.g."#svgChart") where the Visulisation should be appended
-        data  - the newProjects.json set or a subset of it
-        type  - String defining the Visualisation Type
-        config- Json with variables defining the Style properties
-    */
-    this.transitionTime = 800
-    // Delays data change to let removed elements fade out and new Elements fade in.
-    this.delayTime = 0
-    this.tooltipTransitionTime = 200
-    /*
-      visdata  - Is an array where each entry represents an Object in the Chart. To seperate e.g.
-            the FBs, there are 4 empty entries between them.
-
-            num is used to put two or more objects in the same row to Optimize space
-            [{num:,color:,startDate:, endDate:,projectId:},...]
-    */
-    this.onProjectClick = onProjectClick
-    this.visData = data
-    this.svg = d3Select(svgId)
-    this.width = width
-    this.height = height
-    this.svg.attr('width', width).attr('height', height)
-    this.g = this.svg.append('g')
-      .attr('transform', 'translate(' + (this.width / 4) + ',' +
-        (this.height / 4) + ')')
-    this.xScale = d3ScaleBand()
-      .range([0, this.width / 2])
-      .padding(0.1)
-    this.yScale = d3ScaleTime()
-      .range([this.height / 2, 0])
-    this.rightAxis = this.g.append('g')
-      .attr('class', 'yTimeLine')
-
-    this.g.append('line').attr('class', 'currentDay').style('opacity', 0)
-    this.g.append('circle').attr('class', 'rightDot').style('opacity', 0)
-    this.g.append('circle').attr('class', 'leftDot').style('opacity', 0)
-
-    this.tooltip = d3Select('body').append('div')
-      .attr('class', classes.tooltip)
-      .style('opacity', 0)
-
-    this.updateD3Functions()
-    this.updateSvgElements()
+    // this.loadPaths = this.loadPaths.bind(this)
   }
 
-  updateTimeGraph (data, height, width) {
-    console.log('VISUALIZATION CHANGE: UPDATE TIMELINE')
-    /*
-      Public
-      Updates The Visulisation with the new Data
-        data - the newProjects.json set or a subset of it
-    */
-    this.width = width
-    this.height = height
-    this.svg.attr('width', width).attr('height', height)
-    this.g.attr('transform', 'translate(' + (this.width / 4) + ',' +
-      (this.height / 4) + ')')
-    this.xScale.range([0, this.width / 2])
-    this.yScale.range([this.height / 2, 0])
-
-    this.visData = data
-    this.updateD3Functions()
-    this.updateSvgElements()
+  updateTimeGraph (data, height, width, margin) {
+    console.log(data)
+    this.setState({height: height * 0.5, width: width * 0.50, margin: margin})
   }
 
-  updateD3Functions () {
-    /*
-      Private
-      Updates all nessecary D3 functions (e.g. ForceSimulation, Scales)
-      Uses the globally defined Data in this.visData
-    */
-    this.xScale.domain(this.visData.map(function (d) {
-      return d.num
+  render () {
+    const selectY = datum => datum.productPerceivedQuality
+    const selectX = datum => new Date(datum.day).setHours(0, 0, 0, 0)
+
+    // Since this is "time series" visualization, our x axis should have a time scale.
+    // Our x domain will be the extent ([min, max]) of x values (Dates) in our data set.
+    // Our x range will be from x=0 to x=width.
+    const xScale = d3ScaleTime()
+      .domain(d3ArrayExtent(this.state.data, selectX))
+      .range([0, this.state.width])
+
+    // Our y axis should just have a linear scale.
+    // Our y domain will be the extent of y values (numbers) in our data set.
+    const yScale = d3ScaleLinear()
+      .domain(d3ArrayExtent(this.state.data, selectY))
+      .range([this.state.height, 0])
+
+    // Add an axis for our x scale which has half as many ticks as there are rows in the data set.
+    const xAxis = d3AxisBottom()
+      .scale(xScale)
+      .ticks(this.state.data.length / 2)
+    // Add an axis for our y scale that has 3 ticks (FIXME: we should probably make number of ticks per axis a prop).
+    const yAxis = d3AxisLeft()
+      .scale(yScale)
+      .ticks(3)
+
+    // These two functions select the scaled x and y values (respectively) of our data.
+    const selectScaledX = datum => xScale(selectX(datum))
+    const selectScaledY = datum => yScale(selectY(datum))
+
+    // Create a d3Line factory for our scales.
+    const sparkLine = d3Line()
+      .x(selectScaledX)
+      .y(selectScaledY)
+
+      // Create a line path of for our data.
+    const linePath = sparkLine(this.state.data)
+
+    // map our data to scaled points.
+    const circlePoints = this.state.data.map(datum => ({
+      x: selectScaledX(datum),
+      y: selectScaledY(datum)
     }))
-    this.yScale.domain([d3Min(this.visData, function (d) {
-      return d.startDate
-    }),
-    d3Max(this.visData, function (d) {
-      return d.endDate
-    })])
-  }
 
-  updateSvgElements () {
-    /*
-      Private
-      Updates all nessecary SVG elements
-    */
-    this.updateAxis()
-    this.updateCurrentDayIndication()
-    this.updateBars()
-  }
+    return (
+      <SVGWithMargin
+        className={styles.timelineContainer}
+        contentContainerBackgroundRectClassName={styles.timelineContentContainerBackgroundRect}
+        contentContainerGroupClassName={styles.timelineContentContainer}
+        height={this.state.height}
+        margin={this.state.margin}
+        width={this.state.width}
+      >
 
-  updateAxis () {
-    /*
-      Updates the axis in the svg
-    */
-    this.g.select('.yTimeLine').transition().delay(this.delayTime).duration(this.transitionTime)
-      .call(d3AxisRight(this.yScale)
-        .tickSize(this.width / 2))
-      .selectAll('.tick text')
-      .attr('x', this.xScale.range()[1] + 20)
-    this.g.select('.yTimeLine').selectAll('.tick').attr('class', classes.tick + ' tick')
-    this.g.select('.yTimeLine').selectAll('.domain').attr('class', classes.domain + ' domain')
-  }
+        {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
+        <g
+          className={styles.xAxis}
+          ref={node => d3Select(node).call(xAxis)}
+          style={{
+            transform: `translateY(${this.state.height}px)`
+          }}
+        />
+        <g className={styles.yAxis} ref={node => d3Select(node).call(yAxis)} />
 
-  updateCurrentDayIndication () {
-    /*
-      Updates the CurrentDayIndication in the svg
-    */
-    let d = new Date()
+        <g className={styles.line}>
+          <path d={linePath} />
+        </g>
 
-    this.g.select('.currentDay')
-      .attr('stroke', this.colors.system.active)
-      .transition().delay(this.delayTime).duration(this.transitionTime)
-      .attr('y1', this.yScale(d))
-      .attr('y2', this.yScale(d))
-      .attr('x1', -5)
-      .attr('x2', this.width / 2 + 5)
-      .style('opacity', 1)
-
-    this.g.select('.rightDot')
-      .style('fill', this.colors.system.active)
-      .transition().delay(this.delayTime).duration(this.transitionTime)
-      .attr('r', 4)
-      .attr('cx', -5)
-      .attr('cy', this.yScale(d))
-      .style('opacity', 1)
-
-    this.g.select('.leftDot')
-      .style('fill', this.colors.system.active)
-      .transition().delay(this.delayTime).duration(this.transitionTime)
-      .attr('r', 4)
-      .attr('cx', this.width / 2 + 5)
-      .attr('cy', this.yScale(d))
-      .style('opacity', 1)
-  }
-
-  updateBars () {
-    /*
-      Updates all Bars in the svg and a tooltip in the Body
-    */
-    /*
-      Replace Bars with path or polygon for different Visulisations of the Project
-      (possibly seperate Class)
-    */
-    const that = this
-    const bars = this.g.selectAll('.' + classes.bar)
-      .data(this.visData, function (d) {
-        return d.projectId
-      })
-
-    // Delete old elements
-    bars.exit().transition()
-      .duration(this.transitionTime)
-      .attr('y', function (d) {
-        let tmp = new Date(d.endDate)
-        tmp.setDate(tmp.getDate() - 600)
-
-        return that.yScale(tmp)
-      })
-      .style('opacity', 0)
-      .remove()
-    // Add new elements
-    bars.enter().append('rect')
-      .attr('class', classes.bar)
-      .attr('stroke', function (d) {
-        return d.color
-      })
-      .style('fill', function (d) {
-        return d.color
-      })
-      .style('opacity', 0)
-      .attr('x', d => that.xScale(d.num) + 'px')
-      .attr('width', function () {
-        if (that.xScale.bandwidth() - 3 > 0.01) {
-          return that.xScale.bandwidth() - 3
-        }
-        return 0
-      })
-      .attr('y', function (d) {
-        let tmp = new Date(d.endDate)
-        tmp.setDate(tmp.getDate() - 600)
-        return that.yScale(tmp)
-      })
-      .attr('height', function (d) {
-        return that.yScale(d.startDate) - that.yScale(d.endDate)
-      })
-      .on('click', function (d) {
-        that.onProjectClick(d, 1)
-      })
-      .on('mouseover', function () {
-        d3Select(this).style('cursor', 'pointer')
-        d3Select(this).transition()
-          .duration(that.tooltipTransitionTime)
-          .style('stroke', that.colors.system.active)
-          .style('fill', that.colors.system.active)
-        that.tooltip.transition()
-          .duration(that.tooltipTransitionTime)
-          .style('opacity', 0.8)
-        // TODO tooltip
-        that.tooltip.html('No tooltip')
-          .style('color', that.colors.system.active)
-          .style('left', (d3Event.pageX) + 'px')
-          .style('top', (d3Event.pageY - 32) + 'px')
-      })
-      .on('mouseout', function (d) {
-        d3Select(this).style('cursor', 'default')
-        d3Select(this).transition()
-          .duration(that.tooltipTransitionTime)
-          .style('stroke', d.color)
-          .style('fill', d.color)
-        that.tooltip.transition()
-          .duration(that.tooltipTransitionTime)
-          .style('opacity', 0)
-      })
-      .transition().delay(this.delayTime).duration(this.transitionTime)
-      .style('opacity', 1)
-      .attr('y', function (d) {
-        return that.yScale(d.endDate)
-      })
-
-    bars
-      .transition().delay(this.delayTime).duration(this.transitionTime)
-      .attr('x', d => that.xScale(d.num) + 'px')
-      .attr('width', function () {
-        if (that.xScale.bandwidth() - 3 > 0.01) {
-          return that.xScale.bandwidth() - 3
-        }
-        return 0
-      })
-      .attr('y', function (d) {
-        return that.yScale(d.endDate)
-      })
-      .attr('height', function (d) {
-        return that.yScale(d.startDate) - that.yScale(d.endDate)
-      })
-      .style('opacity', 1)
+        {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
+        <g className={styles.scatter}>
+          {circlePoints.map(circlePoint => (
+            <circle
+              cx={circlePoint.x}
+              cy={circlePoint.y}
+              key={`${circlePoint.x},${circlePoint.y}`}
+              r={4}
+            />
+          ))}
+        </g>
+      </SVGWithMargin>
+    )
   }
 }
 
