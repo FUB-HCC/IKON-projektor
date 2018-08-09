@@ -1,15 +1,15 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {fieldsIntToString, getFieldColor} from '../../store/utility'
+import {getFieldColor} from '../../store/utility'
 import {default as TimeLineGraph} from '../../components/Visualizations/TimeLine/TimeLine'
 
 class TimeLine extends React.Component {
   componentDidMount () {
-    this.Graph.updateTimeGraph({dataSplitFb: this.props.dataSplitFb, projects: this.props.projects}, this.props.width, this.props.height, 20)
+    this.Graph.updateTimeGraph({dataSplitFbYear: this.props.dataSplitFbYear, projects: this.props.projects}, this.props.width, this.props.height, 20)
   }
 
   componentDidUpdate () {
-    this.Graph.updateTimeGraph({dataSplitFb: this.props.dataSplitFb, projects: this.props.projects}, this.props.height, this.props.width, 20)
+    this.Graph.updateTimeGraph({dataSplitFbYear: this.props.dataSplitFbYear, projects: this.props.projects}, this.props.height, this.props.width, 20)
   }
 
   render () {
@@ -28,9 +28,8 @@ const graphColors = {
 const mapStateToProps = state => {
   const processedData = processData(state.main.filteredData, graphColors)
   return {
-    dataSplitFb: processedData,
+    dataSplitFbYear: processedData,
     projects: state.main.filteredData,
-    target: 'graph',
     colors: graphColors
   }
 }
@@ -44,25 +43,48 @@ const processData = (data, colors) => {
 
      Returns the visData.
 
-   (Possibly split up into a different function for each Visualisation type)
  */
-  // create baseData and split by FB
+
   if (!data) return [[], [], [], []]
-  let splitFbs = [[], [], [], []]
 
-  Object.keys(data).forEach(pId => {
-    let d = {
-      num: 0,
-      color: getFieldColor(fieldsIntToString(data[pId].forschungsbereichNumber)),
-      startDate: new Date(data[pId].start),
-      endDate: new Date(data[pId].end),
-      projectId: pId,
-      project: data[pId]
+  let dataSplitYears = []
+  for (let projectsKey in data) {
+    if (!(data[projectsKey].forschungsbereichstr in dataSplitYears)) {
+      dataSplitYears[data[projectsKey].forschungsbereichstr] = []
     }
-    splitFbs[data[pId].forschungsbereichNumber - 1].push(d)
-  })
 
-  return splitFbs
+    let startDate = parseInt(data[projectsKey].start)
+    let endDate = parseInt(data[projectsKey].end)
+    if (isNaN(endDate) || endDate === '') endDate = new Date().getFullYear()
+
+    let forschungsbereichData = dataSplitYears[data[projectsKey].forschungsbereichstr]
+
+    let year = startDate
+    while (year <= endDate) {
+      let yearExists = false
+      for (let yearFbIndex in forschungsbereichData) { // check if year already is existent for the forschungsbereich
+        if (forschungsbereichData[yearFbIndex].year === year) {
+          yearExists = true
+          forschungsbereichData[yearFbIndex].numberOfActiveProjects = forschungsbereichData[yearFbIndex].numberOfActiveProjects + 1
+          forschungsbereichData[yearFbIndex].projects.push(data[projectsKey])
+        }
+      }
+      if (!yearExists) {
+        forschungsbereichData.push(
+          {
+            year: year,
+            fb: data[projectsKey].forschungsbereichstr,
+            numberOfActiveProjects: 1,
+            projects: [data[projectsKey]],
+            color: getFieldColor(data[projectsKey].forschungsbereichstr)
+          })
+      }
+      year++
+    }
+    dataSplitYears[data[projectsKey].forschungsbereichstr] = forschungsbereichData.sort((a, b) => a.year - b.year)
+  }
+
+  return dataSplitYears
 }
 
 export default connect(mapStateToProps)(TimeLine)

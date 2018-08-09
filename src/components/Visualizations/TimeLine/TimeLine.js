@@ -2,7 +2,6 @@ import 'd3-transition'
 import React, {Component} from 'react'
 import SVGWithMargin from './SVGWithMargin'
 import styles from './TimeLine.css'
-import {getFieldColor} from '../../../store/utility'
 
 // Import the D3 libraries we'll be using for the spark line.
 import {extent as d3ArrayExtent} from 'd3-array'
@@ -33,59 +32,25 @@ class TimeLine extends Component {
   }
 
   updateTimeGraph (data, height, width, margin) {
-    if (!this.state.firstUpdate) { // little workaround for first time scaling
-      this.setState({height: height * 0.5, width: width * 0.50, margin: margin})
-    }
     console.log(data)
 
-    let dataSplitYears = []
-    for (let projectsKey in data.projects) {
-      if (this.state.forschungsbereiche.indexOf(data.projects[projectsKey].forschungsbereichstr) === -1) this.state.forschungsbereiche.push(data.projects[projectsKey].forschungsbereichstr)
-
-      if (!(data.projects[projectsKey].forschungsbereichstr in dataSplitYears)) {
-        dataSplitYears[data.projects[projectsKey].forschungsbereichstr] = []
-      }
-
-      let startDate = parseInt(data.projects[projectsKey].start)
-      let endDate = parseInt(data.projects[projectsKey].end)
-      if (isNaN(endDate) || endDate === '') endDate = new Date().getFullYear()
-
-      let forschungsbereichData = dataSplitYears[data.projects[projectsKey].forschungsbereichstr]
-
-      let year = startDate
-      while (year <= endDate) {
-        let yearExists = false
-        for (let yearFbIndex in forschungsbereichData) { // check if year already is existent for the forschungsbereich
-          if (forschungsbereichData[yearFbIndex].year === year) {
-            yearExists = true
-            forschungsbereichData[yearFbIndex].numberOfActiveProjects = forschungsbereichData[yearFbIndex].numberOfActiveProjects + 1
-            forschungsbereichData[yearFbIndex].projects.push(data.projects[projectsKey])
-          }
-        }
-        if (!yearExists) {
-          forschungsbereichData.push(
-            {
-              year: year,
-              fb: data.projects[projectsKey].forschungsbereichstr,
-              numberOfActiveProjects: 1,
-              projects: [data.projects[projectsKey]],
-              color: getFieldColor(data.projects[projectsKey].forschungsbereichstr)
-            })
-        }
-
-        year++
-      }
-      dataSplitYears[data.projects[projectsKey].forschungsbereichstr] = forschungsbereichData.sort((a, b) => a.year - b.year)
+    if (!this.state.firstUpdate) { // workaround for first time scaling
+      this.setState({height: height * 0.5, width: width * 0.50, margin: margin})
     }
-    console.log(dataSplitYears)
-    this.setState({dataSplitYears: dataSplitYears, projectsData: data, firstUpdate: false})
+
+    let forschungsbereiche = this.state.forschungsbereiche
+    Object.keys(data.dataSplitFbYear).map(value => {
+      if (this.state.forschungsbereiche.indexOf(value) === -1) forschungsbereiche = [...forschungsbereiche, value]
+    })
+
+    this.setState({dataSplitYears: data.dataSplitFbYear, projectsData: data.projects, forschungsbereiche: forschungsbereiche, firstUpdate: false})
   }
 
   render () {
+    // TODO: iterate over forschungsbereiche
     let fbKey = this.state.forschungsbereiche[1]
     if (!fbKey || this.state.dataSplitYears[fbKey].length === 0) return null
     let fbYearData = this.state.dataSplitYears[fbKey]
-    console.log(fbYearData)
 
     const selectY = datum => datum.numberOfActiveProjects
     const selectX = datum => new Date(datum.year.toString()).setHours(0, 0, 0, 0)
@@ -107,7 +72,7 @@ class TimeLine extends Component {
     const xAxis = d3AxisBottom()
       .scale(xScale)
       .ticks(fbYearData.length)
-    // Add an axis for our y scale that has 3 ticks (FIXME: we should probably make number of ticks per axis a prop).
+    // Add an axis for our y scale that has 3 ticks
     const yAxis = d3AxisLeft()
       .scale(yScale)
       .ticks(3)
@@ -130,8 +95,6 @@ class TimeLine extends Component {
       y: selectScaledY(datum)
     }))
 
-    console.log('testl')
-
     return (
       <SVGWithMargin
         className={styles.timelineContainer}
@@ -153,11 +116,8 @@ class TimeLine extends Component {
         <g className={styles.yAxis} ref={node => d3Select(node).call(yAxis)}/>
 
         <g className={styles.line}>
-          {/* TODO color setting does not work. */}
           <path style={{
-            default: {
-              stroke: fbYearData.color
-            }
+            stroke: fbYearData[0].color
           }} d={linePath}/>
         </g>
 
@@ -167,6 +127,9 @@ class TimeLine extends Component {
             <circle
               cx={circlePoint.x}
               cy={circlePoint.y}
+              style={{
+                fill: fbYearData[0].color
+              }}
               key={`${Math.random()}${circlePoint.x},${circlePoint.y}`}
               r={4}
             />
