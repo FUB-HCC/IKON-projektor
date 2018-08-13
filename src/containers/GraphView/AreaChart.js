@@ -19,7 +19,7 @@ class AreaChart extends React.Component {
   }
 
   render () {
-    return (<AreaChartVis ref={(node) => { this.Graph = node }} ></AreaChartVis>)
+    return (<AreaChartVis ref={(node) => { this.Graph = node }} onProjectClick={this.props.onProjectClick} ></AreaChartVis>)
   }
 }
 
