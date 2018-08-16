@@ -1,7 +1,8 @@
 .BackGradient {
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(60deg, #76738B, #855E5F, #76738B, #646E3F, #76738B, #5F6648, #76738B, #54555E); /*background: linear-gradient(60deg, #434058, #522B2C, #434058, #313B0C, #434058, #2C3315, #434058, #21222B);*/
+    /* background: linear-gradient(60deg, #76738B, #855E5F, #76738B, #646E3F, #76738B, #5F6648, #76738B, #54555E); /*background: linear-gradient(60deg, #434058, #522B2C, #434058, #313B0C, #434058, #2C3315, #434058, #21222B); */
+    background: rgb(21, 43, 21);
     background-size: 800% 800%;
     -webkit-animation: Gradient 60s ease infinite;
     -moz-animation: Gradient 60s ease infinite;
