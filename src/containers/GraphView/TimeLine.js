@@ -13,7 +13,7 @@ class TimeLine extends React.Component {
   }
 
   render () {
-    return (<TimeLineGraph ref={(node) => { this.Graph = node }} width={this.props.width} height={this.props.height} margin={20} ></TimeLineGraph>)
+    return (<TimeLineGraph ref={(node) => { this.Graph = node }} width={this.props.width} height={this.props.height} margin={20} />)
   }
 }
 
