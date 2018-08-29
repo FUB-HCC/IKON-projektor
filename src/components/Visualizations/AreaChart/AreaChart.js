@@ -12,7 +12,9 @@ import {
   Markers,
   Lines,
   Line
-} from 'react-simple-maps'
+} from './ReactSimpleMaps'
+import Tree from './ReactSimpleMaps/Tree'
+import Trees from './ReactSimpleMaps/Trees'
 import {getCenter} from 'geolib'
 import {Motion, spring} from 'react-motion'
 import {getInstitutions} from './areaUtility'
@@ -655,6 +657,28 @@ class AreaChart extends Component {
                       }
                       )}
                   </Markers>
+
+                  <Trees>
+                    {
+                      this.state.institutions.map((institution, i) => {
+                        return <Tree
+                          key={`institution-tree-${i}`}
+                          tree={institution}
+                          onClick={this.handleMarkerClick}
+                          scale={205}
+                          style={{
+                            default: {
+                            },
+                            hover: {
+                            },
+                            pressed: {
+                            }
+                          }}>
+                        </Tree>
+                      }
+                      )}
+                  </Trees>
+
                 </ZoomableGroup>
               </ComposableMap>
             )}
