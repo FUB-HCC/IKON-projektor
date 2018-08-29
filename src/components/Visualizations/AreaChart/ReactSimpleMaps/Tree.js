@@ -1,30 +1,36 @@
 import React, {Component} from 'react'
 import * as d3 from 'd3'
 
-let treeData = {
-  'name': 'Top Level',
-  'children': [
-    {
-      'name': 'Level 2: A',
-      'children': [
-        { 'name': 'Son of A' },
-        { 'name': 'Daughter of A' }
-      ]
-    },
-    { 'name': 'Level 2: B' }
-  ]
-}
-
 class Tree extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      tree: props.tree,
       treeData: {}
     }
   }
 
+  shouldComponentUpdate (nextProps, nextState) {
+    // TODO only render when necessary
+    let result = !Object.is(this.state, nextState)
+    return result
+  }
+
   componentDidMount () {
-    this.setState({treeData: treeData})
+    // TODO THIS SHOULD BE DONE IN AreaChart.js
+    let newTreeData = {
+      'name': 'Institution',
+      'children': []
+    }
+
+    this.state.tree.projects.map((value) => {
+      let newValue = Object.assign({name: value.titel}, value)
+      if (newTreeData.children.length < 10000000) newTreeData.children.push(newValue)
+    })
+
+    console.log(newTreeData)
+
+    this.setState({treeData: newTreeData})
   }
 
   render () {
@@ -42,7 +48,7 @@ class Tree extends Component {
 
     // declares a tree layout and assigns the size
     let treemap = d3.tree()
-      .size([width, height])
+      .size([width * 0.8, height])
 
       //  assigns the data to a hierarchy using parent-child relationships
     let nodes = d3.hierarchy(this.state.treeData)
@@ -77,9 +83,15 @@ class Tree extends Component {
       .data(nodes.descendants().slice(1))
       .enter().append('path')
       .attr('class', 'link')
+      .style('fill', 'none').style('stroke', '#386253').style('stroke-width', '2px')
       .attr('d', (d) => {
         let dx = d.x + deltaX
-        let dy = d.y + deltaY
+        let dy
+        if (!d.parent) {
+          dy = d.y + deltaY
+        } else {
+          dy = height - treeY
+        }
         let dParentX = d.parent.x + deltaX
         let dParentY = d.parent.y + deltaY
 
@@ -100,26 +112,37 @@ class Tree extends Component {
                   (d.children ? ' node--internal' : ' node--leaf')
       })
       .attr('transform', (d) => {
-        console.log(d)
+        // console.log(d)
 
         let dx = d.x + deltaX
-        let dy = d.y + deltaY
-        console.log(scale)
-        console.log(translation)
 
-        return 'translate(' + dx + ',' + dy + ')'
+        let dy
+        if (!d.parent) {
+          dy = d.y + deltaY
+        } else {
+          dy = height - (rootNodeY + deltaY)
+        }
+        // console.log(scale)
+        // console.log(translation)
+
+        return `translate(${dx},${dy}) ${scale}`
       })
 
       // adds the circle to the node
     node.append('circle')
       .attr('r', 10)
+      .style('fill', (d) => {
+        return (d.parent ? '#386253' : '#9DBC25')
+      }).style('stroke', (d) => {
+        return (d.parent ? '#9DBC25' : '#386253')
+      }).style('stroke-width', '3px')
 
       // adds the text to the node
     node.append('text')
       .attr('dy', '.35em')
       .attr('y', (d) => { return d.children ? -20 : 20 })
       .style('text-anchor', 'middle')
-      .text((d) => { return d.data.name })
+      .text((d) => { if (!d.parent) return d.data.name })
 
     return (
       <g className={'rsm-tree'} id={'institution-tree'}/>
