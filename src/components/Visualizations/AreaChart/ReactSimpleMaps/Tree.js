@@ -32,13 +32,13 @@ class Tree extends Component {
       projection,
       zoom,
       tree,
+      width,
+      height,
       preserveMarkerAspect
     } = this.props
 
     // set the dimensions and margins of the diagram
-    let margin = {top: 40, right: 90, bottom: 50, left: 90}
-    let width = 660 - margin.left - margin.right
-    let height = 500 - margin.top - margin.bottom
+    let margin = {top: 0, right: 0, bottom: 0, left: 0}
 
     // declares a tree layout and assigns the size
     let treemap = d3.tree()
@@ -49,6 +49,16 @@ class Tree extends Component {
 
     // maps the node data to the tree layout
     nodes = treemap(nodes)
+
+    let rootNodeX = nodes.x
+    let rootNodeY = nodes.y
+    const scale = preserveMarkerAspect ? ` scale(${1 / zoom})` : ''
+    const translation = projection(tree.coordinates)
+    let treeX = translation[0]
+    let treeY = translation[1]
+
+    let deltaX = treeX - rootNodeX
+    let deltaY = treeY - rootNodeY
 
     // append the svg obgect to the body of the page
     // appends a 'group' element to 'svg'
@@ -68,13 +78,20 @@ class Tree extends Component {
       .enter().append('path')
       .attr('class', 'link')
       .attr('d', (d) => {
-        return 'M' + d.x + ',' + d.y +
-                  'C' + d.x + ',' + (d.y + d.parent.y) / 2 +
-                  ' ' + d.parent.x + ',' + (d.y + d.parent.y) / 2 +
-                  ' ' + d.parent.x + ',' + d.parent.y
+        let dx = d.x + deltaX
+        let dy = d.y + deltaY
+        let dParentX = d.parent.x + deltaX
+        let dParentY = d.parent.y + deltaY
+
+        return 'M' + dx + ',' + dy +
+                  'C' + dx + ',' + (dy + dParentY) / 2 +
+                  ' ' + dParentX + ',' + (dy + dParentY) / 2 +
+                  ' ' + dParentX + ',' + dParentY
       })
 
-      // adds each node as a group
+    console.log(nodes)
+
+    // adds each node as a group
     let node = g.selectAll('.node')
       .data(nodes.descendants())
       .enter().append('g')
@@ -83,8 +100,14 @@ class Tree extends Component {
                   (d.children ? ' node--internal' : ' node--leaf')
       })
       .attr('transform', (d) => {
-        // return 'translate(' + d.x + ',' + d.y + ')'
-        return 'translate(' + d.x + ',' + d.y + ')'
+        console.log(d)
+
+        let dx = d.x + deltaX
+        let dy = d.y + deltaY
+        console.log(scale)
+        console.log(translation)
+
+        return 'translate(' + dx + ',' + dy + ')'
       })
 
       // adds the circle to the node
@@ -98,17 +121,8 @@ class Tree extends Component {
       .style('text-anchor', 'middle')
       .text((d) => { return d.data.name })
 
-    // console.log(this._reactInternalFiber._debugOwner.stateNode)
-      
-    const scale = preserveMarkerAspect ? ` scale(${1 / zoom})` : ''
-    const translation = projection(tree.coordinates)
-
     return (
-      <g className={'rsm-tree'} id={'institution-tree'}
-        transform={ `translate(
-           ${translation[0]}
-           ${translation[1]}
-         ) ${scale}`}/>
+      <g className={'rsm-tree'} id={'institution-tree'}/>
     )
   }
 }
