@@ -62,10 +62,10 @@ class AreaChart extends Component {
 
   updateData (data, width, height) {
     /*
-                              Public
-                              Updates The Visulisation with the new Data
-                                data - the newProjects.json set or a subset of it
-                            */
+                                  Public
+                                  Updates The Visulisation with the new Data
+                                    data - the newProjects.json set or a subset of it
+                                */
     // TODO
     let institutions = getInstitutions(data)
     console.log(institutions)
@@ -114,41 +114,41 @@ class AreaChart extends Component {
     // TODO https://www.react-simple-maps.io/country-map-with-admin-units To learn how to convert shapefiles into
     // TODO topojson that can be used with react-simple-maps read How to convert and prepare TopoJSON files
     // TODO for interactive mapping with d3 on medium.
-    promises.push(get('./topo/countries/germany/dach-states.json'))
+    promises.push(get('./topo/countries/germany/germany-states.json'))
     /* promises.push(get('./topo/countries/algeria/algeria-provinces.json'))
-                        promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
-                        promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
-                        promises.push(get('./topo/countries/belgium/benelux-countries.json'))
-                        promises.push(get('./topo/countries/china/china-provinces.json'))
-                        promises.push(get('./topo/countries/colombia/colombia-departments.json'))
-                        promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
-                        promises.push(get('./topo/countries/denmark/denmark-counties.json'))
-                        promises.push(get('./topo/countries/finland/finland-regions.json'))
-                        promises.push(get('./topo/countries/france/fr-departments.json'))
-                        promises.push(get('./topo/countries/india/india-states.json'))
-                        promises.push(get('./topo/countries/ireland/ireland-counties.json'))
-                        promises.push(get('./topo/countries/italy/italy-regions.json'))
-                        promises.push(get('./topo/countries/japan/jp-prefectures.json'))
-                        promises.push(get('./topo/countries/liberia/liberia-districts.json'))
-                        promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
+                            promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
+                            promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
+                            promises.push(get('./topo/countries/belgium/benelux-countries.json'))
+                            promises.push(get('./topo/countries/china/china-provinces.json'))
+                            promises.push(get('./topo/countries/colombia/colombia-departments.json'))
+                            promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
+                            promises.push(get('./topo/countries/denmark/denmark-counties.json'))
+                            promises.push(get('./topo/countries/finland/finland-regions.json'))
+                            promises.push(get('./topo/countries/france/fr-departments.json'))
+                            promises.push(get('./topo/countries/india/india-states.json'))
+                            promises.push(get('./topo/countries/ireland/ireland-counties.json'))
+                            promises.push(get('./topo/countries/italy/italy-regions.json'))
+                            promises.push(get('./topo/countries/japan/jp-prefectures.json'))
+                            promises.push(get('./topo/countries/liberia/liberia-districts.json'))
+                            promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
     // TODO check US and netherlands
     // promises.push(get('./topo/countries/netherlands/nl-gemeentegrenzen-2016.json'))
     /* promises.push(get('./topo/countries/new-zealand/new-zealand-districts.json'))
-                        promises.push(get('./topo/countries/norway/norway-counties.json'))
-                        promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
-                        promises.push(get('./topo/countries/peru/peru-departments.json'))
-                        promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
-                        promises.push(get('./topo/countries/poland/poland-provinces.json'))
-                        promises.push(get('./topo/countries/portugal/portugal-districts.json'))
-                        promises.push(get('./topo/countries/romania/romania-counties.json'))
-                        promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
-                        promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
-                        promises.push(get('./topo/countries/sweden/sweden-counties.json'))
-                        promises.push(get('./topo/countries/turkey/turkiye.json'))
-                        promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
-                        promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
-                        promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
-                        promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
+                            promises.push(get('./topo/countries/norway/norway-counties.json'))
+                            promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
+                            promises.push(get('./topo/countries/peru/peru-departments.json'))
+                            promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
+                            promises.push(get('./topo/countries/poland/poland-provinces.json'))
+                            promises.push(get('./topo/countries/portugal/portugal-districts.json'))
+                            promises.push(get('./topo/countries/romania/romania-counties.json'))
+                            promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
+                            promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
+                            promises.push(get('./topo/countries/sweden/sweden-counties.json'))
+                            promises.push(get('./topo/countries/turkey/turkiye.json'))
+                            promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
+                            promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
+                            promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
+                            promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
 
     Promise.all(promises).then(res => {
       if (res[0].status !== 200) return
@@ -177,10 +177,10 @@ class AreaChart extends Component {
     this.setState({projectsPopoverHidden: false})
 
     /* e.nativeEvent.target.setAttribute('data-tip', '')
-                e.nativeEvent.target.setAttribute('data-for', 'happyFace')
-                ReactTooltip.rebuild()
-                this.projectsTooltipNode.showTooltip({currentTarget: e.nativeEvent.target})
-                this.projectsTooltipNode.showTooltip({currentTarget: e.nativeEvent.target}) */
+                    e.nativeEvent.target.setAttribute('data-for', 'happyFace')
+                    ReactTooltip.rebuild()
+                    this.projectsTooltipNode.showTooltip({currentTarget: e.nativeEvent.target})
+                    this.projectsTooltipNode.showTooltip({currentTarget: e.nativeEvent.target}) */
   }
 
   handleLineMouseLeave (e, line) {
@@ -234,6 +234,11 @@ class AreaChart extends Component {
     this.setState({
       zoom: this.state.zoom * factor
     })
+    setTimeout(() => {
+      this.setState({
+        zoomOld: this.state.zoom
+      })
+    }, 1000)
     this.checkRegionToRender(this.state.center, this.state.zoom)
   }
 
@@ -261,11 +266,9 @@ class AreaChart extends Component {
   }
 
   handleMoveEnd (newCenter) {
+    this.setState({center: [newCenter[0], newCenter[1]]})
     console.log('New center: ', newCenter)
     // TODO Fix center bug
-    /* this.setState({
-                          center: [newCenter[0], newCenter[1]]
-                        }) */
     this.checkRegionToRender(newCenter, this.state.zoom)
   }
 
@@ -288,14 +291,14 @@ class AreaChart extends Component {
 
       // TODO only show country states when zoomed close to a country
       /* if (Math.abs(long - center[0]) < zoom && Math.abs(lat - center[1]) < zoom) {
-                                      console.log(geographyPath)
-                                      console.log(`${geographyPath.properties.NAME} Long: ${long} Lat: ${lat}`)
-                                      for (let regionPath of this.state.regionsPaths) {
-                                        if (regionPath[0].properties.ISO === geographyPath.properties.ISO_A2) {
-                                          this.setState({regionPathToRender: regionPath})
-                                        }
-                                      }
-                                    } */
+                                            console.log(geographyPath)
+                                            console.log(`${geographyPath.properties.NAME} Long: ${long} Lat: ${lat}`)
+                                            for (let regionPath of this.state.regionsPaths) {
+                                              if (regionPath[0].properties.ISO === geographyPath.properties.ISO_A2) {
+                                                this.setState({regionPathToRender: regionPath})
+                                              }
+                                            }
+                                          } */
     }
     // console.log(this.state.regionsPaths)
     // console.log(`center: ${center}`)
@@ -364,7 +367,8 @@ class AreaChart extends Component {
           return <li onClick={event => {
             this.setState({projectsPopoverHidden: true})
             this.props.onProjectClick({project: project}, 2)
-          }} key={`project-list-link-${project.id}-${i}`} className={classes.projects_list_item}>{`${project.titel} (${project.id})`}</li>
+          }} key={`project-list-link-${project.id}-${i}`}
+          className={classes.projects_list_item}>{`${project.titel} (${project.id})`}</li>
         })}
       </ol>
     </div>
@@ -396,10 +400,12 @@ class AreaChart extends Component {
               y: 20
             }}
             style={{
-              // zoom: spring(this.state.zoom, {stiffness: 170, damping: 26}),
-              zoom: this.state.zoom,
-              x: spring(this.state.center[0], {stiffness: 210, damping: 20}),
-              y: spring(this.state.center[1], {stiffness: 210, damping: 20})
+              zoom: spring(this.state.zoom, {stiffness: 170, damping: 26}),
+              // zoom: this.state.zoom,
+              // x: spring(this.state.center[0], {stiffness: 210, damping: 20}),
+              // y: spring(this.state.center[1], {stiffness: 210, damping: 20})
+              x: this.state.center[0],
+              y: this.state.center[1]
             }}
           >
             {({zoom, x, y}) => (
@@ -419,7 +425,7 @@ class AreaChart extends Component {
                   onMoveStart={this.handleMoveStart}
                   onMoveEnd={this.handleMoveEnd}
                   onwheel={this.handlerSrollMap}
-                  disablePanning={true}
+                  disablePanning={false}
                   ref={(node) => {
                     this.zoomableGroup = node
                   }}
@@ -525,7 +531,9 @@ class AreaChart extends Component {
                   <Markers>
                     {
                       this.state.cities.map((city, i) => {
-                        if (city.population < 5000000 / this.state.zoom || this.state.zoom < 2.5) return null
+                        if (city.population < 5000000 / this.state.zoomOld || this.state.zoomOld < 2.5 || Math.abs(this.state.center[0] - city.coordinates[0]) > 60 || Math.abs(this.state.center[1] - city.coordinates[1]) > 45) return null
+                        // console.log(city.coordinates)
+                        // console.log(this.state.center)
                         let radius = 1
                         if (city.population > 500000) radius = 2
                         if (city.population > 1000000) radius = 3.25
@@ -536,7 +544,9 @@ class AreaChart extends Component {
                         return <Marker
                           key={`city-marker-${i}`}
                           marker={city}
-                          // onClick={this.handleCityMarkerClick}
+                          onClick={(e) => {
+                            console.log(e)
+                          }}
                           style={{
                             default: {
                               fill: '#505050',
