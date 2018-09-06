@@ -79,7 +79,8 @@ class ZoomableGroup extends Component {
     onMoveStart(currentCenter)
   }
   handleTouchStart ({ touches }) {
-    if (touches.length > 1) {
+    const pointers = 0 // set to 1 if you don't want to handle touch events with one finger but at least with two fingers
+    if (touches.length > pointers) {
       this.handleMouseDown(touches[0])
     } else {
       this.handleMouseUp()

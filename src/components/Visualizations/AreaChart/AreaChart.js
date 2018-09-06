@@ -39,6 +39,7 @@ class AreaChart extends Component {
       cities: [],
       projects: [],
       selectedProjectCurve: null,
+      selectedProjectNode: null,
       projectCurves: [],
       width: props.width * 0.6,
       height: props.height * 0.6,
@@ -60,6 +61,10 @@ class AreaChart extends Component {
     this.handlePinch = this.handlePinch.bind(this)
     this.handlePinchEnd = this.handlePinchEnd.bind(this)
     this.handlePinchStart = this.handlePinchStart.bind(this)
+
+    this.handleProjectNodeMouseEnter = this.handleProjectNodeMouseEnter.bind(this)
+    this.handleProjectNodeMouseOut = this.handleProjectNodeMouseOut.bind(this)
+    this.handleProjectVertexClick = this.handleProjectVertexClick.bind(this)
   }
 
   updateData (data, width, height) {
@@ -169,6 +174,62 @@ class AreaChart extends Component {
     })
   }
 
+  handleProjectNodeMouseEnter (vertex) {
+    let project = vertex.data
+    // console.log('Mouse over project')
+
+    let newProjectCurves = []
+    for (let forschungsregionIso of project.forschungsregion) {
+      let projectCurveIndex = -1
+      for (let i = 0; i < newProjectCurves.length; i++) {
+        if (newProjectCurves[i].forschungsregion === forschungsregionIso) {
+          projectCurveIndex = i
+          break
+        }
+      }
+      if (projectCurveIndex > -1) {
+        newProjectCurves[projectCurveIndex].projects.push(project)
+        newProjectCurves[projectCurveIndex].numProjects = newProjectCurves[projectCurveIndex].numProjects + 1
+      } else {
+        newProjectCurves.push({forschungsregion: forschungsregionIso, projects: [project], numProjects: 1})
+      }
+    }
+
+    if (this.state.selectedProjectNode) {
+      let selectedProject = this.state.selectedProjectNode.data
+      for (let forschungsregionIso of selectedProject.forschungsregion) {
+        let projectCurveIndex = -1
+        for (let i = 0; i < newProjectCurves.length; i++) {
+          if (newProjectCurves[i].forschungsregion === forschungsregionIso) {
+            projectCurveIndex = i
+            break
+          }
+        }
+        if (projectCurveIndex > -1) {
+          newProjectCurves[projectCurveIndex].projects.push(selectedProject)
+          newProjectCurves[projectCurveIndex].numProjects = newProjectCurves[projectCurveIndex].numProjects + 1
+        } else {
+          newProjectCurves.push({forschungsregion: forschungsregionIso, projects: [selectedProject], numProjects: 1})
+        }
+      }
+    }
+
+    this.setState({
+      projectCurves: newProjectCurves
+    })
+  }
+
+  handleProjectVertexClick (vertex) {
+    this.setState({selectedProjectNode: vertex})
+  }
+
+  handleProjectNodeMouseOut (vertex) {
+    // console.log('Mouse out project')
+    this.setState({
+      projectCurves: []
+    })
+  }
+
   handleCountryClick (country) {
     console.log('Clicked on country: ', country)
   }
@@ -217,10 +278,13 @@ class AreaChart extends Component {
     console.log(newProjectCurves)
 
     this.setState({
-      zoom: 1.3,
-      center: marker.coordinates,
-      projectCurves: newProjectCurves,
-      selectedMarker: marker
+      // zoom: 1.3,
+      // center: marker.coordinates,
+      // projectCurves: newProjectCurves,
+      selectedMarker: marker,
+      zoom: 1,
+      center: [0, 20],
+      zoomOld: 1
     })
   }
 
@@ -247,7 +311,7 @@ class AreaChart extends Component {
   handlePinch (event) {
     let scale = ((event.scale))
     if (Math.abs(this.state.zoom - (this.state.zoomOld * scale)) > 0.01) {
-      console.log(Math.abs(this.state.zoom - (this.state.zoomOld * scale)))
+      // console.log(Math.abs(this.state.zoom - (this.state.zoomOld * scale)))
       this.setState({zoom: this.state.zoomOld * scale})
     }
   }
@@ -660,23 +724,24 @@ class AreaChart extends Component {
 
                   <Trees>
                     {
-                      this.state.institutions.map((institution, i) => {
-                        return <Tree
-                          key={`institution-tree-${i}`}
-                          tree={institution}
-                          onClick={this.handleMarkerClick}
-                          scale={205}
-                          style={{
-                            default: {
-                            },
-                            hover: {
-                            },
-                            pressed: {
-                            }
-                          }}>
-                        </Tree>
-                      }
-                      )}
+                      (this.state.selectedMarker) ? <Tree
+                        key={`institution-tree-${this.state.selectedMarker.name}`}
+                        tree={this.state.selectedMarker}
+                        onNodeMouseEnter={this.handleProjectNodeMouseEnter}
+                        onNodeMouseOut={this.handleProjectNodeMouseOut}
+                        onNodeClick={this.handleProjectVertexClick}
+                        scale={205}
+                        preserveMarkerAspect={false}
+                        style={{
+                          default: {
+                          },
+                          hover: {
+                          },
+                          pressed: {
+                          }
+                        }}>
+                      </Tree> : null
+                    }
                   </Trees>
 
                 </ZoomableGroup>

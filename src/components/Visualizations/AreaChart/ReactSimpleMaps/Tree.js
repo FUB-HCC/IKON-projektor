@@ -6,9 +6,13 @@ class Tree extends Component {
     super(props)
     this.state = {
       tree: props.tree,
-      treeData: {}
+      treeData: {},
+      selectedNode: null,
+      hoveredNode: null
     }
     this.clickNode = this.clickNode.bind(this)
+    this.mouseEnterNode = this.mouseEnterNode.bind(this)
+    this.mouseOutNode = this.mouseOutNode.bind(this)
   }
 
   shouldComponentUpdate (nextProps, nextState) {
@@ -17,20 +21,50 @@ class Tree extends Component {
     return result
   }
 
+  mouseOutNode (d) {
+    // console.log('Mouse out')
+    const {
+      onNodeMouseOut,
+      projection
+    } = this.props
+    d.coordinates = projection.invert([d.x, d.y])
+    // console.log(d)
+    this.setState({hoveredNode: null})
+    return onNodeMouseOut && onNodeMouseOut(d, projection.invert([d.x, d.y]))
+  }
+
+  mouseEnterNode (d) {
+    // console.log('Mouse over')
+    if (d.parent) {
+      const {
+        onNodeMouseEnter,
+        projection
+      } = this.props
+      d.coordinates = projection.invert([d.x, d.y])
+      // console.log(d)
+      this.setState({hoveredNode: d})
+      return onNodeMouseEnter && onNodeMouseEnter(d, projection.invert([d.x, d.y]))
+    } else {
+      return false
+    }
+  }
+
   clickNode (d) {
     const {
       onNodeClick,
       projection
     } = this.props
     d.coordinates = projection.invert([d.x, d.y])
+    console.log('Click++++++++++++++++++++++++++++++++++++++++++++')
     console.log(d)
+    this.setState({selectedNode: d})
     return onNodeClick && onNodeClick(d, projection.invert([d.x, d.y]))
   }
 
   componentDidMount () {
     // TODO THIS SHOULD BE DONE IN AreaChart.js
     let newTreeData = {
-      'name': 'Institution',
+      'name': this.state.tree.name,
       'children': []
     }
 
@@ -141,16 +175,25 @@ class Tree extends Component {
         // console.log(translation)
 
         return `translate(${dx},${dy}) ${scale}`
-      }).on('click', this.clickNode)
+      }).on('mouseenter', (d) => {
+        return this.mouseEnterNode(d)
+      }).on('mouseleave', (d) => {
+        if (d.parent) return this.mouseOutNode(d)
+        else return false
+      }).on('mousedown', (d) => {
+        return this.clickNode(d)
+      })
 
       // adds the circle to the node
     node.append('circle')
       .attr('r', 10)
       .style('fill', (d) => {
+        if (this.state.selectedNode && d.data.id === this.state.selectedNode.data.id && d.parent) return '#623336'
+        if (this.state.hoveredNode && d.data.id === this.state.hoveredNode.data.id && d.parent) return '#623336'
         return (d.parent ? '#386253' : '#9DBC25')
       }).style('stroke', (d) => {
         return (d.parent ? '#9DBC25' : '#386253')
-      }).style('stroke-width', '3px')
+      }).style('stroke-width', '3px').style('cursor', 'pointer')
 
     // adds the text to the node
     node.append('text')
@@ -159,6 +202,8 @@ class Tree extends Component {
         return d.children ? -20 : 20
       })
       .style('text-anchor', 'middle')
+      .style('fill', 'white')
+      .style('stroke', 'grey').style('stroke-width', '0.5')
       .text((d) => {
         if (!d.parent) return d.data.name
       })
