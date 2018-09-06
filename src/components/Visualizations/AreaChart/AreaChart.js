@@ -13,15 +13,16 @@ import {
   Lines,
   Line
 } from './ReactSimpleMaps'
-import Tree from './ReactSimpleMaps/Tree'
-import Trees from './ReactSimpleMaps/Trees'
 import {getCenter} from 'geolib'
 import {Motion, spring} from 'react-motion'
-import {getInstitutions} from './areaUtility'
+import {getInstitutions, getAllResearchAreas} from './areaUtility'
 import ReactTooltip from 'react-tooltip'
 import classes from './AreaChart.css'
 import CloseIcon from '../../../assets/Exit.svg'
 import Hammer from 'react-hammerjs'
+
+const RESEARCH_AREA_STR = 'Research Areas'
+const INSTITUTIONS_STR = 'Institutions'
 
 class AreaChart extends Component {
   constructor (props) {
@@ -44,7 +45,9 @@ class AreaChart extends Component {
       width: props.width * 0.6,
       height: props.height * 0.6,
       margin: props.margin,
-      projectsPopoverHidden: true
+      projectsPopoverHidden: true,
+      selectedDimension: RESEARCH_AREA_STR,
+      allResearchAreas: []
     }
     this.loadPaths = this.loadPaths.bind(this)
     this.handleZoom = this.handleZoom.bind(this)
@@ -61,22 +64,12 @@ class AreaChart extends Component {
     this.handlePinch = this.handlePinch.bind(this)
     this.handlePinchEnd = this.handlePinchEnd.bind(this)
     this.handlePinchStart = this.handlePinchStart.bind(this)
-
-    this.handleProjectNodeMouseEnter = this.handleProjectNodeMouseEnter.bind(this)
-    this.handleProjectNodeMouseOut = this.handleProjectNodeMouseOut.bind(this)
-    this.handleProjectVertexClick = this.handleProjectVertexClick.bind(this)
+    this.changeDimension = this.changeDimension.bind(this)
   }
 
   updateData (data, width, height) {
-    /*
-                                  Public
-                                  Updates The Visulisation with the new Data
-                                    data - the newProjects.json set or a subset of it
-                                */
-    // TODO
-    let institutions = getInstitutions(data)
-    console.log(institutions)
-    this.setState({institutions: institutions, width: width * 0.6, height: height * 0.6})
+    let allResearchAreas = getAllResearchAreas(data)
+    this.setState({allResearchAreas: allResearchAreas, projects: data, width: width * 0.6, height: height * 0.6})
   }
 
   componentDidMount () {
@@ -87,6 +80,17 @@ class AreaChart extends Component {
   closeProjectsModal () {
     console.log('close projects modal')
     this.setState({projectsPopoverHidden: true})
+  }
+
+  changeDimension () {
+    let allResearchRegions = []
+    let allInstitutions = []
+    if (this.state.selectedDimension === RESEARCH_AREA_STR) {
+      allInstitutions = getInstitutions(this.state.projects)
+    } else if (this.state.selectedDimension === INSTITUTIONS_STR) {
+      allResearchRegions = getAllResearchAreas(this.state.projects)
+    }
+    this.setState({institutions: allInstitutions, allResearchAreas: allResearchRegions, selectedDimension: (this.state.selectedDimension === RESEARCH_AREA_STR ? INSTITUTIONS_STR : RESEARCH_AREA_STR)})
   }
 
   loadPaths () {
@@ -174,64 +178,36 @@ class AreaChart extends Component {
     })
   }
 
-  handleProjectNodeMouseEnter (vertex) {
-    let project = vertex.data
-    // console.log('Mouse over project')
+  handleCountryClick (country) {
+    let researchArea = null
+    let countryCoordinates = [Number(this.calculateGeometricCenter(country)[0]), Number(this.calculateGeometricCenter(country)[1])]
+    let allInstitutions = getInstitutions(this.state.projects)
+    for (let area of this.state.allResearchAreas) {
+      if (area.forschungsregion === country.properties.ISO_A2) {
+        researchArea = area
+        break
+      }
+    }
 
     let newProjectCurves = []
-    for (let forschungsregionIso of project.forschungsregion) {
-      let projectCurveIndex = -1
-      for (let i = 0; i < newProjectCurves.length; i++) {
-        if (newProjectCurves[i].forschungsregion === forschungsregionIso) {
-          projectCurveIndex = i
-          break
+    let relatedInstitutions = []
+    for (let project of researchArea.projects) {
+      for (let institution of allInstitutions) {
+        if (institution.name === project.geldgeber) {
+          let projectLine = {project: project, start: countryCoordinates, end: institution.coordinates}
+          newProjectCurves.push(projectLine)
         }
-      }
-      if (projectCurveIndex > -1) {
-        newProjectCurves[projectCurveIndex].projects.push(project)
-        newProjectCurves[projectCurveIndex].numProjects = newProjectCurves[projectCurveIndex].numProjects + 1
-      } else {
-        newProjectCurves.push({forschungsregion: forschungsregionIso, projects: [project], numProjects: 1})
-      }
-    }
-
-    if (this.state.selectedProjectNode) {
-      let selectedProject = this.state.selectedProjectNode.data
-      for (let forschungsregionIso of selectedProject.forschungsregion) {
-        let projectCurveIndex = -1
-        for (let i = 0; i < newProjectCurves.length; i++) {
-          if (newProjectCurves[i].forschungsregion === forschungsregionIso) {
-            projectCurveIndex = i
-            break
-          }
-        }
-        if (projectCurveIndex > -1) {
-          newProjectCurves[projectCurveIndex].projects.push(selectedProject)
-          newProjectCurves[projectCurveIndex].numProjects = newProjectCurves[projectCurveIndex].numProjects + 1
-        } else {
-          newProjectCurves.push({forschungsregion: forschungsregionIso, projects: [selectedProject], numProjects: 1})
-        }
+        if (relatedInstitutions.indexOf(institution) === -1) relatedInstitutions.push(institution)
       }
     }
 
     this.setState({
-      projectCurves: newProjectCurves
+      zoom: 1,
+      center: countryCoordinates,
+      projectCurves: newProjectCurves,
+      zoomOld: 1,
+      institutions: relatedInstitutions
     })
-  }
-
-  handleProjectVertexClick (vertex) {
-    this.setState({selectedProjectNode: vertex})
-  }
-
-  handleProjectNodeMouseOut (vertex) {
-    // console.log('Mouse out project')
-    this.setState({
-      projectCurves: []
-    })
-  }
-
-  handleCountryClick (country) {
-    console.log('Clicked on country: ', country)
   }
 
   handleLineClick (coordinates, line, e) {
@@ -278,12 +254,10 @@ class AreaChart extends Component {
     console.log(newProjectCurves)
 
     this.setState({
-      // zoom: 1.3,
-      // center: marker.coordinates,
-      // projectCurves: newProjectCurves,
-      selectedMarker: marker,
       zoom: 1,
-      center: [0, 20],
+      center: marker.coordinates,
+      projectCurves: newProjectCurves,
+      selectedMarker: marker,
       zoomOld: 1
     })
   }
@@ -396,7 +370,8 @@ class AreaChart extends Component {
   // This funtion returns a curve command that builds a quadratic curve.
   // And depending on the line's curveStyle property it curves in one direction or the other.
   buildCurves (start, end, line) {
-    const offset = 0
+
+    /* const offset = 0
 
     const x0 = start[0]
     const x1 = end[0]
@@ -411,9 +386,13 @@ class AreaChart extends Component {
     const bOrthogonal = yMiddle - mOrthogonal * xMiddle
     const bParallel = b - offset
     const xCp = (bParallel - bOrthogonal) / (mOrthogonal - m)
-    const yCP = m * xCp + bParallel
+    const yCP = m * xCp + bParallel */
 
-    return `M ${start.join(' ')} Q ${xCp} ${yCP} ${end.join(' ')}`
+    // return `M ${start.join(' ')} Q ${xCp} ${yCP} ${end.join(' ')}`
+    return 'M' + start[0] + ',' + start[1] +
+      'C' + start[0] + ',' + (start[1] + end[1]) / 2 +
+      ' ' + end[0] + ',' + (start[1] + end[1]) / 2 +
+      ' ' + end[0] + ',' + end[1]
   }
 
   renderProjectsPopover () {
@@ -456,8 +435,17 @@ class AreaChart extends Component {
           margin: '0 auto',
           fontFamily: 'Roboto, sans-serif'
         }}>
-          <button onClick={() => this.handleZoom(1.25)}>{'Zoom in'}</button>
-          <button onClick={() => this.handleZoom(1 / 1.25)}>{'Zoom out'}</button>
+
+          <div style={{position: 'absolute', marginTop: this.state.height - 200}}>
+            <button style={{marginLeft: '0.5em'}} className={[classes.zoombutton, classes.in].join(' ')} onClick={() => this.handleZoom(1.25)}>{'+'}</button>
+            <button style={{marginLeft: '0.5em'}} className={[classes.zoombutton, classes.out].join(' ')} onClick={() => this.handleZoom(1 / 1.25)}>{'-'}</button>
+
+            <div style={{position: 'absolute', marginTop: '6.5em'}}>
+              <input className={[classes.tgl, classes['tgl-light']].join(' ')} id="cb1" type="checkbox" onClick={this.changeDimension}/>
+              <label className={classes['tgl-btn']} htmlFor="cb1"></label>
+              <h4>{this.state.selectedDimension}</h4>
+            </div>
+          </div>
 
           <Motion
             defaultStyle={{
@@ -480,8 +468,8 @@ class AreaChart extends Component {
                   scale: 205,
                   rotation: [0, 0, 0]
                 }}
-                width={980}
-                height={551}
+                width={this.state.width}
+                height={this.state.height}
                 style={{
                   width: '100%',
                   height: 'auto'
@@ -499,35 +487,52 @@ class AreaChart extends Component {
                   zoom={zoom}>
                   <Geographies geography={this.state.geographyPaths} disableOptimization>
                     {(geographies, projection) =>
-                      geographies.map((geography, i) =>
-                        <Geography
-                          key={`${geography.properties.ADM0_A3}-${i}`}
-                          cacheId={`path-${geography.properties.ADM0_A3}-${i}`}
+                      geographies.map((geography, i) => {
+                        let fillColor = '#ECEFF1'
+                        let fillColorHover = fillColor
+                        let isResearchArea = false
+                        for (let area of this.state.allResearchAreas) {
+                          if (area.forschungsregion === geography.properties.ISO_A2) {
+                            isResearchArea = true
+                            fillColor = '#7ba3b3'
+                            fillColorHover = '#698d9b'
+                            break
+                          }
+                        }
+
+                        return <Geography
+                          key={`${geography.properties.ISO_A2}-${i}`}
+                          cacheId={`path-${geography.properties.ISO_A2}-${i}`}
                           onClick={this.handleCountryClick}
                           round
                           geography={geography}
                           projection={projection}
                           style={{
                             default: {
-                              fill: '#ECEFF1',
+                              fill: fillColor,
                               stroke: '#607D8B',
                               strokeWidth: 0.75,
-                              outline: 'none'
+                              outline: 'none',
+                              cursor: (isResearchArea ? 'pointer' : 'default')
                             },
                             hover: {
-                              fill: '#ECEFF1',
+                              fill: fillColorHover,
                               stroke: '#607D8B',
                               strokeWidth: 0.75,
-                              outline: 'none'
+                              outline: 'none',
+                              cursor: (isResearchArea ? 'pointer' : 'default')
                             },
                             pressed: {
-                              fill: '#ECEFF1',
+                              fill: fillColorHover,
                               stroke: '#607D8B',
                               strokeWidth: 0.75,
-                              outline: 'none'
+                              outline: 'none',
+                              cursor: (isResearchArea ? 'pointer' : 'default')
                             }
                           }}
                         />
+                      }
+
                       )}
                   </Geographies>
                   <Geographies key={'test'} geography={this.state.regionsPaths} disableOptimization>
@@ -637,8 +642,6 @@ class AreaChart extends Component {
                   <Lines>
                     {
                       this.state.projectCurves.map((projectCurve, i) => {
-                        let areaCoordinates = [0, 0]
-
                         let strokeWidth = 2
                         if (projectCurve.numProjects > 5) strokeWidth = 3.25
                         if (projectCurve.numProjects > 10) strokeWidth = 4.5
@@ -646,7 +649,6 @@ class AreaChart extends Component {
                         this.state.geographyPaths.forEach(country => {
                           if (country.properties.ISO_A2 === projectCurve.forschungsregion) {
                             lineArea = country.properties.ISO_A2
-                            areaCoordinates = this.calculateGeometricCenter(country)
                           }
                         })
                         return <Line
@@ -657,12 +659,12 @@ class AreaChart extends Component {
                           }}
                           line={{
                             coordinates: {
-                              start: this.state.selectedMarker.coordinates,
-                              end: areaCoordinates
+                              start: projectCurve.start,
+                              end: projectCurve.end
                             },
                             area: lineArea
                           }}
-                          // buildPath={this.buildCurves}
+                          buildPath={this.buildCurves}
                           preserveMarkerAspect={false}
                           style={{
                             default: {
@@ -721,29 +723,6 @@ class AreaChart extends Component {
                       }
                       )}
                   </Markers>
-
-                  <Trees>
-                    {
-                      (this.state.selectedMarker) ? <Tree
-                        key={`institution-tree-${this.state.selectedMarker.name}`}
-                        tree={this.state.selectedMarker}
-                        onNodeMouseEnter={this.handleProjectNodeMouseEnter}
-                        onNodeMouseOut={this.handleProjectNodeMouseOut}
-                        onNodeClick={this.handleProjectVertexClick}
-                        scale={205}
-                        preserveMarkerAspect={false}
-                        style={{
-                          default: {
-                          },
-                          hover: {
-                          },
-                          pressed: {
-                          }
-                        }}>
-                      </Tree> : null
-                    }
-                  </Trees>
-
                 </ZoomableGroup>
               </ComposableMap>
             )}

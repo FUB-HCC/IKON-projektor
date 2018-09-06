@@ -26,3 +26,25 @@ export const getInstitutions = (projects) => {
   }
   return institutions
 }
+
+export const getAllResearchAreas = (projects) => {
+  let researchAreas = []
+  for (let prop in projects) {
+    for (let forschungsregion of projects[prop].forschungsregion) {
+      let index = -1
+      for (let area in researchAreas) {
+        if (researchAreas[area].forschungsregion === forschungsregion) {
+          index = area
+        }
+      }
+
+      if (index === -1) {
+        researchAreas.push({forschungsregion: forschungsregion, projects: [projects[prop]]})
+      } else {
+        researchAreas[index].projects.push(projects[prop])
+      }
+    }
+  }
+
+  return researchAreas
+}
