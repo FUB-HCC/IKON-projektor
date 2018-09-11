@@ -181,6 +181,11 @@ class AreaChart extends Component {
   }
 
   handleCountryClick (country) {
+    this.setState({
+      projectCurves: [],
+      institutions: []
+    })
+
     let researchArea = null
     let countryCoordinates = [Number(this.calculateGeometricCenter(country)[0]), Number(this.calculateGeometricCenter(country)[1])]
     let allInstitutions = getInstitutions(this.state.projects)
@@ -197,7 +202,7 @@ class AreaChart extends Component {
       for (let project of researchArea.projects) {
         for (let institution of allInstitutions) {
           if (institution.name === project.geldgeber) {
-            let projectLine = {project: project, start: countryCoordinates, end: institution.coordinates}
+            let projectLine = {project: project, start: countryCoordinates, end: institution.coordinates, controlPoint: undefined}
             newProjectCurves.push(projectLine)
           }
           if (relatedInstitutions.indexOf(institution) === -1) relatedInstitutions.push(institution)
@@ -312,7 +317,6 @@ class AreaChart extends Component {
   handleMoveEnd (newCenter) {
     this.setState({center: [newCenter[0], newCenter[1]]})
     console.log('New center: ', newCenter)
-    // TODO Fix center bug
     this.checkRegionToRender(newCenter, this.state.zoom)
   }
 
@@ -380,42 +384,48 @@ class AreaChart extends Component {
   }
 
   buildCurves (start, end, line) {
+    let controlPoint = this.calculateControlPoint(start, end, line.index)
+
+    let newProjectCurves = []
+    let changed = false
+    for (let projectCurve of this.state.projectCurves) {
+      if (!projectCurve.controlPoint && projectCurve.project.id === line.projectCurve.project.id) {
+        let x = Math.pow(1 - 0.5, 2) * start[0] + 2 * (1 - 0.5) * 0.5 * controlPoint[0] + Math.pow(0.5, 2) * end[0]
+        let y = Math.pow(1 - 0.5, 2) * start[1] + 2 * (1 - 0.5) * 0.5 * controlPoint[1] + Math.pow(0.5, 2) * end[1]
+        projectCurve.controlPoint = [x, y]
+        projectCurve = Object.assign({controlPoint: [x, y]}, projectCurve)
+        changed = true
+      }
+      newProjectCurves.push(projectCurve)
+    }
+    setTimeout(() => { // TODO: a state change should not be done in a render method
+      if (changed) this.setState({projectCurves: newProjectCurves})
+    }, 1)
+
+    return `M ${start.join(' ')} Q ${controlPoint.join(' ')}, ${end.join(' ')}`
+  }
+
+  calculateControlPoint (start, end, index) {
     const m = (start[1] - end[1]) / (start[0] - end[0])
     const mOrtho = -(1 / m)
     const midpoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2]
     const b = midpoint[1] - (mOrtho * midpoint[0])
 
-    const offset = (line.index % 2 === 0 ? 1 : -1)
-    let xControl = midpoint[0] + (offset * 3)
+    const offset = (index % 2 === 0 ? 1 : -1)
+    let xControl = midpoint[0] + offset * 1.5
     let yControl = mOrtho * xControl + b
     let controlPoint = [xControl, yControl]
     let distance = Math.sqrt(Math.pow(controlPoint[0] - midpoint[0], 2) + Math.pow(controlPoint[1] - midpoint[1], 2))
     // TODO this is not efficient: evaluate if it leads to performance problems
-    while (distance < 15 * line.index) {
-      xControl = xControl + offset
+    let iteration = 0
+    while (distance < 18 * index) {
+      xControl = midpoint[0] + offset * iteration
+      iteration++
       yControl = mOrtho * xControl + b
       controlPoint = [xControl, yControl]
       distance = Math.sqrt(Math.pow(controlPoint[0] - midpoint[0], 2) + Math.pow(controlPoint[1] - midpoint[1], 2))
     }
-
-    // TODO: a state change should not be done in a render method
-    setTimeout(() => {
-      let newProjectCurves = []
-      let changed = false
-      for (let projectCurve of this.state.projectCurves) {
-        if (!projectCurve.controlPoint && projectCurve.project.id === line.projectCurve.project.id) {
-          let x = Math.pow(1 - 0.5, 3) * start[0] + 3 * Math.pow((1 - 0.5), 2) * 0.5 * controlPoint[0] + 3 * (1 - 0.5) * Math.pow(0.5, 2) * controlPoint[0] + Math.pow(0.5, 3) * end[0]
-          let y = Math.pow(1 - 0.5, 3) * start[1] + 3 * Math.pow((1 - 0.5), 2) * 0.5 * controlPoint[1] + 3 * (1 - 0.5) * Math.pow(0.5, 2) * controlPoint[1] + Math.pow(0.5, 3) * end[1]
-          projectCurve.controlPoint = [x, y]
-          changed = true
-        }
-        newProjectCurves.push(projectCurve)
-      }
-      if (changed) this.setState({projectCurves: newProjectCurves}) 
-    }, 1)
-
-    console.log(this.state.projectCurves)
-    return `M ${start.join(' ')} C ${controlPoint.join(' ')}, ${controlPoint.join(' ')}, ${end.join(' ')}`
+    return controlPoint
   }
 
   renderProjectsLines (projectCurve, i) {
@@ -718,10 +728,11 @@ class AreaChart extends Component {
                         if (projectCurve.controlPoint) {
                           let projectMarker = { coordinates: projectCurve.controlPoint, projectCurve: projectCurve }
                           return <Marker
-                            key={`institution-marker-${i}`}
+                            key={`controlPoint-marker-${i}`}
                             marker={projectMarker}
                             onClick={this.handleMarkerClick}
                             preventTranslation={true}
+                            preserveMarkerAspect={false}
                             style={{
                               default: {
                                 fill: markerFillColor,
@@ -739,7 +750,7 @@ class AreaChart extends Component {
                               }
                             }}>
                             <circle cx={0} cy={0}
-                              r={10}/>
+                              r={7}/>
                           </Marker>
                         }
                       }
@@ -755,6 +766,7 @@ class AreaChart extends Component {
                           key={`institution-marker-${i}`}
                           marker={institution}
                           onClick={this.handleMarkerClick}
+                          preserveMarkerAspect={false}
                           style={{
                             default: {
                               fill: markerFillColor,
@@ -772,7 +784,7 @@ class AreaChart extends Component {
                             }
                           }}>
                           <circle cx={0} cy={0}
-                            r={this.state.zoom * institution.numberProjects / 30}/>
+                            r={8}/>
                         </Marker>
                       }
                       )}
