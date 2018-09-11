@@ -13,7 +13,7 @@ import {
   Lines,
   Line
 } from './ReactSimpleMaps'
-import {getCenter} from 'geolib'
+import {getCenterOfBounds} from 'geolib'
 import {Motion, spring} from 'react-motion'
 import {getInstitutions, getAllResearchAreas} from './areaUtility'
 import ReactTooltip from 'react-tooltip'
@@ -59,6 +59,8 @@ class AreaChart extends Component {
     this.handleLineClick = this.handleLineClick.bind(this)
     this.handleLineMouseLeave = this.handleLineMouseLeave.bind(this)
     this.closeProjectsModal = this.closeProjectsModal.bind(this)
+    this.renderProjectsLines = this.renderProjectsLines.bind(this)
+    this.renderProjectsPopover = this.renderProjectsPopover.bind(this)
 
     // touch zoom handler:
     this.handlePinch = this.handlePinch.bind(this)
@@ -363,36 +365,79 @@ class AreaChart extends Component {
       processedArray.push({latitude: value[1], longitude: value[0]})
     })
 
-    let center = getCenter(processedArray)
+    // Start: Workaround for some countries
+    if (geographyPath.properties.ISO_A2 === 'RU') {
+      processedArray = [{latitude: 61.068917, longitude: -266.885585}]
+    } else if (geographyPath.properties.ISO_A2 === 'US') {
+      processedArray = [{latitude: 38.659778, longitude: -99.414548}]
+    }
+    // End: Workaround
+
+    let center = getCenterOfBounds(processedArray)
     return [center.longitude, center.latitude]
   }
 
-  // This funtion returns a curve command that builds a quadratic curve.
-  // And depending on the line's curveStyle property it curves in one direction or the other.
   buildCurves (start, end, line) {
+    const m = (start[1] - end[1]) / (start[0] - end[0])
+    const mOrtho = -(1 / m)
+    const midpoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2]
+    const b = midpoint[1] - (mOrtho * midpoint[0])
 
-    /* const offset = 0
+    const offset = (line.index % 2 === 0 ? 1 : -1)
+    let xControl = midpoint[0] + (offset * 3)
+    let yControl = mOrtho * xControl + b
+    let controlPoint = [xControl, yControl]
+    let distance = Math.sqrt(Math.pow(controlPoint[0] - midpoint[0], 2) + Math.pow(controlPoint[1] - midpoint[1], 2))
+    // TODO this is not efficient: evaluate if it leads to performance problems
+    while (distance < 15 * line.index + 1) {
+      xControl = xControl + offset
+      yControl = mOrtho * xControl + b
+      controlPoint = [xControl, yControl]
+      distance = Math.sqrt(Math.pow(controlPoint[0] - midpoint[0], 2) + Math.pow(controlPoint[1] - midpoint[1], 2))
+    }
 
-    const x0 = start[0]
-    const x1 = end[0]
-    const y0 = start[1]
-    const y1 = end[1]
-    const xMiddle = ((x0 + x1) / 2)
-    const yMiddle = ((y0 + y1) / 2)
+    return `M ${start.join(' ')} Q ${[controlPoint[0], controlPoint[1]]} ${end.join(' ')}`
+  }
 
-    const m = (y0 - y1) / (x0 - x1)
-    const b = y0 - m * x0
-    const mOrthogonal = -((x0 - x1) / (y0 - y1))
-    const bOrthogonal = yMiddle - mOrthogonal * xMiddle
-    const bParallel = b - offset
-    const xCp = (bParallel - bOrthogonal) / (mOrthogonal - m)
-    const yCP = m * xCp + bParallel */
+  renderProjectsLines (projectCurve, i) {
+    let strokeWidth = 2 / Math.pow(this.state.zoom, 1 / 4)
 
-    // return `M ${start.join(' ')} Q ${xCp} ${yCP} ${end.join(' ')}`
-    return 'M' + start[0] + ',' + start[1] +
-      'C' + start[0] + ',' + (start[1] + end[1]) / 2 +
-      ' ' + end[0] + ',' + (start[1] + end[1]) / 2 +
-      ' ' + end[0] + ',' + end[1]
+    return <Line
+      key={`project-line-${i}`}
+      onClick={(line, coordinates, e) => {
+        this.setState({selectedProjectCurve: projectCurve})
+        this.handleLineClick(coordinates, line, e)
+      }}
+      line={{
+        coordinates: {
+          start: projectCurve.start,
+          end: projectCurve.end
+        },
+        index: i
+      }}
+      buildPath={this.buildCurves}
+      preserveMarkerAspect={false}
+      style={{
+        default: {
+          fill: 'rgba(255, 255, 255, 0)',
+          stroke: 'rgba(78, 0, 80, 0.72)',
+          strokeWidth: strokeWidth,
+          cursor: 'pointer'
+        },
+        hover: {
+          fill: 'rgba(255, 255, 255, 0)',
+          stroke: '#4b9123',
+          strokeWidth: strokeWidth,
+          cursor: 'pointer'
+        },
+        pressed: {
+          fill: 'rgba(255, 255, 255, 0)',
+          stroke: '#4b9123',
+          strokeWidth: strokeWidth,
+          cursor: 'pointer'
+        }
+      }}
+    />
   }
 
   renderProjectsPopover () {
@@ -642,54 +687,9 @@ class AreaChart extends Component {
                   <Lines>
                     {
                       this.state.projectCurves.map((projectCurve, i) => {
-                        let strokeWidth = 2
-                        if (projectCurve.numProjects > 5) strokeWidth = 3.25
-                        if (projectCurve.numProjects > 10) strokeWidth = 4.5
-                        let lineArea = ''
-                        this.state.geographyPaths.forEach(country => {
-                          if (country.properties.ISO_A2 === projectCurve.forschungsregion) {
-                            lineArea = country.properties.ISO_A2
-                          }
-                        })
-                        return <Line
-                          key={`project-line-${i}`}
-                          onClick={(line, coordinates, e) => {
-                            this.setState({selectedProjectCurve: projectCurve})
-                            this.handleLineClick(coordinates, line, e)
-                          }}
-                          line={{
-                            coordinates: {
-                              start: projectCurve.start,
-                              end: projectCurve.end
-                            },
-                            area: lineArea
-                          }}
-                          buildPath={this.buildCurves}
-                          preserveMarkerAspect={false}
-                          style={{
-                            default: {
-                              fill: 'rgba(255, 255, 255, 0)',
-                              stroke: 'rgba(78, 0, 80, 0.72)',
-                              strokeWidth: strokeWidth / Math.pow(this.state.zoom, 1 / 4),
-                              cursor: 'pointer'
-                            },
-                            hover: {
-                              fill: 'rgba(255, 255, 255, 0)',
-                              stroke: '#4b9123',
-                              strokeWidth: strokeWidth / Math.pow(this.state.zoom, 1 / 4),
-                              cursor: 'pointer'
-                            },
-                            pressed: {
-                              fill: 'rgba(255, 255, 255, 0)',
-                              stroke: '#4b9123',
-                              strokeWidth: strokeWidth / Math.pow(this.state.zoom, 1 / 4),
-                              cursor: 'pointer'
-                            }
-                          }}
-                        />
-                      }
-                      )}
-
+                        return this.renderProjectsLines(projectCurve, i)
+                      })
+                    }
                   </Lines>
 
                   <Markers>
