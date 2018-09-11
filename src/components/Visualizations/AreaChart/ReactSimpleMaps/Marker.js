@@ -89,7 +89,8 @@ class Marker extends Component {
       children,
       preserveMarkerAspect,
       width,
-      height
+      height,
+      preventTranslation
     } = this.props
 
     const {
@@ -116,12 +117,16 @@ class Marker extends Component {
     const isGlobe = projection.clipAngle && projection.clipAngle() === degrees
     const isHidden = isGlobe && geoLength(lineString) > radians
 
-    return (
-      <g className={ `rsm-marker${pressed ? ' rsm-marker--pressed' : ''}${hover ? ' rsm-marker--hover' : ''}` }
-        transform={ `translate(
+    const transform = (preventTranslation ? `translate(
+           ${marker.coordinates[0]}
+           ${marker.coordinates[1]}
+         ) ${scale}` : `translate(
            ${translation[0]}
            ${translation[1]}
-         ) ${scale}`}
+         ) ${scale}`)
+    return (
+      <g className={ `rsm-marker${pressed ? ' rsm-marker--pressed' : ''}${hover ? ' rsm-marker--hover' : ''}` }
+        transform={ transform }
         style={ style[isHidden ? 'hidden' : (pressed || hover ? (pressed ? 'pressed' : 'hover') : 'default')] }
         onMouseEnter={ this.handleMouseEnter }
         onMouseLeave={ this.handleMouseLeave }
@@ -149,7 +154,8 @@ Marker.defaultProps = {
     coordinates: [0, 0]
   },
   tabable: true,
-  preserveMarkerAspect: true
+  preserveMarkerAspect: true,
+  preventTranslation: false
 }
 
 export default Marker

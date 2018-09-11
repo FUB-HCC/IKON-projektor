@@ -191,25 +191,27 @@ class AreaChart extends Component {
       }
     }
 
-    let newProjectCurves = []
-    let relatedInstitutions = []
-    for (let project of researchArea.projects) {
-      for (let institution of allInstitutions) {
-        if (institution.name === project.geldgeber) {
-          let projectLine = {project: project, start: countryCoordinates, end: institution.coordinates}
-          newProjectCurves.push(projectLine)
+    if (researchArea) {
+      let newProjectCurves = []
+      let relatedInstitutions = []
+      for (let project of researchArea.projects) {
+        for (let institution of allInstitutions) {
+          if (institution.name === project.geldgeber) {
+            let projectLine = {project: project, start: countryCoordinates, end: institution.coordinates}
+            newProjectCurves.push(projectLine)
+          }
+          if (relatedInstitutions.indexOf(institution) === -1) relatedInstitutions.push(institution)
         }
-        if (relatedInstitutions.indexOf(institution) === -1) relatedInstitutions.push(institution)
       }
-    }
 
-    this.setState({
-      zoom: 1,
-      center: countryCoordinates,
-      projectCurves: newProjectCurves,
-      zoomOld: 1,
-      institutions: relatedInstitutions
-    })
+      this.setState({
+        zoom: 1,
+        center: countryCoordinates,
+        projectCurves: newProjectCurves,
+        zoomOld: 1,
+        institutions: relatedInstitutions
+      })
+    }
   }
 
   handleLineClick (coordinates, line, e) {
@@ -389,14 +391,31 @@ class AreaChart extends Component {
     let controlPoint = [xControl, yControl]
     let distance = Math.sqrt(Math.pow(controlPoint[0] - midpoint[0], 2) + Math.pow(controlPoint[1] - midpoint[1], 2))
     // TODO this is not efficient: evaluate if it leads to performance problems
-    while (distance < 15 * line.index + 1) {
+    while (distance < 15 * line.index) {
       xControl = xControl + offset
       yControl = mOrtho * xControl + b
       controlPoint = [xControl, yControl]
       distance = Math.sqrt(Math.pow(controlPoint[0] - midpoint[0], 2) + Math.pow(controlPoint[1] - midpoint[1], 2))
     }
 
-    return `M ${start.join(' ')} Q ${[controlPoint[0], controlPoint[1]]} ${end.join(' ')}`
+    // TODO: a state change should not be done in a render method
+    setTimeout(() => {
+      let newProjectCurves = []
+      let changed = false
+      for (let projectCurve of this.state.projectCurves) {
+        if (!projectCurve.controlPoint && projectCurve.project.id === line.projectCurve.project.id) {
+          let x = Math.pow(1 - 0.5, 3) * start[0] + 3 * Math.pow((1 - 0.5), 2) * 0.5 * controlPoint[0] + 3 * (1 - 0.5) * Math.pow(0.5, 2) * controlPoint[0] + Math.pow(0.5, 3) * end[0]
+          let y = Math.pow(1 - 0.5, 3) * start[1] + 3 * Math.pow((1 - 0.5), 2) * 0.5 * controlPoint[1] + 3 * (1 - 0.5) * Math.pow(0.5, 2) * controlPoint[1] + Math.pow(0.5, 3) * end[1]
+          projectCurve.controlPoint = [x, y]
+          changed = true
+        }
+        newProjectCurves.push(projectCurve)
+      }
+      if (changed) this.setState({projectCurves: newProjectCurves}) 
+    }, 1)
+
+    console.log(this.state.projectCurves)
+    return `M ${start.join(' ')} C ${controlPoint.join(' ')}, ${controlPoint.join(' ')}, ${end.join(' ')}`
   }
 
   renderProjectsLines (projectCurve, i) {
@@ -413,6 +432,7 @@ class AreaChart extends Component {
           start: projectCurve.start,
           end: projectCurve.end
         },
+        projectCurve: projectCurve,
         index: i
       }}
       buildPath={this.buildCurves}
@@ -691,6 +711,40 @@ class AreaChart extends Component {
                       })
                     }
                   </Lines>
+                  <Markers>
+                    {
+                      this.state.projectCurves.map((projectCurve, i) => {
+                        let markerFillColor = '#cc3540'
+                        if (projectCurve.controlPoint) {
+                          let projectMarker = { coordinates: projectCurve.controlPoint, projectCurve: projectCurve }
+                          return <Marker
+                            key={`institution-marker-${i}`}
+                            marker={projectMarker}
+                            onClick={this.handleMarkerClick}
+                            preventTranslation={true}
+                            style={{
+                              default: {
+                                fill: markerFillColor,
+                                stroke: '#FFFFFF',
+                                cursor: 'pointer'
+                              },
+                              hover: {
+                                fill: '#4b9123',
+                                stroke: '#2e2e2e',
+                                cursor: 'pointer'
+                              },
+                              pressed: {
+                                fill: '#918c45',
+                                stroke: '#2e2e2e'
+                              }
+                            }}>
+                            <circle cx={0} cy={0}
+                              r={10}/>
+                          </Marker>
+                        }
+                      }
+                      )}
+                  </Markers>
 
                   <Markers>
                     {
