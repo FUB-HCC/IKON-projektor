@@ -47,12 +47,13 @@ class AreaChart extends Component {
       projectsPopoverHidden: true,
       selectedDimension: RESEARCH_AREA_STR,
       allResearchAreas: [],
-      selectedInstitutions: []
+      selectedInstitutions: [],
+      markerCooperations: null
     }
     this.loadPaths = this.loadPaths.bind(this)
     this.handleZoom = this.handleZoom.bind(this)
     this.handleCountryClick = this.handleCountryClick.bind(this)
-    this.handleMarkerClick = this.handleMarkerClick.bind(this)
+    this.handleInstitutionClick = this.handleInstitutionClick.bind(this)
     this.handlerSrollMap = this.handlerSrollMap.bind(this)
     this.buildCurves = this.buildCurves.bind(this)
     this.handleMoveEnd = this.handleMoveEnd.bind(this)
@@ -188,39 +189,39 @@ class AreaChart extends Component {
     // TODO for interactive mapping with d3 on medium.
     promises.push(get('./topo/countries/germany/germany-states.json'))
     /* promises.push(get('./topo/countries/algeria/algeria-provinces.json'))
-                                    promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
-                                    promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
-                                    promises.push(get('./topo/countries/belgium/benelux-countries.json'))
-                                    promises.push(get('./topo/countries/china/china-provinces.json'))
-                                    promises.push(get('./topo/countries/colombia/colombia-departments.json'))
-                                    promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
-                                    promises.push(get('./topo/countries/denmark/denmark-counties.json'))
-                                    promises.push(get('./topo/countries/finland/finland-regions.json'))
-                                    promises.push(get('./topo/countries/france/fr-departments.json'))
-                                    promises.push(get('./topo/countries/india/india-states.json'))
-                                    promises.push(get('./topo/countries/ireland/ireland-counties.json'))
-                                    promises.push(get('./topo/countries/italy/italy-regions.json'))
-                                    promises.push(get('./topo/countries/japan/jp-prefectures.json'))
-                                    promises.push(get('./topo/countries/liberia/liberia-districts.json'))
-                                    promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
+                                            promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
+                                            promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
+                                            promises.push(get('./topo/countries/belgium/benelux-countries.json'))
+                                            promises.push(get('./topo/countries/china/china-provinces.json'))
+                                            promises.push(get('./topo/countries/colombia/colombia-departments.json'))
+                                            promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
+                                            promises.push(get('./topo/countries/denmark/denmark-counties.json'))
+                                            promises.push(get('./topo/countries/finland/finland-regions.json'))
+                                            promises.push(get('./topo/countries/france/fr-departments.json'))
+                                            promises.push(get('./topo/countries/india/india-states.json'))
+                                            promises.push(get('./topo/countries/ireland/ireland-counties.json'))
+                                            promises.push(get('./topo/countries/italy/italy-regions.json'))
+                                            promises.push(get('./topo/countries/japan/jp-prefectures.json'))
+                                            promises.push(get('./topo/countries/liberia/liberia-districts.json'))
+                                            promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
     // TODO check US and netherlands
     // promises.push(get('./topo/countries/netherlands/nl-gemeentegrenzen-2016.json'))
     /* promises.push(get('./topo/countries/new-zealand/new-zealand-districts.json'))
-                                    promises.push(get('./topo/countries/norway/norway-counties.json'))
-                                    promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
-                                    promises.push(get('./topo/countries/peru/peru-departments.json'))
-                                    promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
-                                    promises.push(get('./topo/countries/poland/poland-provinces.json'))
-                                    promises.push(get('./topo/countries/portugal/portugal-districts.json'))
-                                    promises.push(get('./topo/countries/romania/romania-counties.json'))
-                                    promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
-                                    promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
-                                    promises.push(get('./topo/countries/sweden/sweden-counties.json'))
-                                    promises.push(get('./topo/countries/turkey/turkiye.json'))
-                                    promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
-                                    promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
-                                    promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
-                                    promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
+                                            promises.push(get('./topo/countries/norway/norway-counties.json'))
+                                            promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
+                                            promises.push(get('./topo/countries/peru/peru-departments.json'))
+                                            promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
+                                            promises.push(get('./topo/countries/poland/poland-provinces.json'))
+                                            promises.push(get('./topo/countries/portugal/portugal-districts.json'))
+                                            promises.push(get('./topo/countries/romania/romania-counties.json'))
+                                            promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
+                                            promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
+                                            promises.push(get('./topo/countries/sweden/sweden-counties.json'))
+                                            promises.push(get('./topo/countries/turkey/turkiye.json'))
+                                            promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
+                                            promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
+                                            promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
+                                            promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
 
     Promise.all(promises).then(res => {
       if (res[0].status !== 200) return
@@ -306,37 +307,50 @@ class AreaChart extends Component {
     this.setState({hoveredProject: undefined})
   }
 
-  handleMarkerClick (marker) {
-    let newProjectCurves = []
-    console.log(marker)
+  handleInstitutionClick (marker) {
+    if (this.state.selectedDimension === INSTITUTIONS_STR) {
+      let cooperationPartners = []
 
-    for (let project of marker.projects) {
-      for (let forschungsregionIso of project.forschungsregion) {
-        let projectCurveIndex = -1
-        for (let i = 0; i < newProjectCurves.length; i++) {
-          if (newProjectCurves[i].forschungsregion === forschungsregionIso) {
-            projectCurveIndex = i
-            break
-          }
-        }
-        if (projectCurveIndex > -1) {
-          newProjectCurves[projectCurveIndex].projects.push(project)
-          newProjectCurves[projectCurveIndex].numProjects = newProjectCurves[projectCurveIndex].numProjects + 1
-        } else {
-          newProjectCurves.push({forschungsregion: forschungsregionIso, projects: [project], numProjects: 1})
+      // TODO start of curves is always from current institution
+      for (let i in this.state.projects) {
+        let project = this.state.projects[i]
+        let cooperationPartnersInProject = [project.institution_id]
+        project.cooperating_institutions.forEach(cooperatingInstitutionId => {
+          cooperationPartnersInProject.push(cooperatingInstitutionId)
+        })
+        let index = cooperationPartnersInProject.indexOf(marker.id)
+        if (index > -1) {
+          cooperationPartnersInProject.splice(index, 1)
+          cooperationPartnersInProject.forEach(partnerId => {
+            let cooperationPartnerIndex = -1
+            for (let j in cooperationPartners) {
+              if (cooperationPartners[j].partnerId === partnerId) cooperationPartnerIndex = j
+            }
+            if (cooperationPartnerIndex > -1) {
+              cooperationPartners[cooperationPartnerIndex].cooperatingProjects.push(project)
+            } else {
+              // TODO find institution object and put it in
+              let correspondingInstitution = null
+              this.state.allInstitutions.forEach(institution => {
+                if (institution.id === partnerId) correspondingInstitution = institution
+              })
+              cooperationPartners.push({
+                partnerId: partnerId,
+                institution: correspondingInstitution,
+                cooperatingProjects: [project]
+              })
+            }
+          })
         }
       }
+
+      let cooperations = {
+        institution: marker,
+        cooperationPartners
+      }
+      console.log('Cooperations', cooperations)
+      this.setState({markerCooperations: cooperations})
     }
-
-    console.log(newProjectCurves)
-
-    this.setState({
-      zoom: 1,
-      center: marker.coordinates,
-      projectCurves: newProjectCurves,
-      selectedMarker: marker,
-      zoomOld: 1
-    })
   }
 
   handlerSrollMap (scrollEvent) {
@@ -595,8 +609,57 @@ class AreaChart extends Component {
 
     let researchAreas = getResearchAreasForInstitutions(selectedInstitutions, this.state.projects)
 
-    this.setState({selectedInstitutions: value, institutions: selectedInstitutions, allResearchAreas: researchAreas, projectCurves: []})
+    this.setState({
+      selectedInstitutions: value,
+      institutions: selectedInstitutions,
+      allResearchAreas: researchAreas,
+      projectCurves: []
+    })
     console.log('Selected institutions: ', selectedInstitutions)
+  }
+
+  renderCooperationLines (markerCooperations) {
+    let color = 'rgba(78, 0, 80, 0.72)'
+    let strokeWidth = '3px'
+    if (markerCooperations) {
+      return <Lines>
+        {
+          markerCooperations.cooperationPartners.map((partner, i) => <Line
+            key={`cooperation-line-${markerCooperations.institution.id}-${partner.partnerId}`}
+            line={{
+              coordinates: {
+                start: markerCooperations.institution.coordinates,
+                end: partner.institution.coordinates
+              },
+              projectCurve: markerCooperations
+            }}
+            preserveMarkerAspect={false}
+            style={{
+              default: {
+                fill: 'rgba(255, 255, 255, 0)',
+                stroke: color,
+                strokeWidth: strokeWidth,
+                cursor: 'pointer',
+                pointerEvents: 'stroke'
+              },
+              hover: {
+                fill: 'rgba(255, 255, 255, 0)',
+                stroke: '#4b9123',
+                strokeWidth: strokeWidth,
+                cursor: 'pointer',
+                pointerEvents: 'stroke'
+              },
+              pressed: {
+                fill: 'rgba(255, 255, 255, 0)',
+                stroke: '#4b9123',
+                strokeWidth: strokeWidth,
+                cursor: 'pointer',
+                pointerEvents: 'stroke'
+              }
+            }}
+          />)}
+      </Lines>
+    }
   }
 
   render () {
@@ -855,6 +918,9 @@ class AreaChart extends Component {
                       })
                     }
                   </Lines>
+
+                  {this.renderCooperationLines(this.state.markerCooperations)}
+
                   <Markers>
                     {
                       this.state.projectCurves.map((projectCurve, i) => {
@@ -915,7 +981,7 @@ class AreaChart extends Component {
                         return <Marker
                           key={`institution-marker-${i}`}
                           marker={institution}
-                          // onClick={this.handleMarkerClick}
+                          onClick={this.handleInstitutionClick}
                           preserveMarkerAspect={true}
                           style={{
                             default: {

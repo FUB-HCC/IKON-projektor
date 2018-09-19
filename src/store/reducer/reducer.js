@@ -160,17 +160,23 @@ const toggleFilters = (state, action) => state
 // }
 
 const activatePopover = (state, action) => {
+  let selectedProjectId = null
+  state.data.forEach(project => {
+    if (project.id === action.element.project.id) {
+      selectedProjectId = project.id
+    }
+  })
   if (action.vis === 1) {
     const newState = {
       ...state,
-      selectedProject: state.data[action.element.projectId] ? action.element.projectId : state.selectedProject
+      selectedProject: selectedProjectId
     }
     updateUrl(newState)
     return newState
   } else {
     const newState = {
       ...state,
-      selectedProject: state.data[action.element.project.id] ? action.element.project.id : state.selectedProject
+      selectedProject: selectedProjectId
     }
     updateUrl(newState)
     return newState
@@ -194,8 +200,8 @@ const urlUpdatesFilters = (state) => {
     ...state,
     filter: dataFromUrl.filter,
     graph: dataFromUrl.graph,
-    filteredData: applyFilters(state.data, dataFromUrl.filter),
-    selectedProject: dataFromUrl.selectedProject
+    filteredData: applyFilters(state.data, dataFromUrl.filter)
+    // selectedProject: dataFromUrl.selectedProject // TODO
   }
 }
 

@@ -15,21 +15,21 @@ const Popover = (props) => {
 
   const data = props.data
 
-  const titleText = data.titel ? data.titel : 'Projekttitel'
-  const researchAreaText = data.forschungsbereich ? 'Forschungsbereich ' + data.forschungsbereich : 'Forschungsbereich N'
-  const projectLeadText = data.projektleiter ? data.projektleiter : 'Projektleiter'
-  const petitionerText = data.antragsteller ? data.antragsteller : 'Antragsteller'
-  const mainTopicText = data.hauptthema ? data.hauptthema : 'Hauptthema'
-  const startText = data.start ? new Date(data.start).toDateString() : 'kein Datum'
-  const finishText = data.end ? new Date(data.end).toDateString() : 'kein Datum'
+  const titleText = data.title ? data.title : 'Projekttitel'
+  const researchAreaText = data.forschungsbereich ? data.forschungsbereich : 'Forschungsbereich N' // TODO
+  const projectLeadText = data.project_leader ? data.project_leader : 'Projektleiter'
+  const petitionerText = data.applicant ? data.applicant : 'Antragsteller'
+  const mainTopicText = data.hauptthema ? data.hauptthema : 'Hauptthema' // TODO
+  const startText = data.start_date ? new Date(data.start_date).toDateString() : 'kein Datum'
+  const finishText = data.end_date ? new Date(data.end_date).toDateString() : 'kein Datum'
 
-  const descriptionText = data.beschreibung ? data.beschreibung : '-keine Beschreibung verfügbar-'
-  const fundingSourceText = data.geldgeber ? data.geldgeber : 'Geldgeber'
-  const cooperationPartnerText = data.kooperationspartner ? data.kooperationspartner : 'keine Kooperation'
+  const descriptionText = data.abstract ? data.abstract : '-keine Beschreibung verfügbar-'
+  const fundingSourceText = data.sponsor ? data.sponsor : 'Geldgeber'
+  const cooperationPartnerText = data.cooperating_institutions ? data.cooperating_institutions : 'keine Kooperation'
 
-  const sideTopicList = data.nebenthemen ? generateSideTopicList(data.nebenthemen) : undefined
+  const sideTopicList = data.side_topics ? generateSideTopicList(data.side_topics) : undefined
   const wikiHref = data.href ? data.href : 'wikipedia.com'
-  const fieldColor = getFieldColor(fieldsIntToString(data.forschungsbereich))
+  const fieldColor = getFieldColor(fieldsIntToString(data.forschungsbereich)) // todo
 
   const Icon = (<div className={classes.logoCell} style ={{width: '20%'}}><img src={petriImg} className={classes.logo}/></div>)
   const Title = (<div className={classes.cell} style ={{width: '80%'}}><TextBox text={titleText} fontSize={2} color={fieldColor}/></div>)
