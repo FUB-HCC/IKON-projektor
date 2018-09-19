@@ -53,8 +53,8 @@ const processData = (data, colors) => {
       dataSplitYears[data[projectsKey].forschungsbereichstr] = []
     }
 
-    let startDate = parseInt(data[projectsKey].start)
-    let endDate = parseInt(data[projectsKey].end)
+    let startDate = parseInt(data[projectsKey].start_date)
+    let endDate = parseInt(data[projectsKey].end_date)
     if (isNaN(endDate) || endDate === '') endDate = new Date().getFullYear()
 
     let forschungsbereichData = dataSplitYears[data[projectsKey].forschungsbereichstr]

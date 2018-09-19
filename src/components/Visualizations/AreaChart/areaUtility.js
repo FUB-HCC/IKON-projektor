@@ -1,50 +1,75 @@
-export const getInstitutions = (projects) => {
+export const getAllInstitutions = (institutionsData, projects) => {
   let institutions = []
-  for (let prop in projects) {
-    let index = -1
-    for (let i = 0; i < institutions.length; i++) {
-      if (institutions[i].name === projects[prop].geldgeber) {
-        index = i
-        break
-      }
-    } // checked if geldgeber is already in institutions array
 
-    if (index > -1) {
-      institutions[index].projects.push(Object.assign({id: prop}, projects[prop]))
-      institutions[index].numberProjects = institutions[index].projects.length
-    } else if (index === -1) {
-      institutions.push({
-        name: projects[prop].geldgeber,
-        projects: [Object.assign({id: prop}, projects[prop])],
-        pos: projects[prop].pos,
-        coordinates: [projects[prop].pos.long, projects[prop].pos.lat],
-        numberProjects: 1
-      })
+  institutionsData.forEach(institution => {
+    let newInstitution = {
+      name: institution.name,
+      projects: [],
+      id: institution.institution_id,
+      pos: institution.loc,
+      coordinates: [institution.loc.lng, institution.loc.lat],
+      numberProjects: 0
     }
 
-    // TODO do the same for kooperationspartner
-  }
+    for (let prop in projects) {
+      let project = projects[prop]
+      if (project.institution_id === newInstitution.id) {
+        newInstitution.projects.push(project)
+        newInstitution.numberProjects = newInstitution.numberProjects + 1
+      } else {
+        project.cooperating_institutions.forEach(cooperatingInstitutionId => {
+          if (cooperatingInstitutionId === newInstitution.id) {
+            newInstitution.projects.push(project)
+            newInstitution.numberProjects = newInstitution.numberProjects + 1
+          }
+        })
+      }
+    }
+
+    if (newInstitution.numberProjects > 0) institutions.push(newInstitution)
+  })
+
+  console.log(institutions)
   return institutions
+}
+
+export const getResearchAreasForInstitutions = (institutions, projects) => {
+  let projectsOfSelectedInstitutions = []
+  for (let i in projects) {
+    let project = projects[i]
+    institutions.forEach(institution => {
+      if (project.institution_id === institution.id && projectsOfSelectedInstitutions.indexOf(project) === -1) {
+        projectsOfSelectedInstitutions.push(project)
+      } else {
+        project.cooperating_institutions.forEach(cooperatingInstitutionId => {
+          if (cooperatingInstitutionId === institution.id && projectsOfSelectedInstitutions.indexOf(project) === -1) {
+            projectsOfSelectedInstitutions.push(project)
+          }
+        })
+      }
+    })
+  }
+  return getAllResearchAreas(projectsOfSelectedInstitutions)
 }
 
 export const getAllResearchAreas = (projects) => {
   let researchAreas = []
   for (let prop in projects) {
-    for (let forschungsregion of projects[prop].forschungsregion) {
+    for (let region of projects[prop].region) {
       let index = -1
       for (let area in researchAreas) {
-        if (researchAreas[area].forschungsregion === forschungsregion) {
+        if (researchAreas[area].forschungsregion === region) {
           index = area
         }
       }
 
       if (index === -1) {
-        researchAreas.push({forschungsregion: forschungsregion, projects: [projects[prop]]})
+        researchAreas.push({forschungsregion: region, projects: [projects[prop]]})
       } else {
         researchAreas[index].projects.push(projects[prop])
       }
     }
   }
-
+  console.log(researchAreas)
   return researchAreas
 }

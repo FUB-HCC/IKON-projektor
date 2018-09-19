@@ -9,13 +9,13 @@ class AreaChart extends React.Component {
     // you can get current height with 'props.height' and width with 'props.width'
     // you can get all props defined below[in mapStateToProps] with 'this.props.<name>'
     // if you need any more you can define them there (and you can take anything from the statevas a prop
-    this.Graph.updateData(this.props.data, this.props.width, this.props.height)
+    this.Graph.updateData(this.props.data, this.props.institutions, this.props.width, this.props.height)
   }
 
   componentDidUpdate () {
     // update data or size here
     // you can get current height with 'props.height' and width with 'props.width'
-    this.Graph.updateData(this.props.data, this.props.width, this.props.height)
+    this.Graph.updateData(this.props.data, this.props.institutions, this.props.width, this.props.height)
   }
 
   render () {
@@ -25,6 +25,7 @@ class AreaChart extends React.Component {
 
 const mapStateToProps = state => ({
   data: state.main.filteredData, // zu visualisierende Daten (immer up-to-date)
+  institutions: state.main.institutions,
   target: 'graph' // id of the target svg tag
   // this is also a good place to prepare the data since the data given to the visualization is then minimal
 })

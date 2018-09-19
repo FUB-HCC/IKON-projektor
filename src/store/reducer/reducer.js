@@ -1,19 +1,34 @@
 import * as actionTypes from '../actions/actionTypes'
 import {updateUrl, fieldsStringToInt, topicToField} from '../utility'
-import {getData} from '../../assets/publicData'
+import {getProjectsData, getInstitutionsData} from '../../assets/publicData'
 import {parse as queryStringParse} from 'query-string'
 
-const data = getData()
+const institutionsData = getInstitutionsData()
+const data = getProjectsData()
 const distFields = []
 const distTopics = []
 const distSponsor = []
 
 Object.keys(data).map(dataEntry => {
-  data[dataEntry] = {
-    ...data[dataEntry],
-    forschungsbereichstr: data[dataEntry].forschungsbereich,
-    forschungsbereichNumber: fieldsStringToInt(data[dataEntry].forschungsbereich)
+  data[dataEntry].hauptthema = (data[dataEntry].review_board ? data[dataEntry].review_board : 'Unbekannt')
+  data[dataEntry].geldgeber = data[dataEntry].sponsor
+
+  if (data[dataEntry].research_area) {
+    data[dataEntry] = {
+      ...data[dataEntry],
+      forschungsbereich: data[dataEntry].research_area.split(' (')[0],
+      forschungsbereichstr: data[dataEntry].research_area.split(' (')[0], // TODO please change API so it does not contain "(# Mitglieder)"
+      forschungsbereichNumber: fieldsStringToInt(data[dataEntry].research_area.split(' (')[0])
+    }
+  } else {
+    data[dataEntry] = {
+      ...data[dataEntry],
+      forschungsbereich: 'Unbekannt',
+      forschungsbereichstr: 'Unbekannt', // TODO please change API so it does not contain "(# Mitglieder)"
+      forschungsbereichNumber: fieldsStringToInt('Unbekannt')
+    }
   }
+
   Object.keys(data[dataEntry]).map(dataKey => {
     const val = data[dataEntry][dataKey]
     if (dataKey === 'forschungsbereichstr') {
@@ -24,7 +39,8 @@ Object.keys(data).map(dataEntry => {
       if (!distSponsor.some(e => e === val)) distSponsor.push(val)
     }
   })
-})
+}
+)
 const applyFilters = (data, filter) => {
   let filteredData = data
   filter.forEach(f => {
@@ -47,13 +63,32 @@ const compare = (a, b) => {
 
 const initialState = {
   filter: [
-    {name: 'Forschungsgebiet', filterKey: 'forschungsbereichstr', type: 'a', distValues: distFields.sort(compare), value: distFields},
-    {name: 'Hauptthema', filterKey: 'hauptthema', type: 'a', distValues: distTopics.sort(compare), value: distTopics},
-    {name: 'Geldgeber', filterKey: 'geldgeber', type: 'a', distValues: distSponsor.sort(compare), value: distSponsor}
+    {
+      name: 'Forschungsgebiet',
+      filterKey: 'forschungsbereichstr',
+      type: 'a',
+      distValues: distFields.sort(compare),
+      value: distFields
+    },
+    {
+      name: 'Hauptthema',
+      filterKey: 'hauptthema',
+      type: 'a',
+      distValues: distTopics.sort(compare),
+      value: distTopics
+    },
+    {
+      name: 'Geldgeber',
+      filterKey: 'geldgeber',
+      type: 'a',
+      distValues: distSponsor.sort(compare),
+      value: distSponsor
+    }
   ],
   graph: '0',
   data: data,
   filteredData: data,
+  institutions: institutionsData,
   selectedProject: undefined
 }
 

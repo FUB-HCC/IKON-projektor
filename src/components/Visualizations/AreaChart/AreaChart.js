@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {get} from 'axios'
 import {feature} from 'topojson-client'
 import * as parse from 'csv-parse'
-/** import {connect} from 'react-redux' */
 import {
   ComposableMap,
   ZoomableGroup,
@@ -15,7 +14,7 @@ import {
 } from './ReactSimpleMaps'
 import {getCenterOfBounds} from 'geolib'
 import {Motion, spring} from 'react-motion'
-import {getInstitutions, getAllResearchAreas} from './areaUtility'
+import {getResearchAreasForInstitutions, getAllInstitutions} from './areaUtility'
 import classes from './AreaChart.css'
 import CloseIcon from '../../../assets/Exit.svg'
 import Hammer from 'react-hammerjs'
@@ -38,6 +37,7 @@ class AreaChart extends Component {
       regionPathToRender: [],
       cities: [],
       projects: [],
+      allInstitutions: [],
       selectedProjectCurve: null,
       selectedProjectNode: null,
       projectCurves: [],
@@ -46,7 +46,8 @@ class AreaChart extends Component {
       margin: props.margin,
       projectsPopoverHidden: true,
       selectedDimension: RESEARCH_AREA_STR,
-      allResearchAreas: []
+      allResearchAreas: [],
+      selectedInstitutions: []
     }
     this.loadPaths = this.loadPaths.bind(this)
     this.handleZoom = this.handleZoom.bind(this)
@@ -74,11 +75,43 @@ class AreaChart extends Component {
     this.handlePinchEnd = this.handlePinchEnd.bind(this)
     this.handlePinchStart = this.handlePinchStart.bind(this)
     this.changeDimension = this.changeDimension.bind(this)
+
+    // Select Institution dropdown
+    this.handleInstitutionSelectChange = this.handleInstitutionSelectChange.bind(this)
   }
 
-  updateData (data, width, height) {
-    let allResearchAreas = getAllResearchAreas(data)
-    this.setState({allResearchAreas: allResearchAreas, projects: data, width: width * 0.6, height: height * 0.6})
+  updateData (projects, institutions, width, height) {
+    if (this.state.selectedDimension === INSTITUTIONS_STR) {
+      let allInstitutions = getAllInstitutions(institutions, projects)
+      let shownInstitutions = allInstitutions
+      this.setState({
+        allInstitutions: allInstitutions,
+        institutions: shownInstitutions,
+        projects: projects,
+        width: width * 0.6,
+        height: height * 0.6
+      })
+    } else if (this.state.selectedDimension === RESEARCH_AREA_STR) {
+      let allInstitutions = getAllInstitutions(institutions, projects)
+      let shownInstitutions = this.state.institutions
+      let selectedInstitutions = this.state.selectedInstitutions
+      if (this.state.selectedInstitutions.length === 0) {
+        selectedInstitutions = [allInstitutions[0].id]
+        shownInstitutions = [allInstitutions[0]]
+      }
+
+      let allResearchAreas = getResearchAreasForInstitutions(shownInstitutions, projects)
+
+      this.setState({
+        allResearchAreas: allResearchAreas,
+        selectedInstitutions: selectedInstitutions,
+        allInstitutions: allInstitutions,
+        institutions: shownInstitutions,
+        projects: projects,
+        width: width * 0.6,
+        height: height * 0.6
+      })
+    }
   }
 
   componentDidMount () {
@@ -92,19 +125,33 @@ class AreaChart extends Component {
   }
 
   changeDimension () {
-    let allResearchRegions = []
-    let allInstitutions = []
     if (this.state.selectedDimension === RESEARCH_AREA_STR) {
-      allInstitutions = getInstitutions(this.state.projects)
-    } else if (this.state.selectedDimension === INSTITUTIONS_STR) {
-      allResearchRegions = getAllResearchAreas(this.state.projects)
+      let allResearchRegions = []
+      let allInstitutions = this.state.allInstitutions
+      this.setState({
+        projectCurves: [],
+        institutions: allInstitutions,
+        allResearchAreas: allResearchRegions,
+        selectedDimension: (this.state.selectedDimension === RESEARCH_AREA_STR ? INSTITUTIONS_STR : RESEARCH_AREA_STR)
+      })
+    } else if (this.state.selectedDimension === INSTITUTIONS_STR) { // change to area dimension
+      let selectedInstitutions = []
+
+      this.state.allInstitutions.forEach(institution => {
+        this.state.selectedInstitutions.forEach(selectedInstitutionID => {
+          if (institution.id === Number.parseInt(selectedInstitutionID)) selectedInstitutions.push(institution)
+        })
+      })
+
+      let researchRegions = getResearchAreasForInstitutions(selectedInstitutions, this.state.projects)
+
+      this.setState({
+        projectCurves: [],
+        institutions: selectedInstitutions,
+        allResearchAreas: researchRegions,
+        selectedDimension: (this.state.selectedDimension === RESEARCH_AREA_STR ? INSTITUTIONS_STR : RESEARCH_AREA_STR)
+      })
     }
-    this.setState({
-      projectCurves: [],
-      institutions: allInstitutions,
-      allResearchAreas: allResearchRegions,
-      selectedDimension: (this.state.selectedDimension === RESEARCH_AREA_STR ? INSTITUTIONS_STR : RESEARCH_AREA_STR)
-    })
   }
 
   loadPaths () {
@@ -141,39 +188,39 @@ class AreaChart extends Component {
     // TODO for interactive mapping with d3 on medium.
     promises.push(get('./topo/countries/germany/germany-states.json'))
     /* promises.push(get('./topo/countries/algeria/algeria-provinces.json'))
-                                promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
-                                promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
-                                promises.push(get('./topo/countries/belgium/benelux-countries.json'))
-                                promises.push(get('./topo/countries/china/china-provinces.json'))
-                                promises.push(get('./topo/countries/colombia/colombia-departments.json'))
-                                promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
-                                promises.push(get('./topo/countries/denmark/denmark-counties.json'))
-                                promises.push(get('./topo/countries/finland/finland-regions.json'))
-                                promises.push(get('./topo/countries/france/fr-departments.json'))
-                                promises.push(get('./topo/countries/india/india-states.json'))
-                                promises.push(get('./topo/countries/ireland/ireland-counties.json'))
-                                promises.push(get('./topo/countries/italy/italy-regions.json'))
-                                promises.push(get('./topo/countries/japan/jp-prefectures.json'))
-                                promises.push(get('./topo/countries/liberia/liberia-districts.json'))
-                                promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
+                                    promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
+                                    promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
+                                    promises.push(get('./topo/countries/belgium/benelux-countries.json'))
+                                    promises.push(get('./topo/countries/china/china-provinces.json'))
+                                    promises.push(get('./topo/countries/colombia/colombia-departments.json'))
+                                    promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
+                                    promises.push(get('./topo/countries/denmark/denmark-counties.json'))
+                                    promises.push(get('./topo/countries/finland/finland-regions.json'))
+                                    promises.push(get('./topo/countries/france/fr-departments.json'))
+                                    promises.push(get('./topo/countries/india/india-states.json'))
+                                    promises.push(get('./topo/countries/ireland/ireland-counties.json'))
+                                    promises.push(get('./topo/countries/italy/italy-regions.json'))
+                                    promises.push(get('./topo/countries/japan/jp-prefectures.json'))
+                                    promises.push(get('./topo/countries/liberia/liberia-districts.json'))
+                                    promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
     // TODO check US and netherlands
     // promises.push(get('./topo/countries/netherlands/nl-gemeentegrenzen-2016.json'))
     /* promises.push(get('./topo/countries/new-zealand/new-zealand-districts.json'))
-                                promises.push(get('./topo/countries/norway/norway-counties.json'))
-                                promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
-                                promises.push(get('./topo/countries/peru/peru-departments.json'))
-                                promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
-                                promises.push(get('./topo/countries/poland/poland-provinces.json'))
-                                promises.push(get('./topo/countries/portugal/portugal-districts.json'))
-                                promises.push(get('./topo/countries/romania/romania-counties.json'))
-                                promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
-                                promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
-                                promises.push(get('./topo/countries/sweden/sweden-counties.json'))
-                                promises.push(get('./topo/countries/turkey/turkiye.json'))
-                                promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
-                                promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
-                                promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
-                                promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
+                                    promises.push(get('./topo/countries/norway/norway-counties.json'))
+                                    promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
+                                    promises.push(get('./topo/countries/peru/peru-departments.json'))
+                                    promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
+                                    promises.push(get('./topo/countries/poland/poland-provinces.json'))
+                                    promises.push(get('./topo/countries/portugal/portugal-districts.json'))
+                                    promises.push(get('./topo/countries/romania/romania-counties.json'))
+                                    promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
+                                    promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
+                                    promises.push(get('./topo/countries/sweden/sweden-counties.json'))
+                                    promises.push(get('./topo/countries/turkey/turkiye.json'))
+                                    promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
+                                    promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
+                                    promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
+                                    promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
 
     Promise.all(promises).then(res => {
       if (res[0].status !== 200) return
@@ -193,46 +240,57 @@ class AreaChart extends Component {
   }
 
   handleCountryClick (country) {
-    this.setState({
-      projectCurves: [],
-      institutions: []
-    })
+    if (this.state.selectedDimension === RESEARCH_AREA_STR) {
+      this.setState({
+        projectCurves: []
+      })
 
-    let researchArea = null
-    let countryCoordinates = [Number(this.calculateGeometricCenter(country)[0]), Number(this.calculateGeometricCenter(country)[1])]
-    let allInstitutions = getInstitutions(this.state.projects)
-    for (let area of this.state.allResearchAreas) {
-      if (area.forschungsregion === country.properties.ISO_A2) {
-        researchArea = area
-        break
-      }
-    }
-
-    if (researchArea) {
-      let newProjectCurves = []
-      let relatedInstitutions = []
-      for (let project of researchArea.projects) {
-        for (let institution of allInstitutions) {
-          if (institution.name === project.geldgeber) {
-            let projectLine = {
-              project: project,
-              start: countryCoordinates,
-              end: institution.coordinates,
-              controlPoint: undefined
-            }
-            newProjectCurves.push(projectLine)
-          }
-          if (relatedInstitutions.indexOf(institution) === -1) relatedInstitutions.push(institution)
+      let researchArea = null
+      let countryCoordinates = [Number(this.calculateGeometricCenter(country)[0]), Number(this.calculateGeometricCenter(country)[1])]
+      for (let area of this.state.allResearchAreas) {
+        if (area.forschungsregion === country.properties.ISO_A2) {
+          researchArea = area
+          break
         }
       }
 
-      this.setState({
-        zoom: 1,
-        center: countryCoordinates,
-        projectCurves: newProjectCurves,
-        zoomOld: 1,
-        institutions: relatedInstitutions
-      })
+      if (researchArea) {
+        let newProjectCurves = []
+        for (let project of researchArea.projects) {
+          for (let institution of this.state.institutions) {
+            if (institution.id === project.institution_id) {
+              let projectLine = {
+                project: project,
+                institutionId: institution.id,
+                start: countryCoordinates,
+                end: institution.coordinates,
+                controlPoint: undefined
+              }
+              newProjectCurves.push(projectLine)
+            } else {
+              project.cooperating_institutions.forEach(projectCooperatingInstitutionId => {
+                if (projectCooperatingInstitutionId === institution.id) {
+                  let projectLine = {
+                    project: project,
+                    institutionId: institution.id,
+                    start: countryCoordinates,
+                    end: institution.coordinates,
+                    controlPoint: undefined
+                  }
+                  newProjectCurves.push(projectLine)
+                }
+              })
+            }
+          }
+        }
+
+        this.setState({
+          zoom: 1,
+          center: countryCoordinates,
+          projectCurves: newProjectCurves,
+          zoomOld: 1
+        })
+      }
     }
   }
 
@@ -298,7 +356,6 @@ class AreaChart extends Component {
         zoomOld: this.state.zoom
       })
     }, 1000)
-    this.checkRegionToRender(this.state.center, this.state.zoom)
   }
 
   handlePinch (event) {
@@ -327,40 +384,6 @@ class AreaChart extends Component {
   handleMoveEnd (newCenter) {
     this.setState({center: [newCenter[0], newCenter[1]]})
     console.log('New center: ', newCenter)
-    this.checkRegionToRender(newCenter, this.state.zoom)
-  }
-
-  checkRegionToRender (center, zoom) {
-    // calculate geometric center of single countries
-    for (let geographyPath of this.state.geographyPaths) {
-      let long = 0
-      let lat = 0
-      let numberCoordinates = 0
-      for (let coordinateArray of geographyPath.geometry.coordinates) {
-        for (let coordinate of coordinateArray) {
-          long += coordinate[0]
-          lat += coordinate[1]
-          numberCoordinates++
-        }
-      }
-
-      long = long / numberCoordinates
-      lat = lat / numberCoordinates
-
-      // TODO only show country states when zoomed close to a country
-      /* if (Math.abs(long - center[0]) < zoom && Math.abs(lat - center[1]) < zoom) {
-                                                  console.log(geographyPath)
-                                                  console.log(`${geographyPath.properties.NAME} Long: ${long} Lat: ${lat}`)
-                                                  for (let regionPath of this.state.regionsPaths) {
-                                                    if (regionPath[0].properties.ISO === geographyPath.properties.ISO_A2) {
-                                                      this.setState({regionPathToRender: regionPath})
-                                                    }
-                                                  }
-                                                } */
-    }
-    // console.log(this.state.regionsPaths)
-    // console.log(`center: ${center}`)
-    // console.log(`zoom: ${zoom}`)
   }
 
   calculateGeometricCenter (geographyPath) {
@@ -399,7 +422,7 @@ class AreaChart extends Component {
     let newProjectCurves = []
     let changed = false
     for (let projectCurve of this.state.projectCurves) {
-      if (!projectCurve.controlPoint && projectCurve.project.id === line.projectCurve.project.id) {
+      if (!projectCurve.controlPoint && projectCurve.institutionId === line.projectCurve.institutionId && projectCurve.project.id === line.projectCurve.project.id) {
         let x = Math.pow(1 - 0.5, 2) * start[0] + 2 * (1 - 0.5) * 0.5 * controlPoint[0] + Math.pow(0.5, 2) * end[0]
         let y = Math.pow(1 - 0.5, 2) * start[1] + 2 * (1 - 0.5) * 0.5 * controlPoint[1] + Math.pow(0.5, 2) * end[1]
         projectCurve.controlPoint = [x, y]
@@ -426,7 +449,7 @@ class AreaChart extends Component {
     let yControl = mOrtho * xControl + b
     let controlPoint = [xControl, yControl]
     let distance = Math.sqrt(Math.pow(controlPoint[0] - midpoint[0], 2) + Math.pow(controlPoint[1] - midpoint[1], 2))
-    // TODO this is not efficient: evaluate if it leads to performance problems
+    // TODO this is not efficient: check if it leads to performance problems
     let iteration = 0
     while (distance < 18 * index) {
       xControl = midpoint[0] + offset * iteration
@@ -452,8 +475,12 @@ class AreaChart extends Component {
           this.handleLineClick(coordinates, line, e)
         })
       }}
-      onMouseEnter={(line, event) => { this.handleProjectHoverIn(projectCurve.project) }}
-      onMouseLeave={(line, event) => { this.handleProjectHoverOut(projectCurve.project) }}
+      onMouseEnter={(line, event) => {
+        this.handleProjectHoverIn(projectCurve.project)
+      }}
+      onMouseLeave={(line, event) => {
+        this.handleProjectHoverOut(projectCurve.project)
+      }}
       line={{
         coordinates: {
           start: projectCurve.start,
@@ -553,7 +580,27 @@ class AreaChart extends Component {
     </div>
   }
 
+  handleInstitutionSelectChange (event) {
+    let options = event.target.options
+    let value = []
+    let selectedInstitutions = []
+    for (let i = 0, l = options.length; i < l; i++) {
+      if (options[i].selected) {
+        value.push(options[i].value)
+        this.state.allInstitutions.forEach(institution => {
+          if (institution.id === Number.parseInt(options[i].value)) selectedInstitutions.push(institution)
+        })
+      }
+    }
+
+    let researchAreas = getResearchAreasForInstitutions(selectedInstitutions, this.state.projects)
+
+    this.setState({selectedInstitutions: value, institutions: selectedInstitutions, allResearchAreas: researchAreas, projectCurves: []})
+    console.log('Selected institutions: ', selectedInstitutions)
+  }
+
   render () {
+    const selectedDimension = this.state.selectedDimension
     return (
       <Hammer onPinch={this.handlePinch} onPinchEnd={this.handlePinchEnd} onPinchStart={this.handlePinchStart}
         options={{
@@ -570,7 +617,7 @@ class AreaChart extends Component {
           fontFamily: 'Roboto, sans-serif'
         }}>
 
-          <div style={{position: 'absolute', marginTop: this.state.height - 200}}>
+          <div style={{position: 'absolute', marginTop: this.state.height - 275}}>
             <button style={{marginLeft: '0.5em'}} className={[classes.zoombutton, classes.in].join(' ')}
               onClick={() => this.handleZoom(1.25)}>{'+'}</button>
             <button style={{marginLeft: '0.5em'}} className={[classes.zoombutton, classes.out].join(' ')}
@@ -582,6 +629,14 @@ class AreaChart extends Component {
               <label className={classes['tgl-btn']} htmlFor="cb1"></label>
               <h4>{this.state.selectedDimension}</h4>
             </div>
+            {selectedDimension === RESEARCH_AREA_STR &&
+                        <select style={{maxWidth: '12em', position: 'absolute', marginTop: '12em'}} multiple={true}
+                          value={this.state.selectedInstitutions} onChange={this.handleInstitutionSelectChange}>
+                          {this.state.allInstitutions.map((institution) => <option
+                            key={`select-institution-${institution.id}`}
+                            value={institution.id}>{institution.name}</option>)}
+                        </select>
+            }
           </div>
 
           <Motion
@@ -820,8 +875,12 @@ class AreaChart extends Component {
                                 this.handleLineClick(coordinates, marker, e)
                               })
                             }}
-                            onMouseEnter={(marker, event) => { this.handleProjectHoverIn(projectCurve.project) }}
-                            onMouseLeave={(marker, event) => { this.handleProjectHoverOut(projectCurve.project) }}
+                            onMouseEnter={(marker, event) => {
+                              this.handleProjectHoverIn(projectCurve.project)
+                            }}
+                            onMouseLeave={(marker, event) => {
+                              this.handleProjectHoverOut(projectCurve.project)
+                            }}
                             preventTranslation={true}
                             preserveMarkerAspect={false}
                             style={{
@@ -857,7 +916,7 @@ class AreaChart extends Component {
                           key={`institution-marker-${i}`}
                           marker={institution}
                           // onClick={this.handleMarkerClick}
-                          preserveMarkerAspect={false}
+                          preserveMarkerAspect={true}
                           style={{
                             default: {
                               fill: markerFillColor,

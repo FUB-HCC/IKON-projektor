@@ -49,34 +49,42 @@ const fieldsMapping = [
   {name: 'Naturwissenschaften', field: 1, color: '#7d913c'},
   {name: 'Lebenswissenschaften', field: 2, color: '#d9ef36'},
   {name: 'Geistes- und Sozialwissenschaften', field: 3, color: '#8184a7'},
-  {name: 'Ingenieurwissenschaften', field: 4, color: '#ed9798'}
+  {name: 'Ingenieurwissenschaften', field: 4, color: '#ed9798'},
+  {name: 'Unbekannt', field: 5, color: '#ffffff'}
 ]
 
 // topic(hauptthema) colors
 const topicMapping = [
-  /* {name: 'Wissenschaftsdatenmanagement', num: '1', field: 3, color: '#8184a7'},
-  {name: 'Biodiversitäts- und Geoinformatik', num: '2', field: 3, color: '#8184a7'},
-  {name: 'Perspektiven auf Natur - PAN', num: '3', field: 4, color: '#ed9798'},
-  {name: 'Historische Arbeitsstelle', num: '4', field: 4, color: '#ed9798'},
-  {name: 'Sammlungsentwicklung', num: '5', field: 2, color: '#d9ef36'},
-  {name: 'Wissenschaft in der Gesellschaft', num: '6', field: 4, color: '#ed9798'},
-  {name: 'Bildung und Vermittlung', num: '7', field: 4, color: '#ed9798'},
-  {name: 'Evolutionäre Morphologie', num: '8', field: 1, color: '#7d913c'},
-  {name: 'Ausstellung und Wissenstransfer', num: '9', field: 4, color: '#ed9798'},
-  {name: 'Mikroevolution', num: '10', field: 1, color: '#7d913c'},
-  {name: 'Impakt- und Meteoritenforschung', num: '11', field: 1, color: '#7d913c'},
-  {name: 'Diversitätsdynamik', num: '12', field: 1, color: '#7d913c'},
-  {name: 'Biodiversitätsentdeckung', num: '13', field: 2, color: '#d9ef36'},
-  {name: 'IT- Forschungsinfrastrukturen', num: '14', field: 3, color: '#8184a7'},
-  {name: 'Kompetenzzentrum Sammlung', num: '15', field: 2, color: '#d9ef36'}, */
-  {name: 'Geowissenschaften', num: '16', field: 1, color: '#7d913c'},
-  {name: 'Biologie', num: '17', field: 2, color: '#d9ef36'},
-  {name: 'Geisteswissenschaften', num: '18', field: 3, color: '#8184a7'},
-  {name: 'Agrar-, Forstwissenschaften und  Tiermedizin', num: '19', field: 2, color: '#d9ef36'},
-  {name: 'Informatik, System- und Elektrotechnik', num: '20', field: 4, color: '#ed9798'},
-  {name: 'Sozial- und Verhaltenswissenschaften', num: '21', field: 3, color: '#8184a7'},
-  {name: 'b', num: '21', field: 3, color: '#8184a7'}
-
+  // {name: 'Wissenschaftsdatenmanagement', num: '1', field: 3, color: '#8184a7'},
+  // {name: 'Biodiversitäts- und Geoinformatik', num: '2', field: 3, color: '#8184a7'},
+  //  {name: 'Perspektiven auf Natur - PAN', num: '3', field: 4, color: '#ed9798'},
+  // {name: 'Historische Arbeitsstelle', num: '4', field: 4, color: '#ed9798'},
+  // {name: 'Sammlungsentwicklung', num: '5', field: 2, color: '#d9ef36'},
+  // {name: 'Wissenschaft in der Gesellschaft', num: '6', field: 4, color: '#ed9798'},
+  // {name: 'Bildung und Vermittlung', num: '7', field: 4, color: '#ed9798'},
+  // {name: 'Evolutionäre Morphologie', num: '8', field: 1, color: '#7d913c'},
+  // {name: 'Ausstellung und Wissenstransfer', num: '9', field: 4, color: '#ed9798'},
+  // {name: 'Mikroevolution', num: '10', field: 1, color: '#7d913c'},
+  // {name: 'Impakt- und Meteoritenforschung', num: '11', field: 1, color: '#7d913c'},
+  // {name: 'Diversitätsdynamik', num: '12', field: 1, color: '#7d913c'},
+  // {name: 'Biodiversitätsentdeckung', num: '13', field: 2, color: '#d9ef36'},
+  // {name: 'IT- Forschungsinfrastrukturen', num: '14', field: 3, color: '#8184a7'},
+  // {name: 'Kompetenzzentrum Sammlung', num: '15', field: 2, color: '#d9ef36'},
+  // {name: 'Geowissenschaften', num: '16', field: 1, color: '#7d913c'},
+  // {name: 'Biologie', num: '17', field: 2, color: '#d9ef36'},
+  // {name: 'Geisteswissenschaften', num: '18', field: 3, color: '#8184a7'},
+  {name: 'Agrar-, Forstwissenschaften und Tiermedizin', num: '19', field: 2, color: '#d9ef36'},
+  // {name: 'Informatik, System- und Elektrotechnik', num: '20', field: 4, color: '#ed9798'},
+  // {name: 'Sozial- und Verhaltenswissenschaften', num: '21', field: 3, color: '#8184a7'},
+  {name: 'Geologie und Paläontologie', num: '22', field: 1, color: '#7d913c'},
+  {name: 'Geochemie, Mineralogie und Kristallographie', num: '23', field: 1, color: '#7d913c'},
+  {name: 'Geophysik und Geodäsie', num: '24', field: 1, color: '#7d913c'},
+  {name: 'Atmosphären-, Meeres- und Klimaforschung', num: '25', field: 1, color: '#7d913c'},
+  {name: 'Kunst-, Musik-, Theater- und Medienwissenschaften', num: '26', field: 3, color: '#8184a7'},
+  {name: 'Geschichtswissenschaften', num: '27', field: 3, color: '#8184a7'},
+  {name: 'Zoologie', num: '28', field: 2, color: '#d9ef36'},
+  {name: 'Pflanzenwissenschaften', num: '29', field: 2, color: '#d9ef36'},
+  {name: 'Unbekannt', num: '30', field: 5, color: '#ffffff'}
 ]
 
 export const fieldsIntToString = (number) => {
