@@ -16,6 +16,9 @@ import {
   axisLeft as d3AxisLeft
 } from 'd3-axis'
 import {select as d3Select} from 'd3-selection'
+import Modal from '../../Modal/Modal'
+import classes from '../AreaChart/AreaChart.css'
+import HoverPopover from '../../HoverPopover/HoverPopover'
 
 class TimeLine extends Component {
   constructor (props) {
@@ -26,8 +29,14 @@ class TimeLine extends Component {
       height: props.height * 0.5,
       width: props.width * 0.5,
       margin: props.margin,
-      firstUpdate: true
+      firstUpdate: true,
+      projectsPopoverHidden: true
     }
+    this.handleCircleClick = this.handleCircleClick.bind(this)
+    this.renderProjectsHover = this.renderProjectsHover.bind(this)
+    this.handleCircleMouseLeave = this.handleCircleMouseLeave.bind(this)
+    this.handleCircleMouseEnter = this.handleCircleMouseEnter.bind(this)
+
     // this.loadPaths = this.loadPaths.bind(this)
   }
 
@@ -42,6 +51,56 @@ class TimeLine extends Component {
     })
 
     this.setState({dataSplitYears: data.dataSplitFbYear, projectsData: data.projects, forschungsbereiche: forschungsbereiche, firstUpdate: false})
+  }
+
+  handleCircleClick (evt, circlePoint) {
+    console.log(evt, circlePoint)
+    let selectedProjects = circlePoint.projects
+    this.setState({projectsPopoverHidden: false, selectedProjects: selectedProjects})
+  }
+
+  renderProjectsPopover () {
+    let selectedProjects = this.state.selectedProjects
+
+    return !this.state.projectsPopoverHidden && <Modal headline={'Cooperating Projects'} onCloseClick={() => {
+      this.setState({projectsPopoverHidden: true})
+    }} hidden={this.state.projectsPopoverHidden} width={this.state.width * 0.56} height={this.state.height * 0.75}>
+
+      <ol className={classes.projects_list} style={{
+        height: (this.state.height * 0.65) + 'px'
+      }}>
+        {selectedProjects.map((project, i) => {
+          return <li onClick={event => {
+            this.setState({projectsPopoverHidden: true})
+            this.props.onProjectClick({project: project}, 2)
+          }} key={`project-list-link-${project.id}-${i}`}
+          className={classes.projects_list_item}>{`${project.title} (${project.id})`}</li>
+        })}
+      </ol>
+
+    </Modal>
+  }
+
+  renderProjectsHover () {
+    return (this.state.hoveredCircle && this.state.mouseLocation) && <HoverPopover width={'15em'} height={'5em'} locationX={this.state.mouseLocation[0]}
+      locationY={this.state.mouseLocation[1]}>
+      <p style={{
+        position: 'absolute',
+        top: '0em',
+        color: '#e9e9e9',
+        overflowY: 'scroll',
+        overflowX: 'hidden'}}>
+        {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`}
+      </p>
+    </HoverPopover>
+  }
+
+  handleCircleMouseEnter (circlePoint, evt) {
+    this.setState({hoveredCircle: circlePoint, mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]})
+  }
+
+  handleCircleMouseLeave (evt) {
+    this.setState({hoveredCircle: undefined})
   }
 
   render () {
@@ -83,51 +142,63 @@ class TimeLine extends Component {
       .y(selectScaledY)
 
     // map our data to scaled points.
-    const circlePoints = array.map(datum => ({
+    const circlePoints = array.map(datum => (Object.assign({
       x: selectScaledX(datum),
       y: selectScaledY(datum),
-      color: datum.color
-    }))
+      color: datum.color}, datum)))
 
     return (
-      <SVGWithMargin
-        className={styles.timelineContainer}
-        contentContainerBackgroundRectClassName={styles.timelineContentContainerBackgroundRect}
-        contentContainerGroupClassName={styles.timelineContentContainer}
-        height={this.state.height}
-        margin={this.state.margin}
-        width={this.state.width}
-      >
+      <div>
+        <SVGWithMargin
+          className={styles.timelineContainer}
+          contentContainerBackgroundRectClassName={styles.timelineContentContainerBackgroundRect}
+          contentContainerGroupClassName={styles.timelineContentContainer}
+          height={this.state.height}
+          margin={this.state.margin}
+          width={this.state.width}
+        >
 
-        {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
-        <g
-          className={styles.xAxis}
-          ref={node => d3Select(node).call(xAxis)}
-          style={{
-            transform: `translateY(${this.state.height}px)`
-          }}
-        />
-        <g className={styles.yAxis} ref={node => d3Select(node).call(yAxis)}/>
+          {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
+          <g
+            className={styles.xAxis}
+            ref={node => d3Select(node).call(xAxis)}
+            style={{
+              transform: `translateY(${this.state.height}px)`
+            }}
+          />
+          <g className={styles.yAxis} ref={node => d3Select(node).call(yAxis)}/>
 
-        {Object.values(this.state.dataSplitYears).map((line) => {
-          return (<g key={line} className={styles.line}><path style={{stroke: line[0].color}} d={sparkLine(line)}/></g>)
-        })}
+          {Object.values(this.state.dataSplitYears).map((line) => {
+            return (<g key={line} className={styles.line}><path style={{stroke: line[0].color}} d={sparkLine(line)}/></g>)
+          })}
 
-        {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
-        <g className={styles.scatter}>
-          {circlePoints.map(circlePoint => (
-            <circle
-              cx={circlePoint.x}
-              cy={circlePoint.y}
-              style={{
-                fill: circlePoint.color
-              }}
-              key={`${Math.random()}${circlePoint.x},${circlePoint.y}`}
-              r={4}
-            />
-          ))}
-        </g>
-      </SVGWithMargin>
+          {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
+          <g className={styles.scatter}>
+            {circlePoints.map(circlePoint => (
+              <circle
+                cx={circlePoint.x}
+                cy={circlePoint.y}
+                style={{
+                  fill: circlePoint.color,
+                  pointerEvents: 'fill'
+                }}
+                key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.color}`}
+                onClick={(evt) => { this.handleCircleClick(evt, circlePoint) }}
+                onMouseLeave={this.handleCircleMouseLeave}
+                onMouseMove={(event) => {
+                  this.handleCircleMouseEnter(circlePoint, event)
+                }}
+                onMouseEnter={(event) => {
+                  this.handleCircleMouseEnter(circlePoint, event)
+                }}
+                r={4}
+              />
+            ))}
+          </g>
+        </SVGWithMargin>
+        {this.renderProjectsPopover()}
+        {this.renderProjectsHover()}
+      </div>
     )
   }
 }

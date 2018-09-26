@@ -2,11 +2,13 @@ import React from 'react'
 import classes from '../Visualizations/AreaChart/AreaChart.css'
 
 const HoverPopover = (props) => {
-  let {locationX, locationY} = props
+  let {locationX, locationY, width, height} = props
+  if (!width) { width = `30em` }
+  if (!height) { height = `10em` }
 
   return <div className={classes.popover_body} style={{
-    width: `30em`, // TODO dynamically style width
-    height: `10em`, // TODO dynamically style height
+    width: width, // TODO dynamically style width
+    height: height, // TODO dynamically style height
     margin: `1.5em`,
     position: 'absolute',
     left: locationX + 'px',

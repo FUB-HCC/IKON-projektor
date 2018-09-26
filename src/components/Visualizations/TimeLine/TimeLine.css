@@ -4,9 +4,15 @@
 
 .timelineContainer > .timelineContentContainer .xAxis text {
     font-size: 8px;
+    fill: white;
 }
 
-.timelineContainer > .timelineContentContainer .yAxis {
+.timelineContainer > .timelineContentContainer .yAxis line {
+    stroke: white;
+}
+
+.timelineContainer > .timelineContentContainer .yAxis text {
+    fill: white;
 }
 
 .timelineContainer > .timelineContentContainer .line path {
@@ -16,7 +22,14 @@
 }
 
 .timelineContainer > .timelineContentContainer .scatter circle {
-    fill: #5c6bc0;
     stroke: #4f4f4f;
     stroke-width: 3;
+    cursor: pointer;
+    transition: all 0.5s ease;
+
+}
+
+.timelineContainer > .timelineContentContainer .scatter circle:hover {
+    stroke: rgba(255, 255, 255, 0.23);
+    stroke-width: 8;
 }
