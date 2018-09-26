@@ -721,7 +721,7 @@ class AreaChart extends Component {
               <h4>{this.state.selectedDimension}</h4>
             </div>
             {selectedDimension === RESEARCH_AREA_STR &&
-                        <select style={{maxWidth: '12em', position: 'absolute', marginTop: '12em'}} multiple={true}
+                        <select style={{maxWidth: '12em', position: 'absolute', marginTop: '14em'}} multiple={true}
                           value={this.state.selectedInstitutions} onChange={this.handleInstitutionSelectChange}>
                           {this.state.allInstitutions.map((institution) => <option
                             key={`select-institution-${institution.id}`}
@@ -861,43 +861,10 @@ class AreaChart extends Component {
                               fill: '#ECEFF1',
                               stroke: '#607D8B',
                               strokeWidth: 0.2,
-                              outline: 'none'
-                            }
+                              outline: 'none'}
                           }}
                         />
                       )}
-                  </Geographies>
-                  <Geographies geography={this.state.geographyPaths} disableOptimization>
-                    {(geographies, projection) =>
-                      geographies.map((geography, i) => {
-                        let included = false
-                        for (let projectCurve of this.state.projectCurves) {
-                          if (projectCurve.forschungsregion === geography.properties.ISO_A2) {
-                            included = true
-                            break
-                          }
-                        }
-
-                        return included && (
-                          <Geography
-                            key={`include-${geography.properties.ADM0_A3}-${i}`}
-                            cacheId={`include-${geography.properties.ADM0_A3}-${i}`}
-                            onClick={this.handleCountryClick}
-                            round
-                            geography={geography}
-                            projection={projection}
-                            style={{
-                              default: {
-                                fill: '#91403c',
-                                stroke: '#607D8B',
-                                strokeWidth: 0.75,
-                                outline: 'none'
-                              }
-                            }}
-                          />
-                        )
-                      })
-                    }
                   </Geographies>
                   <Markers>
                     {
