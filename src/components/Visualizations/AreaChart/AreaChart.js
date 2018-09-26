@@ -16,8 +16,9 @@ import {getCenterOfBounds} from 'geolib'
 import {Motion, spring} from 'react-motion'
 import {getResearchAreasForInstitutions, getAllInstitutions} from './areaUtility'
 import classes from './AreaChart.css'
-import CloseIcon from '../../../assets/Exit.svg'
 import Hammer from 'react-hammerjs'
+import HoverPopover from '../../HoverPopover/HoverPopover'
+import Modal from '../../Modal/Modal'
 
 const RESEARCH_AREA_STR = 'Research Areas'
 const INSTITUTIONS_STR = 'Institutions'
@@ -54,22 +55,25 @@ class AreaChart extends Component {
     this.handleZoom = this.handleZoom.bind(this)
     this.handleCountryClick = this.handleCountryClick.bind(this)
     this.handleInstitutionClick = this.handleInstitutionClick.bind(this)
+    this.handleCooperationLineClick = this.handleCooperationLineClick.bind(this)
     this.handlerSrollMap = this.handlerSrollMap.bind(this)
     this.buildCurves = this.buildCurves.bind(this)
     this.handleMoveEnd = this.handleMoveEnd.bind(this)
     this.handleLineClick = this.handleLineClick.bind(this)
-    this.closeProjectsModal = this.closeProjectsModal.bind(this)
     this.renderProjectsLines = this.renderProjectsLines.bind(this)
     this.handleProjectHoverIn = this.handleProjectHoverIn.bind(this)
     this.handleProjectHoverOut = this.handleProjectHoverOut.bind(this)
 
-    this.renderProjectsPopover = this.renderProjectsPopover.bind(this)
+    this.renderCooperatingProjectsPopover = this.renderCooperatingProjectsPopover.bind(this)
 
-    // The hover popover when hovering research areas
+    // The hover popover when hovering research areas / institutions
     this.renderProjectsHover = this.renderProjectsHover.bind(this)
     this.handleCountryMouseEnter = this.handleCountryMouseEnter.bind(this)
     this.handleCountryMouseLeave = this.handleCountryMouseLeave.bind(this)
     this.handleCountryMouseMove = this.handleCountryMouseMove.bind(this)
+    this.handleInstitutionMouseEnter = this.handleInstitutionMouseEnter.bind(this)
+    this.handleInstitutionMouseLeave = this.handleInstitutionMouseLeave.bind(this)
+    this.handleInstitutionMouseMove = this.handleInstitutionMouseMove.bind(this)
 
     // touch zoom handler:
     this.handlePinch = this.handlePinch.bind(this)
@@ -118,11 +122,6 @@ class AreaChart extends Component {
   componentDidMount () {
     this.loadPaths()
     this.zoomableGroup.zoomableGroupNode.addEventListener('wheel', this.handlerSrollMap)
-  }
-
-  closeProjectsModal () {
-    console.log('close projects modal')
-    this.setState({projectsPopoverHidden: true})
   }
 
   changeDimension () {
@@ -189,39 +188,39 @@ class AreaChart extends Component {
     // TODO for interactive mapping with d3 on medium.
     promises.push(get('./topo/countries/germany/germany-states.json'))
     /* promises.push(get('./topo/countries/algeria/algeria-provinces.json'))
-                                            promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
-                                            promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
-                                            promises.push(get('./topo/countries/belgium/benelux-countries.json'))
-                                            promises.push(get('./topo/countries/china/china-provinces.json'))
-                                            promises.push(get('./topo/countries/colombia/colombia-departments.json'))
-                                            promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
-                                            promises.push(get('./topo/countries/denmark/denmark-counties.json'))
-                                            promises.push(get('./topo/countries/finland/finland-regions.json'))
-                                            promises.push(get('./topo/countries/france/fr-departments.json'))
-                                            promises.push(get('./topo/countries/india/india-states.json'))
-                                            promises.push(get('./topo/countries/ireland/ireland-counties.json'))
-                                            promises.push(get('./topo/countries/italy/italy-regions.json'))
-                                            promises.push(get('./topo/countries/japan/jp-prefectures.json'))
-                                            promises.push(get('./topo/countries/liberia/liberia-districts.json'))
-                                            promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
+                                                promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
+                                                promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
+                                                promises.push(get('./topo/countries/belgium/benelux-countries.json'))
+                                                promises.push(get('./topo/countries/china/china-provinces.json'))
+                                                promises.push(get('./topo/countries/colombia/colombia-departments.json'))
+                                                promises.push(get('./topo/countries/czech-republic/czech-republic-regions.json'))
+                                                promises.push(get('./topo/countries/denmark/denmark-counties.json'))
+                                                promises.push(get('./topo/countries/finland/finland-regions.json'))
+                                                promises.push(get('./topo/countries/france/fr-departments.json'))
+                                                promises.push(get('./topo/countries/india/india-states.json'))
+                                                promises.push(get('./topo/countries/ireland/ireland-counties.json'))
+                                                promises.push(get('./topo/countries/italy/italy-regions.json'))
+                                                promises.push(get('./topo/countries/japan/jp-prefectures.json'))
+                                                promises.push(get('./topo/countries/liberia/liberia-districts.json'))
+                                                promises.push(get('./topo/countries/nepal/nepal-districts.json')) */
     // TODO check US and netherlands
     // promises.push(get('./topo/countries/netherlands/nl-gemeentegrenzen-2016.json'))
     /* promises.push(get('./topo/countries/new-zealand/new-zealand-districts.json'))
-                                            promises.push(get('./topo/countries/norway/norway-counties.json'))
-                                            promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
-                                            promises.push(get('./topo/countries/peru/peru-departments.json'))
-                                            promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
-                                            promises.push(get('./topo/countries/poland/poland-provinces.json'))
-                                            promises.push(get('./topo/countries/portugal/portugal-districts.json'))
-                                            promises.push(get('./topo/countries/romania/romania-counties.json'))
-                                            promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
-                                            promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
-                                            promises.push(get('./topo/countries/sweden/sweden-counties.json'))
-                                            promises.push(get('./topo/countries/turkey/turkiye.json'))
-                                            promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
-                                            promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
-                                            promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
-                                            promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
+                                                promises.push(get('./topo/countries/norway/norway-counties.json'))
+                                                promises.push(get('./topo/countries/pakistan/pakistan-districts.json'))
+                                                promises.push(get('./topo/countries/peru/peru-departments.json'))
+                                                promises.push(get('./topo/countries/philippines/philippines-provinces.json'))
+                                                promises.push(get('./topo/countries/poland/poland-provinces.json'))
+                                                promises.push(get('./topo/countries/portugal/portugal-districts.json'))
+                                                promises.push(get('./topo/countries/romania/romania-counties.json'))
+                                                promises.push(get('./topo/countries/south-africa/south-africa-provinces.json'))
+                                                promises.push(get('./topo/countries/spain/spain-province-with-canary-islands.json'))
+                                                promises.push(get('./topo/countries/sweden/sweden-counties.json'))
+                                                promises.push(get('./topo/countries/turkey/turkiye.json'))
+                                                promises.push(get('./topo/countries/united-arab-emirates/united-arab-emirates.json'))
+                                                promises.push(get('./topo/countries/united-kingdom/uk-counties.json'))
+                                                promises.push(get('./topo/countries/venezuela/venezuela-estados.json'))
+                                                promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
 
     Promise.all(promises).then(res => {
       if (res[0].status !== 200) return
@@ -531,28 +530,29 @@ class AreaChart extends Component {
     />
   }
 
-  renderProjectsPopover () {
-    let selectedProjectCurve = this.state.selectedProjectCurve
-    return !this.state.projectsPopoverHidden && <div className={classes.popover_body} style={{
-      width: this.state.width * 0.56,
-      height: this.state.height * 0.75
-    }}>
-      <h2 className={classes.projects_headline}>Projects</h2>
-      <div className={classes.closebutton}
-        style={{height: 0.8 * this.state.height / 12, width: 0.8 * this.state.height / 12}}><img
-          src={CloseIcon} onClick={this.closeProjectsModal}/></div>
+  handleCooperationLineClick (coopLine) {
+    let cooperatingProjects = coopLine.partner.cooperatingProjects
+    this.setState({projectsPopoverHidden: false, cooperatingProjects: cooperatingProjects})
+  }
+
+  renderCooperatingProjectsPopover () {
+    let cooperatingProjects = this.state.cooperatingProjects
+
+    return !this.state.projectsPopoverHidden && <Modal headline={'Cooperating Projects'} onCloseClick={() => {
+      this.setState({projectsPopoverHidden: true})
+    }} hidden={this.state.projectsPopoverHidden} width={this.state.width * 0.56} height={this.state.height * 0.75}>
       <ol className={classes.projects_list} style={{
         height: (this.state.height * 0.65) + 'px'
       }}>
-        {selectedProjectCurve.projects.map((project, i) => {
+        {cooperatingProjects.map((project, i) => {
           return <li onClick={event => {
             this.setState({projectsPopoverHidden: true})
             this.props.onProjectClick({project: project}, 2)
           }} key={`project-list-link-${project.id}-${i}`}
-          className={classes.projects_list_item}>{`${project.titel} (${project.id})`}</li>
+          className={classes.projects_list_item}>{`${project.title} (${project.id})`}</li>
         })}
       </ol>
-    </div>
+    </Modal>
   }
 
   handleCountryMouseEnter (geography, evt) {
@@ -564,34 +564,59 @@ class AreaChart extends Component {
   }
 
   handleCountryMouseLeave (geography, evt) {
-    this.setState({hoveredGeometry: undefined, mouseLocation: undefined})
+    this.setState({hoveredGeometry: undefined})
+  }
+
+  handleInstitutionMouseEnter (institution, evt) {
+    this.setState({hoveredInstitution: institution})
+  }
+
+  handleInstitutionMouseMove (institution, evt) {
+    this.setState({
+      hoveredInstitution: institution,
+      mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
+    })
+  }
+
+  handleInstitutionMouseLeave (institution, evt) {
+    this.setState({hoveredInstitution: undefined})
   }
 
   renderProjectsHover () {
-    let hoveredGeometry = this.state.hoveredGeometry
-    let researchArea = null
-    this.state.allResearchAreas.forEach(iterateResearchArea => {
-      if (this.state.mouseLocation && hoveredGeometry && iterateResearchArea.forschungsregion === hoveredGeometry.properties.ISO_A2) {
-        researchArea = iterateResearchArea
-      }
-    })
+    if (this.state.selectedDimension === RESEARCH_AREA_STR) {
+      let hoveredGeometry = this.state.hoveredGeometry
+      let researchArea = null
+      this.state.allResearchAreas.forEach(iterateResearchArea => {
+        if (this.state.mouseLocation && hoveredGeometry && iterateResearchArea.forschungsregion === hoveredGeometry.properties.ISO_A2) {
+          researchArea = iterateResearchArea
+        }
+      })
 
-    return researchArea && <div className={classes.popover_body} style={{
-      width: `30em`, // TODO dynamically style width
-      height: `10em`, // TODO dynamically style height
-      margin: `1.5em`,
-      position: 'absolute',
-      left: this.state.mouseLocation[0] + 'px',
-      top: this.state.mouseLocation[1] + 'px'
-    }}>
-      <h2 className={classes.projects_headline}>Area: {hoveredGeometry.properties.NAME}</h2>
-      <p className={classes.projects_list}>
-                Number of projects in this research area: {researchArea.projects.length} <br/>
-                Anzahl Themen:
-                Das prominenteste Thema:
-                Top Institution/ Partner:
-      </p>
-    </div>
+      return researchArea && <HoverPopover locationX={this.state.mouseLocation[0]}
+        locationY={this.state.mouseLocation[1]}>
+        <h2 className={classes.projects_headline}>Area: {hoveredGeometry.properties.NAME}</h2>
+        <p className={classes.projects_list}>
+                    Number of projects in this research area: {researchArea.projects.length} <br/>
+                    Anzahl Themen:
+                    Das prominenteste Thema:
+                    Top Institution/ Partner:
+        </p>
+      </HoverPopover>
+    } else if (this.state.selectedDimension === INSTITUTIONS_STR) {
+      let hoveredInstitution = this.state.hoveredInstitution
+
+      return (hoveredInstitution && this.state.mouseLocation) &&
+                <HoverPopover locationX={this.state.mouseLocation[0]}
+                  locationY={this.state.mouseLocation[1]}>
+                  <h2 className={classes.projects_headline}>Institution: {hoveredInstitution.name}</h2>
+                  <p className={classes.projects_list}>
+                        Number of involved projects: {hoveredInstitution.projects.length} <br/>
+                        Anzahl Themen:
+                        Das prominenteste Thema:
+                        Top Research area / Partner:
+                  </p>
+                </HoverPopover>
+    }
   }
 
   handleInstitutionSelectChange (event) {
@@ -631,8 +656,11 @@ class AreaChart extends Component {
                 start: markerCooperations.institution.coordinates,
                 end: partner.institution.coordinates
               },
+              institution: markerCooperations.institution,
+              partner: partner,
               projectCurve: markerCooperations
             }}
+            onClick={this.handleCooperationLineClick}
             preserveMarkerAspect={false}
             style={{
               default: {
@@ -978,21 +1006,39 @@ class AreaChart extends Component {
                       this.state.institutions.map((institution, i) => {
                         let markerFillColor = 'rgba(255,87,34,0.8)'
                         if (this.state.selectedMarker && this.state.selectedMarker.name === institution.name) markerFillColor = '#4b9123'
+                        let hoverFillColor = '#4b9123'
+                        let hoverStrokeColor = '#2e2e2e'
+                        let cursor = 'pointer'
+                        if (this.state.selectedDimension === RESEARCH_AREA_STR) {
+                          hoverFillColor = markerFillColor
+                          hoverStrokeColor = '#FFFFFF'
+                          cursor = 'default'
+                        }
                         return <Marker
                           key={`institution-marker-${i}`}
                           marker={institution}
+                          onMouseEnter={(geography, event) => {
+                            this.handleInstitutionMouseEnter(institution, event)
+                          }}
+                          onMouseMove={(geography, event) => {
+                            this.handleInstitutionMouseMove(institution, event)
+                          }}
+                          onMouseLeave={(geography, event) => {
+                            this.handleInstitutionMouseLeave(institution, event)
+                          }}
+
                           onClick={this.handleInstitutionClick}
                           preserveMarkerAspect={true}
                           style={{
                             default: {
                               fill: markerFillColor,
                               stroke: '#FFFFFF',
-                              cursor: 'pointer'
+                              cursor: cursor
                             },
                             hover: {
-                              fill: '#4b9123',
-                              stroke: '#2e2e2e',
-                              cursor: 'pointer'
+                              fill: hoverFillColor,
+                              stroke: hoverStrokeColor,
+                              cursor: cursor
                             },
                             pressed: {
                               fill: '#918c45',
@@ -1010,7 +1056,7 @@ class AreaChart extends Component {
             )}
           </Motion>
 
-          {this.renderProjectsPopover()}
+          {this.renderCooperatingProjectsPopover()}
 
           {this.renderProjectsHover()}
         </div>
