@@ -5,7 +5,7 @@ import * as actions from '../../store/actions/actions'
 
 class PetriDish extends React.Component {
   componentDidMount () {
-    this.Graph = new PetriDishGraph('#' + this.props.target, this.props.data, this.props.width, this.props.height, this.props.onProjectClick)
+    this.Graph.updateData(this.props.data, this.props.width, this.props.height)
   }
 
   componentDidUpdate () {
@@ -13,9 +13,7 @@ class PetriDish extends React.Component {
   }
 
   render () {
-    return (
-      <svg id={this.props.target}/>
-    )
+    return (<PetriDishGraph ref={(node) => { this.Graph = node }} onProjectClick={this.props.onProjectClick} width={this.props.width} height={this.props.height} margin={20} />)
   }
 }
 
