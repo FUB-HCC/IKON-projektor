@@ -62,7 +62,7 @@ class TimeLine extends Component {
   renderProjectsPopover () {
     let selectedProjects = this.state.selectedProjects
 
-    return !this.state.projectsPopoverHidden && <Modal headline={'Cooperating Projects'} onCloseClick={() => {
+    return !this.state.projectsPopoverHidden && <Modal headline={'Projects'} onCloseClick={() => {
       this.setState({projectsPopoverHidden: true})
     }} hidden={this.state.projectsPopoverHidden} width={this.state.width * 0.56} height={this.state.height * 0.75}>
 

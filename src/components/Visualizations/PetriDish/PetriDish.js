@@ -99,6 +99,7 @@ const randomRgba = () => {
   return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ', 0.5' + ')'
 }
 
+// TODO replace data here
 const nlpDump = {
   'params': {
     'targetDim': 2,
