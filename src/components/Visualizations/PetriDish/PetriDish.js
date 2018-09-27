@@ -40,6 +40,7 @@ class PetriDish extends Component {
     let width = this.state.width
     let height = this.state.height
 
+    // TODO scale as needed
     let scale = 100
     let offsetY = 0.5 * height
     let offsetX = 0.5 * width

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {get} from 'axios'
 import {feature} from 'topojson-client'
-import * as parse from 'csv-parse'
+import * as parse from 'csv-parse/lib/es5'
 import {
   ComposableMap,
   ZoomableGroup,
