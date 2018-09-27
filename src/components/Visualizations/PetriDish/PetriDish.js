@@ -40,72 +40,50 @@ class PetriDish extends Component {
         clusters[value.cluster] = []
       }
     })
-    console.log(clusters)
 
-    /* let randomX = d3Random.randomNormal(width / 2, 60)
-        let randomY = d3Random.randomNormal(height / 2, 60)
-        let points = d3.range(100).map(() => {
-          return [randomX(), randomY()]
-        }) */
+    let container = d3.select('#clusterContainer')
+    container.selectAll('*').remove()
+    let svg = container.append('svg').attr('width', width)
+      .attr('height', height)
 
-
+    svg.append('rect')
+      .attr('width', width)
+      .attr('height', height)
+      .attr('fill', 'none')
 
     clusters.forEach((points, index) => {
-        let svg = d3.select('#clusterContainer').append('svg').attr('width', width)
-            .attr('height', height)
-
-        svg.append("rect")
-            .attr("width", width)
-            .attr("height", height);
-
-        var hull = svg.append("path")
-            .attr("class", "hull");
-
-        var circle = svg.selectAll("circle");
-
-
-        var text = svg.append("text").text("Hull Title").attr("text-anchor","middle");
-        var polygon = d3.polygonHull(vertices.map(function(d) { return d; }) );
-
-        hull.datum(polygon).attr("d", function(d) { return "M" + d.join("L") + "Z"; });
-
-        text.attr("transform","translate("+d3.polygonCentroid(polygon)+")").raise();
-
-        circle = svg.selectAll("circle").data(vertices);
-        circle.enter().append("circle").attr("r", 3).attr("transform", function(d) { return "translate(" + d + ")"; });
-        circle.attr("transform", function(d) { return "translate(" + d + ")"; });
-
-
-      let hull = d3.polygonHull(points) // Note: d3 can only compute a hull when there are 3 points or more
-      console.log(points)
-      if (hull) {
-        context.beginPath()
-        context.moveTo(hull[0][0], hull[0][1])
-        for (let i = 1, n = hull.length; i < n; ++i) {
-          context.lineTo(hull[i][0], hull[i][1])
-        }
-
+      if (points.length >= 3) { // d3.polygonHull requires at least 3 data points
         let randomColor = randomRgba()
-        context.closePath()
-        context.fillStyle = randomColor
-        context.fill()
-        context.lineWidth = 20
-        context.lineJoin = 'round'
-        context.strokeStyle = randomColor
+        let hull = svg.append('path')
+          .attr('class', 'hull')
+          .attr('fill', randomColor)
+          .attr('rx', '20') // rounded rect
+          .attr('ry', '20') // rounded rect
+          .style('stroke', randomColor)
+          .style('stroke-width', '2em')
+          .attr('stroke-linejoin', 'round')
+          .attr('stroke-offset', '20')
+          .attr('opacity', '0.6')
 
-        context.stroke()
-        console.log(context)
+        let polygon = d3.polygonHull(points)
 
-        context.beginPath()
-        for (let i = 0, n = points.length; i < n; ++i) {
-          context.moveTo(points[i][0] + 2.5, points[i][1])
-          context.arc(points[i][0], points[i][1], 2.5, 0, 2 * Math.PI)
-        }
-        context.fillStyle = 'white'
-        context.fill()
-        context.lineWidth = 1.5
-        context.strokeStyle = 'black'
-        context.stroke()
+        hull.datum(polygon).attr('d', function (d) {
+          return 'M' + d.join('L') + 'Z'
+        })
+
+        // Use this in case you want to display a text in the hull:
+        // let text = svg.append('text').text('Hull Title').attr('text-anchor', 'middle')
+        // text.attr('transform', 'translate(' + d3.polygonCentroid(polygon) + ')').raise()
+
+        points.forEach(point => {
+          svg.append('circle')
+            .attr('cx', point[0])
+            .attr('cy', point[1])
+            .attr('r', 6)
+            .style('fill', randomColor)
+            .style('stroke', 'white')
+            .style('stroke-width', 2.5)
+        })
       }
     })
   }
@@ -119,7 +97,7 @@ const randomRgba = () => {
   let o = Math.round
   let r = Math.random
   let s = 255
-  return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ', 0.5' + ')'
+  return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ', 1' + ')'
 }
 
 // TODO replace data here
