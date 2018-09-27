@@ -22,7 +22,7 @@ class PetriDish extends Component {
   }
 
   render () {
-    return <canvas id={'clusterContainer'} width="960" height="500"></canvas>
+    return <div id={'clusterContainer'} width="960" height="500"></div>
   }
 
   updateHulls () {
@@ -48,11 +48,34 @@ class PetriDish extends Component {
           return [randomX(), randomY()]
         }) */
 
-    let canvas = document.querySelector('canvas')
-    let context = canvas.getContext('2d')
-    context.clearRect(0, 0, width, height)
+
 
     clusters.forEach((points, index) => {
+        let svg = d3.select('#clusterContainer').append('svg').attr('width', width)
+            .attr('height', height)
+
+        svg.append("rect")
+            .attr("width", width)
+            .attr("height", height);
+
+        var hull = svg.append("path")
+            .attr("class", "hull");
+
+        var circle = svg.selectAll("circle");
+
+
+        var text = svg.append("text").text("Hull Title").attr("text-anchor","middle");
+        var polygon = d3.polygonHull(vertices.map(function(d) { return d; }) );
+
+        hull.datum(polygon).attr("d", function(d) { return "M" + d.join("L") + "Z"; });
+
+        text.attr("transform","translate("+d3.polygonCentroid(polygon)+")").raise();
+
+        circle = svg.selectAll("circle").data(vertices);
+        circle.enter().append("circle").attr("r", 3).attr("transform", function(d) { return "translate(" + d + ")"; });
+        circle.attr("transform", function(d) { return "translate(" + d + ")"; });
+
+
       let hull = d3.polygonHull(points) // Note: d3 can only compute a hull when there are 3 points or more
       console.log(points)
       if (hull) {
