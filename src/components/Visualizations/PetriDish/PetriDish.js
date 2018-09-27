@@ -10,24 +10,36 @@ class PetriDish extends Component {
     }
     this.state = {
       nlpProjectsDump: projects, // TODO: Change from the static dump data below to the API
-      width: 500,
-      height: 500
+      width: 0,
+      height: 0
     }
     this.updateHulls = this.updateHulls.bind(this)
   }
 
   updateData (data, width, height) {
     this.setState({data, width, height})
-    this.updateHulls()
   }
 
   render () {
-    return <div id={'clusterContainer'} width="960" height="500"></div>
+    this.updateHulls()
+    return <div>
+      <div id={'clusterContainer'} width={this.state.width} height={this.state.height} ></div>
+    </div>
+  }
+
+  handleClusterClick (points) {
+    // TODO
+    alert(`Cluster clicked`)
+  }
+
+  handleMouseMoveOnCluster (points) {
+    // TODO integrate hoverPopup same as in the map and the timeline
   }
 
   updateHulls () {
-    let width = 960
-    let height = 500
+    let width = this.state.width
+    let height = this.state.height
+
     let scale = 100
     let offsetY = 0.5 * height
     let offsetX = 0.5 * width
@@ -44,6 +56,7 @@ class PetriDish extends Component {
     let container = d3.select('#clusterContainer')
     container.selectAll('*').remove()
     let svg = container.append('svg').attr('width', width)
+      .attr('id', 'cluster-svg')
       .attr('height', height)
 
     svg.append('rect')
@@ -52,9 +65,11 @@ class PetriDish extends Component {
       .attr('fill', 'none')
 
     clusters.forEach((points, index) => {
+      let clusterId = index
       if (points.length >= 3) { // d3.polygonHull requires at least 3 data points
         let randomColor = randomRgba()
         let hull = svg.append('path')
+          .attr('id', `cluster-hull-${clusterId}`)
           .attr('class', 'hull')
           .attr('fill', randomColor)
           .attr('rx', '20') // rounded rect
@@ -64,6 +79,28 @@ class PetriDish extends Component {
           .attr('stroke-linejoin', 'round')
           .attr('stroke-offset', '20')
           .attr('opacity', '0.6')
+          .style('cursor', 'pointer')
+          .on('mouseenter', (e) => {
+            // Bring the cluster to the foreground when mouse enters it
+            let clusterPathElement = document.getElementById(`cluster-hull-${clusterId}`)
+            let clusterPoints = document.getElementsByClassName(`cluster-point-${clusterId}`)
+            let n = 0
+            while (n < clusterPoints.length / 2) { // workaround for bringing all data points and the hull to the foreground
+              for (let i = 0; i < clusterPoints.length; i++) {
+                document.getElementById('cluster-svg').appendChild(clusterPoints[i])
+              }
+              document.getElementById('cluster-svg').insertBefore(clusterPathElement, clusterPoints[0])
+              n++
+            }
+          })
+          .on('mousemove', (points) => {
+            hull.attr('opacity', '1')
+            this.handleMouseMoveOnCluster(points)
+          })
+          .on('mouseleave', (points) => {
+            hull.attr('opacity', '0.6')
+          })
+          .on('click', (points) => this.handleClusterClick(clusterId, points))
 
         let polygon = d3.polygonHull(points)
 
@@ -77,12 +114,22 @@ class PetriDish extends Component {
 
         points.forEach(point => {
           svg.append('circle')
+            .attr('class', `cluster-point-${clusterId}`)
+            .attr('id', `cluster-point-${point[0]},${point[1]}`)
             .attr('cx', point[0])
             .attr('cy', point[1])
             .attr('r', 6)
             .style('fill', randomColor)
             .style('stroke', 'white')
             .style('stroke-width', 2.5)
+            .style('cursor', 'pointer')
+            .on('mousemove', (points) => {
+              hull.attr('opacity', '1')
+              this.handleMouseMoveOnCluster(points)
+            })
+            .on('mouseleave', (points) => {
+              hull.attr('opacity', '0.6')
+            })
         })
       }
     })
