@@ -1,6 +1,5 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import aGraph from '../../assets/Field.png'
 import {default as AreaChartVis} from '../../components/Visualizations/AreaChart/AreaChart'
 import * as actions from '../../store/actions/actions'
 
@@ -10,28 +9,24 @@ class AreaChart extends React.Component {
     // you can get current height with 'props.height' and width with 'props.width'
     // you can get all props defined below[in mapStateToProps] with 'this.props.<name>'
     // if you need any more you can define them there (and you can take anything from the statevas a prop
-    this.Graph = new AreaChartVis()
+    this.Graph.updateData(this.props.data, this.props.institutions, this.props.width, this.props.height)
   }
 
   componentDidUpdate () {
     // update data or size here
     // you can get current height with 'props.height' and width with 'props.width'
-    this.Graph.updateData()
+    this.Graph.updateData(this.props.data, this.props.institutions, this.props.width, this.props.height)
   }
 
   render () {
-    if (this.props.isVisActive) {
-      return (<svg id={this.props.target}/>)
-    } else {
-      return (<div><img src={aGraph}/></div>)
-    }
+    return (<AreaChartVis ref={(node) => { this.Graph = node }} width={this.props.width} height={this.props.height} onProjectClick={this.props.onProjectClick} ></AreaChartVis>)
   }
 }
 
 const mapStateToProps = state => ({
   data: state.main.filteredData, // zu visualisierende Daten (immer up-to-date)
-  target: 'graph', // id of the target svg tag
-  isVisActive: false // change to true for rendering of true visualization
+  institutions: state.main.institutions,
+  target: 'graph' // id of the target svg tag
   // this is also a good place to prepare the data since the data given to the visualization is then minimal
 })
 

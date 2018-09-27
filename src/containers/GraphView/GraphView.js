@@ -108,11 +108,16 @@ class GraphView extends Component {
 }
 
 const mapStateToProps = state => {
+  let selectedProject
+  state.main.data.forEach(project => {
+    if (project.id === state.main.selectedProject) selectedProject = project
+  })
+
   return {
     graph: state.main.graph,
     filterAmount: state.main.filter.length,
     selectedProject: state.main.selectedProject,
-    selectedDataPoint: state.main.selectedProject ? state.main.data[state.main.selectedProject] : undefined,
+    selectedDataPoint: selectedProject,
     activeFilterCount: calculateActiveFilterCount(state.main.filter),
     filter: state.main.filter,
     filteredData: state.main.filteredData

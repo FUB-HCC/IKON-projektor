@@ -1,0 +1,106 @@
+.projects_list {
+    left: 0;
+    position: absolute;
+    top: 2.5em;
+    color: #e9e9e9;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.projects_list_item{
+    font-size: 0.7em;
+}
+
+.projects_list_item:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.zoombutton {
+    background: rgba(67,64,88, 0.4);
+    width: 1.75em;
+    height: 1.75em;
+    border-width: 0;
+    color: white;
+    font-weight: 900;
+    font-size: 1.5em;
+    margin: 0em 0.25em 0em 0em;
+    cursor: pointer;
+    position: fixed;
+}
+
+.zoombutton.in {
+    margin: 0.25em 0em 0em 0.25em;
+}
+
+.zoombutton.out {
+    margin: 2.25em 0em 0em 0.25em;
+}
+
+
+/****************************** Start: Toggle Button ******************************/
+
+h4 {
+    margin-top: 0.25em;
+    color: #999;
+    text-align: center;
+}
+
+.tgl {
+    display: none;
+}
+.tgl, .tgl:after, .tgl:before, .tgl *, .tgl *:after, .tgl *:before, .tgl + .tgl-btn {
+    box-sizing: border-box;
+}
+.tgl::-moz-selection, .tgl:after::-moz-selection, .tgl:before::-moz-selection, .tgl *::-moz-selection, .tgl *:after::-moz-selection, .tgl *:before::-moz-selection, .tgl + .tgl-btn::-moz-selection {
+    background: none;
+}
+.tgl::selection, .tgl:after::selection, .tgl:before::selection, .tgl *::selection, .tgl *:after::selection, .tgl *:before::selection, .tgl + .tgl-btn::selection {
+    background: none;
+}
+.tgl + .tgl-btn {
+    outline: 0;
+    display: block;
+    width: 4em;
+    height: 2em;
+    position: relative;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
+    position: relative;
+    display: block;
+    content: "";
+    width: 50%;
+    height: 100%;
+}
+.tgl + .tgl-btn:after {
+    left: 0;
+}
+.tgl + .tgl-btn:before {
+    display: none;
+}
+.tgl:checked + .tgl-btn:after {
+    left: 50%;
+}
+
+.tgl-light + .tgl-btn {
+    background: #f0874c;
+    border-radius: 2em;
+    padding: 2px;
+    transition: all .4s ease;
+}
+.tgl-light + .tgl-btn:after {
+    border-radius: 50%;
+    background: #fff;
+    transition: all .2s ease;
+}
+.tgl-light:checked + .tgl-btn {
+    background: #9FD6AE;
+}
+
+/****************************** End: Toggle Button ******************************/
+
