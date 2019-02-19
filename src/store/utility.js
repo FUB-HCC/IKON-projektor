@@ -46,11 +46,11 @@ const fieldsMapping = [
   {name: 'Sammlungsentwicklung und Biodiversitätsentdeckung', field: 2, color: '#d9ef36'},
   {name: 'Digitale Welt und Informationswissenschaft', field: 3, color: '#8184a7'},
   {name: 'Wissenskommunikation und Wissensforschung', field: 4, color: '#ed9798'}, */
-  {name: 'Naturwissenschaften', field: 1, color: '#7d913c'},
-  {name: 'Lebenswissenschaften', field: 2, color: '#d9ef36'},
-  {name: 'Geistes- und Sozialwissenschaften', field: 3, color: '#8184a7'},
+  {name: 'Naturwissenschaften', field: 1, color: '#f4a310'},
+  {name: 'Lebenswissenschaften', field: 2, color: '#f12626'},
+  {name: 'Geistes- und Sozialwissenschaften', field: 3, color: '#7ad101'},
   {name: 'Ingenieurwissenschaften', field: 4, color: '#ed9798'},
-  {name: 'Unbekannt', field: 5, color: '#ffffff'}
+  {name: 'Unbekannt', field: 5, color: '#9c9bff'}
 ]
 
 // topic(hauptthema) colors

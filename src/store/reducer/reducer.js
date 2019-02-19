@@ -28,9 +28,10 @@ Object.keys(data).map(dataEntry => {
       forschungsbereichNumber: fieldsStringToInt('Unbekannt')
     }
   }
-
+  
   Object.keys(data[dataEntry]).map(dataKey => {
     const val = data[dataEntry][dataKey]
+    
     if (dataKey === 'forschungsbereichstr') {
       if (!distFields.some(e => e === val)) distFields.push(val)
     } else if (dataKey === 'hauptthema') {
@@ -140,7 +141,9 @@ const changeFilter = (state, action) => {
     filter: newFilter,
     filteredData: applyFilters(state.data, newFilter)
   }
+  
   updateUrl(newState)
+  
   return newState
 }
 
@@ -159,7 +162,7 @@ const toggleFilters = (state, action) => state
 //   return newState
 // }
 
-const activatePopover = (state, action) => {
+const activatePopover = (state, action) => {  
   let selectedProjectId = null
   state.data.forEach(project => {
     if (project.id === action.element.project.id) {
@@ -170,15 +173,18 @@ const activatePopover = (state, action) => {
     const newState = {
       ...state,
       selectedProject: selectedProjectId
-    }
+    } 
     updateUrl(newState)
+
     return newState
-  } else {
+  } else {    
     const newState = {
       ...state,
       selectedProject: selectedProjectId
     }
+
     updateUrl(newState)
+
     return newState
   }
 }

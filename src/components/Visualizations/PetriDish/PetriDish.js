@@ -21,7 +21,8 @@ class PetriDish extends Component {
   }
 
   render () {
-    this.updateHulls()
+    this.updateHulls()   
+    
     return <div>
       <div id={'clusterContainer'} width={this.state.width} height={this.state.height} ></div>
     </div>

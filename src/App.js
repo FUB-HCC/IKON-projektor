@@ -4,6 +4,8 @@ import About from './containers/About/About'
 import Discoveries from './containers/Discoveries/Discoveries'
 import Projects from './containers/Projects/Projects'
 import { default as NavigationSubpages } from './components/NavigationSubpages/NavigationSubpages'
+import Footer from './components/Footer/Footer'
+import Sidebar from './components/Sidebar/Sidebar'
 import { ConnectedRouter } from 'react-router-redux'
 import { Route, Redirect, Switch } from 'react-router'
 import {history} from './index'
@@ -13,16 +15,24 @@ class App extends Component {
   render () {
     return (
       <ConnectedRouter history={history}>
-        <div className={classes.BackGradient}>
+        <React.Fragment>
           <NavigationSubpages/>
-          <Switch>
-            <Route exact path='/' render={() => (<Redirect to="/explore"/>)}/>
-            <Route path='/projects' component={Projects} />
-            <Route path='/explore' component={GraphView} />
-            <Route path='/discoveries' component={Discoveries} />
-            <Route path='/about' component={About} />
-          </Switch>
-        </div>
+          <div className={classes.bodyWrap}>
+            <div className={classes.BackGradient}>
+              <Switch>
+                <Route exact path='/' render={() => (<Redirect to="/explore"/>)}/>
+                <Route path='/projects' component={Projects} />
+                <Route path='/explore' component={GraphView} />
+                <Route path='/discoveries' component={Discoveries} />
+                <Route path='/about' component={About} />
+              </Switch>
+            </div>
+            <div className={classes.sidebar}>
+              <Sidebar />
+            </div>
+          </div>
+          <Footer />
+        </React.Fragment>
       </ConnectedRouter>
     )
   }

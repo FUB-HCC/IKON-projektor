@@ -1,0 +1,83 @@
+import React, {Component} from 'react'
+import classes from './Footer.css'
+import {connect} from 'react-redux'
+import * as actions from '../../store/actions/actions'
+import Select from 'react-select'
+
+const options = [
+  { value: 'chocolate', label: 'Chocolate' },
+  { value: 'strawberry', label: 'Strawberry' },
+  { value: 'vanilla', label: 'Vanilla' }
+]
+class Footer extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      selectedOption: null
+    }
+    this.handleChange = this.handleChange.bind(this)
+  }  
+  handleChange (selectedOption) {
+    this.setState({ selectedOption })
+    console.log(`Option selected:`, selectedOption)
+  }
+
+  render () {  
+    const { selectedOption } = this.state
+    return (
+
+      <React.Fragment>
+        <div className={classes.footer}>
+          <div className={classes.leftFooter}>
+            <div className={classes.timeSlider}>
+            </div>
+            <div className={classes.filter}>
+              <div className={classes.filterWrap}>
+                <Select
+                  value={selectedOption}
+                  onChange={this.handleChange}
+                  options={options}
+                />
+              </div>
+              <div className={classes.filterWrap}>
+                <Select
+                  value={selectedOption}
+                  onChange={this.handleChange}
+                  options={options}
+                />
+              </div>
+            </div>
+          </div>
+          <div className={classes.rightFooter}>
+            asdsad
+          </div>
+        </div>
+      </React.Fragment>
+    )
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    changeGraph: (value) => dispatch(actions.changeGraph(value)),
+    activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
+    deactivatePopover: () => dispatch(actions.deactivatePopover())
+  }
+}
+const mapStateToProps = state => {
+  let selectedProject
+  state.main.data.forEach(project => {
+    if (project.id === state.main.selectedProject) selectedProject = project
+  })
+  
+  return {
+    graph: state.main.graph,
+    filterAmount: state.main.filter.length,
+    selectedProject: state.main.selectedProject,
+    selectedDataPoint: selectedProject,
+    filter: state.main.filter,
+    filteredData: state.main.filteredData
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Footer)

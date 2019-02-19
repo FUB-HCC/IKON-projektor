@@ -1,19 +1,25 @@
 .projects_list {
     left: 0;
     position: absolute;
-    top: 2.5em;
+    top: 45px;
     color: #e9e9e9;
     overflow-y: scroll;
     overflow-x: hidden;
+    height: 80%;
+    padding-left: 20px;
 }
 
 .projects_list_item{
     font-size: 0.7em;
+    font-size: 10px;
+    color: #5f6063;
+    margin-bottom: 5px;
 }
 
 .projects_list_item:hover {
     text-decoration: underline;
     cursor: pointer;
+    
 }
 
 .zoombutton {

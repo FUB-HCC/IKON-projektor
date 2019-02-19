@@ -1,24 +1,91 @@
-import React from 'react'
+import React, {Component} from 'react'
 import classes from './NavigationSubpages.css'
-let NavLink = require('react-router-dom').NavLink
+import {connect} from 'react-redux'
+import * as actions from '../../store/actions/actions'
+import logo from '../../assets/ikon_logo.png'
 
-const NavigationSubpages = () => {
-  return (
-    <ul className={classes.ContainerSub}>
-      <li>
-        <NavLink className={classes.NavigationElement} activeStyle={{color: '#f0faf0'}} to='/projects'>PROJEKTE</NavLink>
-      </li>
-      <li>
-        <NavLink className={classes.NavigationElement} activeStyle={{color: '#f0faf0'}} to='/explore'>ERKUNDEN</NavLink>
-      </li>
-      <li>
-        <NavLink className={classes.NavigationElement} activeStyle={{color: '#f0faf0'}} to='/discoveries'>ENTDECKUNG</NavLink>
-      </li>
-      <li>
-        <NavLink className={classes.NavigationElement} activeStyle={{color: '#f0faf0'}} to='/about'>HILFE</NavLink>
-      </li>
-    </ul>
-  )
+class NavigationSubpages extends Component {
+  constructor (props) {
+    super(props)
+    this.changeGraphHandler = this.changeGraphHandler.bind(this)
+    this.state = {
+      active: 'WISSEN'
+    }
+  }  
+
+  changeGraphHandler (graph) {   
+    console.log(this.state, graph)
+     
+    if (graph === '0') {
+      this.setState({active: 'WISSEN'})
+    }
+    if (graph === '1') {    
+      this.setState({active: 'ZEIT'})
+    }
+    if (graph === '2') {
+      this.setState({active: 'RAUM'})
+    }
+    console.log(this.state, graph)
+    this.props.changeGraph(graph)
+    this.setState({
+      activePopover: -1
+    })
+  }
+  render () {
+    return (
+      <div className={classes.navbar}>
+        <div className={classes.leftpanel}>
+          <ul className={classes.ContainerSub}>
+            <li>
+              <a className={classes.NavigationElement + ' ' + classes.logo} to='/projects'><img src={logo} /></a>
+            </li>
+            <li>
+              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'WISSEN') ? classes.active : '')} onClick={() => this.changeGraphHandler('0')}>WISSEN</a>
+            </li>
+            <li>
+              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'ZEIT') ? classes.active : '') } onClick={() => this.changeGraphHandler('1')}>ZEIT</a>
+            </li>
+            <li>
+              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'RAUM') ? classes.active : '')} onClick={() => this.changeGraphHandler('2')}>RAUM</a>
+            </li>
+          </ul>
+        </div>
+        <div className={classes.rightPanel}>
+          <ul>
+            <li>
+              <a className={classes.NavigationRightElement}>SUCHE</a>
+            </li>
+            <li>
+              <a className={classes.NavigationRightElement}>MENU</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    )
+  }
 }
 
-export default NavigationSubpages
+const mapDispatchToProps = dispatch => {
+  return {
+    changeGraph: (value) => dispatch(actions.changeGraph(value)),
+    activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
+    deactivatePopover: () => dispatch(actions.deactivatePopover())
+  }
+}
+const mapStateToProps = state => {
+  let selectedProject
+  state.main.data.forEach(project => {
+    if (project.id === state.main.selectedProject) selectedProject = project
+  })
+
+  return {
+    graph: state.main.graph,
+    filterAmount: state.main.filter.length,
+    selectedProject: state.main.selectedProject,
+    selectedDataPoint: selectedProject,
+    filter: state.main.filter,
+    filteredData: state.main.filteredData
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavigationSubpages)
