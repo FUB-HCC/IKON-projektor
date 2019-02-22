@@ -126,10 +126,13 @@ class TimeLine extends Component {
       locationY={this.state.mouseLocation[1]}>
       <p style={{
         position: 'absolute',
+        backgroundColor: '#717071',
+        margin: '0',
         top: '0em',
         color: '#e9e9e9',
         overflowY: 'scroll',
-        overflowX: 'hidden'}}>
+        overflowX: 'hidden',
+        padding: '5px'}}>
         {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`}
       </p>
     </HoverPopover>
