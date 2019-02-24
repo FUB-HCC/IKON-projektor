@@ -3,6 +3,7 @@ import classes from './Footer.css'
 import {connect} from 'react-redux'
 import * as actions from '../../store/actions/actions'
 import Select from 'react-select'
+import InputRange from 'react-input-range'
 
 const options = [
   { value: 'chocolate', label: 'Chocolate' },
@@ -13,6 +14,7 @@ class Footer extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      value: { min: 1995, max: 2017 },
       selectedOption: null
     }
     this.handleChange = this.handleChange.bind(this)
@@ -30,7 +32,11 @@ class Footer extends Component {
         <div className={classes.footer}>
           <div className={classes.leftFooter}>
             <div className={classes.timeSlider}>
+              <InputRange maxValue={2018} minValue={1994} value={this.state.value} onChange={value => this.setState({ value })} />
             </div>
+          </div>
+          
+          <div className={classes.milldleLeft}>
             <div className={classes.filter}>
               <div className={classes.filterWrap}>
                 <Select
@@ -48,8 +54,13 @@ class Footer extends Component {
               </div>
             </div>
           </div>
+          
+          <div className={classes.milldleRight}>
+            <button>SPEICHERN</button>
+          </div>
+          
           <div className={classes.rightFooter}>
-            asdsad
+            <button>TEILEN</button>
           </div>
         </div>
       </React.Fragment>

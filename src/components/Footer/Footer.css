@@ -11,15 +11,21 @@
     padding: 5px;
 }
 .leftFooter{
-    width: 80vw;
+    width: 30vw;
     display: flex;
 }
+.milldleLeft{
+    width: 50vw;
+}
+.milldleRight{
+    width: 10vw;
+}
 .rightFooter{
-    width: 20vw;
+    width: 10vw;
 }
 .timeSlider{
-    width: 40%;
-    
+    padding-left: 10px;
+    width: 90%;    
 }
 .filter{
     width: 60%;
@@ -29,7 +35,4 @@
 .filterWrap{
     width: 50%;
     padding: 10px;
-}
-.inputrange{
-    
 }
