@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import * as d3 from 'd3'
-import clusterGeistSvg from '../../../assets/cluster-geist.svg'
+import assets from '../../../assets'
 
 class PetriDish extends Component {
   constructor (props) {
@@ -71,7 +71,7 @@ class PetriDish extends Component {
       let clusterId = index
       if (points.length >= 3) { // d3.polygonHull requires at least 3 data points
         let randomColor = randomRgba()
-        let clusterColor = setColor(index)
+        let clusterSVG = setColor(index)
         let hull = svg.append('path')
           .attr('id', `cluster-hull-${clusterId}`)
           .attr('class', 'hull')
@@ -117,23 +117,15 @@ class PetriDish extends Component {
         // text.attr('transform', 'translate(' + d3.polygonCentroid(polygon) + ')').raise()
 
         points.forEach(point => {
-          svg.append('svg:image')
-            .attr({
-              'xlink:href': '', 
-              x: 0,
-              y: 0,
-              width: 48,
-              height: 48
-            })
           // svg.append('circle')
-          //   .attr('class', `cluster-point-${clusterId}`)
+          //   .attr('class', `clusterPoint${clusterId}`)
           //   .attr('id', `cluster-point-${point[0]},${point[1]}`)
           //   .attr('cx', point[0])
           //   .attr('cy', point[1])
           //   .attr('r', 6)
-          //   .style('fill', clusterColor)
+          //   .style('fill', 'transparent')
           //   .style('stroke', 'white')
-          //   .style('stroke-width', 2.5)
+          //   .style('stroke-width', 0)
           //   .style('cursor', 'pointer')
           //   .on('mousemove', (points) => {
           //     hull.attr('opacity', '1')
@@ -142,6 +134,16 @@ class PetriDish extends Component {
           //   .on('mouseleave', (points) => {
           //     hull.attr('opacity', '0.6')
           //   })
+
+          // let circles = svg.selectAll('circle')
+          svg.append('image')
+            .attr('class', `clusterPoint${clusterId}`)
+            .attr('id', `cluster-point-${point[0]},${point[1]}`)
+            .attr('xlink:href', clusterSVG)
+            .attr('x', point[0])
+            .attr('y', point[1])
+            .attr('width', 16)
+            .attr('height', 16)
         })
       }
     })
@@ -153,22 +155,23 @@ class PetriDish extends Component {
 }
 
 const randomRgba = () => {
-  let o = Math.round
-  let r = Math.random
-  let s = 255
-  return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ', 1' + ')'
+  return '#262626'
+  // let o = Math.round
+  // let r = Math.random
+  // let s = 255
+  // return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ', 1' + ')'
 }
 
 const setColor = (colorIndex) => {
   switch (colorIndex) {
     case 1:
-      return '#A4782E'
+      return assets.clusterGeistSVG
     case 2:
-      return '#994A49'
+      return assets.clusterLebenSVG
     case 3:
-      return '#435B21'
+      return assets.clusterNaturSVG
     default:
-      return '#A4782E'
+      return assets.clusterUnbekantSVG
   }
 }
 
