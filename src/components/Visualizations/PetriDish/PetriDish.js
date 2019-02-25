@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import * as d3 from 'd3'
+import clusterGeistSvg from '../../../assets/cluster-geist.svg'
 
 class PetriDish extends Component {
   constructor (props) {
@@ -70,6 +71,7 @@ class PetriDish extends Component {
       let clusterId = index
       if (points.length >= 3) { // d3.polygonHull requires at least 3 data points
         let randomColor = randomRgba()
+        let clusterColor = setColor(index)
         let hull = svg.append('path')
           .attr('id', `cluster-hull-${clusterId}`)
           .attr('class', 'hull')
@@ -115,23 +117,31 @@ class PetriDish extends Component {
         // text.attr('transform', 'translate(' + d3.polygonCentroid(polygon) + ')').raise()
 
         points.forEach(point => {
-          svg.append('circle')
-            .attr('class', `cluster-point-${clusterId}`)
-            .attr('id', `cluster-point-${point[0]},${point[1]}`)
-            .attr('cx', point[0])
-            .attr('cy', point[1])
-            .attr('r', 6)
-            .style('fill', randomColor)
-            .style('stroke', 'white')
-            .style('stroke-width', 2.5)
-            .style('cursor', 'pointer')
-            .on('mousemove', (points) => {
-              hull.attr('opacity', '1')
-              this.handleMouseMoveOnCluster(points)
+          svg.append('svg:image')
+            .attr({
+              'xlink:href': '', 
+              x: 0,
+              y: 0,
+              width: 48,
+              height: 48
             })
-            .on('mouseleave', (points) => {
-              hull.attr('opacity', '0.6')
-            })
+          // svg.append('circle')
+          //   .attr('class', `cluster-point-${clusterId}`)
+          //   .attr('id', `cluster-point-${point[0]},${point[1]}`)
+          //   .attr('cx', point[0])
+          //   .attr('cy', point[1])
+          //   .attr('r', 6)
+          //   .style('fill', clusterColor)
+          //   .style('stroke', 'white')
+          //   .style('stroke-width', 2.5)
+          //   .style('cursor', 'pointer')
+          //   .on('mousemove', (points) => {
+          //     hull.attr('opacity', '1')
+          //     this.handleMouseMoveOnCluster(points)
+          //   })
+          //   .on('mouseleave', (points) => {
+          //     hull.attr('opacity', '0.6')
+          //   })
         })
       }
     })
@@ -147,6 +157,19 @@ const randomRgba = () => {
   let r = Math.random
   let s = 255
   return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ', 1' + ')'
+}
+
+const setColor = (colorIndex) => {
+  switch (colorIndex) {
+    case 1:
+      return '#A4782E'
+    case 2:
+      return '#994A49'
+    case 3:
+      return '#435B21'
+    default:
+      return '#A4782E'
+  }
 }
 
 // TODO replace data here
