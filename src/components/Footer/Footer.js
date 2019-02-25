@@ -5,17 +5,12 @@ import * as actions from '../../store/actions/actions'
 import Select from 'react-select'
 import InputRange from 'react-input-range'
 
-const options = [
-  { value: 'chocolate', label: 'Chocolate' },
-  { value: 'strawberry', label: 'Strawberry' },
-  { value: 'vanilla', label: 'Vanilla' }
-]
 class Footer extends Component {
   constructor (props) {
     super(props)
     this.state = {
       value: { min: 1995, max: 2017 },
-      selectedOption: null
+      selectedOption: 'strawberry'
     }
     this.handleChange = this.handleChange.bind(this)
   }  
@@ -26,6 +21,12 @@ class Footer extends Component {
 
   render () {  
     const { selectedOption } = this.state
+    console.log(selectedOption)
+    const options = [
+      { value: 'chocolate', label: 'Chocolate' },
+      { value: 'strawberry', label: 'Strawberry' },
+      { value: 'vanilla', label: 'Vanilla' }
+    ]
     return (
 
       <React.Fragment>
@@ -39,6 +40,7 @@ class Footer extends Component {
           <div className={classes.milldleLeft}>
             <div className={classes.filter}>
               <div className={classes.filterWrap}>
+                <label>VIEW</label>
                 <Select
                   value={selectedOption}
                   onChange={this.handleChange}
@@ -46,6 +48,7 @@ class Footer extends Component {
                 />
               </div>
               <div className={classes.filterWrap}>
+                <label>VIEW</label>
                 <Select
                   value={selectedOption}
                   onChange={this.handleChange}
@@ -56,11 +59,12 @@ class Footer extends Component {
           </div>
           
           <div className={classes.milldleRight}>
-            <button>SPEICHERN</button>
+            <button className={classes.btnFooter}>SPEICHERN</button>
           </div>
           
-          <div className={classes.rightFooter}>
-            <button>TEILEN</button>
+          <div className={classes.rightFooter + ' ' + classes.dslfjdsl}>
+            <button className={classes.btnFooter}>TEILEN</button>
+
           </div>
         </div>
       </React.Fragment>
