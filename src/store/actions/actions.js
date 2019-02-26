@@ -10,6 +10,8 @@ export const changeGraph = (value) => {
 }
 
 export const filterChange = (filterId, value) => {
+  console.log('filterId', filterId)
+  console.log('value', value)
   return {
     type: actionTypes.FILTER_CHANGE,
     id: filterId,

@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import classes from './Sidebar.css'
 import {connect} from 'react-redux'
 import * as actions from '../../store/actions/actions'
+// import SidebarFilterElements from './SidebarFilterElements'
 import SidebarFilterElementsNew from './SidebarFilterElementsNew'
 
 class Sidebar extends Component {
@@ -51,10 +52,10 @@ class Sidebar extends Component {
   }
   render () {  
     // console.log(this.props.filters, 'this.props.filters')      
-    console.log(this.state.filters, 'new filters')      
+    // console.log(this.state.filters, 'new filters')      
     // const filterElements = this.props.filters.map((filter, key) => filter.type === 'a'
     //   ? <SidebarFilterElements id={key} key={key} name={filter.name} keys={filter.distValues} value={filter.value} open={this.state.expandedFilters[key]} change={this.props.filterChangeHandler} expand={this.handleFilterExpand}/> : null)
-    const filterElements = <SidebarFilterElementsNew filters={this.state.filters} />
+    const filterElements = <SidebarFilterElementsNew filters={this.state.filters} change={this.props.filterChangeHandler} />
     return (
       <div className={classes.FilterModal}>
         <div className={classes.CheckBoxes}>

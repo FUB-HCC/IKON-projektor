@@ -84,7 +84,8 @@ const topicMapping = [
   {name: 'Geschichtswissenschaften', num: '27', field: 3, color: '#8184a7'},
   {name: 'Zoologie', num: '28', field: 2, color: '#d9ef36'},
   {name: 'Pflanzenwissenschaften', num: '29', field: 2, color: '#d9ef36'},
-  {name: 'Unbekannt', num: '30', field: 5, color: '#ffffff'}
+  // {name: 'Unbekannt', num: '30', field: 5, color: '#ffffff'}
+  {name: 'Unbekannt', num: '30', field: 5, color: '#959ef9'}
 ]
 
 export const fieldsIntToString = (number) => {

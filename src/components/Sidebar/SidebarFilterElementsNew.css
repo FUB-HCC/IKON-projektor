@@ -20,8 +20,18 @@
     justify-content: space-between;
     width: 100%;
     height: 70px;
-    color: white;
-    /* font-size: 2.2vh; */
+    color: #00e3c2;
+    font-size: 2vh;
+    font-weight: 100;
+}
+
+.subGroup {
+    /* display: flex; */
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 70px;
+    font-size: 1.7vh;
     font-weight: 100;
 }
 
