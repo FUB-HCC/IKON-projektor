@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import * as d3 from 'd3'
 import assets from '../../../assets'
+import PetriDishDetailModal from '../../Modal/PetriDishDetailModal'
 
 const dataDump = require('./PetriDish.json')
 
@@ -19,6 +20,7 @@ class PetriDish extends Component {
       width: 0,
       height: 0,      
       detailModal: false,
+      selectedProjectId: false,
       project: {},
       title: '',
       year: '',
@@ -27,10 +29,15 @@ class PetriDish extends Component {
 
     }
     this.updateHulls = this.updateHulls.bind(this)
+    this.closeDetailModal = this.closeDetailModal.bind(this)
   }
 
   updateData (data, width, height) {
     this.setState({data, width, height})
+  }
+
+  closeDetailModal () {
+    this.setState({detailModal: false})
   }
 
   render () {
@@ -38,6 +45,9 @@ class PetriDish extends Component {
     
     return <div>
       <div id={'clusterContainer'} width={this.state.width} height={this.state.height} ></div>
+      {this.state.detailModal && this.state.selectedProjectId &&
+          <PetriDishDetailModal projectId={this.state.selectedProjectId} closeDetailModal={this.closeDetailModal} />
+      }
     </div>
   }
 
@@ -70,7 +80,6 @@ class PetriDish extends Component {
         clusterProjects[value.cluster] = []
       }
     })
-    console.log(clusterProjects)
 
     let container = d3.select('#clusterContainer')
     container.selectAll('*').remove()
@@ -143,7 +152,7 @@ class PetriDish extends Component {
             .attr('width', 16)
             .attr('height', 16)
             .on('click', (points) => {              
-              alert('Project ID ' + projectId)
+              this.setState({detailModal: true, selectedProjectId: projectId})
             })
         })
       }
