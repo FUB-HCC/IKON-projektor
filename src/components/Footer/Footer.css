@@ -20,12 +20,6 @@
     width: 45vw;
     border-right: 5px solid #2d2d2d;
 }
-.milldleRight{
-    width: 15vw;
-}
-.rightFooter{
-    width: 10vw;
-}
 .timeSlider{
     padding-left: 10px;
     width: 90%;    
@@ -115,9 +109,30 @@
       .footer__section li a {
         color: #fff; } */
 
-    .btnFooter{
-        background: transparent;
-        border: 0px;
-        color: #fff;
-        cursor: pointer;
-      }
+/* .btnFooter{
+  background: transparent;
+  border: 0px;
+  color: #fff;
+  cursor: pointer;
+} */
+.milldleRight{
+  border-right: 5px solid #2d2d2d;
+  text-align: center;
+  width: 15vw;
+}
+.rightFooter{
+  text-align: center;
+  border-right: 5px solid #2d2d2d;
+  width: 10vw;
+}
+.btnFooter{
+      background: transparent;
+      border: 0px;
+      color: #fff;
+      cursor: pointer;
+      height: 100%;
+      width: 100%;
+}
+.btnFooter:hover{
+    color: #50e3c2;
+}
