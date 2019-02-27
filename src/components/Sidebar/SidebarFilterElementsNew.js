@@ -18,7 +18,7 @@ const SidebarFilterElementsNew = (props) => {
             return (
               <div className={classes.CheckContainer} key={sgIndex} >
                 <CheckBox show={true} disable={false} checked={true} name={subGroup.name.toUpperCase()} classes={classes.subGroup} color={color} change={props.change} id={0} value={subGroup.name} />
-                <div>
+                <div className={classes.groupMarginFix} >
                   {subGroup.values.map((name, nIndex) => {
                     return (
                       <CheckBox show={true} disable={false} key={nIndex} checked={true} name={name} classes={classes.subGroup} color={color} change={props.change} id={sgIndex === 3 ? 0 : 1} value={name} />
@@ -31,11 +31,11 @@ const SidebarFilterElementsNew = (props) => {
         </div>
       </div>
 
-      <div>
-        <div>
+      <div className={classes.FirstBlock}>
+        <div className={classes.UpperHead} >
           <CheckBox show={false} disable={true} checked={false} name={filters[1].name.toUpperCase()} classes={classes.Title} />
         </div>
-        <div>
+        <div className={`${classes.CheckContainer} ${classes.groupMarginFix}`} >
           {filters[1].values.map((item, index) => <CheckBox show={true} disable={false} key={index} checked={true} name={item} classes={classes.subGroup} color={getTopicColor(item) === '#989aa1' ? getFieldColor(item) : getTopicColor(item)} change={props.change} id={2} value={item} />)}
         </div>
       </div>

@@ -24,9 +24,18 @@
 .CheckContainer{
     overflow: hidden;
 }
+.CheckContainer div{
+    overflow: hidden;
+    font-family: IBM Plex Mono,monospace;
+}
 .CheckContainer .CheckBoxLabel{
     float: right;
 }
+
+.groupMarginFix{
+    padding-left: 10px;
+}
+
 .Title {
     /* display: flex; */
     align-items: center;
@@ -37,15 +46,15 @@
     font-size: 2vh;
     font-weight: 100;
 }
-
 .subGroup {
     /* display: flex; */
     align-items: center;
     justify-content: space-between;
     width: 100%;
     height: 70px;
-    font-size: 1.7vh;
+    font-size: 1.8vh;
     font-weight: 100;
+    margin-top: 10px;
 }
 
 .ButtonCollapsed {
@@ -101,33 +110,40 @@
 .CheckBoxLabel {
     display: inline;
     vertical-align: middle;
-    margin: 5px;
+    margin: 5px 5px;
     cursor: pointer;
 }
 
 .CheckBoxLabel {
     position: relative;
+    background: #50e3c2;
+    width: 19px;
+    height: 19px;
 }
 
 .CheckBoxLabel:before {
     content: '';
-    border: 1px solid #b0b0b0;
+    border: 2px solid #50e3c2;
+    background: #000;
     display: inline-block;
     vertical-align: middle;
-    width: 2vh;
-    height: 2vh;
-    padding: 4px;
+    width: 1.5vh;
+    height: 1.5vh;
+    padding: 8px 4px;
     margin-right: 5px;
     text-align: center;
+    margin-top: -1px;
 }
 
 .CheckBox + .CheckBoxLabel:before {
-    border-radius: 50%;
+    border-radius: 0;
+    height: 2px;
 }
 
 .CheckBox:checked + .CheckBoxLabel:before {
-    background: lightgrey;
+    background: #50e3c2;
     background-clip: content-box;
+    height: 2px;
 }
 
 .CheckBox:focus + .CheckBoxLabel {

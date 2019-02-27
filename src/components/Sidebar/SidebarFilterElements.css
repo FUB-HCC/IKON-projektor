@@ -87,7 +87,7 @@
 
 .CheckBoxLabel:before {
     content: '';
-    border: 1px solid #b0b0b0;
+    border: 1px solid #50e3c2;
     display: inline-block;
     vertical-align: middle;
     width: 2vh;
@@ -102,7 +102,7 @@
 }
 
 .CheckBox:checked + .CheckBoxLabel:before {
-    background: lightgrey;
+    background: #50e3c2;
     background-clip: content-box;
 }
 
