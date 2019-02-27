@@ -40,6 +40,14 @@
     font-style: italic;
 }
 
+@font-face {
+    font-family: Roboto;
+    src: url(./assets/Roboto-Regular.ttf);
+    font-weight:500;
+    font-style: italic;
+}
+
+
 body {
   margin: 0;
   padding: 0;

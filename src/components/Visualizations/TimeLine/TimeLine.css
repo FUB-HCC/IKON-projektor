@@ -3,8 +3,8 @@
 }
 
 .timelineContainer > .timelineContentContainer .xAxis text {
-    font-size: 8px;
     fill: #717071;
+    font-family: IBM_Plex_Mono;
 }
 
 .timelineContainer > .timelineContentContainer .xAxis line {
@@ -22,6 +22,7 @@
 
 .timelineContainer > .timelineContentContainer .yAxis text {
     fill: #717071;
+    font-family: IBM_Plex_Mono;
 }
 
 .timelineContainer > .timelineContentContainer .yAxis path {
@@ -95,13 +96,14 @@
 
 .dt_modal_header{
     display: flex;
-    padding: 30px 10px 25px 15px;
+    padding: 30px 10px 0px 15px;
     align-items: center;
     flex-wrap: wrap;
 }
 .left_icon img{
-    height: 40px;
-    width: 40px;
+    height: 32px;
+    width: 32px;
+    margin-top:5px;
 }
 .right_text p:first-child{
     font-size: 13px;

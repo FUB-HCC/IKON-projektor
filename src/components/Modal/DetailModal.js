@@ -54,16 +54,16 @@ class DetailModal extends Component {
     let year = this.props.year
     let index = this.state.index + 1
     title = (title ? title.replace(/ .*/, '') : 'Unbakent')
-    let color = '#9c9bff'
+    let color = '#7675B2'
     switch (title) {
       case 'Naturwissenschaften':
-        color = '#f4a310'
+        color = '#A4782E'
         break
       case 'Lebenswissenschaften':
-        color = '#f12626'
+        color = '#994A49'
         break
       case 'Geistes-':
-        color = '#7ad101'
+        color = '#435B22'
         break
       default:
         break
