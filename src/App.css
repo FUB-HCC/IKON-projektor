@@ -1,5 +1,5 @@
 .BackGradient {
-    width: 80vw;
+    width: 75vw;
     height: 82vh;
     /* background: linear-gradient(60deg, #76738B, #855E5F, #76738B, #646E3F, #76738B, #5F6648, #76738B, #54555E); /*background: linear-gradient(60deg, #434058, #522B2C, #434058, #313B0C, #434058, #2C3315, #434058, #21222B); */
     background: #0e0e0e;
@@ -15,9 +15,9 @@
     float: left;
 }
 .sidebar{
-    width: 20vw;
+    width: 25vw;
     background: #0e0e0e;
-    height: 82vh;
+    height: 75vh;
     overflow-y: scroll;
     float: left;
 }

@@ -162,4 +162,25 @@
     bottom: 0;
     margin: auto;
     right: 95px;
+
 }
+
+
+/* 
+.popFixer:after, .popFixer:before{
+    top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.popFixer:after {
+	border-color: rgba(38, 38, 38, 0);
+	border-top-color: #262626;
+	border-width: 7px;
+	margin-left: -7px;
+} */

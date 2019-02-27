@@ -8,12 +8,19 @@
 }
 
 .Body {
-    margin-top: 50px;
+    margin-top: 30px;
     display: flex;
     flex-wrap: wrap;
     width: 100%;
 }
 
+.FirstBlock{
+    width: 100%;
+}
+.UpperHead{
+    border-bottom: 1px solid #50e3c2;
+    padding-bottom: 20px;
+}
 .Title {
     /* display: flex; */
     align-items: center;

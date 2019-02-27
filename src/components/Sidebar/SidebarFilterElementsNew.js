@@ -8,8 +8,8 @@ const SidebarFilterElementsNew = (props) => {
   const filters = props.filters
   return (
     <div className={classes.Body}>
-      <div>
-        <div>
+      <div className={classes.FirstBlock}>
+        <div className={classes.UpperHead}>
           <CheckBox show={false} disable={true} checked={false} name={filters[0].name.toUpperCase()} classes={classes.Title} />
         </div>
         <div>

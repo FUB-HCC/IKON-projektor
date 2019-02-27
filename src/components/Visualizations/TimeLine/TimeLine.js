@@ -20,6 +20,7 @@ import Modal from '../../Modal/Modal'
 import DetailModal from '../../Modal/DetailModal'
 import classes from '../AreaChart/AreaChart.css'
 import HoverPopover from '../../HoverPopover/HoverPopover'
+import arrowHover from '../../../assets'
 
 class TimeLine extends Component {
   constructor (props) {
@@ -124,17 +125,22 @@ class TimeLine extends Component {
   renderProjectsHover () {
     return (this.state.hoveredCircle && this.state.mouseLocation) && <HoverPopover width={'15em'} height={'5em'} locationX={this.state.mouseLocation[0]}
       locationY={this.state.mouseLocation[1]}>
-      <p style={{
+      <p className={classes.popFixer} style={{
         position: 'absolute',
-        backgroundColor: '#717071',
+        backgroundColor: '#333',
+        border: '1px solid #4CD8B9',
         margin: '0',
-        top: '0em',
+        fontSize: '10px',
+        top: '-12em',
         color: '#e9e9e9',
-        overflowY: 'scroll',
-        overflowX: 'hidden',
-        padding: '5px'}}>
+        letterSpacing: '1px',
+        borderRadius: '15px',
+        overflowY: 'visible',
+        overflowX: 'visible',
+        padding: '5px 10px'}}>
         {/* {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`} */}
-        {`${this.state.hoveredCircle.numberOfActiveProjects} Projects in ${this.state.hoveredCircle.year}`}
+        <label>{`${this.state.hoveredCircle.numberOfActiveProjects} Projects in ${this.state.hoveredCircle.year}`} <span style={{
+          position: 'absolute', width: '20px', height: '20px', background: arrowHover, backgroundSize: 'cover', bottom: '-15px', left: '42%'}}></span></label>
       </p>
     </HoverPopover>
   }
