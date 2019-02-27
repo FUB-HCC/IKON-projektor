@@ -1,4 +1,8 @@
 .projects_list {
+    padding-top: 30px; 
+    font-family: IBM Plex Mono,monospace;
+    font-weight: 500;
+    margin: 15px;
     left: 0;
     position: absolute;
     top: 45px;
@@ -6,20 +10,25 @@
     overflow-y: scroll;
     overflow-x: hidden;
     height: 80%;
-    padding-left: 20px;
+    padding-left: 30px;
 }
 
-.projects_list_item{
-    font-size: 0.7em;
-    font-size: 10px;
-    color: #5f6063;
-    margin-bottom: 5px;
+
+.projects_list_item {
+    color: #717071;
+    font-size: 12px;
+    padding: 5px 0;
+    cursor: pointer;
+    height: auto !important;
+    width: auto !important;
+    text-align: left;
+    list-style: decimal;
 }
 
 .projects_list_item:hover {
-    text-decoration: underline;
+    text-decoration: none;
     cursor: pointer;
-    
+    color: rgb(80, 227, 194);
 }
 
 .zoombutton {

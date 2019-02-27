@@ -27,7 +27,6 @@ const graphColors = {
 
 const mapStateToProps = state => {
   const processedData = processData(state.main.filteredData, graphColors)
-  console.log(processedData, 'processedData')  
   return {
     dataSplitFbYear: processedData,
     projects: state.main.filteredData,
