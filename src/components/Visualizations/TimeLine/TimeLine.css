@@ -118,11 +118,11 @@
     font-size: 16px;
     color: #fff;
     margin-bottom: 10px;
-    font-family: 'Roboto', sans-serif !important;
+    font-family: Roboto, sans-serif !important;
 }
 .dt_modal_des p{
     font-size: 10px;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: IBM_Plex_Mono;
     color: #9b9b9b;
     margin: 0 0 10px;
 }
@@ -141,7 +141,7 @@
     text-transform: capitalize;
     font-size: 10px;
     margin: 0 !important;
-    font-family: IBM Plex Mono,monospace;
+    font-family: IBM_Plex_Mono;
 }
 .info_des a {
     color: #337ab7;

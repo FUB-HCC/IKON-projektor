@@ -108,7 +108,6 @@ class PetriDish extends Component {
           .attr('stroke-linejoin', 'round')
           .attr('stroke-offset', '20')
           .attr('opacity', '0.6')
-          .style('cursor', 'pointer')
           .on('mouseenter', (e) => {
             // Bring the cluster to the foreground when mouse enters it
             let clusterPathElement = document.getElementById(`cluster-hull-${clusterId}`)
@@ -129,7 +128,7 @@ class PetriDish extends Component {
           .on('mouseleave', (points) => {
             hull.attr('opacity', '0.6')
           })
-          .on('click', (points) => this.handleClusterClick(clusterId, points))
+          // .on('click', (points) => this.handleClusterClick(clusterId, points))
 
         let polygon = d3.polygonHull(points)
 
@@ -152,6 +151,7 @@ class PetriDish extends Component {
             .attr('y', point[1])
             .attr('width', 16)
             .attr('height', 16)
+            .style('cursor', 'pointer')
             .on('click', (points) => {
               if (this.state.detailModal) {
                 this.closeDetailModal()
