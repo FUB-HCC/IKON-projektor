@@ -19,7 +19,13 @@
 }
 .UpperHead{
     border-bottom: 1px solid #50e3c2;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
+}
+.CheckContainer{
+    overflow: hidden;
+}
+.CheckContainer .CheckBoxLabel{
+    float: right;
 }
 .Title {
     /* display: flex; */

@@ -16,7 +16,7 @@ const SidebarFilterElementsNew = (props) => {
           {filters[0].subGroup.map((subGroup, sgIndex) => {
             const color = getTopicColor(subGroup.name) === '#989aa1' ? getFieldColor(subGroup.name) : getTopicColor(subGroup.name)
             return (
-              <div key={sgIndex} >
+              <div className={classes.CheckContainer} key={sgIndex} >
                 <CheckBox show={true} disable={false} checked={true} name={subGroup.name.toUpperCase()} classes={classes.subGroup} color={color} change={props.change} id={0} value={subGroup.name} />
                 <div>
                   {subGroup.values.map((name, nIndex) => {
