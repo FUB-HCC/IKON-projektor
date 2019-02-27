@@ -58,7 +58,7 @@ class Modal extends Component {
       // margin: 'auto'
     }}>
       <div className={classes.projectListModalheader}>
-        <p style={{ color: '#50e3c2' }}> {counter} Projekts in {year}</p>
+        <p style={{ color: '#50e3c2' }}> {counter} Projekte in {year}</p>
         <p style={{ color: color }}>{title}</p>
       </div>
       <div className={classes.modalCloser}>
