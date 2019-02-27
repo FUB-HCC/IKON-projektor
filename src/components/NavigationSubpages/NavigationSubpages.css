@@ -13,6 +13,11 @@
 .NavigationElement.logo::after{
     display: none !important;
 }
+.smallHeadTxt{
+    color: #717071;
+    display: none;
+    position: absolute;
+}
 .leftpanel{
     width: 75vw;
 }
@@ -127,6 +132,7 @@
     text-align: left;
     padding-left: 30px;
     background: #1c1d1f;
+    font-family: IBM Plex Mono,monospace;
 }
 .NavigationElement .logo{
     padding: 20px !important;
@@ -134,6 +140,9 @@
 
 .active{
     background: transparent;
+}
+.active .smallHeadTxt{
+    display: block;
 }
 .active:after{
     opacity: 1;

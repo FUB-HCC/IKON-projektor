@@ -40,10 +40,10 @@ class NavigationSubpages extends Component {
               <a className={classes.NavigationElement + ' ' + classes.logo} to='/projects'><img src={logo} /></a>
             </li>
             <li>
-              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'WISSEN') ? classes.active : '')} onClick={() => this.changeGraphHandler('0')}>WISSEN</a>
+              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'WISSEN') ? classes.active : '')} onClick={() => this.changeGraphHandler('0')}>WISSEN <small className={classes.smallHeadTxt}>Projekte in Clustern</small> </a>
             </li>
             <li>
-              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'ZEIT') ? classes.active : '') } onClick={() => this.changeGraphHandler('1')}>ZEIT</a>
+              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'ZEIT') ? classes.active : '') } onClick={() => this.changeGraphHandler('1')}>ZEIT <small className={classes.smallHeadTxt}>Anzahl der Projekte uber Jahre</small> </a>
             </li>
             <li>
               <a className={classes.NavigationElement + ' ' + ((this.state.active === 'RAUM') ? classes.active : '')} onClick={() => this.changeGraphHandler('2')}>RAUM</a>
