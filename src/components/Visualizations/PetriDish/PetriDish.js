@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import * as d3 from 'd3'
 import assets from '../../../assets'
 import PetriDishDetailModal from '../../Modal/PetriDishDetailModal'
+import * as projectData from '../../../assets/publicData'
 
 const dataDump = require('./PetriDish.json')
 
@@ -51,9 +52,9 @@ class PetriDish extends Component {
     </div>
   }
 
-  handleClusterClick (points) {
+  handleClusterClick (clusterId, points) {
     // TODO
-    alert(`Cluster clicked`)
+    alert(`Cluster clicked ${clusterId}`)
   }
 
   handleMouseMoveOnCluster (points) {
@@ -95,8 +96,7 @@ class PetriDish extends Component {
     clusters.forEach((points, index) => {
       let clusterId = index
       if (points.length >= 3) { // d3.polygonHull requires at least 3 data points
-        let randomColor = randomRgba()
-        let clusterSVG = setColor(index)
+        let randomColor = randomRgba()        
         let hull = svg.append('path')
           .attr('id', `cluster-hull-${clusterId}`)
           .attr('class', 'hull')
@@ -143,6 +143,7 @@ class PetriDish extends Component {
 
         points.forEach((point, index) => {
           let projectId = clusterProjects[clusterId][index]
+          let clusterSVG = setColor(projectId)
           svg.append('image')
             .attr('class', `clusterPoint${clusterId}`)
             .attr('id', `cluster-point-${point[0]},${point[1]}`)
@@ -151,7 +152,11 @@ class PetriDish extends Component {
             .attr('y', point[1])
             .attr('width', 16)
             .attr('height', 16)
-            .on('click', (points) => {              
+            .on('click', (points) => {
+              console.log(projectId)
+              if (this.state.detailModal) {
+                this.closeDetailModal()
+              }
               this.setState({detailModal: true, selectedProjectId: projectId})
             })
         })
@@ -172,17 +177,37 @@ const randomRgba = () => {
   // return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ', 1' + ')'
 }
 
-const setColor = (colorIndex) => {
-  switch (colorIndex) {
-    case 1:
-      return assets.clusterGeistSVG
-    case 2:
-      return assets.clusterLebenSVG
-    case 3:
+const setColor = (projectId) => {
+  let projects = projectData.getProjectsData()
+  let projectDetail = projects.find((element) => {
+    if (element.id === projectId) {
+      return element
+    }
+  })
+
+  switch (projectDetail.research_area) {
+    case 'Naturwissenschaften (119 Mitglieder)':
       return assets.clusterNaturSVG
+    case 'Lebenswissenschaften (231 Mitglieder)':
+      return assets.clusterLebenSVG
+    case 'Geistes- und Sozialwissenschaften (136 Mitglieder)':
+      return assets.clusterGeistSVG
     default:
       return assets.clusterUnbekantSVG
   }
+
+  // switch (colorIndex) {
+  //   case 0:
+  //     return assets.clusterGeistSVG
+  //   case 1:
+  //     return assets.clusterLebenSVG
+  //   case 2:
+  //     return assets.clusterLebenSVG
+  //   case 3:
+  //     return assets.clusterLebenSVG
+  //   default:
+  //     return assets.clusterUnbekantSVG
+  // }
 }
 
 export default PetriDish

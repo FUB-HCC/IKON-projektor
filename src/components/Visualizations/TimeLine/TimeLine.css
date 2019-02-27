@@ -50,8 +50,8 @@
 .projectModal{
     background: #0e0e0e !important;
     position: absolute;
-    width: 20vw;
-    height: 91vh;
+    width: 25vw;
+    height: 100vh;
     right: 0;
     top: 0;
     z-index: 11;
@@ -80,18 +80,19 @@
 }
 .dt_modal_header{
     display: flex;
-    padding: 10px 15px;
+    padding: 30px 10px 25px 15px;
     align-items: center;
     flex-wrap: wrap;
 }
-.left_icon{
-
+.left_icon img{
+    height: 40px;
+    width: 40px;
 }
 .right_text p:first-child{
-    font-size: 12px;
+    font-size: 13px;
 }
 .right_text p:last-child{
-    font-size: 10px;
+    font-size: 13px;
 }
 .right_text p{
     margin: 0px;
@@ -99,33 +100,51 @@
     text-transform: uppercase;
 }
 .dt_modal_title p{
-    font-size: 14px;
-    margin: 0px;
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif !important;
 }
 .dt_modal_des p{
     font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: #9b9b9b;
+    margin: 0 0 10px;
 }
 .modal_des_wrap{
     padding: 0px 15px;
     color: #5f6063;
 }
 .info_label{
+    color: #4a4a4a;
+    text-transform: uppercase;
     font-size: 10px;
-    color: #3c3f44;
-    margin: 0px;
-    text-transform: uppercase
+    margin-bottom: 0;    
 }
 .info_des{
+    color: #9b9b9b;
+    text-transform: capitalize;
     font-size: 10px;
-    color: #5f6063;
-    margin-top: 0px;
+    margin: 0 !important;
+    font-family: IBM Plex Mono,monospace;
+}
+.info_des a {
+    color: #337ab7;
+    text-decoration: none;
 }
 .info_split{
     display: flex
 }
+
+.dt_modal_info_full{
+    margin-bottom: 20px;
+}
+
 .dt_modal_info{
     width: 50%; 
+    margin-bottom: 20px;
 }
+
 .dt_modal_text_area textarea{
     width: 100%;
     height: 100px;

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import CloseIcon from '../../assets/Exit.svg'
+import assets from '../../assets'
 import classes from '../../components/Visualizations/TimeLine/TimeLine.css'
 import * as actions from '../../store/actions/actions'
-import icon from '../../assets/geistes_icon.png'
+import * as filteredData from '../../assets/publicData'
 
 class PetriDishDetailModal extends Component {
   constructor (props) {
@@ -18,15 +19,14 @@ class PetriDishDetailModal extends Component {
     this.props.closeDetailModal()
   }
   componentWillMount () {
-    const {filteredData, projectId} = this.props
-    let project = null
-    for (const key of Object.keys(filteredData)) {
-      if (filteredData[key].id === projectId) {
-        project = filteredData[key]
-        break
+    const {projectId} = this.props
+    let projects = filteredData.getProjectsData()
+    let projectDetail = projects.find((element) => {
+      if (element.id === projectId) {
+        return element
       }
-    }
-    this.setState({ projectdetails: project })
+    })
+    this.setState({ projectdetails: projectDetail })
   }
 
   render () {    
@@ -34,15 +34,19 @@ class PetriDishDetailModal extends Component {
     let title = projectdetails.research_area
     title = (title ? title.replace(/ .*/, '') : 'Unbakent')
     let color = '#9c9bff'
+    let icon = assets.clusterUnbekantSVG
     switch (title) {
       case 'Naturwissenschaften':
         color = '#f4a310'
+        icon = assets.clusterNaturSVG
         break
       case 'Lebenswissenschaften':
         color = '#f12626'
+        icon = assets.clusterLebenSVG
         break
       case 'Geistes-':
         color = '#7ad101'
+        icon = assets.clusterGeistSVG
         break
       default:
         break
@@ -50,7 +54,7 @@ class PetriDishDetailModal extends Component {
     return (
       <div className={classes.projectModal}>
         <div className={classes.modalheader}>
-          <p style={{ color: color }}>{title}</p>
+          
         </div>
         <div className={classes.modalCloser}>
           <img src={CloseIcon} onClick={this.closeProjectsModal} />
@@ -71,7 +75,7 @@ class PetriDishDetailModal extends Component {
           <div className={classes.dt_modal_des}>
             <p>{(projectdetails.abstract) ? projectdetails.abstract.substr(0, 120) : 'N/A'}</p>
           </div>
-          <div className={classes.dt_modal_info}>
+          <div className={classes.dt_modal_info_full}>
             <p className={classes.info_label}>hauptthema</p>
             <p className={classes.info_des}>{(projectdetails.review_board) ? projectdetails.review_board : 'N/A'}</p>
           </div>
