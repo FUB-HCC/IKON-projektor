@@ -40,7 +40,7 @@ class Footer extends Component {
           <div className={classes.milldleLeft}>
             <div className={classes.filter}>
               <div className={classes.filterWrap}>
-                <label>VIEW</label>
+                <label className={classes.selectLabel} >VIEW</label>
                 <Select
                   value={selectedOption}
                   onChange={this.handleChange}
@@ -48,7 +48,7 @@ class Footer extends Component {
                 />
               </div>
               <div className={classes.filterWrap}>
-                <label>VIEW</label>
+                <label className={classes.selectLabel} >VIEW</label>
                 <Select
                   value={selectedOption}
                   onChange={this.handleChange}

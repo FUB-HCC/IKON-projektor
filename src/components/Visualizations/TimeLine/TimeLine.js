@@ -133,7 +133,8 @@ class TimeLine extends Component {
         overflowY: 'scroll',
         overflowX: 'hidden',
         padding: '5px'}}>
-        {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`}
+        {/* {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`} */}
+        {`${this.state.hoveredCircle.numberOfActiveProjects} Projects in ${this.state.hoveredCircle.year}`}
       </p>
     </HoverPopover>
   }
