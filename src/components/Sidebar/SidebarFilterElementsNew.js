@@ -62,7 +62,7 @@ class CheckBox extends Component {
       <div>
         <span className={props.classes} style={{color: props.color}} >{ props.name }</span>
         <input {...config} checked={this.state.checked} className={classes.CheckBox} type='checkbox' id={props.name} onChange={() => this.onChange(props.id, props.name, 'a')} />
-        {props.show && <label className={classes.CheckBoxLabel} htmlFor={props.name} /> }
+        {props.show && <label className={classes.CheckBoxLabel + ' ' + classes.red } htmlFor={props.name} /> }
       </div>
     )
   }

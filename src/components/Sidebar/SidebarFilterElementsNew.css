@@ -27,6 +27,7 @@
 .CheckContainer div{
     overflow: hidden;
     font-family: IBM Plex Mono,monospace;
+    margin-top: 0.8vh;
 }
 .CheckContainer .CheckBoxLabel{
     float: right;
@@ -121,15 +122,16 @@
     height: 19px;
 }
 
+
 .CheckBoxLabel:before {
     content: '';
     border: 2px solid #50e3c2;
     background: #000;
     display: inline-block;
     vertical-align: middle;
-    width: 1.5vh;
-    height: 1.5vh;
-    padding: 8px 4px;
+    width: 18px;
+    height: 18px;
+    padding: 0px;
     margin-right: 5px;
     text-align: center;
     margin-top: -1px;
@@ -137,13 +139,62 @@
 
 .CheckBox + .CheckBoxLabel:before {
     border-radius: 0;
-    height: 2px;
 }
 
 .CheckBox:checked + .CheckBoxLabel:before {
     background: #50e3c2;
     background-clip: content-box;
-    height: 2px;
+}
+
+.CheckBoxLabel.yellow{
+    background: #f4a310;
+}
+.CheckBoxLabel.yellow::before{
+    border-color: #f4a310;
+}
+.CheckBox:checked + .CheckBoxLabel.yellow:before {
+    background: #f4a310;
+    background-clip: content-box;
+}
+.CheckBoxLabel.red{
+    background: #f12626;
+}
+.CheckBox:checked + .CheckBoxLabel.red:before {
+    background: #f12626;
+    background-clip: content-box;
+}
+.CheckBoxLabel.red::before{
+    border-color: #f12626;
+}
+.CheckBoxLabel.green{
+    background: #7ad101;
+}
+.CheckBox:checked + .CheckBoxLabel.green:before {
+    background: #7ad101;
+    background-clip: content-box;
+}
+.CheckBoxLabel.green::before{
+    border-color: #7ad101;
+}
+.CheckBoxLabel.violet{
+    background: #9c9bff;
+}
+.CheckBox:checked + .CheckBoxLabel.violet:before {
+    background: #9c9bff;
+    background-clip: content-box;
+}
+.CheckBoxLabel.violet::before{
+    border-color: #9c9bff;
+}
+.CheckBoxLabel.grey{
+    background: #989aa1;
+}
+.CheckBox:checked + .CheckBoxLabel.grey:before {
+    background: #989aa1;
+    background-clip: content-box;
+}
+.CheckBoxLabel.grey::before{
+    border-color: #989aa1;
 }
 
 .CheckBox:focus + .CheckBoxLabel {
