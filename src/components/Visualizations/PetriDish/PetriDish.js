@@ -153,7 +153,6 @@ class PetriDish extends Component {
             .attr('width', 16)
             .attr('height', 16)
             .on('click', (points) => {
-              console.log(projectId)
               if (this.state.detailModal) {
                 this.closeDetailModal()
               }

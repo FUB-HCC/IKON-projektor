@@ -78,6 +78,21 @@
 .modalheader p:last-child{
     font-size: 8px;
 }
+
+.projectListModalheader{
+    text-align: left;
+    padding: 20px 25px;
+    margin: 20px 0px;
+}
+
+.projectListModalheader p{
+    margin: 0px;
+    font-size: 18px;
+}
+.projectListModalheader p:last-child{
+    font-size: 12px;
+}
+
 .dt_modal_header{
     display: flex;
     padding: 30px 10px 25px 15px;

@@ -57,9 +57,9 @@ class Modal extends Component {
       // right: 0,
       // margin: 'auto'
     }}>
-      <div className={classes.modalheader}>
+      <div className={classes.projectListModalheader}>
+        <p style={{ color: '#50e3c2' }}> {counter} Projekts in {year}</p>
         <p style={{ color: color }}>{title}</p>
-        <p style={{ color: '#fff' }}> {counter} Projekte in {year}</p>
       </div>
       <div className={classes.modalCloser}>
         <img src={CloseIcon} onClick={this.closeProjectsModal}/>
