@@ -34,6 +34,15 @@
     font-family: TradeGothicLTStd;
 }
 
+.CheckContainer div span{
+    overflow: hidden;
+    font-family: TradeGothicLTStd;
+    float: left;
+    height: 4vh !important;
+    width: 80%;
+}
+
+
 .CheckContainer .CheckBoxLabel{
     float: right;
 }
@@ -126,6 +135,7 @@
     background: #50e3c2;
     width: 19px;
     height: 19px;
+    margin-top: 1.2ex;
 }
 
 
