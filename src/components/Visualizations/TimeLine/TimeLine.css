@@ -201,6 +201,19 @@
 
 }
 
+.zurukhBtn{
+    color: #00dcac;
+    float: left;
+    cursor: pointer;
+    position: absolute;
+    left: 5px;
+    top:10px;
+    font-size: 11px;
+}
+.zurukhBtn span{
+    font-size: 10px;
+}
+
 
 /* 
 .popFixer:after, .popFixer:before{

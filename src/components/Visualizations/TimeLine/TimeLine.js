@@ -46,6 +46,7 @@ class TimeLine extends Component {
     this.handleCircleMouseEnter = this.handleCircleMouseEnter.bind(this)
     this.onProjectClick = this.onProjectClick.bind(this)
     this.closeDetailModal = this.closeDetailModal.bind(this)
+    this.zurukhBtnAction = this.zurukhBtnAction.bind(this)
 
     // this.loadPaths = this.loadPaths.bind(this)
   }
@@ -68,8 +69,13 @@ class TimeLine extends Component {
     }    
     this.setState({detailModal: true, project: project, title, year, counter, index})
   }
+
   closeDetailModal () {
     this.setState({detailModal: false})
+  }
+
+  zurukhBtnAction () {
+    this.setState({detailModal: false, projectsPopoverHidden: false})
   }
 
   updateTimeGraph (data, height, width, margin) {
@@ -250,7 +256,7 @@ class TimeLine extends Component {
         {this.renderProjectsHover()}
 
         {this.state.detailModal &&
-          <DetailModal projects={this.state.selectedProjects} index={this.state.index} headline={this.state.title} year={this.state.year} counter={this.state.counter} closeDetailModal={this.closeDetailModal} project={this.state.project}/>
+          <DetailModal projects={this.state.selectedProjects} index={this.state.index} headline={this.state.title} year={this.state.year} counter={this.state.counter} closeDetailModal={this.closeDetailModal} project={this.state.project} zurukhBtnAction={this.zurukhBtnAction} />
         }
       </div>
     )

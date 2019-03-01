@@ -71,6 +71,7 @@ class DetailModal extends Component {
     return (
       <div className={classes.projectModal}>
         <div className={classes.modalheader}>
+          <p onClick={this.props.zurukhBtnAction} className={classes.zurukhBtn} > <span>&#x3c;</span> zurück</p>
           <p style={{ color: color }}>{title}</p>
           <p style={{ color: '#fff' }}> {counter} Projekte in {year}</p>
           <p className={classes.controlBoard}> <span onClick={(evt) => this.projectControl('left')} className={classes.control + ' ' + classes.left}> ^ </span> {index} of {totalSize}<span onClick={(evt) => this.projectControl('right')} className={classes.control + ' ' + classes.right}> ^ </span></p>
