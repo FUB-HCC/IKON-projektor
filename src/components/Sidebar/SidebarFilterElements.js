@@ -1,7 +1,7 @@
 /* eslint-disable no-multi-str */
 import React from 'react'
 
-import classes from './SidebarFilterElements.css'
+import classes from './Sidebar.css'
 import {getFieldColor, getTopicColor} from '../../store/utility'
 
 const SidebarFilterElements = (props) => {  

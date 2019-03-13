@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import classes from './Footer.css'
+import classes from '../combined.css'
 import {connect} from 'react-redux'
 import * as actions from '../../store/actions/actions'
 import Select from 'react-select'

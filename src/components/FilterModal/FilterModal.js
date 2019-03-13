@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import classes from './FilterModal.css'
+import classes from '../combined.css'
 import FilterElement from './FilterElement'
 import {connect} from 'react-redux'
 import * as actions from '../../store/actions/actions'
