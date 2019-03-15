@@ -1,7 +1,7 @@
 /* eslint-disable no-multi-str */
 import React from 'react'
 
-import classes from '../combined.css'
+import classes from '../redesigned.css'
 import {getFieldColor, getTopicColor} from '../../store/utility'
 
 const filterElement = (props) => {

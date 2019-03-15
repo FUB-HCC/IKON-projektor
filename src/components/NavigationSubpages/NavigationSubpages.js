@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import classes from '../combined.css'
+import classes from '../redesigned.css'
 import {connect} from 'react-redux'
 import * as actions from '../../store/actions/actions'
 import logo from '../../assets/ikon_logo.png'
