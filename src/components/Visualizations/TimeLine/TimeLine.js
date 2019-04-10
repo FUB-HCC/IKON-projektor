@@ -17,8 +17,10 @@ import {
 } from 'd3-axis'
 import {select as d3Select} from 'd3-selection'
 import Modal from '../../Modal/Modal'
+import DetailModal from '../../Modal/DetailModal'
 import classes from '../AreaChart/AreaChart.css'
 import HoverPopover from '../../HoverPopover/HoverPopover'
+import arrowHover from '../../../assets'
 
 class TimeLine extends Component {
   constructor (props) {
@@ -27,22 +29,58 @@ class TimeLine extends Component {
       dataSplitYears: [],
       forschungsbereiche: [],
       height: props.height * 0.5,
-      width: props.width * 0.5,
+      width: props.width * 0.6,
       margin: props.margin,
       firstUpdate: true,
-      projectsPopoverHidden: true
+      projectsPopoverHidden: true,
+      detailModal: false,
+      project: {},
+      title: '',
+      year: '',
+      counter: 0,
+      index: 0
     }
     this.handleCircleClick = this.handleCircleClick.bind(this)
     this.renderProjectsHover = this.renderProjectsHover.bind(this)
     this.handleCircleMouseLeave = this.handleCircleMouseLeave.bind(this)
     this.handleCircleMouseEnter = this.handleCircleMouseEnter.bind(this)
+    this.onProjectClick = this.onProjectClick.bind(this)
+    this.closeDetailModal = this.closeDetailModal.bind(this)
+    this.zurukhBtnAction = this.zurukhBtnAction.bind(this)
 
     // this.loadPaths = this.loadPaths.bind(this)
+  }
+  onProjectClick (project) {
+    let selectedProjects = this.state.selectedProjects
+    let current = project.project
+    let title = ''
+    let year = ''
+    let counter = 0
+    let index = 0
+    if (selectedProjects) {
+      title = selectedProjects[0].research_area  
+      selectedProjects.map((project, i) => {
+        counter++
+        year = project.start_date   
+        if (current.id === project.id) {
+          index = counter
+        }  
+      })
+    }    
+    this.setState({detailModal: true, project: project, title, year, counter, index})
+  }
+
+  closeDetailModal () {
+    this.setState({detailModal: false})
+  }
+
+  zurukhBtnAction () {
+    this.setState({detailModal: false, projectsPopoverHidden: false})
   }
 
   updateTimeGraph (data, height, width, margin) {
     if (!this.state.firstUpdate) { // workaround for first time scaling
-      this.setState({height: height * 0.5, width: width * 0.50, margin: margin})
+      this.setState({height: height * 0.5, width: width * 0.6, margin: margin})
     }
 
     let forschungsbereiche = this.state.forschungsbereiche
@@ -54,25 +92,34 @@ class TimeLine extends Component {
   }
 
   handleCircleClick (evt, circlePoint) {
-    console.log(evt, circlePoint)
-    let selectedProjects = circlePoint.projects
-    this.setState({projectsPopoverHidden: false, selectedProjects: selectedProjects})
+    let selectedProjects = circlePoint.projects    
+    this.setState({projectsPopoverHidden: false, selectedProjects: selectedProjects, detailModal: false})
   }
 
   renderProjectsPopover () {
     let selectedProjects = this.state.selectedProjects
-
-    return !this.state.projectsPopoverHidden && <Modal headline={'Projects'} onCloseClick={() => {
+    let title = ''
+    let year = ''
+    let counter = 0
+    if (selectedProjects) {
+      title = selectedProjects[0].research_area  
+      selectedProjects.map((project, i) => {
+        counter++
+        year = project.start_date     
+      })
+    }
+    
+    return !this.state.projectsPopoverHidden && <Modal year={year} counter={counter} headline={title} className={classes.projectModal} onCloseClick={() => {
       this.setState({projectsPopoverHidden: true})
     }} hidden={this.state.projectsPopoverHidden} width={this.state.width * 0.56} height={this.state.height * 0.75}>
 
       <ol className={classes.projects_list} style={{
-        height: (this.state.height * 0.65) + 'px'
+        // height: (this.state.height * 0.65) + 'px'
       }}>
         {selectedProjects.map((project, i) => {
           return <li onClick={event => {
-            this.setState({projectsPopoverHidden: true})
-            this.props.onProjectClick({project: project}, 2)
+            this.setState({projectsPopoverHidden: true})            
+            this.onProjectClick({project: project}, 2)
           }} key={`project-list-link-${project.id}-${i}`}
           className={classes.projects_list_item}>{`${project.title} (${project.id})`}</li>
         })}
@@ -84,13 +131,22 @@ class TimeLine extends Component {
   renderProjectsHover () {
     return (this.state.hoveredCircle && this.state.mouseLocation) && <HoverPopover width={'15em'} height={'5em'} locationX={this.state.mouseLocation[0]}
       locationY={this.state.mouseLocation[1]}>
-      <p style={{
+      <p className={classes.popFixer} style={{
         position: 'absolute',
-        top: '0em',
+        backgroundColor: '#333',
+        border: '1px solid #4CD8B9',
+        margin: '0',
+        fontSize: '10px',
+        top: '-12em',
         color: '#e9e9e9',
-        overflowY: 'scroll',
-        overflowX: 'hidden'}}>
-        {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`}
+        letterSpacing: '1px',
+        borderRadius: '15px',
+        overflowY: 'visible',
+        overflowX: 'visible',
+        padding: '5px 10px'}}>
+        {/* {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`} */}
+        <label>{`${this.state.hoveredCircle.numberOfActiveProjects} Projects in ${this.state.hoveredCircle.year}`} <span style={{
+          position: 'absolute', width: '20px', height: '20px', background: arrowHover, backgroundSize: 'cover', bottom: '-15px', left: '42%'}}></span></label>
       </p>
     </HoverPopover>
   }
@@ -146,7 +202,7 @@ class TimeLine extends Component {
       x: selectScaledX(datum),
       y: selectScaledY(datum),
       color: datum.color}, datum)))
-
+    
     return (
       <div>
         <SVGWithMargin
@@ -168,8 +224,8 @@ class TimeLine extends Component {
           />
           <g className={styles.yAxis} ref={node => d3Select(node).call(yAxis)}/>
 
-          {Object.values(this.state.dataSplitYears).map((line) => {
-            return (<g key={line} className={styles.line}><path style={{stroke: line[0].color}} d={sparkLine(line)}/></g>)
+          {Object.values(this.state.dataSplitYears).map((line, i) => {            
+            return (<g key={line} className={styles.line}><path style={{stroke: line[i].color}} d={sparkLine(line)}/></g>)
           })}
 
           {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
@@ -198,6 +254,10 @@ class TimeLine extends Component {
         </SVGWithMargin>
         {this.renderProjectsPopover()}
         {this.renderProjectsHover()}
+
+        {this.state.detailModal &&
+          <DetailModal projects={this.state.selectedProjects} index={this.state.index} headline={this.state.title} year={this.state.year} counter={this.state.counter} closeDetailModal={this.closeDetailModal} project={this.state.project} zurukhBtnAction={this.zurukhBtnAction} />
+        }
       </div>
     )
   }

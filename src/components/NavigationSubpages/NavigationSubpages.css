@@ -1,8 +1,94 @@
+.navbar{
+    background: #0e0e0e;
+    padding: 5px;
+    height: 15vh;
+    display: flex;
+
+}
+.logo{
+    padding: 20px !important;
+    text-align: center !important;
+}
+
+.NavigationElement.logo::after{
+    display: none !important;
+}
+.smallHeadTxt{
+    color: #717071;
+    display: none;
+    position: absolute;
+}
+.leftpanel{
+    width: 75vw;
+}
+.rightPanel{
+    width: 25vw;
+    background:  #0e0e0e;
+}
+.NavigationRightElement{
+    text-decoration: none;
+    color: #fff;
+    font-size: 13px;
+    display: block;
+    padding: 36px 15px;
+    padding-left: 30px;
+    text-align: left;
+    background: #1c1d1f;
+    text-align: left;
+    border-right: 1px solid #0e0e0e;
+    cursor: pointer;
+    margin-top: 3px;
+    position: relative;
+}
+.NavigationRightElement li{
+    text-align: left;
+    position: relative;
+    margin-left: 5px;
+}
+.NavigationRightElement:after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background: #50e3c2;
+    top: 0px;
+    left: 0;
+    opacity: 0;
+}
+.NavigationRightElement:hover::after{
+    opacity: 1;
+}
+.NavigationRightElement li a{
+    text-align: left;
+}
+.rightPanel ul{
+    padding: 0px;
+    display: flex;
+    align-items: top;
+    margin: 0px;
+}
+.rightPanel ul li{
+    width: 50%;
+    list-style: none;
+    margin-left: 5px;
+    position: relative;
+}
+.rightPanel ul li:after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background: #50e3c2;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
 .ContainerSub{
     padding: 0%;
     display: flex;
     align-items: center;
-    position: absolute;
+    justify-content: space-between;
+    flex-wrap: wrap;
     margin: 0%;
     top: 5vh;
     left: 5vh;
@@ -10,13 +96,54 @@
     list-style: none;
 }
 
-.NavigationElement{
-    margin-right: 3vw;
-    text-decoration: none;
-    color: #989aa1;
-    font-size: 2vh;
+.ContainerSub li{
+    width: 24.5%;
+    
+    cursor: pointer;
+    position: relative;
+    margin-right: 1px;
 }
 
-.active {
-    color: white;
+.ContainerSub li:hover:after{
+    opacity: 1;
+}
+.ContainerSub li:hover{
+    background: transparent;    
+}
+.NavigationElement:after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background: #50e3c2;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+.ContainerSub li:hover .NavigationElement:after{
+    opacity: 1;
+}
+.NavigationElement{
+    text-decoration: none;
+    color: #50e3c2;
+    font-size: 13px;
+    display: block;
+    padding: 36px 15px;
+    text-align: left;
+    padding-left: 30px;
+    background: #1c1d1f;
+    font-family: IBM_Plex_Mono;
+}
+.NavigationElement .logo{
+    padding: 20px !important;
+}
+
+.active{
+    background: transparent;
+}
+.active .smallHeadTxt{
+    display: block;
+}
+.active:after{
+    opacity: 1;
 }

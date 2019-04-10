@@ -1,13 +1,13 @@
 /* eslint-disable no-multi-str */
 import React from 'react'
 
-import classes from '../redesigned.css'
+import classes from './Sidebar.css'
 import {getFieldColor, getTopicColor} from '../../store/utility'
 
-const filterElement = (props) => {
+const SidebarFilterElements = (props) => {  
   const filters = props.keys.map((k, key) => {
     const labelString = k.length > 60 ? k.slice(0, 60) + '...' : k
-    const color = getTopicColor(k) === '#989aa1' ? getFieldColor(k) : getTopicColor(k)
+    const color = getTopicColor(k) === '#989aa1' ? getFieldColor(k) : getTopicColor(k)    
     return (
       <div style={{width: props.keys.length > 15 ? '20%' : '25%', fontSize: props.keys.length > 15 ? '1.0vh' : '1.2vh'}} className={classes.Filter} key={key} >
         <input
@@ -43,4 +43,4 @@ const filterElement = (props) => {
   )
 }
 
-export default filterElement
+export default SidebarFilterElements

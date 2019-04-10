@@ -3,17 +3,19 @@ import classes from '../Visualizations/AreaChart/AreaChart.css'
 
 const HoverPopover = (props) => {
   let {locationX, locationY, width, height} = props
-  if (!width) { width = `30em` }
+  if (!width) { width = `40em` }
   if (!height) { height = `10em` }
 
   return <div className={classes.popover_body} style={{
     width: width, // TODO dynamically style width
     height: height, // TODO dynamically style height
-    margin: `1.5em`,
+    margin: `5em`,
+    // marginTop: '-3em',
+    marginLeft: '-4em',
     position: 'absolute',
     left: locationX + 'px',
     top: locationY + 'px',
-    backgroundColor: 'rgba(67, 64, 88, 0.8)',
+    backgroundColor: 'transparent',
     display: 'flex',
     flexWrap: 'wrap',
     zIndex: 99,

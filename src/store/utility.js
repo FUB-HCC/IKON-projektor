@@ -46,11 +46,11 @@ const fieldsMapping = [
   {name: 'Sammlungsentwicklung und Biodiversitätsentdeckung', field: 2, color: '#d9ef36'},
   {name: 'Digitale Welt und Informationswissenschaft', field: 3, color: '#8184a7'},
   {name: 'Wissenskommunikation und Wissensforschung', field: 4, color: '#ed9798'}, */
-  {name: 'Naturwissenschaften', field: 1, color: '#7d913c'},
-  {name: 'Lebenswissenschaften', field: 2, color: '#d9ef36'},
-  {name: 'Geistes- und Sozialwissenschaften', field: 3, color: '#8184a7'},
+  {name: 'Naturwissenschaften', field: 1, color: '#A4782E'},
+  {name: 'Lebenswissenschaften', field: 2, color: '#994A49'},
+  {name: 'Geistes- und Sozialwissenschaften', field: 3, color: '#435B22'},
   {name: 'Ingenieurwissenschaften', field: 4, color: '#ed9798'},
-  {name: 'Unbekannt', field: 5, color: '#ffffff'}
+  {name: 'Unbekannt', field: 5, color: '#7675B2'}
 ]
 
 // topic(hauptthema) colors
@@ -84,7 +84,8 @@ const topicMapping = [
   {name: 'Geschichtswissenschaften', num: '27', field: 3, color: '#8184a7'},
   {name: 'Zoologie', num: '28', field: 2, color: '#d9ef36'},
   {name: 'Pflanzenwissenschaften', num: '29', field: 2, color: '#d9ef36'},
-  {name: 'Unbekannt', num: '30', field: 5, color: '#ffffff'}
+  // {name: 'Unbekannt', num: '30', field: 5, color: '#ffffff'}
+  {name: 'Unbekannt', num: '30', field: 5, color: '#959ef9'}
 ]
 
 export const fieldsIntToString = (number) => {
