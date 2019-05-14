@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" charset="utf-8">
+<html>
+<head>
+  <title>PetriDish</title>
+  <link href="styles.css" rel="stylesheet">
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/d3-polygon.v1.min.js"></script>
+  <script type="text/javascript" src="newGeometry3.js"></script>
+  <script type="text/javascript" src="d3-tip.js"></script>
+  <script type="text/javascript" src="multirange.js"></script>
+  <script type="text/javascript" src="settings3.js"></script>
+</head>
+
+<body>
+
+<h1>PetriDish</h1>
+  <div><!-- class="clearfix" -->
+  <svg id="svg" style="float: left"></svg>
+  <form>
+    <p><b>Forschungsgebiete:</b></p>
+    <fielset id="checkboxen">
+    </fielset>
+  </form>
+  </div>
+  </br>
+  
+  <div>
+    <p><b>Zeitspanne:</b></p>
+    <span id="leftRange" >1980</span>
+    <input id="jahrRange" type="range" multiple value="1980,2019" min="1980" max="2019" />
+    <span id="rightRange">2019</span>
+  </div>
+  
+  <div>
+    <p><b>Perspektive:</b></p>
+    <input id="changePos" type="range" value="0" min="0" max="10" />
+  </div>
+  
+  <div>
+    <button onclick="mergeCluster()">merge cluster</button></br>
+    <button onclick="splitCluster()">split cluster</button></br>
+    <button onclick="nodeChangeCluster()">nodes change cluster</button></br>
+    <!--<button onclick="manuellUpdate()">manuell Update</button>-->
+  </div>
+  <script type="text/javascript" src="petriDish3.js"></script>
+
+</body>
+</html>

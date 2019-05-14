@@ -1,0 +1,164 @@
+/* /////////////////// HTML Elemente ///////////////// */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #1c1d1f;
+  color: white;
+  font-size: 10px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+button {
+  color: white;
+  background-color: #666;
+  text-align: center;
+  margin: 0.5ex;
+}
+
+input {
+  margin: 0.5ex;
+}
+
+h1 {
+  font-size:140%;
+}
+
+h2 {
+  font-size:110%;
+}
+
+p {
+  font-size: 10px;
+  text-align: left;
+  margin: 0.5ex;
+}
+
+.box {
+  float: left;
+  margin-right: 5px;
+  /*padding: 20px*/;
+}
+
+.clearfix {
+  overflow: auto;/* genestete Elem. enden mit Elternelem */
+  float: left;
+}
+
+/* /////////////////// SVG Elemente ///////////////// */
+svg {
+  background-color: #0e0e0e; 
+  border: 1px solid #666666; 
+  margin-left: 6em;
+  margin-top: 7ex;
+  /*padding-right: 1em;*/
+}
+
+.line {
+  fill: none;
+  stroke: orange;
+  stroke-width: 2px;
+}
+
+.area {
+  fill: yellow;
+  opacity: 0.3;
+}
+
+text {
+  font-size: 10px;
+}
+
+circle {
+  fill: pink;
+  stroke: red;
+  stroke-width: 1.5px;
+}
+
+path {
+  /*fill: gray;
+  stroke: gray;*/
+  stroke-width: 25px;
+  opacity: 0.3;
+  paint-order: stroke markers fill;
+  stroke-linejoin: round;
+}
+
+.d3-tip {
+  line-height: 1;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+}
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+/* Style northward tooltips specifically */
+.d3-tip.n:after {
+  margin: -2px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+/* Multirange: https://wiki.selfhtml.org/wiki/HTML/Formulare/input/number */
+@supports (--css: variables) {
+	input[type="range"].multirange {
+		padding: 0;
+		margin: 0;
+		display: inline-block;
+		vertical-align: top;
+    background: #1c1d1f;
+	}
+
+	input[type="range"].multirange.original {
+		position: absolute;
+	}
+
+  input[type="range"].multirange.original::-webkit-slider-thumb {
+    position: relative;
+    z-index: 2;
+  }
+
+  input[type="range"].multirange.original::-moz-range-thumb {
+    transform: scale(1); /* FF doesn't apply position it seems */
+    z-index: 1;
+    /*background: rgba(0, 1, 1, 0.8); left button*/
+  }
+
+  input[type="range"].multirange::-moz-range-track {
+    border-color: transparent; /* needed to switch FF to "styleable" control */
+  }
+
+	input[type="range"].multirange.ghost {
+		position: relative;
+		background: var(--track-background);
+		--track-background: linear-gradient(to right,
+				hsl(100, 100%, 100%) /*linker balken, anstatt transparent*/
+        var(--low), var(--range-color) 0,
+				var(--range-color) var(--high), 
+        hsl(100, 100%, 100%) /*rechter balken, anstatt transparent*/
+        0
+			) no-repeat 0 45% / 100% 25%;
+		--range-color: hsl(100, 80%, 40%);/* balken*/
+	}
+
+  input[type="range"].multirange.ghost::-webkit-slider-runnable-track {
+    background: var(--track-background);
+  }
+
+  input[type="range"].multirange.ghost::-moz-range-track {
+    background: var(--track-background);
+  }
+
+}
