@@ -1,0 +1,10 @@
+<!-- Polyline -->
+<svg width="50" height="50" xmlns="http://www.w3.org/2000/svg">
+  <polyline fill="none" stroke="blue" stroke-width="2"
+            points="05,30
+                    15,30
+                    15,20
+                    25,20
+                    25,10
+                    35,10" />
+</svg>

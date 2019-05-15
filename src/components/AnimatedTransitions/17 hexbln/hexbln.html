@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" charset="utf-8">
+<html>
+<head>
+  <title>JSON: Hexbin</title>
+  <style  type="text/css">
+    h1 {font-size:130%;}
+    h2 {font-size:100%;}
+    body {background-color: #dddddd}
+    svg {background-color: #ffffff}
+    text {
+      font-size: 10px;
+    }
+    .d3-tip {
+      line-height: 1;
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+    /* Style northward tooltips specifically */
+    .d3-tip.n:after {
+      margin: -2px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
+    .verse > tspan {
+      x: 10px;
+      dy: 1.2em;
+    }
+    .verse > tspan:nth-child(2n) {
+      dx: 1em;
+    }
+    .hull {/* pfade */
+      fill: gray;
+      stroke: gray;
+      stroke-width: 25px;
+      opacity: 0.3;
+      paint-order: stroke markers fill;
+      stroke-linejoin: round;
+    }
+    /* slider */
+    .slider {
+      margin: 1ex 0em;
+    }
+    .startduration,
+    .endduration {
+      float: left;
+      width: 15vw;
+      text-align: right;
+      /*font-weight: bold;
+      color: #333;*/
+    }
+    .endduration {
+      text-align: left;
+    }
+    .setduration {
+      position: absolute;
+      top: -2.5ex;
+      left: 60%;
+      width: 30px;
+      height: 1em;
+      text-align: center;
+      color: red;
+      /*font-weight: bold;*/
+      white-space: nowrap;
+    }
+    .range {
+      position: relative;
+      float: left;
+      width: 25vw;
+      padding: 0 0.9375rem;
+    }
+    input[type=range] {
+      -webkit-appearance: none;
+      display: block;
+      width: 100%;
+      padding: 0;
+      height: 5px;
+      border-radius: 3px;
+      background: #aaa;
+      box-sizing: content-box;
+    }
+    input[type=range]:focus {
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 50px;
+      height: 50px;
+      border: 2px solid #A7A7A7;
+      border-radius: 25px;
+      background: #aaa;
+    }
+  </style>
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/d3-hexbin.v0.2.min.js"></script>
+  <script type="text/javascript" src="d3-tip.js"></script>
+  <script type="text/javascript" src="geometry.js"></script>
+</head>
+<!-- //////////// BEGINN //////////////// -->
+<body>
+
+<h1>JSON: Hexbin</h1>
+<p>Wenn Punkte dichter als der spezifizierte Radius aneinander liegen, wird ihnen die gleiche Hexagon-Koordinate zugewiesen. Beispiel: hexbin([[0,0,"a"],[1,1,"b"],[0,1,"c"],[1,0,"d"]]) ergibt [{0: [0,0,"a"], x:0, y:0}, {0:[1,1,"b"], 1:[0,1,"c"], x: 0.866.., y:1.5}, {0:[1,0,"d"], x:1.732.., y:0}] - also werden aus 4 Punkten 3 generiert.</p>
+<p>Weiterer Nachteil: es muss ein Radius spezifiziert werden.</p>
+<!-- Buttons -->
+<button id="btn" onclick="changeView()">change to gridplot</button>
+<br>
+<!-- Hüllensichtbarkeit -->
+<select id="transparenz" onchange="changeTransparenz()">
+  <option value="0.3" selected>Hüllen sichtbar</option>
+  <option value="0">Hüllen unsichtbar</option>
+</select>
+<!-- Transitionsdauer -->
+<form>
+  Transitiondauer:
+  <div class="slider">
+    <span class="startduration">0.5s</span>
+    <div class="range">
+      <input id="transDuration" name="transDuration" type="range" min="500" max="3000" value="2000" required step="500">
+      <output id="durationOutput" class="setduration">2000</output>
+    </div>
+    <span class="endduration">3s</span>
+  </div>
+</form></br>
+<script type="text/javascript" src="hexbln.js"></script>
+
+</body>
+</html>

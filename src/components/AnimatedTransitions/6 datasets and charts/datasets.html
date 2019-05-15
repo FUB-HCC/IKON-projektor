@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" charset="utf-8">
+<html>
+<head>
+  <title>Datasets</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <style  type="text/css">
+    h1 {font-size:130%;}
+    h2 {font-size:100%;}
+    button {float: left; padding-right: 1em;}
+    .clearfix {overflow: auto;}
+    div.bar {
+      display: inline-block;
+      width: 20px;
+      height: 75px;   /* We'll override this later */
+      background-color: teal;
+    }
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+    .axis text {
+      font-family: sans-serif;
+      font-size: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="clearfix">
+    <h1>Paragraphs</h1>
+    <script type="text/javascript" src="firstTry.js"></script>
+  </div>
+  
+  <div class="clearfix">
+    <h1>Div-Bars</h1>
+    <div id="hier"></div>
+    <script type="text/javascript" src="div-bars.js"></script>
+  </div>
+  
+  <div class="clearfix">
+    <h1>Circles</h1>
+    <script type="text/javascript" src="circles.js"></script>
+  </div>
+  
+  <div class="clearfix">
+    <h1>Bar-Chart</h1>
+    <script type="text/javascript" src="Barchart.js"></script>
+  </div>
+  
+  <div class="clearfix">
+    <h1>Scatterplot with Scaling</h1>
+    <script type="text/javascript" src="Scatterplot.js"></script>
+  </div>
+  
+  <div class="clearfix">
+    <h1>Area</h1>
+    <script type="text/javascript" src="area.js"></script>
+  </div>
+  
+</body>
+</html>
+
+<!-- Quellen:
+  http://alignedleft.com/tutorials/d3/binding-data
+  http://knowledgestockpile.blogspot.com/2012/01/understanding-selectall-data-enter.html
+-->

@@ -1,0 +1,10 @@
+Echte Kraftprotze – Wespen und ihre Muskeln
+Einführung und Ziele des Projekts
+
+Das Promotionsprojekt befasst sich mit der Phylogenie und Evolution der aculeaten Hymenoptera (= mit einem Wehrstachel ausgestattete Hautflügler, Stechimmen). Mittels MikroCT-Scans und 3D-Rekonstruktionen wird die Skelettmuskulatur im Thorax von Wespen aus aller Welt untersucht. Aculeate Merkmalssysteme werden herausgearbeitet. Daraus entsteht ein umfassender, morphologischer Datensatz zur Klärung verwandtschaftlicher Beziehungen. Die einzelnen Strukturen werden online über das Museum für Naturkunde und auf dem Hymenoptera Anatomy Ontology-Portal (HAO) frei zugänglich gemacht.
+Methoden
+
+Die Extremitäten und der Hinterleib der Tiere werden entfernt. Dann werden sie mit einer Iod-Ethanol-Lösung gefärbt, in einem speziellen Verfahren schonend getrocknet („Kritisch-Punkt-Trocknung“) und im Mikro-Computertomographen (µCT) gescannt. So erhält man ein 3D-Volumen-Bild. Die einzelnen Muskeln werden mit der Software „AmiraZIBEdition“ manuell herausgearbeitet. Dies ermöglicht später im Bild das Ein- und Ausblenden einzelner Muskeln, so dass man deren Strukturverlauf von allen Seiten genau sehen und beschreiben kann, vor allem die jeweilige Ursprungs- und Ansatzstelle eines Muskels. Es wird jeweils eine Körperhälfte des Meso- und Metathorax untersucht. Aus dem Vergleich der Ergebnisse mit genetischen Arbeiten wird ein Erkenntniszuwachs über die Verwandtschaftsverhältnisse der aculeaten Hymenoptera erwartet.
+Zwischenergebnisse
+
+Die bisherigen Untersuchungen zeigen bereits deutliche Unterschiede in der Anzahl sowie im Strukturverlauf der Muskeln. Über 40 Muskeln kann eine Wespe auf einer Seite des Meso- und Metathorax besitzen. Nicht jeder Muskel kommt jedoch in jeder Wespe vor. Schließlich haben die Tiere zum Teil völlig unterschiedliche Lebensweisen,  Fortpflanzungsstrategien und Beutetiere in ganz unterschiedlichen Lebensräumen.

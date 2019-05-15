@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" charset="utf-8">
+<html>
+<head>
+  <title>JSON</title>
+  <style  type="text/css">
+    h1 {font-size:130%;}
+    h2 {font-size:100%;}
+    body {background-color: #dddddd}
+    svg {background-color: #ffffff}
+    text {
+      font-size: 10px;
+    }
+    .d3-tip {
+      line-height: 1;
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+    /* Style northward tooltips specifically */
+    .d3-tip.n:after {
+      margin: -2px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
+    .verse > tspan {
+      x: 10px;
+      dy: 1.2em;
+    }
+    .verse > tspan:nth-child(2n) {
+      dx: 1em;
+    }
+  </style>
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <script type="text/javascript" src="d3-tip.js"></script>
+</head>
+<!-- //////////// BEGINN //////////////// -->
+<body>
+
+<h1>JSON</h1>
+<script type="text/javascript" src="scatterplot.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" charset="utf-8">
+<html>
+<head>
+  <title>Transitions</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/d3-ease.v1.min.js"></script>
+  <style  type="text/css">
+    button {float: left; padding-right: 1em;}
+    .clearfix {overflow: auto;}
+  </style>
+</head>
+
+<body>
+  <div class="clearfix">
+  <button type="button" onclick="initTransition()">simple Transition with Duration</button>
+  <script type="text/javascript" src="Transition.js"></script>
+  </div>
+  
+  <div class="clearfix">
+  <button type="button" onclick="initDelay()">delay</button> 
+  <script type="text/javascript" src="Delay.js"></script>
+  </div>
+  
+  <div class="clearfix">
+  <button type="button" onclick="initMultiTrans()">multiple Transitions</button> 
+  <script type="text/javascript" src="multipleTransitions.js"></script>
+  </div>
+  
+  <div class="clearfix">
+  <button type="button" onclick="initSlideIn()">slide-in</button> 
+  <script type="text/javascript" src="SlideIn.js"></script>
+  </div>
+  
+  <div class="clearfix">
+  <button type="button" onclick="initPathTransition()">Transform Path</button> 
+  <script type="text/javascript" src="Path.js"></script>
+  </div>
+  
+  <div class="clearfix">
+  <button type="button" onclick="initJoins()">Joins</button> 
+  <script type="text/javascript" src="Joins.js"></script>
+  </div>
+  
+  <div class="clearfix">
+  <button type="button" onclick="initTweens()">Tween</button> 
+  <script type="text/javascript" src="Tweens.js"></script>
+  </div>
+  
+  <div class="clearfix">
+  <button type="button" onclick="updateDataset()">Update</button> 
+  <script type="text/javascript" src="updateDataset.js"></script>
+  </div>
+</body>
+</html>
+
+<!-- Quellen:
+  http://docs.w3cub.com/d3~4/d3-transition/
+  https://d3indepth.com/selections/
+-->

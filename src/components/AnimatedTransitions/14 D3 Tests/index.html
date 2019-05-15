@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" charset="utf-8">
+<html>
+<head>
+  <title>D3 Tests</title>
+  <link href="styles.css" rel="stylesheet">
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="https://d3js.org/d3-polygon.v1.min.js"></script>
+  <script type="text/javascript" src="geometry.js"></script>
+  <script type="text/javascript" src="d3-tip.js"></script>
+  <script type="text/javascript" src="settings.js"></script>
+</head>
+
+<body>
+
+<h1>Punkte werden eingeblendet</h1>
+  <button onclick="addCircle()">Add Circle</button>
+  <button onclick="delCircle()">Delete Circle</button>
+  </br>
+  <script type="text/javascript" src="svg-add-files/svg-add.js"></script>
+  <table><tr>
+    <td>
+      <p>Alpha-Wert (0 -> 1)</p><svg id="svg11"></svg><script type="text/javascript" src="svg-add-files/svg-add-alpha.js"></script>
+    </td>
+    <td>
+      <p>Radius (0 -> 5)</p><svg id="svg12"></svg><script type="text/javascript" src="svg-add-files/svg-add-radius.js"></script>
+    </td>
+    <td>
+      <p>Radius (easeBackIn/Out.overshot)</p><svg id="svg13"></svg><script type="text/javascript" src="svg-add-files/svg-add-radius-b.js"></script>
+    </td>
+    <td>
+      <p>ohne Transition</p><svg id="svg14"></svg><script type="text/javascript" src="svg-add-files/svg-add-no.js"></script>
+    </td>
+  </tr></table>
+ 
+</br>
+<h1>Bewegungen</h1>
+  <button onclick="moveCircles()">Move Circles</button>
+  </br><script type="text/javascript" src="svg-move-files/svg-move.js"></script>
+    <table><tr>
+    <td>
+      <p>Linear</p><svg id="svg21"></svg><script type="text/javascript" src="svg-move-files/svg-move-linear.js"></script>
+    </td>
+    <td>
+      <p>SI/SO (easeQuadInOut)</p><svg id="svg22"></svg><script type="text/javascript" src="svg-move-files/svg-move-siso.js"></script>
+    </td>
+    <td>
+      <p>ohne Transition</p><svg id="svg23"></svg><script type="text/javascript" src="svg-move-files/svg-move-ohneTrans.js"></script>
+    </td>
+  </tr></table>
+  <p>Bereits hier erkennt man, dass man ohne Transition keine Chance hat, bewegte Knoten zu identifizieren, sofern es mehrere sind.</p>
+  
+</br>
+<h1>Staggering</h1>
+  <button onclick="moveColCircles()">Move Circles</button>
+  Überdeckung der Bewegungen: 0 <input id="staggeringRange" style="position:relative;top:3px;" type="range" min="0" max="100" value="75">1
+  </br>
+  <script type="text/javascript" src="svg-staggering-files/svg-staggering.js"></script>
+    <table><tr>
+    <td>
+      <p>staggered nach Farbe</p><svg id="svg31"></svg><script type="text/javascript" src="svg-staggering-files/svg-staggering-farbe.js"></script>
+    </td>
+    <td>
+      <p>staggered nach Richtung (Quadrant 1 bis 4)</p><svg id="svg32"></svg><script type="text/javascript" src="svg-staggering-files/svg-staggering-richtung.js"></script>
+    </td>
+    <td>
+      <p>linear ( = gleichzeitig)</p><svg id="svg33"></svg><script type="text/javascript" src="svg-staggering-files/svg-staggering-linear.js"></script>
+    </td>
+  </tr></table>
+  
+  
+</br>
+<h1>Staging</h1>
+  <button onclick="moveClusterCircles()">Move Circles</button>
+  </br>
+  Die Verformung der Hülle ist nicht ausgereift, weil die Anpassung der Hüllen (vorher/nachher) bisher die Position als ID nahm. Dies muss noch auf eine einzigartige, unveränderliche ID geändert werden.
+  <script type="text/javascript" src="svg-staging-files/svg-staging.js"></script>
+    <table><tr>
+    <td>
+      <p>linear (alles gleichzeitig)</p><svg id="svg41"></svg><script type="text/javascript" src="svg-staging-files/svg-staging-linear.js"></script>
+    </td>
+    <td>
+      <p>staged (per Cluster)</p><svg id="svg42"></svg><script type="text/javascript" src="svg-staging-files/svg-staging-cluster.js"></script>
+    </td>
+    <td>
+      <p>ohne Transition</p><svg id="svg43"></svg><script type="text/javascript" src="svg-staging-files/svg-staging-noTrans.js"></script>
+    </td>
+  </tr></table>
+  
+</br>
+<h1>Verschmelzen und aufteilen von Hüllen</h1>
+  Das Versch,elzen funktioniert nicht, daher lasse ich es an dieser Stelle weg.</br>
+  <button onclick="addHull()">add circs for new hull</button>
+  <button onclick="delHull()">delete circs for diminish hull</button>
+  <!--<button onclick="meltHulls()">melt hulls</button>-->
+  <button onclick="divideHulls()">divide hulls</button>
+  </br>
+  <svg id="svg51"></svg><script type="text/javascript" src="svg-meltHulls-files/svg-meltHulls.js"></script>
+</body>
+</html>

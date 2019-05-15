@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" charset="utf-8">
+<html>
+<head>
+  <title>Enter, Update, Exit</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="d3-tip.js"></script>
+  <!-- läuft nicht: <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script> http://bl.ocks.org/Caged/6476579 -->
+  <style  type="text/css">
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    svg {border: 1px solid #dedede; padding-right: 1em;}
+    h1 {font-size:130%;}
+    h2 {font-size:100%;}
+    .clearfix {overflow: auto;}
+    .axis path, .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    .line {
+      fill: none;
+      stroke: orange;
+      stroke-width: 2px;
+    }
+    .area {
+      fill: yellow;
+      opacity: 0.3;
+    }
+    text {
+      fill: black;
+      font-size: 10px;
+    }
+    .d3-tip {
+      line-height: 1;
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }
+    /* Style northward tooltips specifically */
+    .d3-tip.n:after {
+      margin: -2px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Update</h1>
+  <div>
+  <button type="button" onclick="update()">Update</button>
+  <script type="text/javascript" src="update.js"></script>
+  </div>
+
+<h1>Change Graphic</h1>
+  <div>
+  <button type="button" onclick="showGraph()">Graph</button>
+  <button type="button" onclick="showScatterplot()">Scatterplot</button>
+  <button type="button" onclick="showBarchart()">Barchart</button>
+  <button type="button" onclick="showPiechart()">Piechart</button> 
+  <script type="text/javascript" src="change.js"></script>
+  <script type="text/javascript" src="graph.js"></script>
+  <script type="text/javascript" src="scatterplot.js"></script>
+  <script type="text/javascript" src="barchart.js"></script>
+  <script type="text/javascript" src="piechart.js"></script>
+  <script type="text/javascript">showPiechart();</script>
+  </div>
+ 
+</body>
+</html>
+
+<!-- Quellen:
+
+-->

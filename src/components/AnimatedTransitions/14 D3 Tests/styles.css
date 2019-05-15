@@ -1,0 +1,105 @@
+/* /////////////////// HTML Elemente ///////////////// */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #1c1d1f;
+  color: white;
+  font-size: 10px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+button {
+  color: white;
+  background-color: #999999;
+  text-align: center;
+}
+
+h1 {
+  font-size:140%;
+}
+
+h2 {
+  font-size:110%;
+}
+
+p {
+  font-size: 10px;
+  text-align: left;
+}
+
+.box {
+  float: left;
+  margin-right: 5px;
+  padding: 20px;
+}
+
+.clearfix {
+  overflow: auto;/* genestete Elem. enden mit Elternelem */
+  float: left;
+}
+
+/* /////////////////// SVG Elemente ///////////////// */
+svg {
+  background-color: #0e0e0e; 
+  border: 1px solid #666666; 
+  padding-right: 1em;
+}
+
+.line {
+  fill: none;
+  stroke: orange;
+  stroke-width: 2px;
+}
+
+.area {
+  fill: yellow;
+  opacity: 0.3;
+}
+
+text {
+  font-size: 10px;
+}
+
+circle {
+  fill: pink;
+  stroke: red;
+  stroke-width: 1.5px;
+}
+
+path {
+  /*fill: gray;
+  stroke: gray;*/
+  stroke-width: 25px;
+  opacity: 0.3;
+  paint-order: stroke markers fill;
+  stroke-linejoin: round;
+}
+
+.d3-tip {
+  line-height: 1;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+}
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+/* Style northward tooltips specifically */
+.d3-tip.n:after {
+  margin: -2px 0 0 0;
+  top: 100%;
+  left: 0;
+}

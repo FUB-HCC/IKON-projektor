@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" charset="utf-8">
+<html>
+<head>
+  <title>Shapes and Filters</title>
+  <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script><!-- /home/anja/D3/d3-5.7.0/3d.js -->
+  <style  type="text/css">
+    svg {float: left; padding-right: 1em;}
+    h1 {font-size:130%;}
+    h2 {font-size:100%;}
+    .clearfix {overflow: auto;}
+  </style>
+</head>
+
+<body>
+<!-- ////////////// Linie /////////////// -->
+<h1>Linie</h1>
+  <div class="clearfix">
+  <svg height="50" width="50">
+    <line x1="0" y1="0" x2="50" y2="50" style="stroke:red; stroke-width:2"/>
+  </svg>
+  <div id="Linie"></div><!-- Kontainer für das SVG Bild -->
+  <script language = "javascript">
+    // create SVG element
+    var svg = d3.select("#Linie")
+      .append("svg")
+      .attr("width", 50)
+      .attr("height", 50);
+    svg.append("line")
+      .attr("x1", 0)
+      .attr("y1", 0)
+      .attr("x2", 50)
+      .attr("y2", 50)
+      .style("stroke", "lightgreen")
+      .style("stroke-width", 2);
+  </script></br>
+  <pre><!-- monofont + preserves spaces and line breaks -->
+  <code><!-- Defines a piece of computer code -->
+    d3.select("#Linie").append("svg")
+      .attr("width", 50)
+      .attr("height", 50)
+      .attr("x1", 0)
+      .attr("y1", 0)
+      .attr("x2", 50)
+      .attr("y2", 50)
+      .style("stroke", "lightgreen")
+      .style("stroke-width", 2);
+  </code>
+  </pre>
+  </div>
+
+<!-- ////////////// Rechteck /////////////// -->
+<h1>Rechteck</h1>
+  <div class="clearfix">
+  <svg width="100" height="50">
+    <rect width="100" height="50" style="fill:pink; stroke-width:3; stroke:red" />
+  </svg>
+  <div id="Rechteck"></div>
+  <script type="text/javascript" src="Rechteck.js"></script>
+  </div>
+  
+<!-- ////////////// Kreis /////////////// -->
+<h1>Kreis</h1>
+  <div class="clearfix">
+  <svg height="50" width="50">
+    <circle cx="25" cy="25" r="20" fill="pink" stroke="red" stroke-width="2" />
+  </svg>
+  <div id="Kreis"></div>
+  <script type="text/javascript" src="Kreis.js"></script>
+  </div>
+  
+<!-- ////////////// Ellipse /////////////// -->
+<h1>Ellipse</h1>
+  <div class="clearfix">
+  <svg width = "100" height = "50">
+    <ellipse cx = "50" cy = "25" rx = "40" ry = "20" fill = "pink" stroke="red" />
+  </svg>
+  <div id="Ellipse"></div>
+  <script type="text/javascript" src="Ellipse.js"></script>
+  </div>
+  
+<!-- ////////////// Polygon /////////////// -->
+<h1>Polygon</h1>
+  <div class="clearfix">
+  <svg height="50" width="100">
+    <polygon points="10,10 100,20 60,50" style="fill:pink; stroke:red; stroke-width:1" />
+  </svg> 
+  <div id="Polygon"></div>
+  <script type="text/javascript" src="Polygon.js"></script>
+  </div>
+  
+<!-- ////////////// Polyline /////////////// -->
+<h1>Polyline</h1>
+  <div class="clearfix">
+  <svg height="50" width="100">
+    <polyline points="20,20 40,25 60,40 80,50 100,30"
+  style="fill:pink; stroke:red; stroke-width:3" />
+  </svg> 
+  <div id="Polyline"></div>
+  <script type="text/javascript" src="Polyline.js"></script>
+  </div>
+  
+<!-- ////////////// Path /////////////// -->
+<h1>Path</h1>
+  <div class="clearfix">
+  <svg height="50" width="100">
+     <path d="M 100 0 L 75 50 L 40 20 Z" fill="pink" stroke="red" />
+  </svg> 
+  <div id="Path"></div>
+  <script type="text/javascript" src="Path.js"></script>
+  </div>
+  <p>
+  Path-Variables (Big letters for absolute coordinates, small letters for relative):
+    <ul>
+    <li>M/m = moveto</li>
+    <li>L/l = lineto</li>
+    <li>H/h = horizontal lineto</li>
+    <li>V/v = vertical lineto</li>
+    <li>C/c = curveto</li>
+    <li>S/s = smooth curveto</li>
+    <li>Q/q = quadratic Bézier curve</li>
+    <li>T/t = smooth quadratic Bézier curveto</li>
+    <li>A/a = elliptical Arc</li>
+    <li>Z/z = closepath</li>
+    </ul>
+  </p>
+  
+<!-- ////////////// Arc /////////////// -->
+<h1>Arc</h1>
+  <div class="clearfix">
+  <svg width = "150" height = "100">
+    <path d="M 50 50 m 20 20 l 30 30 l 0 -70.71 l-30 30 s14.14 0 0 28.28 -14.14 0 Z"  fill="pink" stroke="red" />
+  </svg>
+  <div id="Arc"></div>
+  <script type="text/javascript" src="Arc.js"></script>
+  </div>
+  
+<!-- ////////////// Text /////////////// -->
+<h1>Text</h1>
+  <div class="clearfix">
+  <svg height="20" width="100">
+    <text x="0" y="15" fill="red" font-family="sans-serif" font-size="16px">I love SVG!</text>
+  </svg> 
+  <div id="Text"></div>
+  <script type="text/javascript" src="Text.js"></script>
+  </div>
+  
+<!-- ////////////// Strokes /////////////// -->
+<h1>Strokes</h1>
+  <div class="clearfix">
+  <svg height="10" width="100">
+     <path stroke="red" d="M 0 0 L 100 0" stroke-width="6" stroke-dasharray="8,4,2,2,2,4" />
+  </svg> 
+  <div id="Stroke"></div>
+  <script type="text/javascript" src="Stroke.js"></script>
+  </div>
+  <p>
+  stroke-linecap:
+    <ul>
+    <li>butt</li>
+    <li>round</li>
+    <li>square</li>
+    </ul>
+  </p>
+  
+<!-- ////////////// Transformation /////////////// -->
+<h1>Transformations</h1>
+  <div class="clearfix">
+  <svg height="120" width="130">
+     <rect width="100" height="50" style="fill:pink; stroke-width:3; stroke:red" transform = "translate(30 20) rotate(30,0,0) scale(0.75 0.75)" />
+  </svg>
+  <div id="Transformation"></div>
+  <script type="text/javascript" src="Transformation.js"></script>
+  </div>
+
+<!-- ////////////// Gruppe /////////////// -->
+<h1>Gruppe</h1>
+  <div class="clearfix">
+  <svg height="100" width="100">
+    <g>
+      <rect x="20" y="20" width="50" height="50" style="fill:pink; stroke:red"/>
+      <circle cx="0" cy="0" r="30" fill="pink" stroke="red"/>
+    </g>
+  </svg>
+  <div id="Gruppe"></div>
+  <script type="text/javascript" src="Gruppe.js"></script>
+  </div>
+
+<!-- ////////////// Filter /////////////// -->
+<h1>Filter</h1>
+
+<!-- linearGradient -->
+<h2>linearGradient</h2>
+  <div class="clearfix">
+  <svg height="50" width="100">
+    <defs>
+      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="50%">
+        <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+        <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+      </linearGradient>
+    </defs>
+    <rect width="100" height="50" fill="url(#grad1)" />
+    <text fill="#ffffff" font-size="32" font-family="Verdana" x="10" y="35">SVG</text>
+  </svg>
+  <div id="FillingLin"></div>
+  <script type="text/javascript" src="FillingLin.js"></script>
+  </div>
+  
+<!-- radialGradient -->
+<h2>radialGradient</h2>
+  <div class="clearfix">
+  <svg height="50" width="100">
+    <defs>
+      <radialGradient id="grad2" cx="50%" cy="50%" r="50%" fx="30%" fy="20%">
+        <stop offset="0%" style="stop-color:rgb(255,255,100);stop-opacity:0" />
+        <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+      </radialGradient>
+    </defs>
+    <ellipse cx="50" cy="25" rx="40" ry="20" fill="url(#grad2)" />
+  </svg>
+  <div id="FillingRad"></div>
+  <script type="text/javascript" src="FillingRad.js"></script>
+  </div>
+
+<!-- feGaussianBlur -->
+<h2>feGaussianBlur</h2>
+  <div class="clearfix">
+  <svg height="90" width="140">
+      <defs>
+        <filter id="filter1" x="-20" y="-20" width="100" height="50">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" />
+        </filter>
+      </defs>
+      <rect x="20" y="20" width="100" height="50" fill="red" filter="url(#filter1)" />
+  </svg> 
+  <div id="Filter"></div>
+  <script type="text/javascript" src="Filter.js"></script>
+  </div>
+  <p>
+  Filter-Elemente:
+    <ul>
+    <li>&lt;feBlend&gt;</li>
+    <li>&lt;feColorMatrix&gt;</li>
+    <li>&lt;feComponentTransfer&gt;</li>
+    <li>&lt;feComposite&gt;</li>
+    <li>&lt;feConvolveMatrix&gt;</li>
+    <li>&lt;feDiffuseLighting&gt;</li>
+    <li>&lt;feDisplacementMap&gt;</li>
+    <li>&lt;feFlood&gt;</li>
+    <li>&lt;feGaussianBlur&gt;</li>
+    <li>&lt;feImage&gt;</li>
+    <li>&lt;feMerge&gt;</li>
+    <li>&lt;feMorphology&gt;</li>
+    <li>&lt;feOffset&gt;</li>
+    <li>&lt;feSpecularLighting&gt;</li>
+    <li>&lt;feTile&gt;</li>
+    <li>&lt;feTurbulence&gt;</li>
+    <li>&lt;feDistantLight&gt;</li>
+    <li>&lt;fePointLight&gt;</li>
+    <li>&lt;feSpotLight&gt;</li>
+    </ul>
+  </p>
+
+  
+<!-- Shadow -->
+<h2>Shadows</h2>
+  <div class="clearfix">
+  <svg height="70" width="120">
+     <defs>
+        <filter id="filter3" x="0" y="0" width="150%" height="150%">
+          <feOffset result="offOut" in="SourceAlpha" dx="5" dy="5" />
+          <feGaussianBlur result="blurOut" in="offOut" stdDeviation="5" />
+          <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+        </filter>
+      </defs>
+      <rect width="90" height="40" stroke="red" stroke-width="3"
+      fill="pink" filter="url(#filter3)" />
+  </svg>
+  <div id="Shadow"></div>
+  <script type="text/javascript" src="Shadow.js"></script>
+  </div>
+
+<!-- Glow-->
+<h2>Glow</h2>
+  <div class="clearfix">
+  <svg height="70" width="120">
+     <defs>
+        <filter id="myFilter" x="-10" y="-10" width="90" height="40">
+          <feGaussianBlur result="blurOut" in="SourceGraphic" stdDeviation="5" />
+          <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+        </filter>
+      </defs>
+      <rect x="10" y="10" width="90" height="40" fill="red" filter="url(#myFilter)" />
+  </svg>
+  <div id="Glow"></div>
+  <script type="text/javascript" src="Glow.js"></script>
+  </div>
+  
+</body>
+</html>
+
+<!-- Quellen:
+  https://www.w3schools.com/graphics/svg_feoffset.asp
+  https://www.dashingd3js.com/svg-basic-shapes-and-d3js
+  https://www.dashingd3js.com/svg-paths-and-d3js
+  
+-->

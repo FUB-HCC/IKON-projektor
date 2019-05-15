@@ -1,0 +1,18 @@
+\documentclass{scrartcl}
+
+\usepackage{pst-all}% um nach TeX konvertierte PStrick-dateien einzubinden
+\usepackage{svg}% um svg dateien anzuzeigen
+
+\begin{document}
+\section{Inkscape SVG nach TeX konvertieren}
+\input{tex.tex}
+
+\section{SVG als PDF speichern}
+\scalebox{0.6}{\input{tex.pdf_tex}}
+
+
+\section{SVG direkt einbinden}
+Funzt nicht.
+%\includesvg{tex.svg}
+%\includegraphics[scale=1]{svg}
+\end{document}
