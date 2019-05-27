@@ -38,10 +38,16 @@
   </div>
   
   <div>
+    <p><b>Zusatzoptionen:</b></p>
     <button onclick="mergeCluster()">merge cluster</button></br>
     <button onclick="splitCluster()">split cluster</button></br>
     <button onclick="nodeChangeCluster()">nodes change cluster</button></br>
-    <!--<button onclick="manuellUpdate()">manuell Update</button>-->
+    <!--<button onclick="manuellUpdate()">manuell Update</button></br>-->
+    <b>Transitionsdauer:</b>
+    <span id="startduration">0.5 s</span>
+    <input id="transDurationIn" type="range" value="1000" min="500" max="2500" step="500"/>
+    <span id="endduration">2.5 s</span>
+    <output id="transDurationOut">1 s</output>
   </div>
   <script type="text/javascript" src="petriDish3.js"></script>
 

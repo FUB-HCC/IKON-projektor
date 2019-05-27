@@ -3,6 +3,7 @@ var clusterzahl = 4;
 var currID = 1;
 var zeitspanne = [1980,2019];
 var positionsRegler = 0;
+var transDuration = 1000;
 var checkboxen = {};
 
 //////////////// Dataset ////////////////
@@ -16,7 +17,7 @@ function fillDataset(anz){
     gerade = new Gerade(new Position(width/2, height/2), pos);
     clusterNo = Math.floor(gerade.getAngle() / (2*Math.PI) * clusterzahl);
     researchArea = forschungsgebiete[Index.getRandInt(0, forschungsgebiete.length-1)];
-    keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];;
+    keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];
     year = Index.getRandInt(zeitspanne[0], zeitspanne[1]);
     dataset.push(new Knoten(pos, id, clusterNo, researchArea, year, keywords));
   }
@@ -41,8 +42,8 @@ var toggle = 0;
 function fillDataset2(){
   dataset = [];
   var pos = {
-    even: [[[4,0],[4,4],[0,6]], [[10,3],[5,3],[7,9]]],
-    odd: [[[2,8],[2,10],[0,10],[0,7]], [[7,3],[7,8],[12,5]]]
+    even: [[[4,0],[4,4],[0,6]], [[10,3],[5,3],[7,9],[7,4]]],
+    odd: [[[2,10],[0,10],[0,7],[2,8]], [[7,3],[7,8],[12,5],[9,5]]]
   };
   var id = 0, p, fach;
   const keys = ["uhu", "wal", "hai"];
@@ -67,7 +68,7 @@ function manuellUpdate(){
   
   toggle = (toggle+1)%2;
   fillDataset2();
-  console.log(dataset);
+  console.log("dataset",dataset);
   update(oldDatas, oldNests);
 }*/
 //////////////////////// ENDE: TESTUMGEBUNG
@@ -321,6 +322,23 @@ function splitCluster(){
   else
     console.log("Es gibt kein Cluster, darum kann nicht gesplittet werden.");
 }
+
+/////////////// Schieberegeler TransDuration ///////////
+document.getElementById("transDurationIn").value = transDuration;
+
+d3.select("#transDurationIn")
+  .on("change", function(){
+    transDuration = parseInt(this.value);
+  })
+  .on("input", function(){
+    document.getElementById("transDurationOut").value = (parseInt(this.value)/1000).toString() + " s"; //textContent
+    d3.select("#transDurationOut")
+      .style("right", (100-(this.value-this.min)/this.max*100+30).toString()+"px");
+  });
+
+
+
+
   
 ////////////////// UPDATE //////////////
 function update(oldDatas, oldNests){// (oldDatas, oldNests, delay)
@@ -331,6 +349,7 @@ function update(oldDatas, oldNests){// (oldDatas, oldNests, delay)
   var filteredData = getFilteredData(dataset);
   var transTable = oldNests.createTransitionNests(newNests);
   
+  //////////// vorher
   var hulls = svg.svg.select("g.hulls").selectAll("path.class42")
     .data(transTable[0].nest, function(d){return d.id;});
   
@@ -356,6 +375,7 @@ function update(oldDatas, oldNests){// (oldDatas, oldNests, delay)
     //.attr('fill', "green")
     .attr("opacity", 0.3);
   
+  //////////// nachher
   var hulls2 = svg.svg.select("g.hulls").selectAll("path.class42")
     .data(transTable[1].nest, function(d){return d.id;});
   
@@ -376,8 +396,8 @@ function update(oldDatas, oldNests){// (oldDatas, oldNests, delay)
     .on("mouseout", tooltipCluster.hide)
   .merge(hulls2)
     .transition() // Transition
-    .delay(delay+1000)
-    .duration(1000)
+    .delay(delay+250)
+    .duration(transDuration)
     .ease(d3.easeQuadInOut)
     .attr("d", function(d){// Pfade werden geändert, hier entsteht Müll
       //console.log("vertices n",d);
@@ -389,12 +409,13 @@ function update(oldDatas, oldNests){// (oldDatas, oldNests, delay)
     .on("end", showNewDatas);
   
   hulls2.exit()// bei verschmelzen: einer im exit() drin
-    .transition().delay(delay+1000)
-    .duration(1000)
+    .transition().delay(delay+250)
+    .duration(transDuration)
     .on("end", showNewDatas)
     .attr("opacity", 0)
     .remove();
   
+  ////////////// wird nach der Transition ausgeführt
   function showNewDatas(){
     var hulls3 = svg.svg.select("g.hulls").selectAll("path.class42")
       .data(new Nest(filteredData).nest, function(d){return d.id;});
@@ -445,20 +466,22 @@ function update(oldDatas, oldNests){// (oldDatas, oldNests, delay)
         // d3.select(this) ist der dataset-Eintrag
         if (d.year < zeitspanne[0] || d.year > zeitspanne[1]) {
           d3.select(this).transition()
-          .duration(1000)
+          .duration(250)
           .ease(d3.easeBackIn.overshoot(5))
           .attr("r", 0)
           .style('pointer-events', 'none');
         }
         else {
           d3.select(this).transition()
-          .duration(1000)
+          .duration(250)
           .ease(d3.easeBackOut.overshoot(5))
           .attr("r", 5)
           .style('pointer-events', 'all');
         }
       })
-      .transition().duration(1000).delay(1000).ease(d3.easeQuadInOut)
+      .transition()
+      .duration(transDuration)
+      .delay(delay+250).ease(d3.easeQuadInOut)
       .attr("cx", function(d){return scale.xScale(d.pos.x);})
       .attr("cy", function(d){return scale.yScale(d.pos.y);})
       .style("opacity", function(d){
@@ -469,7 +492,7 @@ function update(oldDatas, oldNests){// (oldDatas, oldNests, delay)
       });
       
   circles.exit()
-    .transition().delay(delay).duration(1000)
+    .transition().delay(delay+transDuration).duration(250)
     .ease(d3.easeBackIn.overshoot(3))
     .attr("r", 0)
     .remove();

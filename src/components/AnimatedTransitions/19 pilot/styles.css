@@ -3,47 +3,59 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: #1c1d1f;
   color: white;
-  font-size: 10px;
+  font-size: 11px;
+  padding: 1.5ex;
+  /*width: 750px;*/
+  text-align: center;
+  width: 50%;
+  margin-left : 25%
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+form {
+  display: inline;
+  /*margin:auto; https://d-graff.de/demos/selfhtml/jeena_test.html*/
+}
+
+
 button {
   color: white;
   background-color: #666;
-  text-align: center;
-  margin: 0.5ex;
+  margin: 0.2ex;
+  padding: 0.5ex;
 }
 
 input {
-  margin: 0.5ex;
+  color: white;
+  background-color: #666;
+  padding: 0.5ex;
+  margin:auto;
+  /*margin-right: 0.4em;*/
 }
 
 h1 {
-  font-size:140%;
+  font-size:160%;
 }
 
 h2 {
-  font-size:110%;
+  font-size:130%;
 }
 
 p {
-  font-size: 10px;
-  text-align: left;
-  margin: 0.5ex;
+  font-size: 11px;
+  margin-bottom: 1.6ex;
+  /*width: 750px;*/
+  text-align: justify;
 }
 
 .box {
-  float: left;
-  margin-right: 5px;
-  /*padding: 20px*/;
-}
-
-.clearfix {
-  overflow: auto;/* genestete Elem. enden mit Elternelem */
-  float: left;
+  overflow: auto;/* genestete Elem. enden mit Elternelem, siehe clearfix */
+  float: none;
+  margin-top: 1.5ex;
+  margin-bottom: 1.5ex;
 }
 
 #transDurationIn {
@@ -65,10 +77,8 @@ p {
 /* /////////////////// SVG Elemente ///////////////// */
 svg {
   background-color: #0e0e0e; 
-  border: 1px solid #666666; 
-  margin-left: 6em;
-  margin-top: 7ex;
-  /*padding-right: 1em;*/
+  border: 1px solid #666666;
+  /*float: left;*/
 }
 
 .line {
@@ -83,7 +93,7 @@ svg {
 }
 
 text {
-  font-size: 10px;
+  font-size: 11px;
 }
 
 circle {
@@ -108,6 +118,7 @@ path {
   color: #fff;
   border-radius: 4px;
   font-size: 12px;
+  text-align: left;
 }
 /* Creates a small triangle extender for the tooltip */
 .d3-tip:after {

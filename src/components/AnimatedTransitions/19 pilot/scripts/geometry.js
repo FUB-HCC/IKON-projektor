@@ -77,39 +77,35 @@ class Index { // statische Klasse
 class Keywords {
   static getRandStr(researchArea,clusterNo){// wählt ein zufälliges Keyword für das Cluster i
     var keylist = {// gelb
-      0: ["Chemie", "Formel", "Versuch", "Physik", "Gleichung", "Biologie", "Ergebnis", "Probe", "Messung", "Analyse", "Membran", "Arznei", "Wirkung", "Algebra", "Stochastik", "Evaluation", "Technik", "Innovation", "Forschung", "Methode", "Technologie"],
+      0: ["Mineral", "Lava", "Gestein", "Kristall", "Eisen", "Element", "Erde", "Aufbau", "Schichten", "Abbau", "MRT", "Analyse", "Legierung", "Keramik", "Metall", "Herstellung", "Bearbeitung", "Schliff", "Reinheit", "Wachstum", "Verbindung", "Vulkan", "Beschaffenheit", "Material", "Stabilität", "Kreislauf", "Isotop", "Boden", "Wasser", "Biosphäre", "Erdkruste", "Fluid", "Flöz", "Arsen", "Chrom", "Selen", "Endlager", "Radionukliden", "Schadstoff", "Partikeln", "Kolloiden", "Ressource", "Rohstoff", "Untergrund", "Spurenmetall", "Sediment", "Stalagmit", "Bodenkunde", "Chemie", "Formel", "Gleichung"],
       
-      1: ["Mineral", "Lava", "Gestein", "Kristall", "Eisen", "Element", "Erde", "Aufbau", "Schichten", "Abbau", "MRT", "Analyse", "Legierung", "Keramik", "Metall", "Herstellung", "Bearbeitung", "Schliff", "Reinheit", "Wachstum", "Verbindung", "Vulkan", "Beschaffenheit", "Material", "Stabilität", "Kreislauf", "Isotop", "Boden", "Wasser", "Biosphäre", "Erdkruste", "Fluid", "Flöz", "Arsen", "Chrom", "Selen", "Endlager", "Radionukliden", "Schadstoff", "Partikeln", "Kolloiden", "Ressource", "Rohstoff", "Untergrund", "Spurenmetall", "Sediment", "Stalagmit", "Bodenkunde"],
+      1: ["Erdbeben", "Höhenlage", "Zusammensetzung", "Probe", "Erdoberfläche", "Schwerefeld", "Vermessung", "Grenzen", "Kartierung", "Planet", "Karte", "Beschaffenheit", "Einteilung", "Globus", "Breitengrad", "Längengrad", "Schwerkraft", "Staumaür", "Windkraftanlage", "Grundstück", "Feld", "Pol", "Rotationsellipsoid", "Kugel", "Festlegung", "Bestimmung", "Seimologie", "Dynamik", "Physik", "Atmosphäre", "Kontinentalplatte", "Tektonik", "verschiebung", "Erdkern", "Sedimentbecken", "Klima", "Gebirge", "Kontinent", "Rohstoff", "Umweltschutz", "Seismik", "Meteor", "Formel", "Versuch", "Gleichung", "Forschung"],
       
-      2: ["Erdbeben", "Höhenlage", "Zusammensetzung", "Probe", "Erdoberfläche", "Schwerefeld", "Vermessung", "Grenzen", "Kartierung", "Planet", "Karte", "Beschaffenheit", "Einteilung", "Globus", "Breitengrad", "Längengrad", "Schwerkraft", "Staumaür", "Windkraftanlage", "Grundstück", "Feld", "Pol", "Rotationsellipsoid", "Kugel", "Festlegung", "Bestimmung", "Seimologie", "Dynamik", "Physik", "Atmosphäre", "Kontinentalplatte", "Tektonik", "verschiebung", "Erdkern", "Sedimentbecken", "Klima", "Gebirge", "Kontinent", "Rohstoff", "Umweltschutz", "Seismik", "Meteor"],
+      2: ["Gestein", "Erdkruste", "Fossil", "MRT", "Einordnung", "Ausgrabung", "Mikroorganismus", "Mikroskoph", "Sediment", "Systematik", "versteinert", "Röntgen", "Sammlung", "Entstehung", "Beschaffenheit", "Entwicklung", "Tektonik", "Vulkan", "Pluton", "Statigraphie", "Datierung", "Baugrund", "Biologie", "Probe", "Messung", "Analyse", "Forschung", "Ergebnis"],
       
-      3: ["Gestein", "Erdkruste", "Fossil", "MRT", "Einordnung", "Ausgrabung", "Mikroorganismus", "Mikroskoph", "Sediment", "Systematik", "versteinert", "Röntgen", "Sammlung", "Entstehung", "Beschaffenheit", "Entwicklung", "Tektonik", "Vulkan", "Pluton", "Statigraphie", "Datierung", "Baugrund"],
-      
-      4: ["Erwärmung", "Saürstoffgehalt", "CO2", "Ozon", "Wasser", "Riff", "Verschmutzung", "Erdatmosphäre", "Stickstoff", "O2", "O3", "Temperatur", "Wetter", "Nachhaltigkeit", "Umwelt", "Athmosphäre", "Gas", "Wolken", "Klima", "Messung", "Gewitter", "Tsunami", "Astronaut", "Astronomie", "Planet", "Fische", "Meeressäuger", "Strudel", "Salzwasser", "Ozean", "Expedition", "Tiefsee", "Schleppnetz", "Atlantik", "Plankton", "Fischfang", "Arktis", "Taucher", "Küste", "Plastikmüll", "Eisberg", "Wal", "Bohrinsel", "Umweltschutz", "Fisch"],
+      3: ["Erwärmung", "Sauerstoffgehalt", "CO2", "Ozon", "Wasser", "Riff", "Verschmutzung", "Erdatmosphäre", "Stickstoff", "O2", "O3", "Temperatur", "Wetter", "Nachhaltigkeit", "Umwelt", "Athmosphäre", "Gas", "Wolken", "Klima", "Messung", "Gewitter", "Tsunami", "Astronaut", "Astronomie", "Planet", "Fische", "Meeressäuger", "Strudel", "Salzwasser", "Ozean", "Expedition", "Tiefsee", "Schleppnetz", "Atlantik", "Plankton", "Fischfang", "Arktis", "Taucher", "Küste", "Plastikmüll", "Eisberg", "Wal", "Bohrinsel", "Umweltschutz", "Fisch", "Technik", "Innovation", "Forschung", "Methode", "Technologie"],
       
       // grün
-      5: ["Gewebe", "DNA", "Nahrung", "Medizin", "Molekularbiologie", "Pharmazie", "Biodiversität", "Vermehrung", "Biochemie", "Zelle", "Umweltschutz", "Protein", "Genom", "Biodiversität", "Systembiologie", "Biomedizin", "Neurowissenschaft", "Infektionsbiologie", "Krebsforschung", "Alzheimer", "Krebs", "Einzelzellanalyse", "Grundlagenforschung", "Forschung", "Photonik", "Krankheit", "Ursache", "Molekül", "Lebensmittel", "Analyse", "Kultur", "Tomographie", "MRT", "Diagnostik", "Tumor", "Spektroskophie", "Blut", "Blutplasma", "Herz", "Kreislauf", "Proband", "Mikroskoph", "Organismus"],
+      4: ["Gewebe", "DNA", "Nahrung", "Medizin", "Molekularbiologie", "Pharmazie", "Biodiversität", "Vermehrung", "Biochemie", "Zelle", "Umweltschutz", "Protein", "Genom", "Biodiversität", "Systembiologie", "Biomedizin", "Neurowissenschaft", "Infektionsbiologie", "Krebsforschung", "Alzheimer", "Krebs", "Einzelzellanalyse", "Grundlagenforschung", "Forschung", "Photonik", "Krankheit", "Ursache", "Molekül", "Lebensmittel", "Analyse", "Kultur", "Tomographie", "MRT", "Diagnostik", "Tumor", "Spektroskophie", "Blut", "Blutplasma", "Herz", "Kreislauf", "Proband", "Mikroskoph", "Organismus"],
       
-      6: ["Tiger", "Fortpflanzung", "Milbe", "Sammlung", "Metazoa", "Animalia", "Anatomie", "Morphologie", "Physiologie", "Genetik", "Verbreitung", "Entwicklung", "Systematik", "Tier", "Verhalten", "Biologie", "Organismus", "Saügetier", "Wirbeltier", "Evolution", "Population", "Tierschutz", "Museum", "Biodiversität", "Ökosystem", "Raubtier", "Fisch", "Meeressäuger"],
+      5: ["Tiger", "Fortpflanzung", "Milbe", "Sammlung", "Metazoa", "Animalia", "Anatomie", "Morphologie", "Physiologie", "Genetik", "Verbreitung", "Entwicklung", "Systematik", "Tier", "Verhalten", "Biologie", "Organismus", "Saügetier", "Wirbeltier", "Evolution", "Population", "Tierschutz", "Museum", "Biodiversität", "Ökosystem", "Raubtier", "Fisch", "Meeressäuger"],
       
-      7: ["Humus", "Agrar", "Baumbestand", "Pfote", "Knochen", "Skelett", "Zahnmedizin", "Ernährung", "Lebensmittel", "Wald", "Plantage", "Landschaft", "Holz", "Nachhaltigkeit", "Ressource", "Boden", "Dünger", "Forst", "Obst", "Gemüse", "Knolle", "Saat", "Kultur", "Freiland", "Veterinärmedizin", "Tierarzt", "Anatomie", "Arznei", "Bakteriologie", "Botanik", "Futterpflanze", "Giftpflanze", "Heilpflanze", "Chirurgie", "Anästhesie", "Fleisch", "Hygiene", "Genetik", "Parasit", "Pathologie", "Pharmakologie", "Toxikologie", "Tierhaltung", "Tierschutz", "Seuche", "Virologie", "Zoologie", "Viehzucht", "Ackerbau", "Ökologie", "Trockenheit", "Getreide", "Eier", "Milch", "Fisch", "Bodenkunde", "Agrarpolitik", "Phytomedizin", "Nutztier", "Biometrie", "Grünland", "Futterbau", "Pflanzenschutz"],
+      6: ["Humus", "Agrar", "Baumbestand", "Pfote", "Knochen", "Skelett", "Zahnmedizin", "Ernährung", "Lebensmittel", "Wald", "Plantage", "Landschaft", "Holz", "Nachhaltigkeit", "Ressource", "Boden", "Dünger", "Forst", "Obst", "Gemüse", "Knolle", "Saat", "Kultur", "Freiland", "Veterinärmedizin", "Tierarzt", "Anatomie", "Arznei", "Bakteriologie", "Botanik", "Futterpflanze", "Giftpflanze", "Heilpflanze", "Chirurgie", "Anästhesie", "Fleisch", "Hygiene", "Genetik", "Parasit", "Pathologie", "Pharmakologie", "Toxikologie", "Tierhaltung", "Tierschutz", "Seuche", "Virologie", "Zoologie", "Viehzucht", "Ackerbau", "Ökologie", "Trockenheit", "Getreide", "Eier", "Milch", "Fisch", "Bodenkunde", "Agrarpolitik", "Phytomedizin", "Nutztier", "Biometrie", "Grünland", "Futterbau", "Pflanzenschutz", "Membran", "Wirkung"],
       
-      8: ["Trieb", "Sonnenlicht", "Wasser", "Wachstum", "Erde", "Zucht", "Botanik", "Weidepflanze", "Futterpflanze", "Stoffwechsel", "Wachstum", "Systematik", "Inhaltsstoffe", "Biozönose", "Osmoplasmose", "Fotosynthese", "Wurzel", "Blatt", "Frucht", "Saat", "Samen", "Kultur", "Pflanzenschutz", "Artenschutz", "Biodiversität", "Gene", "Landbau", "Gartenbau", "Gemüse", "Obst", "Knolle", "Landwirtschaft", "Freiland", "Biotechnologie"],
+//       8: ["Trieb", "Sonnenlicht", "Wasser", "Wachstum", "Erde", "Zucht", "Botanik", "Weidepflanze", "Futterpflanze", "Stoffwechsel", "Wachstum", "Systematik", "Inhaltsstoffe", "Biozönose", "Osmoplasmose", "Fotosynthese", "Wurzel", "Blatt", "Frucht", "Saat", "Samen", "Kultur", "Pflanzenschutz", "Artenschutz", "Biodiversität", "Gene", "Landbau", "Gartenbau", "Gemüse", "Obst", "Knolle", "Landwirtschaft", "Freiland", "Biotechnologie"],
       
-      // rot
-      9: ["Sozialisation", "Gesellschaft", "Zusammenleben", "Institutionen", "Individuum", "Anthropologie", "Ethnologie", "Politik", "Religion", "Soziologie", "Sport", "Gericht", "Legislative", "Judikative", "Exekutive", "Polizei"],
+      // rot      
+      7: ["Schwinngung", "Guitarre", "Saite", "Note", "Takt", "Maske", "Licht", "Trauer", "Kommunikation", "Medium", "TV", "Kino", "Bühne", "Instrument", "Malerei", "Acryl", "Farben", "Film", "Video", "Raubkopie", "Individuum", , "Sport"],
       
-      10: ["Schwinngung", "Guitarre", "Saite", "Note", "Takt", "Maske", "Licht", "Trauer", "Kommunikation", "Medium", "TV", "Kino", "Bühne", "Instrument", "Malerei", "Acryl", "Farben", "Film", "Video", "Raubkopie"],
+      8: ["Politik", "Historiker", "König", "Schemata", "Einordnung", "Gemeinschaft", "Gesetze", "Literatur", "Ereignis", "Überlieferung", "Edda", "Vergangenheit", "Migration", "Epoche", "Dokument", "Schrift", "Herrscher", "Tyrann", "Kirche", "Krieg", "Schlacht", "Frieden", "Handel", "Lyrik", "Sprache", "Gesellschaft", "Zusammenleben", "Institutionen", "Anthropologie", "Ethnologie", "Religion", "Soziologie"],
       
-      11: ["Politik", "Historiker", "König", "Schemata", "Einordnung", "Gemeinschaft", "Gesetze", "Literatur", "Ereignis", "Überlieferung", "Edda", "Vergangenheit", "Migration", "Epoche", "Dokument", "Schrift", "Herrscher", "Tyrann", "Kirche", "Krieg", "Schlacht", "Frieden", "Handel", "Lyrik", "Sprache"],
-      
-      12: ["12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht"]
+      9: ["12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht"]
     };
     var keys = keylist[researchArea.id].filter(function(d,i){
       return i % 4 == clusterNo;// 4=clusterzahl
     });
     return keys[Index.getRandInt(0, keys.length-1)];
-  }  
+  }
   
   static getMajorWords(wordlist){
     var buckets = d3.nest()
@@ -124,10 +120,6 @@ class Keywords {
       return b.key - a.key;
     });
     return haeufigkeit.map(obj => obj.values).slice(0,4);
-  }
-  
-  static mergeKeywords(list){
-    return [].concat.apply([], list);
   }
   
 } // Ende: Klasse Keywords

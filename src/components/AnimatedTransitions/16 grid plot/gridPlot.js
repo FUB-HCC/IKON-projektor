@@ -1,7 +1,7 @@
 // ////////////// svg //////////////
 var margin = {top: 120, right: 40, bottom: 40, left: 40},
-  width = 500 - margin.left - margin.right,
-  height = 450 - margin.top - margin.bottom;
+  width = 650 - margin.left - margin.right,
+  height = 600 - margin.top - margin.bottom;
   
 var radius = 4;
 var plotkind = ["gridplot","scatterplot"];
