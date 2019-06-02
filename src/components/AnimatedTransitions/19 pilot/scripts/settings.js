@@ -53,7 +53,7 @@ const forschungsgebiete = [
   }
 ];
 
-const websites = ["../index", "test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test09", "results"];
+const websites = ["../index", "test01", "test02", "test03", "test04", "test05", "test06", "test07", "test08", "test09", "results"];
 
 function aufgabenNr(site){
   return websites.indexOf(site);
@@ -242,6 +242,7 @@ class Button {
 ////////////// Button Funktionen ///////////
 function storeDatas(site, res){
   sessionStorage.setItem(site, res);// https://www.w3schools.com/jsref/prop_win_sessionstorage.asp
+  localStorage.setItem(site, res);// https://diveintohtml5.info/storage.html
   document.cookie = site + "=" + res;// ; expires=Tue, 31 Dec 2019 12:00:00 UTC; path=thanks.html
   // https://www.w3schools.com/js/js_cookies.asp
   //console.log(site,"Datei hinzugefügt");
@@ -252,12 +253,14 @@ function storeDatas(site, res){
 
 function deleteDatas(site, res) {
   sessionStorage.removeItem(site);
+  localStorage.removeItem(site);
   document.cookie = site + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   //console.log(site,"letzte Datei gelöscht");
 }
 
 function deleteAllDatas(site, res) {
   sessionStorage.clear();
+  localStorage.clear();
   document.cookie.split(";").forEach(function(c){
     var key = c.split("=")[0];
     document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
@@ -268,16 +271,44 @@ function deleteAllDatas(site, res) {
 function showDatas(site){
   // window.sessionStorage
   // https://www.w3schools.com/jsref/prop_win_sessionstorage.asp
-  alert(document.cookie.split("; ").join("\n"));
-  console.log(document.cookie.split("; ").join("\n"));
+  
+  //alert(document.cookie.split("; ").join("\n"));
+  
+  //console.log(document.cookie.split("; ").join("\n"));
   // https://www.w3schools.com/js/js_cookies.asp
   //console.log(site,"Daten angezeigt");
   
-  document.cookie.split("; ").forEach(line =>
-    d3.select("body")
-      .append("p")
-      .text(line)
-  );
+//   document.cookie.split("; ").forEach(line =>
+//     d3.select("body")
+//       .append("p")
+//       .text(line)
+//   );
+  
+  // erstellt eine Datei mit den Ergebnissen
+  // https://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
+  // https://www.mediaevent.de/javascript/local-storage.html
+  var content = [];
+  var keys = Object.keys(localStorage).sort();
+  keys.forEach(function(key){
+    content.push(key + ": " + localStorage.getItem(key));
+  });
+  //var content = document.cookie;
+  download('results.txt', content.join("\n"));
+}
+
+function download(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
 }
 
 function cloneDataset(dataset){

@@ -39,6 +39,13 @@ d3.json("c4-t20_tSNE_p30-lr806.json").then(function(data){
   var gruppen = new Nest(dataset);
   var pfade = new Pfade(gruppen, svg, "class42", scale);
   
+  // Check for the various File API support.
+  if (window.File && window.FileReader && window.FileList && window.Blob) {
+    // Great success! All the File APIs are supported.
+  } else {
+    alert('The File APIs are not fully supported in this browser.');
+  } // https://www.html5rocks.com/en/tutorials/file/dndfiles/
+  
   createForm();
   
 });
@@ -54,16 +61,17 @@ function createForm() {
     .append("div")
     .attr("class", "box")
     .attr("id", "platzhalter")
-    .style("width", "60%")
-    .style("margin-left", "20%");
+    .style("width", "50%")
+    .style("margin-left", "25%");
 
   var hinweis = d3.select("body").select("div#platzhalter")
     .append("p")
     .text("Teilnehmer ID:")
     .style("float", "left")
-    .style("padding-right", "-1em")
-    .style("text-align", "right")
-    .style("width", "50%");
+    .style("margin-left", "10%")
+    //.style("margin-right", "-1em")
+    //.style("text-align", "right")
+    .style("width", "40%");
   
   var input = d3.select("body").select("div#platzhalter")
     .append("input")
@@ -72,7 +80,8 @@ function createForm() {
     .attr("id", "teilnehmerID")
     .attr("size", 4)
     .attr("required", true)
-    .style("width", "6em")
+    .style("width", "30%")
+    .style("margin-right", "10%")
     .style("float", "right")
     .style("text-align", "left");
     
