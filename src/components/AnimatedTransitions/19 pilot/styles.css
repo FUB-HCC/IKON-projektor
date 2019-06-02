@@ -36,6 +36,10 @@ input {
   /*margin-right: 0.4em;*/
 }
 
+input.radio {
+  display: block;
+}
+
 h1 {
   font-size:160%;
 }

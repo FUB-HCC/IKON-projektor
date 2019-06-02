@@ -14,9 +14,8 @@ var dataset = [];
 var pos, id, gerade, clusterNo, researchArea, year, keywords;
 var forschungsIDs = [1,4,8];
 var positionen = [
-  [0.5,3,0], [1,4.5,0], [2,4,0], // cluster 0
-  [4,3,1], [5,5,1], [5.5,3.5,1],// cluster 1
-  [3.5,0.5,2], [4.3,2,2], [6,1.5,2] // cluster 2
+  [1,1,0], [2,1.5,0], [2.2,3,0], [1.4,3.6,0], [3,3.5,0], // cluster 0
+  [4,6,1], [3.8,8,1], [5,5,1], [4.7,7,1], // cluster 1
 ];
 for(i=0; i < positionen.length; i++){
   pos = new Position(positionen[i][0], positionen[i][1]);
@@ -38,7 +37,7 @@ d3.select("body")
 
 d3.select("body")
   .append("h1")
-  .text("Deutung der Transition I");
+  .text("Deutung der Transition IV");
   
 d3.select("body")
   .append("p")
@@ -79,7 +78,84 @@ function update(){
   bereitBtn.btn.remove();
   hinweis.remove();
   
-  // Formular
+  
+  
+  var positionen = [
+  [1.2,0.4,0], [3,1,0], [5,1,2], [1,3,0], [3.3,4,0], // cluster 0
+  [4.6,5,1], [3,7,1], [6,4.5,1], [4,8,1], // cluster 1
+  ];
+
+  //////////// Transition ///////////////
+  var oldDataset = cloneDataset(dataset);
+  var oldNests = new Nest(oldDataset);
+  
+  for(i=0; i < positionen.length; i++){
+    pos = new Position(positionen[i][0], positionen[i][1]);
+    dataset[i].pos = pos;
+    dataset[i].clusterNo = positionen[i][2];
+  }
+  
+  var newNests = new Nest(dataset);
+  var transTable = oldNests.createTransitionNests(newNests);
+  
+  ////////// Hüllen //////////////
+  svg.svg.select("g.hulls").selectAll("path.class42")
+    .data(transTable[0].nest, function(d){return d.id;})
+    .attr("d", function(d){
+      return d.makeHulls2Path(scale);
+    });
+  
+  scale.setDomain(dataset);
+  
+  var hulls = svg.svg.select("g.hulls").selectAll("path.class42")
+    .data(transTable[1].nest, function(d){return d.id;});
+    
+  console.log(hulls);
+    
+  hulls.enter()// bei verschmelzen: einer im exit() drin
+    .append("path")
+    .attr("class", "enter")
+    .attr("d", function(c){// c = Cluster{id, polygons}
+      return c.makePolygons2Path(scale);}
+    )
+    .attr('fill', "gray")
+    .attr('stroke', "gray")
+    .attr('opacity', 0)
+    .style('opacity', 0)
+    .on("mouseover", tooltipCluster.show)
+    .on("mouseout", tooltipCluster.hide)
+    .transition().duration(transDuration)
+    .style('opacity', 0.3);
+    
+  svg.svg.select("g.hulls").selectAll("path.class42")
+    .transition().duration(transDuration)
+    .ease(d3.easeQuadInOut)
+    .attr("d", function(d){
+      return d.makeHulls2Path(scale);
+    })
+    .on("end", showNewDatas);
+    
+  function showNewDatas(){
+    svg.svg.select("g.hulls").selectAll("path.class42")
+      .data(new Nest(dataset).nest, function(d){return d.id;})
+      .attr("d", function(d){
+        return d.makePolygons2Path(scale);
+      });
+  }
+  
+  ////////// Kreise //////////////
+  var circles = svg.svg.select("g.circs")
+    .selectAll("circle.class42")
+    .data(dataset, function(d){return d.id;});
+    
+  circles.transition().duration(transDuration)
+    .ease(d3.easeQuadInOut)
+    .attr("cx", function(d) {return scale.xScale(d.pos.x);})
+    .attr("cy", function(d) {return scale.yScale(d.pos.y);});
+    //.style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
+    
+    
+  //////////////// Formular
   box.style("width", "70%")
     .style("margin-left", "15%");
     
@@ -87,10 +163,10 @@ function update(){
     .append("form");
     
   var cases = [
-    "Ein Cluster hat sich aufgeteilt.", 
-    "Genau Zwei Cluster sind zu einem verschmolzen.", 
+    "Mehrere Cluster haben sich aufgeteilt.",
     "Projekte sind verschwunden.",
-    "Projekte sind hinzu gekommen."
+    "Projekte sind hinzu gekommen.",
+    "Ein Cluster ist neu hinzu gekommen.",
   ];
   // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
   // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
@@ -124,78 +200,13 @@ function update(){
         }
       }
       if (selected != undefined) {
-        storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[0].value);
+        storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[3].value);
         var index = (websites.indexOf(me)+1) % websites.length;
         window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
       }
       else
         alert("Bitte wähle eine Antwort aus.");
     });
-  
-  var positionen = [
-    [5,0.8,2], [2.7,4.4,1], [4,3.7,1], // cluster 0 aufgeteilt
-    [3,3,1], [4,5,1], [4.5,3.5,1],// cluster 1
-    [3.5,0.5,2], [4.3,2,2], [6,1.5,2] // cluster 2
-  ];
-
-  //////////// Transition ///////////////
-  var oldDataset = cloneDataset(dataset);
-  var oldNests = new Nest(oldDataset);
-  
-  for(i=0; i < positionen.length; i++){
-    pos = new Position(positionen[i][0], positionen[i][1]);
-    dataset[i].pos = pos;
-    dataset[i].clusterNo = positionen[i][2];
-  }
-  
-  var newNests = new Nest(dataset);
-  var transTable = oldNests.createTransitionNests(newNests);
-  
-  ////////// Hüllen //////////////
-  svg.svg.select("g.hulls").selectAll("path.class42")
-    .data(transTable[0].nest, function(d){return d.id;})
-    .attr("d", function(d){
-      return d.makeHulls2Path(scale);
-    });
-  
-  scale.setDomain(dataset);
-  
-  var hulls = svg.svg.select("g.hulls").selectAll("path.class42")
-    .data(transTable[1].nest, function(d){return d.id;});
-    
-  console.log(hulls);
-    
-  hulls.exit()// bei verschmelzen: einer im exit() drin
-    .attr("class", "exit")
-    .remove();
-    
-  svg.svg.select("g.hulls").selectAll("path.class42")
-    .transition().duration(transDuration)
-    .ease(d3.easeQuadInOut)
-    .attr("d", function(d){
-      return d.makeHulls2Path(scale);
-    })
-    .on("end", showNewDatas);
-    
-  function showNewDatas(){
-    svg.svg.select("g.hulls").selectAll("path.class42")
-      .data(new Nest(dataset).nest, function(d){return d.id;})
-      .attr("d", function(d){
-        return d.makePolygons2Path(scale);
-      });
-  }
-  
-  ////////// Kreise //////////////
-  var circles = svg.svg.select("g.circs")
-    .selectAll("circle.class42")
-    .data(dataset, function(d){return d.id;});
-    
-  circles.transition().duration(transDuration)
-    .ease(d3.easeQuadInOut)
-    .attr("cx", function(d) {return scale.xScale(d.pos.x);})
-    .attr("cy", function(d) {return scale.yScale(d.pos.y);});
-    //.style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
-  
 }
 
   

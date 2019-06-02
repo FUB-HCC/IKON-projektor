@@ -4,7 +4,7 @@ const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
 var clusterzahl = 3;
 var currID = 1;
 var positionsRegler = 0;
-var transDuration = 1000;
+var transDuration = 750;
 var checkboxen = {};
 const targetID = 6;
 
@@ -14,9 +14,9 @@ var dataset = [];
 var pos, id, gerade, clusterNo, researchArea, year, keywords;
 var forschungsIDs = [1,4,8];
 var positionen = [
-  [0.5,3,0], [1,4.5,0], [2,4,0], // cluster 0
-  [4,3,1], [5,5,1], [5.5,3.5,1],// cluster 1
-  [3.5,0.5,2], [4.3,2,2], [6,1.5,2] // cluster 2
+  [1,7,0], [2,3,0], [4,8,0], [4,4,0], // cluster 0
+  [5,2,1], [6,3,1], [8,1,1], // cluster 1
+  [6.5,9,2] // cluster 2
 ];
 for(i=0; i < positionen.length; i++){
   pos = new Position(positionen[i][0], positionen[i][1]);
@@ -38,7 +38,7 @@ d3.select("body")
 
 d3.select("body")
   .append("h1")
-  .text("Deutung der Transition I");
+  .text("Deutung der Transition V");
   
 d3.select("body")
   .append("p")
@@ -87,10 +87,10 @@ function update(){
     .append("form");
     
   var cases = [
-    "Ein Cluster hat sich aufgeteilt.", 
-    "Genau Zwei Cluster sind zu einem verschmolzen.", 
-    "Projekte sind verschwunden.",
-    "Projekte sind hinzu gekommen."
+    "Cluster sind verschmolzen.",
+    "Cluster sind verschwunden.",
+    "Cluster haben sich verschoben",
+    "Projekte haben das Cluster gewechselt."
   ];
   // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
   // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
@@ -124,7 +124,7 @@ function update(){
         }
       }
       if (selected != undefined) {
-        storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[0].value);
+        storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[2].value);
         var index = (websites.indexOf(me)+1) % websites.length;
         window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
       }
@@ -133,9 +133,9 @@ function update(){
     });
   
   var positionen = [
-    [5,0.8,2], [2.7,4.4,1], [4,3.7,1], // cluster 0 aufgeteilt
-    [3,3,1], [4,5,1], [4.5,3.5,1],// cluster 1
-    [3.5,0.5,2], [4.3,2,2], [6,1.5,2] // cluster 2
+  [1,4,0], [2,2,0], [3,5,0], [3.8,3,0], // cluster 0
+  [0.5,1.8,1], [2.3,3.4,1], [5,1.2,1], // cluster 1
+  [2.7,4,2] // cluster 2
   ];
 
   //////////// Transition ///////////////
@@ -165,12 +165,7 @@ function update(){
     
   console.log(hulls);
     
-  hulls.exit()// bei verschmelzen: einer im exit() drin
-    .attr("class", "exit")
-    .remove();
-    
-  svg.svg.select("g.hulls").selectAll("path.class42")
-    .transition().duration(transDuration)
+  hulls.transition().duration(transDuration)
     .ease(d3.easeQuadInOut)
     .attr("d", function(d){
       return d.makeHulls2Path(scale);

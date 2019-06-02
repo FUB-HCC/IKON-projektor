@@ -53,7 +53,7 @@ const forschungsgebiete = [
   }
 ];
 
-const websites = ["../index", "test1", "test2", "test3", "test4", "results"];
+const websites = ["../index", "test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test09", "results"];
 
 function aufgabenNr(site){
   return websites.indexOf(site);

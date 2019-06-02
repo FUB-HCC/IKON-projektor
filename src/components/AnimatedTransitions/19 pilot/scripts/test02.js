@@ -6,10 +6,11 @@ var currID = 1;
 var positionsRegler = 0;
 var transDuration = 1000;
 var checkboxen = {};
-const targetID = 6;
+const targetID = 7;
 const projZahl = 32;
 
 //////////////// Dataset ////////////////
+zeitspanne = [1990,2000];
 
 var dataset = [];
 var pos, id, gerade, clusterNo, researchArea, year, keywords;
@@ -38,12 +39,12 @@ d3.select("body")
 
 d3.select("body")
   .append("h1")
-  .text("Änderungswahrnehmung II");
+  .text("Änderungswahrnehmung I");
   
 d3.select("body")
   .append("p")
   .attr("name", "anweisung")
-  .text("Das folgende Beispiel zeigt alle Projekte bis zum Jahr 2019. Aufgabe ist es, die Anzahl der gefilterten Projekte möglichst gut zu schätzen. Anders formuliert: wie viele Projekte verschwinden? Achtung: Die Animationsdauer ist kurz und eine Wiederholung ist nicht möglich.");
+  .text("Das folgende Beispiel zeigt alle Projekte bis zum Jahr 2000. Aufgabe ist es, die Anzahl der neu hinzu gekommenen Projekte möglichst gut zu schätzen. Achtung: Die Animationsdauer ist kurz und eine Wiederholung ist nicht möglich.");
   
 //////////////// SVG ////////////////////
 var svg = new SVG("svg");
@@ -113,8 +114,7 @@ function update(){
       var num = document.getElementById("anzahl").value;
       console.log(num);
       if (num && !isNaN(num) && num <= 20 && num >= 0) {
-        storeDatas(me, "Gefiltert, " + anzNeu + ", geschätzt, " + num);
-        zeitspanne[1] = 2019;
+        storeDatas(me, "hinzu gekommen, " + anzNeu + ", geschätzt, " + num);
         var index = (websites.indexOf(me)+1) % websites.length;
         window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
       }
@@ -126,7 +126,7 @@ function update(){
   var oldDataset = cloneDataset(getFilteredData(dataset));
   var oldNests = new Nest(oldDataset);
   
-  zeitspanne[1] = 2000;
+  zeitspanne[1] = 2019;
   
   var newNests = new Nest(getFilteredData(dataset));
   var transTable = oldNests.createTransitionNests(newNests);
@@ -142,8 +142,7 @@ function update(){
   
   svg.svg.select("g.hulls").selectAll("path.class42")
     .data(transTable[1].nest, function(d){return d.id;})
-    .transition().delay(500)
-    .duration(transDuration).ease(d3.easeQuadInOut)
+    .transition().duration(transDuration).ease(d3.easeQuadInOut)
     .attr("d", function(d){
       return d.makeHulls2Path(scale);
     })
@@ -163,18 +162,30 @@ function update(){
     .selectAll("circle.class42")
     .data(getFilteredData(dataset), function(d){return d.id;});
     
-  circles.exit()
-    .transition().duration(500)
-    .ease(d3.easeBackIn.overshoot(6))
-    .attr("r", 0)
-    .remove();
-    
-  circles.filter(c => c.year <= 2000)
-    .transition().delay(500)
-    .duration(transDuration)
-    .ease(d3.easeQuadInOut)
+  circles.enter()
+    .append("circle")
+    .attr("class", "class42")
     .attr("cx", function(d) {return scale.xScale(d.pos.x);})
     .attr("cy", function(d) {return scale.yScale(d.pos.y);})
+    .attr("r", 0)
+    .on("mouseover", tooltipNode.show)
+    .on("mouseout", tooltipNode.hide)
+    // https://github.com/d3/d3-scale-chromatic
+    .style("stroke", function(d){
+      return d3.rgb(colorScheme[d.researchArea.disziplin]).brighter(2);
+    })// .darker(2)
+    .style("fill", function(d){
+      return d3.rgb(colorScheme[d.researchArea.disziplin]);
+    })
+    .style("opacity", 1)
+    .style("pointer-events", "all")
+  .merge(circles)
+    .transition().duration(transDuration).ease(d3.easeQuadInOut)
+    .attr("cx", function(d) {return scale.xScale(d.pos.x);})
+    .attr("cy", function(d) {return scale.yScale(d.pos.y);})
+    .transition().delay(transDuration)
+    .duration(500).ease(d3.easeBackOut.overshoot(6))
+    .attr("r", radius)
     .style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
   
 }

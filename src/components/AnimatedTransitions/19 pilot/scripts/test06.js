@@ -14,9 +14,9 @@ var dataset = [];
 var pos, id, gerade, clusterNo, researchArea, year, keywords;
 var forschungsIDs = [1,4,8];
 var positionen = [
-  [0.5,3,0], [1,4.5,0], [2,4,0], // cluster 0
-  [4,3,1], [5,5,1], [5.5,3.5,1],// cluster 1
-  [3.5,0.5,2], [4.3,2,2], [6,1.5,2] // cluster 2
+  [2.5,2,0], [3,5,0], [5.5,2,0], // cluster 0
+  [2,8,1], [2.5,10,1], [4.5,7,1], [5,9,1], // cluster 1
+  [8,7,2], [8.2,5,2], [9.3,5.5,2], [10.5,4,2], [10,8,2] // cluster 2
 ];
 for(i=0; i < positionen.length; i++){
   pos = new Position(positionen[i][0], positionen[i][1]);
@@ -38,7 +38,7 @@ d3.select("body")
 
 d3.select("body")
   .append("h1")
-  .text("Deutung der Transition I");
+  .text("Deutung der Transition III");
   
 d3.select("body")
   .append("p")
@@ -87,10 +87,10 @@ function update(){
     .append("form");
     
   var cases = [
-    "Ein Cluster hat sich aufgeteilt.", 
-    "Genau Zwei Cluster sind zu einem verschmolzen.", 
+    "Zwei Cluster sind zu einem verschmolzen.",
+    "Projekte haben das Cluster gewechselt.",
+    "Ein Cluster ist verschwunden.",
     "Projekte sind verschwunden.",
-    "Projekte sind hinzu gekommen."
   ];
   // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
   // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
@@ -124,7 +124,7 @@ function update(){
         }
       }
       if (selected != undefined) {
-        storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[0].value);
+        storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[1].value);
         var index = (websites.indexOf(me)+1) % websites.length;
         window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
       }
@@ -133,9 +133,9 @@ function update(){
     });
   
   var positionen = [
-    [5,0.8,2], [2.7,4.4,1], [4,3.7,1], // cluster 0 aufgeteilt
-    [3,3,1], [4,5,1], [4.5,3.5,1],// cluster 1
-    [3.5,0.5,2], [4.3,2,2], [6,1.5,2] // cluster 2
+  [2,1,0], [3.8,7.7,1], [11,6,2], // cluster 0, 2 Knoten gehen
+  [1,9,1], [2,12,1], [5,6,1], [5.5,9.5,1], // cluster 1
+  [8.4,7.2,2], [8,4.5,2], [9,5,2], [10,5,2], [10.7,9,2] // cluster 2
   ];
 
   //////////// Transition ///////////////

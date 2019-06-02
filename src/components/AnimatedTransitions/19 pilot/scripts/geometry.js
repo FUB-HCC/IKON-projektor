@@ -862,7 +862,7 @@ class Cluster {
     const mid = new Position(width/2, height/2);
     const angle = parseFloat(this.id) / anzCluster * 2*Math.PI;
     const richVek = new Position(Math.cos(angle)*width/4, Math.sin(angle)*height/4);
-    const newPos = mid.add(richVek);
+    const newPos = mid.add(richVek.mul(1.5));// multiplikation ggf. löschen
     var g = new Gerade(this.getSchwerpunkt(), newPos);
     // console.log("id",this.id, "mid",mid, "angle",angle, "richVek",richVek, "newPos",newPos, "g.rich", g.richtung);
     this.moveBy(g.richtung);
