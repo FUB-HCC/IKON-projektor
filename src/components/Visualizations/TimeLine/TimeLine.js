@@ -21,6 +21,7 @@ import DetailModal from '../../Modal/DetailModal'
 import classes from '../AreaChart/AreaChart.css'
 import HoverPopover from '../../HoverPopover/HoverPopover'
 import arrowHover from '../../../assets'
+import MissingData from '../../MissingData/MissingData'
 
 class TimeLine extends Component {
   constructor (props) {
@@ -38,7 +39,10 @@ class TimeLine extends Component {
       title: '',
       year: '',
       counter: 0,
-      index: 0
+      index: 0,
+      minYear: 1996,
+      maxYear: 2018,
+      visType: 'sketchiness'
     }
     this.handleCircleClick = this.handleCircleClick.bind(this)
     this.renderProjectsHover = this.renderProjectsHover.bind(this)
@@ -50,6 +54,7 @@ class TimeLine extends Component {
 
     // this.loadPaths = this.loadPaths.bind(this)
   }
+
   onProjectClick (project) {
     let selectedProjects = this.state.selectedProjects
     let current = project.project
@@ -78,7 +83,7 @@ class TimeLine extends Component {
     this.setState({detailModal: false, projectsPopoverHidden: false})
   }
 
-  updateTimeGraph (data, height, width, margin) {
+  updateTimeGraph (data, height, width, margin, minYear, maxYear, visType) {
     if (!this.state.firstUpdate) { // workaround for first time scaling
       this.setState({height: height * 0.5, width: width * 0.6, margin: margin})
     }
@@ -88,7 +93,7 @@ class TimeLine extends Component {
       if (this.state.forschungsbereiche.indexOf(value) === -1) forschungsbereiche = [...forschungsbereiche, value]
     })
 
-    this.setState({dataSplitYears: data.dataSplitFbYear, projectsData: data.projects, forschungsbereiche: forschungsbereiche, firstUpdate: false})
+    this.setState({dataSplitYears: data.dataSplitFbYear, projectsData: data.projects, forschungsbereiche: forschungsbereiche, firstUpdate: false, minYear: minYear, maxYear: maxYear, visType: visType})
   }
 
   handleCircleClick (evt, circlePoint) {
@@ -196,12 +201,69 @@ class TimeLine extends Component {
     const sparkLine = d3Line()
       .x(selectScaledX)
       .y(selectScaledY)
+      .defined(function (d) {
+        return (d.numberOfActiveProjects != null) 
+      })
 
     // map our data to scaled points.
     const circlePoints = array.map(datum => (Object.assign({
       x: selectScaledX(datum),
       y: selectScaledY(datum),
       color: datum.color}, datum)))
+
+    // create dataset with missing data input as null
+    let dataset = JSON.parse(JSON.stringify(Object.values(this.state.dataSplitYears)))
+
+    let missingData = []
+
+    dataset.forEach(element => {
+      if (element.length > 0) {
+        let missingElements = []
+        const fb = element[0].fb
+        const color = element[0].color
+        for (let i = 0; i <= this.state.maxYear - this.state.minYear; i++) {
+          if (element.length <= i) {
+            element.push({
+              'year': this.state.minYear + i,
+              'fb': fb,
+              'numberOfActiveProjects': null,
+              'color': color
+            })
+          } else if (element[i].year !== this.state.minYear + i) {
+            element.splice(i, 0, {
+              'year': this.state.minYear + i,
+              'fb': fb,
+              'numberOfActiveProjects': null,
+              'color': color
+            })
+          } else {
+            if (i !== 0) {
+              if (element[i - 1].numberOfActiveProjects == null) {
+                missingElements.push({
+                  'x': xScale(new Date((this.state.minYear + i).toString())),
+                  'y': yScale(element[i].numberOfActiveProjects),
+                  'year': element[i].year,
+                  'color': color,
+                  'state': 'end'})
+                missingData.push(missingElements)
+                missingElements = []
+              }
+            }
+            if (element.length > i + 1) {
+              if (element[i + 1].year !== this.state.minYear + i + 1) {
+                missingElements.push({
+                  'x': xScale(new Date((this.state.minYear + i).toString())),
+                  'y': yScale(element[i].numberOfActiveProjects),
+                  'year': element[i].year,
+                  'color': color,
+                  'state': 'start'})
+              }
+            }
+          } 
+        }
+        if (missingElements.length !== 0) { missingData.push(missingElements) }
+      }
+    })
     
     return (
       <div>
@@ -213,6 +275,7 @@ class TimeLine extends Component {
           margin={this.state.margin}
           width={this.state.width}
         >
+          <MissingData missingDataPoints={missingData} width={this.state.width} height={this.state.height} visType={this.state.visType}/>
 
           {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
           <g
@@ -224,8 +287,16 @@ class TimeLine extends Component {
           />
           <g className={styles.yAxis} ref={node => d3Select(node).call(yAxis)}/>
 
-          {Object.values(this.state.dataSplitYears).map((line, i) => {            
-            return (<g key={line} className={styles.line}><path style={{stroke: line[i].color}} d={sparkLine(line)}/></g>)
+          {/* Lines without missing data */}
+          {Object.values(dataset).map((line, i) => {
+            let color = '#e2e2e2'
+            // get color even if i value of dataset is missing
+            line.forEach(element => {
+              if (element !== null) {
+                color = element.color 
+              }
+            })
+            return (<g key={JSON.stringify(line)} className={styles.line}><path style={{stroke: color}} d={sparkLine(line)}/></g>)
           })}
 
           {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}

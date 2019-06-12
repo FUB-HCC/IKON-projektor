@@ -40,3 +40,17 @@ export const deactivatePopover = () => {
     type: actionTypes.DEACTIVATE_POPOVER
   }
 }
+
+export const yearChange = (value) => {
+  return {
+    type: actionTypes.CHANGE_YEARS,
+    value: value
+  }
+}
+
+export const visTypeChange = (value) => {
+  return {
+    type: actionTypes.CHANGE_VISTYPE,
+    value: value
+  }
+}

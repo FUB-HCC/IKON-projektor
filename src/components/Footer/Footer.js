@@ -9,23 +9,32 @@ class Footer extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      value: { min: 1995, max: 2017 },
-      selectedOption: 'strawberry'
+      value: { min: 1996, max: 2018 },
+      selectedOption: 'sketchiness'
     }
     this.handleChange = this.handleChange.bind(this)
+    this.handleYearChange = this.handleYearChange.bind(this)
   }  
   handleChange (selectedOption) {
     this.setState({ selectedOption })
+    // console.log(selectedOption.value)
+    this.props.changeVisType(selectedOption.value)
     // console.log(`Option selected:`, selectedOption)
+  }
+
+  handleYearChange (selectedValue) {
+    this.setState({
+      value: selectedValue
+    })
+    this.props.yearChangeHandler(selectedValue)
   }
 
   render () {  
     const { selectedOption } = this.state
-    // console.log(selectedOption)
     const options = [
-      { value: 'chocolate', label: 'Chocolate' },
-      { value: 'strawberry', label: 'Strawberry' },
-      { value: 'vanilla', label: 'Vanilla' }
+      { value: 'sketchiness', label: 'Sketchiness' },
+      { value: 'dashing', label: 'Dashing' },
+      { value: 'blur', label: 'Blur' }
     ]
     return (
 
@@ -33,14 +42,14 @@ class Footer extends Component {
         <div className={classes.footer}>
           <div className={classes.leftFooter}>
             <div className={classes.timeSlider}>
-              <InputRange maxValue={2018} minValue={1994} value={this.state.value} onChange={value => this.setState({ value })} />
+              <InputRange maxValue={2018} minValue={1996} value={this.state.value} onChange={this.handleYearChange} />
             </div>
           </div>
           
           <div className={classes.milldleLeft}>
             <div className={classes.filter}>
               <div className={classes.filterWrap}>
-                <label className={classes.selectLabel} >VIEW</label>
+                <label className={classes.selectLabel} >VIS. TYPE</label>
                 <Select
                   value={selectedOption}
                   onChange={this.handleChange}
@@ -76,7 +85,9 @@ const mapDispatchToProps = dispatch => {
   return {
     changeGraph: (value) => dispatch(actions.changeGraph(value)),
     activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
-    deactivatePopover: () => dispatch(actions.deactivatePopover())
+    deactivatePopover: () => dispatch(actions.deactivatePopover()),
+    yearChangeHandler: (value) => dispatch(actions.yearChange(value)),
+    changeVisType: (value) => dispatch(actions.visTypeChange(value))
   }
 }
 const mapStateToProps = state => {
@@ -84,14 +95,14 @@ const mapStateToProps = state => {
   state.main.data.forEach(project => {
     if (project.id === state.main.selectedProject) selectedProject = project
   })
-  
   return {
     graph: state.main.graph,
     filterAmount: state.main.filter.length,
     selectedProject: state.main.selectedProject,
     selectedDataPoint: selectedProject,
     filter: state.main.filter,
-    filteredData: state.main.filteredData
+    filteredData: state.main.filteredData,
+    selectedYears: state.main.selectedYears
   }
 }
 

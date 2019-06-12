@@ -5,11 +5,11 @@ import {default as TimeLineGraph} from '../../components/Visualizations/TimeLine
 
 class TimeLine extends React.Component {
   componentDidMount () {
-    this.Graph.updateTimeGraph({dataSplitFbYear: this.props.dataSplitFbYear, projects: this.props.projects}, this.props.width, this.props.height, 20)
+    this.Graph.updateTimeGraph({dataSplitFbYear: this.props.dataSplitFbYear, projects: this.props.projects}, this.props.width, this.props.height, 20, this.props.years.min, this.props.years.max, this.props.missingVisType)
   }
 
   componentDidUpdate () {
-    this.Graph.updateTimeGraph({dataSplitFbYear: this.props.dataSplitFbYear, projects: this.props.projects}, this.props.height, this.props.width, 20)
+    this.Graph.updateTimeGraph({dataSplitFbYear: this.props.dataSplitFbYear, projects: this.props.projects}, this.props.height, this.props.width, 20, this.props.years.min, this.props.years.max, this.props.missingVisType)
   }
 
   render () {
@@ -26,15 +26,17 @@ const graphColors = {
 }
 
 const mapStateToProps = state => {
-  const processedData = processData(state.main.filteredData, graphColors)
+  const processedData = processData(state.main.filteredData, graphColors, state.main.selectedYears.value.min, state.main.selectedYears.value.max)
   return {
     dataSplitFbYear: processedData,
     projects: state.main.filteredData,
-    colors: graphColors
+    colors: graphColors,
+    years: state.main.selectedYears.value,
+    missingVisType: state.main.missingVisType
   }
 }
 
-const processData = (data, colors) => {
+const processData = (data, colors, minYear, maxYear) => {
   /*
    Private
    Transforms the data in to a format which can be easily used for the Visulisation.
@@ -81,7 +83,7 @@ const processData = (data, colors) => {
       }
       year++
     }
-    dataSplitYears[data[projectsKey].forschungsbereichstr] = forschungsbereichData.sort((a, b) => a.year - b.year)
+    dataSplitYears[data[projectsKey].forschungsbereichstr] = forschungsbereichData.filter(a => a.year >= minYear && a.year <= maxYear).sort((a, b) => a.year - b.year)
   }
 
   return dataSplitYears

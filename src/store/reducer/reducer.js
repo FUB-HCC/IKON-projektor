@@ -8,6 +8,7 @@ const data = getProjectsData()
 const distFields = []
 const distTopics = []
 const distSponsor = []
+const distYears = []
 
 Object.keys(data).map(dataEntry => {
   data[dataEntry].hauptthema = (data[dataEntry].review_board ? data[dataEntry].review_board : 'Unbekannt')
@@ -31,13 +32,17 @@ Object.keys(data).map(dataEntry => {
   
   Object.keys(data[dataEntry]).map(dataKey => {
     const val = data[dataEntry][dataKey]
-    
+
     if (dataKey === 'forschungsbereichstr') {
       if (!distFields.some(e => e === val)) distFields.push(val)
     } else if (dataKey === 'hauptthema') {
       if (!distTopics.some(e => e === val)) distTopics.push(val)
     } else if (dataKey === 'geldgeber') {
       if (!distSponsor.some(e => e === val)) distSponsor.push(val)
+    } else if (dataKey === 'start_date') {
+      if (!distYears.some(e => e === val)) distYears.push(val)
+    } else if (dataKey === 'end_date') {
+      if (!distYears.some(e => e === val) && (val !== '')) distYears.push(val)
     }
   })
 }
@@ -90,7 +95,13 @@ const initialState = {
   data: data,
   filteredData: data,
   institutions: institutionsData,
-  selectedProject: undefined
+  selectedProject: undefined,
+  selectedYears: {
+    distValues: {min: Math.min(...distYears),
+      max: Math.max(...distYears)},
+    value: {min: Math.min(...distYears),
+      max: Math.max(...distYears)}},
+  missingVisType: 'sketchiness'
 }
 
 // Keep the reducer switch lean by outsourcing the actual code below
@@ -121,6 +132,13 @@ const reducer = (state = initialState, action) => {
     case actionTypes.DEACTIVATE_POPOVER:
       console.log('STATE CHANGE: ', action.type, action)
       return deactivatePopover(state)
+
+    case actionTypes.CHANGE_YEARS:
+      // console.log('YEAR CHANGE: ', action.type, action)
+      return changeYears(state, action)
+
+    case actionTypes.CHANGE_VISTYPE:
+      return changeVisType(state, action)
 
     default:
       // console.log('STATE CHANGE: DEFAULT')
@@ -193,6 +211,24 @@ const deactivatePopover = (state) => {
   const newState = {
     ...state,
     selectedProject: undefined
+  }
+  updateUrl(newState)
+  return newState
+}
+
+const changeYears = (state, action) => {
+  const newState = {
+    ...state,
+    selectedYears: {value: action.value}
+  }
+  updateUrl(newState)
+  return newState
+}
+
+const changeVisType = (state, action) => {
+  const newState = {
+    ...state,
+    missingVisType: action.value
   }
   updateUrl(newState)
   return newState
