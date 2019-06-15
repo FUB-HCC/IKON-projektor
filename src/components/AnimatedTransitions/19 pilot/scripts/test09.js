@@ -4,7 +4,7 @@ const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
 var clusterzahl = 5;
 var currID = 1;
 var positionsRegler = 0;
-var transDuration = 1000;
+var transDuration = 750;
 const targetID = 7;
 const projZahl = 150;
 
@@ -16,7 +16,7 @@ for(i=0; i < projZahl; i++){
   id = currID++;
   gerade = new Gerade(new Position(width/2, height/2), pos);
   clusterNo = Math.floor(gerade.getAngle() / (2*Math.PI) * clusterzahl);
-  researchArea = forschungsgebiete[Index.getRandInt(0, forschungsgebiete.length-1)];
+  researchArea = forschungsgebiete[Index.getRandInt(0,3)];
   keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];
   year = Index.getRandInt(zeitspanne[0], zeitspanne[1]);
   dataset.push(new Knoten(pos, id, clusterNo, researchArea, year, keywords));
@@ -113,8 +113,7 @@ var bereitBtn = new Button(update, "bereit");
 
 //////////// UPDATE /////////////
 function update(){
-  bereitBtn.btn.remove();
-  
+  //////////// Transition ///////////////
   dataset.map(function(knoten){
     var newPos = new Position(Float.getRandFloat(0, width/3), Float.getRandFloat(0, height/3));
     knoten.moveBy(newPos);
@@ -122,18 +121,12 @@ function update(){
   
   gruppen.nest.forEach(function(c) {
     c.positioniereCluster(clusterzahl);
-    c.moveVertsCloserTogether(0.3);
+    c.moveVertsCloserTogether(0.2);
   });
 
   scale.setDomain(dataset);
-  //////////// Transition ///////////////
-//   var oldDataset = cloneDataset(getFilteredData(dataset));
-//   var oldNests = new Nest(oldDataset);
   
-//   var newNests = new Nest(dataset);
-//   var transTable = oldNests.createTransitionNests(newNests);
-  ////////// Kreise //////////////
-  
+  ////////// Kreise
   var circles = svg.svg.select("g.circs")
     .selectAll("circle.class42")
     .data(dataset, function(d){return d.id;});
@@ -160,27 +153,35 @@ function update(){
     .attr("cx", function(d) {return scale.xScale(d.pos.x);})
     .attr("cy", function(d) {return scale.yScale(d.pos.y);})
     .transition().delay(transDuration)
-    .duration(500).ease(d3.easeBackOut.overshoot(6))
+    .duration(transDuration).ease(d3.easeBackOut.overshoot(6))
     .attr("r", radius)
     .style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
+    
+  var t0 = d3.transition().delay(transDuration+500).duration(0)
+    .on("end", createForm);
   
-  ///////////// Save
-  var weiter = new Button(storeDatas, "weiter");
-  weiter.btn
-    .on("click", function(){// wird ersetzt
-      var numVorher = document.getElementById("input0").value;
-      var numNachher = document.getElementById("input1").value;
-      
-      if (!numVorher || isNaN(numVorher) || numVorher < 0)
-        alert("Bitte gib eine natürliche Zahl zwischen 0 und 20 ein.");
-      else if (!numNachher || isNaN(numNachher) || numNachher < 0)
-        alert("Bitte gib eine natürliche Zahl zwischen 0 und 20 ein.");
-      else {
-        storeDatas(me, "Clusterzahl vorher, " + numVorher + ", Clusterzahl nachher, " + numNachher + ", tatsächliche Zahl," + clusterzahl);
-        var index = (websites.indexOf(me)+1) % websites.length;
-        window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
-      }
-    });
+  // Formular
+  function createForm() {
+    bereitBtn.btn.remove();
+    
+    ///////////// Save
+    var weiter = new Button(storeDatas, "weiter");
+    weiter.btn
+      .on("click", function(){// wird ersetzt
+        var numVorher = document.getElementById("input0").value;
+        var numNachher = document.getElementById("input1").value;
+        
+        if (!numVorher || isNaN(numVorher) || numVorher < 0)
+          alert("Bitte gib eine natürliche Zahl zwischen 0 und 20 ein.");
+        else if (!numNachher || isNaN(numNachher) || numNachher < 0)
+          alert("Bitte gib eine natürliche Zahl zwischen 0 und 20 ein.");
+        else {
+          storeDatas(me, "Clusterzahl vorher, " + numVorher + ", Clusterzahl nachher, " + numNachher + ", tatsächliche Zahl," + clusterzahl);
+          var index = (websites.indexOf(me)+1) % websites.length;
+          window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
+        }
+      });
+  }
 }
 
   

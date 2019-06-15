@@ -8,7 +8,7 @@ d3.select("body")
 d3.select("body")
   .append("p")
   .attr("name", "anweisung")
-  .text("Im Folgenden wollen wir die Transitionen von Clustern und deren Hüllen evaluieren. Mache dich dazu mit der Benutzeroberfläche etwas vertraut! Jedes Projekt wird durch einen Punkt dargestellt und hat eine eindeutige ID und findet im Rahmen eines Forschungsgebiets statt. Forschungsgebiete gehören zu einer Disziplin, woraus sich die Farbe der Projekt-Punkte ableitet. Projekte, die sich sehr ähnlich sind, werden einem Cluster zugeordnet und liegen tendenziell näher beieinander.");
+  .text("Im Folgenden wollen wir die Transitionen von Clustern und deren Hüllen evaluieren. Mache dich dazu mit der Benutzeroberfläche etwas vertraut! Jedes Projekt wird durch einen Punkt dargestellt und hat eine eindeutige ID und findet im Rahmen eines Forschungsgebiets statt. Forschungsgebiete gehören zu einer Disziplin, woraus sich die Farbe der Projekt-Punkte ableitet. Projekte, die sich sehr ähnlich sind, werden einem Cluster zugeordnet - hier durch eine graue Hülle dargestellt - und liegen tendenziell näher beieinander.");
   
 /////////////// Datas /////////////
 var dataset, clusterData, projectParams;

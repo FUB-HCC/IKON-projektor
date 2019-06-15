@@ -7,6 +7,7 @@ var positionsRegler = 0;
 var transDuration = 1000;
 var checkboxen = {};
 const targetID = 6;
+var richtigeAntwort = 0;
 
 //////////////// Dataset ////////////////
 
@@ -38,12 +39,12 @@ d3.select("body")
 
 d3.select("body")
   .append("h1")
-  .text("Deutung der Transition II");
+  .text("Deutung der Transition " + romanize(aufgabenNr(me)));
   
 d3.select("body")
   .append("p")
   .attr("name", "anweisung")
-  .text("Das folgende Beispiel zeigt eine Transition von Hüllen, bedingt durch die Projektdaten. Schaue dir folgende Transition an und deute diese.");
+  .text("Das folgende Beispiel zeigt eine Transition von Hüllen. Was passiert hier? Beschreibe es in Worten und finde die passende Antwort im Multiple Choice:");
   
 //////////////// SVG ////////////////////
 var svg = new SVG("svg");
@@ -76,68 +77,13 @@ var bereitBtn = new Button(update, "bereit");
 
 //////////// UPDATE /////////////
 function update(){
-  bereitBtn.btn.remove();
-  hinweis.remove();
-  
-  // Formular
-  box.style("width", "70%")
-    .style("margin-left", "15%");
-    
-  var form = d3.select("body").select("div#platzhalter")
-    .append("form");
-    
-  var cases = [
-    "Ein Cluster hat sich aufgeteilt.", 
-    "Zwei Cluster sind zu einem verschmolzen.",
-    "Ein Cluster ist mitsamt der Projekte verschwunden.",
-    "Projekte haben sich geändert.",
-  ];
-  // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
-  // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
-  var radios = form.selectAll('input[name="cases"]')
-  .data(cases);
-
-  var labels = radios.enter()
-    .append("div")
-    .style("text-align", "left")
-    .append("label")
-    .append("input")
-    .attr("type", "radio")
-    .attr("name", "cases")
-    .attr("value", function(d) {return d;});
-    
-  d3.selectAll("label")
-    .append("text")
-    .text(function(d) {return " " + d});
-  
-  // Buttons
-  var weiter = new Button(storeDatas, "weiter");
-  weiter.btn
-    .on("click", function(){// wird ersetzt
-      var radioList = document.getElementsByName("cases");
-      var selected = undefined;
-      // https://stackoverflow.com/questions/9618504/how-to-get-the-selected-radio-button-s-value
-      for (var i in radioList) {
-        if (radioList[i].checked) {
-          selected = radioList[i];
-          break;
-        }
-      }
-      if (selected != undefined) {
-        storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[1].value);
-        var index = (websites.indexOf(me)+1) % websites.length;
-        window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
-      }
-      else
-        alert("Bitte wähle eine Antwort aus.");
-    });
   
   var positionen = [
   [1.5,3,0], [1,1.8,0], [3,2.6,0], // cluster 0
   [0.4,2.7,0], [2,2.5,0], // cluster 1 mit 0 verschmolzen
   [3.8,3,2], [4.4,3.8,2], [4.6,1.5,2], [5.5,2.7,2] // cluster 2
   ];
-
+  
   //////////// Transition ///////////////
   var oldDataset = cloneDataset(dataset);
   var oldNests = new Nest(oldDataset);
@@ -196,6 +142,68 @@ function update(){
     .attr("cy", function(d) {return scale.yScale(d.pos.y);});
     //.style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
   
+  var t0 = d3.transition().delay(transDuration+500).duration(0)
+    .on("end", createForm);
+  
+  function createForm() {  
+    bereitBtn.btn.remove();
+    hinweis.remove();
+    
+    // Formular
+    box.style("width", "70%")
+      .style("margin-left", "15%");
+      
+    var form = d3.select("body").select("div#platzhalter")
+      .append("form");
+      
+    var cases = [
+      "Cluster sind verschmolzen.",// <- richtigeAntwort
+      "Ein Cluster hat sich aufgeteilt.", 
+      "Ein Cluster ist mitsamt der Projekte verschwunden.",
+      "Projekte haben das Cluster gewechselt. Ihr altes Cluster exisitert noch."
+    ];
+    richtigeAntwort = randomizeArray(cases, richtigeAntwort);
+    
+    // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
+    // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
+    var radios = form.selectAll('input[name="cases"]')
+    .data(cases);
+
+    var labels = radios.enter()
+      .append("div")
+      .style("text-align", "left")
+      .append("label")
+      .append("input")
+      .attr("type", "radio")
+      .attr("name", "cases")
+      .attr("value", function(d) {return d;});
+      
+    d3.selectAll("label")
+      .append("text")
+      .text(function(d) {return " " + d});
+    
+    // Buttons
+    var weiter = new Button(storeDatas, "weiter");
+    weiter.btn
+      .on("click", function(){// wird ersetzt
+        var radioList = document.getElementsByName("cases");
+        var selected = undefined;
+        // https://stackoverflow.com/questions/9618504/how-to-get-the-selected-radio-button-s-value
+        for (var i in radioList) {
+          if (radioList[i].checked) {
+            selected = radioList[i];
+            break;
+          }
+        }
+        if (selected != undefined) {
+          storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[richtigeAntwort].value);
+          var index = (websites.indexOf(me)+1) % websites.length;
+          window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
+        }
+        else
+          alert("Bitte wähle eine Antwort aus.");
+      });
+  }
 }
 
   

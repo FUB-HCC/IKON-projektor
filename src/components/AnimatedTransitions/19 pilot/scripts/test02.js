@@ -8,6 +8,7 @@ var transDuration = 1000;
 var checkboxen = {};
 const targetID = 7;
 const projZahl = 32;
+var richtigeAntwort = 0;
 
 //////////////// Dataset ////////////////
 zeitspanne = [1990,2000];
@@ -39,12 +40,12 @@ d3.select("body")
 
 d3.select("body")
   .append("h1")
-  .text("Änderungswahrnehmung I");
+  .text("Deutung der Transition " + romanize(aufgabenNr(me)));
   
 d3.select("body")
   .append("p")
   .attr("name", "anweisung")
-  .text("Das folgende Beispiel zeigt alle Projekte bis zum Jahr 2000. Aufgabe ist es, die Anzahl der neu hinzu gekommenen Projekte möglichst gut zu schätzen. Achtung: Die Animationsdauer ist kurz und eine Wiederholung ist nicht möglich.");
+  .text("Schaue dir folgende Transition an! Was passiert hier? Beschreibe es in Worten und finde die passende Antwort im Multiple Choice:");
   
 //////////////// SVG ////////////////////
 var svg = new SVG("svg");
@@ -76,51 +77,8 @@ new LinkButton(me, deleteDatas, -1, "zurück", null);
 var bereitBtn = new Button(update, "bereit");
 
 //////////// UPDATE /////////////
-function update(){
-  d3.select("g.circs").selectAll("circle.class42")
-    .on("mouseover", tooltipNodePoor.show)
-    .on("mouseout", tooltipNodePoor.hide);
-    
-  svg.svg.call(tooltipNodePoor);
-  bereitBtn.btn.remove();
-  
-  box.style("width", "30%")
-    .style("margin-left", "35%");
-  hinweis.text("Anzahl:")
-    .style("float", "left")
-    //.style("position", "absolute")
-    .style("padding-right", "-1em")
-    .style("text-align", "right")
-    .style("width", "20%");
-  
-  var input = d3.select("body").select("div#platzhalter")
-    .append("input")
-    .attr("type", "number")
-    .attr("name", "anzahl")
-    .attr("id", "anzahl")
-    .attr("min", 0)
-    .attr("max", 20)
-    .attr("size", 2)
-    .attr("step", 1)
-    .attr("required", true)
-    .style("width", "4em")
-    .style("float", "right")
-    .style("text-align", "left");
-  
+function update(){    
   var anzNeu = dataset.filter(d => d.year > 2000).length;
-  var weiter = new Button(storeDatas, "weiter");
-  weiter.btn
-    .on("click", function(){// wird ersetzt
-      var num = document.getElementById("anzahl").value;
-      console.log(num);
-      if (num && !isNaN(num) && num <= 20 && num >= 0) {
-        storeDatas(me, "hinzu gekommen, " + anzNeu + ", geschätzt, " + num);
-        var index = (websites.indexOf(me)+1) % websites.length;
-        window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
-      }
-      else
-        alert("Bitte gib eine natürliche Zahl zwischen 0 und 20 ein.");
-    });
   
   //////////// Transition ///////////////
   var oldDataset = cloneDataset(getFilteredData(dataset));
@@ -164,7 +122,7 @@ function update(){
     
   circles.enter()
     .append("circle")
-    .attr("class", "class42")
+    .attr("class", "new")
     .attr("cx", function(d) {return scale.xScale(d.pos.x);})
     .attr("cy", function(d) {return scale.yScale(d.pos.y);})
     .attr("r", 0)
@@ -179,15 +137,76 @@ function update(){
     })
     .style("opacity", 1)
     .style("pointer-events", "all")
-  .merge(circles)
-    .transition().duration(transDuration).ease(d3.easeQuadInOut)
-    .attr("cx", function(d) {return scale.xScale(d.pos.x);})
-    .attr("cy", function(d) {return scale.yScale(d.pos.y);})
     .transition().delay(transDuration)
     .duration(500).ease(d3.easeBackOut.overshoot(6))
     .attr("r", radius)
     .style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
+    
+  svg.svg.select("g.circs").selectAll("circle.class42")
+    .transition().duration(transDuration).ease(d3.easeQuadInOut)
+    .attr("cx", function(d) {return scale.xScale(d.pos.x);})
+    .attr("cy", function(d) {return scale.yScale(d.pos.y);});
+    
+  var t0 = d3.transition().delay(transDuration+500).duration(0)
+    .on("end", createForm);
   
+  // Formular
+  function createForm() {
+    bereitBtn.btn.remove();
+    hinweis.remove();
+    
+    box.style("width", "70%")
+      .style("margin-left", "15%");
+      
+    var form = d3.select("body").select("div#platzhalter")
+      .append("form");
+      
+    var cases = [
+      "Projekte sind hinzu gekommen.",// <- richtigeAntwort
+      "Projekte haben das Cluster gewechselt.", 
+      "Projekte haben sich verschoben.", 
+      "Projekte sind verschwunden."
+    ];
+    richtigeAntwort = randomizeArray(cases, richtigeAntwort);
+    // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
+    // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
+    var radios = form.selectAll('input[name="cases"]')
+    .data(cases);
+
+    var labels = radios.enter()
+      .append("div")
+      .style("text-align", "left")
+      .append("label")
+      .append("input")
+      .attr("type", "radio")
+      .attr("name", "cases")
+      .attr("value", function(d) {return d;});
+      
+    d3.selectAll("label")
+      .append("text")
+      .text(function(d) {return " " + d});
+    
+    var weiter = new Button(storeDatas, "weiter");
+    weiter.btn
+      .on("click", function(){// wird ersetzt
+        var radioList = document.getElementsByName("cases");
+        var selected = undefined;
+        // https://stackoverflow.com/questions/9618504/how-to-get-the-selected-radio-button-s-value
+        for (var i in radioList) {
+          if (radioList[i].checked) {
+            selected = radioList[i];
+            break;
+          }
+        }
+        if (selected != undefined) {
+          storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[richtigeAntwort].value);
+          var index = (websites.indexOf(me)+1) % websites.length;
+          window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
+        }
+        else
+          alert("Bitte wähle eine Antwort aus.");
+      });
+  }
 }
 
   

@@ -14,19 +14,22 @@ var richtigeAntwort = 0;
 
 var dataset = [];
 var pos, id, gerade, clusterNo, researchArea, year, keywords;
-for(i=0; i < projZahl; i++){
-  pos = new Position(Float.getRandFloat(0,width), Float.getRandFloat(0,height));
-  id = currID++;
-  gerade = new Gerade(new Position(width/2, height/2), pos);
-  clusterNo = Math.floor(gerade.getAngle() / (2*Math.PI) * clusterzahl);
-  researchArea = forschungsgebiete[Index.getRandInt(0, forschungsgebiete.length-1)];
-  keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];
-  var rel = Math.floor(projZahl/8);
-  if ((i+1) % rel == 0)
-    year = Index.getRandInt(2001, 2019);
-  else
-    year = Index.getRandInt(zeitspanne[0], 2000);
-  dataset.push(new Knoten(pos, id, clusterNo, researchArea, year, keywords));
+var forschungsIDs = [1,4,8];
+var positionen = [
+  [[3,7], [5,9], [2,10], [4,8], [3,5]], // cluster 0
+  [[6,4], [9,1], [8,6], [10,4]], // cluster 1
+  [[2,2], [0,1]] // cluster 2
+];
+for (var i=0; i < positionen.length; i++){
+  for (var j=0; j < positionen[i].length; j++){
+    pos = new Position(positionen[i][j][0], positionen[i][j][1]);
+    clusterNo = i;
+    id = 10*i + j;
+    researchArea = forschungsgebiete[forschungsIDs[id%3]];
+    keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];
+    year = Index.getRandInt(zeitspanne[0], zeitspanne[1]);
+    dataset.push(new Knoten(pos, id, clusterNo, researchArea, year, keywords));
+  }
 }
 
 ///////////// Seite ////////////////
@@ -76,16 +79,27 @@ new LinkButton(me, deleteDatas, -1, "zurück", null);
 var bereitBtn = new Button(update, "bereit");
 
 //////////// UPDATE /////////////
-function update(){  
-  var anzNeu = dataset.filter(d => d.year > 2000).length;
+function update(){
+  var positionen = [
+  [[3,7], [5,9], [2,10]], // cluster 0
+  [[6,4], [9,1], [8,6]], // cluster 1
+  [[2,2]] // cluster 2
+];
   
   //////////// Transition ///////////////
-  var oldDataset = cloneDataset(getFilteredData(dataset));
+  var oldDataset = cloneDataset(dataset);
   var oldNests = new Nest(oldDataset);
   
-  zeitspanne[1] = 2000;
+  var newDataset = [];
+  oldDataset.forEach(function(k){
+    if (k.clusterNo < positionen.length) {
+      var line = positionen[k.clusterNo];
+      if (k.id < 10*k.clusterNo + line.length)
+        newDataset.push(k);
+    }
+  });
   
-  var newNests = new Nest(getFilteredData(dataset));
+  var newNests = new Nest(newDataset);
   var transTable = oldNests.createTransitionNests(newNests);
   
   ////////// Hüllen //////////////
@@ -95,7 +109,7 @@ function update(){
       return d.makeHulls2Path(scale);
     });
   
-  scale.setDomain(getFilteredData(dataset));
+  scale.setDomain(newDataset);
   
   svg.svg.select("g.hulls").selectAll("path.class42")
     .data(transTable[1].nest, function(d){return d.id;})
@@ -108,7 +122,7 @@ function update(){
     
   function showNewDatas(){
     svg.svg.select("g.hulls").selectAll("path.class42")
-      .data(new Nest(getFilteredData(dataset)).nest, function(d){return d.id;})
+      .data(new Nest(newDataset).nest, function(d){return d.id;})
       .attr("d", function(d){
         return d.makePolygons2Path(scale);
       });
@@ -117,15 +131,17 @@ function update(){
   ////////// Kreise //////////////
   var circles = svg.svg.select("g.circs")
     .selectAll("circle.class42")
-    .data(getFilteredData(dataset), function(d){return d.id;});
+    .data(newDataset, function(d){return d.id;});
     
   circles.exit()
+    .attr("class", "remove")
     .transition().duration(500)
     .ease(d3.easeBackIn.overshoot(6))
     .attr("r", 0)
     .remove();
     
-  circles.filter(c => c.year <= 2000)
+  svg.svg.select("g.circs")
+    .selectAll("circle.class42")
     .transition().delay(500)
     .duration(transDuration)
     .ease(d3.easeQuadInOut)
@@ -141,18 +157,17 @@ function update(){
     bereitBtn.btn.remove();
     hinweis.remove();
     
-    box.style("width", "70%")
-      .style("margin-left", "15%");
+    box.style("width", "90%")
+      .style("margin-left", "5%");
       
     var form = d3.select("body").select("div#platzhalter")
       .append("form");
       
     var cases = [
-    
-      "Projekte sind verschwunden.",// <- richtigeAntwort
-      "Projekte sind hinzu gekommen.",
-      "Projekte haben das Cluster gewechselt.", 
-      "Projekte haben sich verschoben."
+      "Das Verschwinden von Projekten beeinflusste die Hüllenform.",// <- richtigeAntwort
+      "Projekte sind verschwunden und beeinflussten nicht die Hüllenform.",
+      "Die Hüllenform hat sich bei konstanter Projektzahl verändert.",
+      "Die Cluster haben sich verschoben, aber die Form blieb unverändert."
     ];
     richtigeAntwort = randomizeArray(cases, richtigeAntwort);
     // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js

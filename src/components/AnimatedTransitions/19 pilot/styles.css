@@ -20,7 +20,6 @@ form {
   /*margin:auto; https://d-graff.de/demos/selfhtml/jeena_test.html*/
 }
 
-
 button {
   color: white;
   background-color: #666;
@@ -53,6 +52,27 @@ p {
   margin-bottom: 1.6ex;
   /*width: 750px;*/
   text-align: justify;
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}/* https://www.w3schools.com/html/tryit.asp?filename=tryhtml_table_intro */
+
+td:nth-child(1) {/* https://www.w3schools.com/cssref/sel_nth-child.asp */
+  text-align: right;
+}
+
+div.spalte {
+  width: 50%;
+  float: left;
 }
 
 .box {
@@ -110,7 +130,7 @@ path {
   /*fill: gray;
   stroke: gray;*/
   stroke-width: 25px;
-  opacity: 0.3;
+  /*opacity: 0.3;*/
   paint-order: stroke markers fill;
   stroke-linejoin: round;
 }

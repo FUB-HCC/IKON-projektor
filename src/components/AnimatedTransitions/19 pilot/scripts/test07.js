@@ -7,6 +7,7 @@ var positionsRegler = 0;
 var transDuration = 1000;
 var checkboxen = {};
 const targetID = 6;
+var richtigeAntwort = 0;
 
 //////////////// Dataset ////////////////
 
@@ -37,12 +38,12 @@ d3.select("body")
 
 d3.select("body")
   .append("h1")
-  .text("Deutung der Transition IV");
+  .text("Deutung der Transition " + romanize(aufgabenNr(me)));
   
 d3.select("body")
   .append("p")
   .attr("name", "anweisung")
-  .text("Das folgende Beispiel zeigt eine Transition von Hüllen, bedingt durch die Projektdaten. Schaue dir folgende Transition an und deute diese.");
+  .text("Das folgende Beispiel zeigt eine Transition von Hüllen. Was passiert hier? Beschreibe es in Worten und finde die passende Antwort im Multiple Choice:");
   
 //////////////// SVG ////////////////////
 var svg = new SVG("svg");
@@ -75,11 +76,6 @@ var bereitBtn = new Button(update, "bereit");
 
 //////////// UPDATE /////////////
 function update(){
-  bereitBtn.btn.remove();
-  hinweis.remove();
-  
-  
-  
   var positionen = [
   [1.2,0.4,0], [3,1,0], [5,1,2], [1,3,0], [3.3,4,0], // cluster 0
   [4.6,5,1], [3,7,1], [6,4.5,1], [4,8,1], // cluster 1
@@ -109,8 +105,6 @@ function update(){
   
   var hulls = svg.svg.select("g.hulls").selectAll("path.class42")
     .data(transTable[1].nest, function(d){return d.id;});
-    
-  console.log(hulls);
     
   hulls.enter()// bei verschmelzen: einer im exit() drin
     .append("path")
@@ -154,59 +148,68 @@ function update(){
     .attr("cy", function(d) {return scale.yScale(d.pos.y);});
     //.style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
     
-    
-  //////////////// Formular
-  box.style("width", "70%")
-    .style("margin-left", "15%");
-    
-  var form = d3.select("body").select("div#platzhalter")
-    .append("form");
-    
-  var cases = [
-    "Mehrere Cluster haben sich aufgeteilt.",
-    "Projekte sind verschwunden.",
-    "Projekte sind hinzu gekommen.",
-    "Ein Cluster ist neu hinzu gekommen.",
-  ];
-  // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
-  // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
-  var radios = form.selectAll('input[name="cases"]')
-  .data(cases);
-
-  var labels = radios.enter()
-    .append("div")
-    .style("text-align", "left")
-    .append("label")
-    .append("input")
-    .attr("type", "radio")
-    .attr("name", "cases")
-    .attr("value", function(d) {return d;});
-    
-  d3.selectAll("label")
-    .append("text")
-    .text(function(d) {return " " + d});
+  var t0 = d3.transition().delay(transDuration+500).duration(0)
+    .on("end", createForm);
   
-  // Buttons
-  var weiter = new Button(storeDatas, "weiter");
-  weiter.btn
-    .on("click", function(){// wird ersetzt
-      var radioList = document.getElementsByName("cases");
-      var selected = undefined;
-      // https://stackoverflow.com/questions/9618504/how-to-get-the-selected-radio-button-s-value
-      for (var i in radioList) {
-        if (radioList[i].checked) {
-          selected = radioList[i];
-          break;
+  function createForm() {
+    //////////////// Formular
+    bereitBtn.btn.remove();
+    hinweis.remove();
+    
+    box.style("width", "90%")
+      .style("margin-left", "5%");
+      
+    var form = d3.select("body").select("div#platzhalter")
+      .append("form");
+      
+    var cases = [
+      "Ein Cluster hat sich aufgeteilt und ein neues ist entstanden.", // <- richtigeAntwort
+      "Ein Projekt ist hinzu gekommen und hat ein neues Cluster gebildet.",
+      "Ein Projekt ist zu einem anderem, existierenden Cluster gewechselt.",
+      "Ein Cluster hat ein Projekt an ein anderes existierendes abgegeben."
+    ];
+    richtigeAntwort = randomizeArray(cases, richtigeAntwort);
+    
+    // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
+    // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
+    var radios = form.selectAll('input[name="cases"]')
+    .data(cases);
+
+    var labels = radios.enter()
+      .append("div")
+      .style("text-align", "left")
+      .append("label")
+      .append("input")
+      .attr("type", "radio")
+      .attr("name", "cases")
+      .attr("value", function(d) {return d;});
+      
+    d3.selectAll("label")
+      .append("text")
+      .text(function(d) {return " " + d});
+    
+    // Buttons
+    var weiter = new Button(storeDatas, "weiter");
+    weiter.btn
+      .on("click", function(){// wird ersetzt
+        var radioList = document.getElementsByName("cases");
+        var selected = undefined;
+        // https://stackoverflow.com/questions/9618504/how-to-get-the-selected-radio-button-s-value
+        for (var i in radioList) {
+          if (radioList[i].checked) {
+            selected = radioList[i];
+            break;
+          }
         }
-      }
-      if (selected != undefined) {
-        storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[3].value);
-        var index = (websites.indexOf(me)+1) % websites.length;
-        window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
-      }
-      else
-        alert("Bitte wähle eine Antwort aus.");
-    });
+        if (selected != undefined) {
+          storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[richtigeAntwort].value);
+          var index = (websites.indexOf(me)+1) % websites.length;
+          window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
+        }
+        else
+          alert("Bitte wähle eine Antwort aus.");
+      });
+  }
 }
 
   

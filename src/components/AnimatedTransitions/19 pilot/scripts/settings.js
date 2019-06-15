@@ -53,7 +53,26 @@ const forschungsgebiete = [
   }
 ];
 
-const websites = ["../index", "test01", "test02", "test03", "test04", "test05", "test06", "test07", "test08", "test09", "results"];
+const websites = ["../index", 
+  "test10", // neue Knoten + wirken sich nicht auf die Form aus
+  "test11", // neue Knoten + Verformung durch diese
+  "test08", // Verschiebung
+  "test05", // Verschmelzung
+  "test13", // Knoten verschwinden + Verformung durch diese aus
+  "test04", // ein Cluster teilt sich auf 2 andere auf
+  "test14", // Knoten verschwinden + wirken sich nicht auf die Form
+  "test06", // Clusterwechsel (alte bleibt bestehen)
+  "test07", // Clusterwechsel + neues Cluster
+  "test12", // neue Knoten => neues Cluster
+  "test09", // Clusterzahl raten (altes Template)
+  "test15", // Vergleich: Trans. vs. Überblendung
+  "test16", // Transitionsdauer
+  "results"
+];
+/* "test01", // Objektverfolgung 
+ * "test02", // Knoten kommen hinzu
+ * "test03", // Knoten verschwinden
+ */
 
 function aufgabenNr(site){
   return websites.indexOf(site);
@@ -61,6 +80,32 @@ function aufgabenNr(site){
 
 function aufgabenCounter(site) {
   return "Aufgabe " + aufgabenNr(site) + "/" + (websites.length-2);
+}
+
+function romanize(num) { // https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
+  var roman = {
+    M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, 
+    L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1};
+  var str = '';
+  for (var i of Object.keys(roman)) {
+    var q = Math.floor(num / roman[i]);
+    num -= q * roman[i];
+    str += i.repeat(q);
+  }
+  return str;
+}
+
+function randomizeArray(arr, initialIndex) {
+  var tmp, randI;
+  for (var i=0; i < arr.length; i++) {
+    randI = Index.getRandInt(0, arr.length-1);
+    tmp = arr[randI];
+    arr[randI] = arr[i];
+    arr[i] = tmp;
+    if (initialIndex == i)// passt Stelle an
+      initialIndex = randI;
+  }
+  return initialIndex;
 }
 
 ////////////////// SVG ////////////

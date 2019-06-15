@@ -2,31 +2,34 @@ const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
 
 //////////////// Variablen //////////////
 var clusterzahl = 3;
-var currID = 1;
 var positionsRegler = 0;
 var transDuration = 1000;
 var checkboxen = {};
-const targetID = 6;
+const targetID = 7;
 const projZahl = 32;
 var richtigeAntwort = 0;
 
 //////////////// Dataset ////////////////
+zeitspanne = [1990,2000];
 
 var dataset = [];
 var pos, id, gerade, clusterNo, researchArea, year, keywords;
-for(i=0; i < projZahl; i++){
-  pos = new Position(Float.getRandFloat(0,width), Float.getRandFloat(0,height));
-  id = currID++;
-  gerade = new Gerade(new Position(width/2, height/2), pos);
-  clusterNo = Math.floor(gerade.getAngle() / (2*Math.PI) * clusterzahl);
-  researchArea = forschungsgebiete[Index.getRandInt(0, forschungsgebiete.length-1)];
-  keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];
-  var rel = Math.floor(projZahl/8);
-  if ((i+1) % rel == 0)
-    year = Index.getRandInt(2001, 2019);
-  else
-    year = Index.getRandInt(zeitspanne[0], 2000);
-  dataset.push(new Knoten(pos, id, clusterNo, researchArea, year, keywords));
+var forschungsIDs = [1,4,8];
+var positionen = [
+  [[1.3,7], [1.5,3.3], [3.8,5.2], [2,4]], // cluster 0
+  [[6.7,5.2], [6.3,6.8]], // cluster 1
+  [[4,1], [6,0.8], [6.8,2.8], [5,2], [5.2,2.9]] // cluster 2
+];
+for (var i=0; i < positionen.length; i++){
+  for (var j=0; j < positionen[i].length; j++){
+    pos = new Position(positionen[i][j][0], positionen[i][j][1]);
+    clusterNo = i;
+    id = 10*i + j;
+    researchArea = forschungsgebiete[forschungsIDs[id%3]];
+    keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];
+    year = Index.getRandInt(zeitspanne[0], zeitspanne[1]);
+    dataset.push(new Knoten(pos, id, clusterNo, researchArea, year, keywords));
+  }
 }
 
 ///////////// Seite ////////////////
@@ -76,14 +79,33 @@ new LinkButton(me, deleteDatas, -1, "zurück", null);
 var bereitBtn = new Button(update, "bereit");
 
 //////////// UPDATE /////////////
-function update(){  
-  var anzNeu = dataset.filter(d => d.year > 2000).length;
+function update(){    
+  var positionen = [
+  [[1.6,7], [1,3.5], [4.4,4.7], [2,3], [2.6,5], [2,6]], // cluster 0
+  [[6.5,6], [6,6.8]], // cluster 1
+  [[4,0], [6.4,0.6], [6.8,2.8], [5,1], [4,3.4], [4.5,2], [6.1,2.1]] // cluster 2
+  ];
   
   //////////// Transition ///////////////
-  var oldDataset = cloneDataset(getFilteredData(dataset));
+  var oldDataset = cloneDataset(dataset);
   var oldNests = new Nest(oldDataset);
   
-  zeitspanne[1] = 2000;
+  var vorhanden;
+  for (var i=0; i < positionen.length; i++){
+    for (var j=0; j < positionen[i].length; j++){
+      pos = new Position(positionen[i][j][0], positionen[i][j][1]);
+      clusterNo = i;
+      id = 10*i + j;
+      researchArea = forschungsgebiete[forschungsIDs[id%3]];
+      keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];
+      year = Index.getRandInt(zeitspanne[0], zeitspanne[1]);
+      vorhanden = dataset.map(d => d.id).some(i => i == id);
+      if (!vorhanden)
+        dataset.push(new Knoten(pos, id, clusterNo, researchArea, year, keywords));
+      else
+        dataset.filter(d => d.id == id).forEach(d => d.pos = pos);
+    }
+  }
   
   var newNests = new Nest(getFilteredData(dataset));
   var transTable = oldNests.createTransitionNests(newNests);
@@ -99,8 +121,7 @@ function update(){
   
   svg.svg.select("g.hulls").selectAll("path.class42")
     .data(transTable[1].nest, function(d){return d.id;})
-    .transition().delay(500)
-    .duration(transDuration).ease(d3.easeQuadInOut)
+    .transition().duration(transDuration).ease(d3.easeQuadInOut)
     .attr("d", function(d){
       return d.makeHulls2Path(scale);
     })
@@ -115,24 +136,38 @@ function update(){
   }
   
   ////////// Kreise //////////////
+  
   var circles = svg.svg.select("g.circs")
     .selectAll("circle.class42")
     .data(getFilteredData(dataset), function(d){return d.id;});
     
-  circles.exit()
-    .transition().duration(500)
-    .ease(d3.easeBackIn.overshoot(6))
-    .attr("r", 0)
-    .remove();
-    
-  circles.filter(c => c.year <= 2000)
-    .transition().delay(500)
-    .duration(transDuration)
-    .ease(d3.easeQuadInOut)
+  circles.enter()
+    .append("circle")
+    .attr("class", "new")
     .attr("cx", function(d) {return scale.xScale(d.pos.x);})
     .attr("cy", function(d) {return scale.yScale(d.pos.y);})
+    .attr("r", 0)
+    .on("mouseover", tooltipNode.show)
+    .on("mouseout", tooltipNode.hide)
+    // https://github.com/d3/d3-scale-chromatic
+    .style("stroke", function(d){
+      return d3.rgb(colorScheme[d.researchArea.disziplin]).brighter(2);
+    })// .darker(2)
+    .style("fill", function(d){
+      return d3.rgb(colorScheme[d.researchArea.disziplin]);
+    })
+    .style("opacity", 1)
+    .style("pointer-events", "all")
+    .transition().delay(transDuration)
+    .duration(500).ease(d3.easeBackOut.overshoot(6))
+    .attr("r", radius)
     .style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
-  
+    
+  svg.svg.select("g.circs").selectAll("circle.class42")
+    .transition().duration(transDuration).ease(d3.easeQuadInOut)
+    .attr("cx", function(d) {return scale.xScale(d.pos.x);})
+    .attr("cy", function(d) {return scale.yScale(d.pos.y);});
+    
   var t0 = d3.transition().delay(transDuration+500).duration(0)
     .on("end", createForm);
   
@@ -141,20 +176,22 @@ function update(){
     bereitBtn.btn.remove();
     hinweis.remove();
     
-    box.style("width", "70%")
-      .style("margin-left", "15%");
+    box.style("width", "90%")
+      .style("margin-left", "5%");
       
     var form = d3.select("body").select("div#platzhalter")
       .append("form");
       
     var cases = [
-    
-      "Projekte sind verschwunden.",// <- richtigeAntwort
-      "Projekte sind hinzu gekommen.",
-      "Projekte haben das Cluster gewechselt.", 
-      "Projekte haben sich verschoben."
+      "Neue Projekte kamen hinzu. Sie haben die Hüllenform nicht beeinflusst.",// <- richtigeAntwort
+      "Neue Projekte kamen hinzu und veränderten die Hüllenform.",
+      //"Die Clusterform wurde durch die altenProjekte verändert.",// <- richtigeAntwort
+      //"Die Clusterform wurde durch die neuen Projekte verändert.", 
+      "Die Hüllenform hat sich bei konstanter Projektzahl verändert.",
+      "Die Cluster haben sich verschoben, aber die Form blieb unverändert."
     ];
     richtigeAntwort = randomizeArray(cases, richtigeAntwort);
+    
     // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
     // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
     var radios = form.selectAll('input[name="cases"]')
