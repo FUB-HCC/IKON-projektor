@@ -1,4 +1,4 @@
-const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
+mconst me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
 
 //////////////// Variablen //////////////
 var clusterzahl = 3;
@@ -169,7 +169,7 @@ function update(){
       const dist = blueCircPos.getDistance(clicked.pos);
       const maxDist = d3.max(allCircsPos, 
         p => blueCircPos.getDistance(p));
-       const accuracy = "Objektverfolgung Genauigkeit: " + (100-(dist/maxDist*100)).toString() + "%";
+       const accuracy = "Objektverfolgung Genauigkeit;" + (100-(dist/maxDist*100)).toString() + "%";
       // erstellt den neuen Link
       new LinkButton(me, storeDatas, +1, "weiter", accuracy);
       

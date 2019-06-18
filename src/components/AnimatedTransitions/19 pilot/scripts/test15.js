@@ -250,15 +250,15 @@ function update(){
     
     var maxLetters = cases.map(s => s.length)
       .reduce(function(akk,d){return Math.max(akk,d)},0);
-    console.log(maxLetters);
+    //console.log(maxLetters);
     var fontSize = 11;
     var boxwidth = fontSize * maxLetters * (2/3);
-    console.log(boxwidth);
+    //console.log(boxwidth);
     box.style("width", function(){return boxwidth + "px"})//30%
       .style("margin-left", function(){
         var w = document.getElementsByTagName("body")[0].style.width;
         w = w.slice(0, w.length-2);
-        console.log(w);
+        //console.log(w);
         return (parseInt(w) - boxwidth) / 2 + "px";
       })
       .style("margin-bottom", "10px");// "35%"
@@ -299,7 +299,7 @@ function update(){
           }
         }
         if (selected != undefined) {
-          storeDatas(me, "Animationsart, " + selected.value);
+          storeDatas(me, "Bevorzugte Animationsart;" + selected.value + "; ; ;Antworten;" + cases.join(";"));
           var index = (websites.indexOf(me)+1) % websites.length;
           window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
         }

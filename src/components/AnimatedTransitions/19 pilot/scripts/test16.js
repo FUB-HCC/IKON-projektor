@@ -245,13 +245,12 @@ function update(){
       .attr("name", "default")
       .text("Bitte auswählen");
       
+    var cases = [];
+    for (var i = durationSpan[0]; i <= durationSpan[1]; i += schrittweite)
+      cases.push(i);
+      
     selections = selections.selectAll('option[name="cases"]')
-      .data(function(){
-        var array = [];
-        for (var i = durationSpan[0]; i <= durationSpan[1]; i += schrittweite)
-          array.push(i);
-        return array;
-      });
+      .data(cases);
 
     var options = selections.enter()
       .append("option")
@@ -274,7 +273,7 @@ function update(){
           }
         }
         if (selected != undefined) {
-          storeDatas(me, "Prefered time, " + selected.value);
+          storeDatas(me, "Bevorzugte Zeit;" + selected.value + "; ; ;Antworten;" + cases.join(";"));
           var index = (websites.indexOf(me)+1) % websites.length;
           window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
         }

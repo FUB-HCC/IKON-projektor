@@ -1,34 +1,25 @@
 const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
 
 //////////////// Variablen //////////////
-var clusterzahl = 3;
+var clusterzahl = 5;
 var currID = 1;
 var positionsRegler = 0;
-var transDuration = 1000;
-var checkboxen = {};
-const targetID = 6;
-const projZahl = 32;
-var richtigeAntwort = 0;
+var transDuration = 750;
+const targetID = 7;
+const projZahl = 150;
 
 //////////////// Dataset ////////////////
-
 var dataset = [];
 var pos, id, gerade, clusterNo, researchArea, year, keywords;
-var forschungsIDs = [1,4,8];
-var positionen = [
-  [[1,4], [1,1], [4,0], [5,5], [3,3]], // cluster 0
-  [[3,6], [7,4], [10,6], [4,9], [8,6.5], [5,8]] // cluster 1
-];
-for (var i=0; i < positionen.length; i++){
-  for (var j=0; j < positionen[i].length; j++){
-    pos = new Position(positionen[i][j][0], positionen[i][j][1]);
-    clusterNo = i;
-    id = 10*i + j;
-    researchArea = forschungsgebiete[forschungsIDs[id%3]];
-    keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];
-    year = Index.getRandInt(zeitspanne[0], zeitspanne[1]);
-    dataset.push(new Knoten(pos, id, clusterNo, researchArea, year, keywords));
-  }
+for(i=0; i < projZahl; i++){
+  pos = new Position(Float.getRandFloat(0,width), Float.getRandFloat(0,height));
+  id = currID++;
+  gerade = new Gerade(new Position(width/2, height/2), pos);
+  clusterNo = Math.floor(gerade.getAngle() / (2*Math.PI) * clusterzahl);
+  researchArea = forschungsgebiete[Index.getRandInt(0,3)];
+  keywords = [Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo), Keywords.getRandStr(researchArea, clusterNo)];
+  year = Index.getRandInt(zeitspanne[0], zeitspanne[1]);
+  dataset.push(new Knoten(pos, id, clusterNo, researchArea, year, keywords));
 }
 
 ///////////// Seite ////////////////
@@ -41,26 +32,34 @@ d3.select("body")
 
 d3.select("body")
   .append("h1")
-  .text("Deutung der Transition " + romanize(aufgabenNr(me)));
+  .text("Clusterzahl");
   
 d3.select("body")
   .append("p")
   .attr("name", "anweisung")
-  .text("Schaue dir folgende Transition an! Was passiert hier? Beschreibe es in Worten und finde die passende Antwort im Multiple Choice:");
+  .text("Das folgende Beispiel zeigt geclusterte Projekte - jedoch ohne Hüllen. Trage die vermutete Clusterzahl vor und nach der Transition in die Felder ein.");
   
 //////////////// SVG ////////////////////
 var svg = new SVG("svg");
 
 //////////////// Scaling ////////////////////
 var scale = new Scale(dataset);
-scale.setDomain(getFilteredData(dataset));
 
 //////////////// Kreise ////////////////////
-var circs = new Kreise(getFilteredData(dataset), svg, "class42", scale);
+var circs = new Kreise(dataset, svg, "class42", scale);
 
-//////////////// Hüllen ////////////////////
-var gruppen = new Nest(getFilteredData(dataset));
-var pfade = new Pfade(gruppen, svg, "class42", scale);
+//////////////// Cluster ////////////////////
+var gruppen = new Nest(dataset);
+gruppen.nest.forEach(function(c) {
+  c.moveVertsCloserTogether(0.2);
+});
+
+scale.setDomain(dataset);
+var huellen = new Pfade(gruppen, svg, "class42", scale);
+huellen.hull.style('opacity', 0);
+circs.circles
+  .attr("cx", function(d) {return scale.xScale(d.pos.x);})
+  .attr("cy", function(d) {return scale.yScale(d.pos.y);});
 
 
 //////////// Text / Input ////////////
@@ -68,10 +67,45 @@ var box = d3.select("body")
   .append("div")
   .attr("class", "box")
   .attr("id", "platzhalter");
+  
+  ///////////// Felder
+  box.style("width", "70%")
+    .style("margin-left", "15%");
+    
+  var form = d3.select("body").select("div#platzhalter")
+    .append("form");
+    
+  var labeltext = [
+    "Clusterzahl  (vorher)",
+    "Clusterzahl (nachher)"
+  ];
+  
+  var labels = form.selectAll("label")
+    .data(labeltext)
+    .enter()
+    .append("label")
+      .style("float", "left")
+      .style("text-align", "right")
+      .style("width", "18em")
+      .text(function(d) {return d;})
+    .insert("input")
+      .attr("type", "number")
+      .attr("name", "anzahl")
+      .attr("class", "numberInput")
+      .attr("id", function(d,i){return "input" + i})
+      .attr("min", 0)
+      .attr("max", 20)
+      .attr("size", 2)
+      .attr("step", 1)
+      .attr("required", true)
+      .style("width", "3em")
+      .style("float", "right")
+      .style("text-align", "left")
+      .style("margin-left", "0.5em");
 
-var hinweis = d3.select("body").select("div#platzhalter")
-  .append("p")
-  .text("Wenn du bereit bist, klicke auf den Button 'bereit'.");
+// var hinweis = d3.select("body").select("div#platzhalter")
+//   .append("p")
+//   .text("Wenn du bereit bist, klicke auf den Button 'bereit'.");
 
 //////////// Buttons /////////////
 new LinkButton(me, deleteDatas, -1, "zurück", null);
@@ -79,135 +113,73 @@ var bereitBtn = new Button(update, "bereit");
 
 //////////// UPDATE /////////////
 function update(){
-  var positionen = [
-  [[1,4.5], [2,0], [6,1], [3,2]], // cluster 0
-  [[6,7], [7,4], [9,6.5], [3,7.5]] // cluster 1
-];
-  
   //////////// Transition ///////////////
-  var oldDataset = cloneDataset(dataset);
-  var oldNests = new Nest(oldDataset);
-  
-  var newDataset = [];
-  dataset.forEach(function(k){
-    if (k.clusterNo < positionen.length) {
-      var line = positionen[k.clusterNo];
-      if (k.id < 10*k.clusterNo + line.length) {
-        var p = line[k.id-10*k.clusterNo];
-        k.pos = new Position(p[0], p[1]);
-        newDataset.push(k);
-      }
-    }
+  dataset.map(function(knoten){
+    var newPos = new Position(Float.getRandFloat(0, width/3), Float.getRandFloat(0, height/3));
+    knoten.moveBy(newPos);
   });
   
-  var newNests = new Nest(newDataset);
-  var transTable = oldNests.createTransitionNests(newNests);
+  gruppen.nest.forEach(function(c) {
+    c.positioniereCluster(clusterzahl);
+    c.moveVertsCloserTogether(0.15);
+  });
+
+  scale.setDomain(dataset);
   
-  ////////// Hüllen //////////////
-  svg.svg.select("g.hulls").selectAll("path.class42")
-    .data(transTable[0].nest, function(d){return d.id;})
-    .attr("d", function(d){
-      return d.makeHulls2Path(scale);
-    });
-  
-  scale.setDomain(newDataset);
-  
-  svg.svg.select("g.hulls").selectAll("path.class42")
-    .data(transTable[1].nest, function(d){return d.id;})
-    .transition().ease(d3.easeQuadInOut)
-    .delay(500).duration(transDuration)
-    .attr("d", function(d){
-      return d.makeHulls2Path(scale);
-    })
-    .on("end", showNewDatas);
-    
-  function showNewDatas(){
-    svg.svg.select("g.hulls").selectAll("path.class42")
-      .data(new Nest(newDataset).nest, function(d){return d.id;})
-      .attr("d", function(d){
-        return d.makePolygons2Path(scale);
-      });
-  }
-  
-  ////////// Kreise //////////////
+  ////////// Kreise
   var circles = svg.svg.select("g.circs")
     .selectAll("circle.class42")
-    .data(newDataset, function(d){return d.id;});
+    .data(dataset, function(d){return d.id;});
     
-  circles.exit()
-    .attr("class", "remove")
-    .transition().duration(500)
-    .ease(d3.easeBackIn.overshoot(6))
-    .attr("r", 0)
-    .remove();
-    
-  svg.svg.select("g.circs")
-    .selectAll("circle.class42")
-    .transition().delay(500)
-    .duration(transDuration)
-    .ease(d3.easeQuadInOut)
+  circles.enter()
+    .append("circle")
+    .attr("class", "class42")
     .attr("cx", function(d) {return scale.xScale(d.pos.x);})
     .attr("cy", function(d) {return scale.yScale(d.pos.y);})
+    .attr("r", 0)
+    .on("mouseover", tooltipNode.show)
+    .on("mouseout", tooltipNode.hide)
+    // https://github.com/d3/d3-scale-chromatic
+    .style("stroke", function(d){
+      return d3.rgb(colorScheme[d.researchArea.disziplin]).brighter(2);
+    })// .darker(2)
+    .style("fill", function(d){
+      return d3.rgb(colorScheme[d.researchArea.disziplin]);
+    })
+    .style("opacity", 1)
+    .style("pointer-events", "all")
+  .merge(circles)
+    .transition().duration(transDuration).ease(d3.easeQuadInOut)
+    .attr("cx", function(d) {return scale.xScale(d.pos.x);})
+    .attr("cy", function(d) {return scale.yScale(d.pos.y);})
+    .transition().delay(transDuration)
+    .duration(transDuration).ease(d3.easeBackOut.overshoot(6))
+    .attr("r", radius)
     .style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
-  
+    
   var t0 = d3.transition().delay(transDuration+500).duration(0)
     .on("end", createForm);
   
   // Formular
   function createForm() {
     bereitBtn.btn.remove();
-    hinweis.remove();
     
-    box.style("width", "90%")
-      .style("margin-left", "5%");
-      
-    var form = d3.select("body").select("div#platzhalter")
-      .append("form");
-      
-    var cases = [
-      "Projekte sind verschwunden und beeinflussten nicht die Hüllenform.",// <- richtigeAntwort
-      "Das Verschwinden von Projekten beeinflusste die Hüllenform.",
-      "Die Hüllenform hat sich bei konstanter Projektzahl verändert.",
-      "Die Cluster haben sich verschoben, aber die Form blieb unverändert."
-    ];
-    richtigeAntwort = randomizeArray(cases, richtigeAntwort);
-    // https://stackoverflow.com/questions/26499844/dynamically-create-radio-buttons-using-d3-js
-    // https://stackoverflow.com/questions/28433997/d3-how-to-create-input-elements-followed-by-label-text
-    var radios = form.selectAll('input[name="cases"]')
-    .data(cases);
-
-    var labels = radios.enter()
-      .append("div")
-      .style("text-align", "left")
-      .append("label")
-      .append("input")
-      .attr("type", "radio")
-      .attr("name", "cases")
-      .attr("value", function(d) {return d;});
-      
-    d3.selectAll("label")
-      .append("text")
-      .text(function(d) {return " " + d});
-    
+    ///////////// Save
     var weiter = new Button(storeDatas, "weiter");
     weiter.btn
       .on("click", function(){// wird ersetzt
-        var radioList = document.getElementsByName("cases");
-        var selected = undefined;
-        // https://stackoverflow.com/questions/9618504/how-to-get-the-selected-radio-button-s-value
-        for (var i in radioList) {
-          if (radioList[i].checked) {
-            selected = radioList[i];
-            break;
-          }
-        }
-        if (selected != undefined) {
-          storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[richtigeAntwort].value);
+        var numVorher = document.getElementById("input0").value;
+        var numNachher = document.getElementById("input1").value;
+        
+        if (!numVorher || isNaN(numVorher) || numVorher < 0)
+          alert("Bitte gib eine natürliche Zahl zwischen 0 und 20 ein.");
+        else if (!numNachher || isNaN(numNachher) || numNachher < 0)
+          alert("Bitte gib eine natürliche Zahl zwischen 0 und 20 ein.");
+        else {
+          storeDatas(me, "Schätzungen;" + numVorher + "," + numNachher + ";Lösung;" + clusterzahl);
           var index = (websites.indexOf(me)+1) % websites.length;
           window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
         }
-        else
-          alert("Bitte wähle eine Antwort aus.");
       });
   }
 }

@@ -163,7 +163,7 @@ function update(){
     var form = d3.select("body").select("div#platzhalter")
       .append("form");
       
-    var cases = [
+    var cases = [//
       "Das Verschwinden von Projekten beeinflusste die Hüllenform.",// <- richtigeAntwort
       "Projekte sind verschwunden und beeinflussten nicht die Hüllenform.",
       "Die Hüllenform hat sich bei konstanter Projektzahl verändert.",
@@ -201,7 +201,7 @@ function update(){
           }
         }
         if (selected != undefined) {
-          storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[richtigeAntwort].value);
+          storeDatas(me, "Deutung;" + selected.value + ";Lösung;" + radioList[richtigeAntwort].value + ";Antworten; " + cases.join(";"));
           var index = (websites.indexOf(me)+1) % websites.length;
           window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
         }

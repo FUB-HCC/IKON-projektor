@@ -1,8 +1,9 @@
 //////////////// Konstanten ////////////////////
-const margin = {top: 30, right: 30, bottom: 30, left: 30},
-  width = 350 - margin.left - margin.right,
-  height = 350 - margin.top - margin.bottom,
-  radius = 4;
+const margin = {top: 40, right: 100, bottom: 40, left: 40},
+  width = 400 - margin.left - margin.right,
+  height = 300 - margin.top - margin.bottom,
+  radius = 4,
+  barPadding = 2;
 var zeitspanne = [1990,2019];
 
 var colorScheme = d3.schemeCategory10;//schemeDark2;//schemeSet1;// https://github.com/d3/d3-scale-chromatic/blob/master/README.md#schemeCategory10
@@ -82,6 +83,64 @@ function aufgabenCounter(site) {
   return "Aufgabe " + aufgabenNr(site) + "/" + (websites.length-2);
 }
 
+var allAnswers = [
+  // neue Projekte
+  "Neue Projekte kamen hinzu. Sie haben die Hüllenform nicht beeinflusst.",
+  "Neue Projekte kamen hinzu und veränderten die Hüllenform.",
+  "Die Hüllenform hat sich bei konstanter Projektzahl verändert.",
+  "Die Cluster haben sich verschoben, aber die Form blieb unverändert.",
+  "Das Verschwinden von Projekten beeinflusste die Hüllenform.",
+  "Projekte sind verschwunden und beeinflussten nicht die Hüllenform.",
+  // del Projekte
+  "Alte Projekte haben ein neues Cluster erzeugt.",
+  "Neue Projekte haben ein neues Cluster erzeugt.",
+  "Projekte kamen hinzu, aber die Clusterzahl blieb konstant.",
+  "Ein Cluster hat sich aufgeteilt.",
+  "Ein Cluster ist mitsamt der Projekte verschwunden.",
+  "Projekte haben das Cluster gewechselt. Ihr altes Cluster exisitert noch.",
+  // verschmelzen
+  "Cluster sind verschmolzen.",
+  "Cluster haben sich bewegt und verformt.",
+  "Cluster haben sich aufgeteilt.",
+  "Projekte haben das Cluster gewechselt.",
+  "Ein neues Cluster ist hinzu gekommen.",
+  "Ein Cluster hat sich aufgeteilt und existiert nicht mehr.",
+  // aufteilen
+  "Ein Cluster hat sich aufgeteilt und existiert noch.",
+  "Ein Cluster hat sich aufgeteilt und ein neues ist entstanden.",
+  "Ein Projekt ist hinzu gekommen und hat ein neues Cluster gebildet.",
+  // clusterwechsel
+  "Ein Projekt ist zu einem anderem, existierenden Cluster gewechselt.",
+  "Ein Cluster hat ein Projekt an ein anderes existierendes abgegeben."
+];
+
+// var allAnswersOrig = [
+//   "Ein Cluster hat sich aufgeteilt und existiert nicht mehr.",
+//   "Cluster sind zu einem verschmolzen.",
+//   "Projekte haben das Cluster gewechselt. Ihr altes Cluster exisitert noch.",
+//   "Ein Cluster hat sich aufgeteilt und existiert noch.",
+//   "Cluster sind verschmolzen.",
+//   "Ein Cluster hat sich aufgeteilt.",
+//   "Ein Cluster ist mitsamt der Projekte verschwunden.",
+//   "Projekte haben das Cluster gewechselt.",
+//   "Ein neues Cluster ist hinzu gekommen.",
+//   "Ein Cluster hat sich aufgeteilt und ein neues ist entstanden.",
+//   "Ein Projekt ist hinzu gekommen und hat ein neues Cluster gebildet.",
+//   "Ein Projekt ist zu einem anderem, existierenden Cluster gewechselt.",
+//   "Ein Cluster hat ein Projekt an ein anderes existierendes abgegeben.",
+//   "Cluster haben sich aufgeteilt.",
+//   "Cluster haben sich bewegt und verformt.",
+//   "Projekte sind verschwunden und beeinflussten nicht die Hüllenform.",
+//   "Die Cluster haben sich verschoben, aber die Form blieb unverändert.",
+//   "Das Verschwinden von Projekten beeinflusste die Hüllenform.",
+//   "Die Hüllenform hat sich bei konstanter Projektzahl verändert.",
+//   "Neue Projekte kamen hinzu. Sie haben die Hüllenform nicht beeinflusst.",
+//   "Neue Projekte kamen hinzu und veränderten die Hüllenform.",
+//   "Projekte kamen hinzu, aber die Clusterzahl blieb konstant.",
+//   "Neue Projekte haben ein neues Cluster erzeugt.",
+//   "Alte Projekte haben ein neues Cluster erzeugt."
+// ];
+
 function romanize(num) { // https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
   var roman = {
     M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, 
@@ -119,9 +178,8 @@ function randomizeArray(arr, initialIndex) {
 ////////////////// SVG ////////////
 class SVG {
   // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Klassen
-  constructor(id) {
-    this.svg = d3.select("body")//.select(".box")//d3.select("#"+id)
-      .append("div")
+  constructor(id, ort) {
+    this.svg = ort.append("div")
       .attr("class", "box")
       .append("svg")
       .attr("class", id)
@@ -147,12 +205,95 @@ class Scale {
     this.yScale = d3.scaleLinear()
       .domain([0, height])
       .range([height, 0]);
+    this.nameScaleX = d3.scaleBand()
+      .domain([])
+      .range([0, width])
+      .paddingInner(0.2) // 2 set padding between bands
+      .paddingOuter(0.1);// 0.55
+    this.nameScaleY = d3.scaleBand()
+      // https://github.com/d3/d3-scale
+      .domain([])
+      .range([height, 0])// inverse
+      .paddingInner(0.2) // 2 set padding between bands
+      .paddingOuter(0.1);// 0.55
+    this.colorScale = d3.scaleSequential()
+      // https://www.d3-graph-gallery.com/graph/custom_color.html
+      // https://github.com/d3/d3-scale-chromatic
+      .domain([1,10])
+      .interpolator(d3.interpolateBlues);
   }
   
-  setDomain(vertices) {
+  setDomainDeutung(daten4, allAnswers, anzTN) {
+    this.xScale.domain([0, allAnswers.length]);
+    this.yScale.domain([0, anzTN]);
+    this.colorScale.domain([0, anzTN+1]);
+    this.nameScaleX.domain(daten4.map(d =>
+      allAnswers.indexOf(d.Loesung)+1
+    ).sort(function(a,b){return a-b}));
+    this.nameScaleY.domain(allAnswers.map(function(d,i){return i+1}));
+  }
+  
+  setDomainAnimation(vertices) {
     // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Functions/set
-    this.xScale.domain([getMinXofShapes(vertices), getMaxXofShapes(vertices)]);
-    this.yScale.domain([getMinYofShapes(vertices), getMaxYofShapes(vertices)]);
+    this.xScale.domain([0, vertices.length]);
+    this.yScale.domain([0, d3.max(vertices.map(d => d.anz))]);
+    this.nameScaleX.domain(vertices.map(d => d.name));
+    this.nameScaleY.domain(vertices.map(d => d.name));
+  }
+  
+  setDomainDauer(vertices) {
+    // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Functions/set
+    this.xScale.domain([0, d3.max(vertices.map(d => +d.name))]);
+    this.yScale.domain([0, d3.max(vertices.map(d => d.anz))]);
+    this.nameScaleX.domain(vertices.map(d => d.name));
+    this.nameScaleY.domain(vertices.map(d => d.name));
+  }
+  
+  setDomainClusterzahl(vertices) {
+    this.xScale.domain([0, d3.max(vertices, function(d){
+      if (d.start != undefined)
+        return d.start;
+      else
+        return d.end;
+    })]);
+    this.yScale.domain([0, d3.max(vertices, function(d){
+      return d.anz;
+    })]);
+  }
+}
+
+//////////////// Area ///////////////
+class Area {  
+  constructor(vertices, svg, klasse, scale){
+    this.area = d3.area()
+      .x(function(d){return scale.xScale(d.x);})
+      .y0(scale.yScale(0))
+      .y1(function(d){return scale.yScale(d.y);});
+    this.line = d3.line()
+      .x(function(d){return scale.xScale(d.x);})
+      .y(function(d){return scale.yScale(d.y);});
+    this.fill = svg.svg.select("g.hulls")
+      .selectAll("path."+klasse)
+      .datum(vertices)
+//       .data([vertices])
+//       .enter()
+      .attr("class", klasse)
+      .attr("d", d3.area()
+        .x(function(d){return scale.xScale(d.x);})
+        .y0(scale.yScale(0))
+        .y1(function(d){return scale.yScale(d.y);})
+      )
+      .attr("fill", "yellow")
+      .style("opacity", 0.3);
+//     this.stroke = svg.svg.select("g.hulls")
+//       .selectAll("path."+klasse)
+//       .data([vertices])
+//       .enter()
+//       .attr("class", "area")
+//       .attr("d", function(){return this.line})
+//       .attr("fill", "none")
+//       .attr("stroke", "orange")
+//       .attr("stroke-width", 2);
   }
 }
 
@@ -173,11 +314,157 @@ var tooltipCluster = d3.tip()
     return "ID: " + d.id + "<br>major keys: " + d.getKeywords().join(",<br>" + "&nbsp".repeat(22));
   });
   
+var tooltipClusterNo = d3.tip()
+  .attr("class", "d3-tip")
+  .offset([-8, 0])
+  .html(function(d) {// Antworten
+    if (d.start != undefined)
+      return "Start: " + d.start +"<br>Personenzahl: " + d.anz;
+    else
+      return "End: " + d.end +"<br>Personenzahl: " + d.anz;
+  });
+  
+var tooltipAnim = d3.tip()
+  .attr("class", "d3-tip")
+  .offset([-8, 0])
+  .html(function(d) {return "Name: " + d.name +"<br>Personenzahl: " + d.anz;
+  });
+  
+var tooltipDeutung = d3.tip()
+  .attr("class", "d3-tip")
+  .offset([-8, 0])
+  .html(function(d) {return "Aufgaben-Nr:  " + aufgabenNr(d.Aufgabe)  + "<br>Deutungs-Nr.: " + (allAnswers.indexOf(d.Antwort)+1) + "<br>Lösungs-Nr.:  " + (allAnswers.indexOf(d.Loesung)+1) + "<br>Personenzahl: " + d.Anzahl;
+  });
+  
+var tooltipDauer = d3.tip()
+  .attr("class", "d3-tip")
+  .offset([-8, 0])
+  .html(function(d) {return "Dauer: " + (parseInt(d.name)/1000) +" s<br>Personenzahl: " + d.anz;
+  });
+  
 var tooltipNodePoor = d3.tip()// zum Verbergen von Informationen
   .attr("class", "d3-tip")
   .offset([-8, 0])
   .html(function(d){return "keine Informationen"});
+
+//////////////// Rectangles ///////////////
+class Deutungsbars {  
+  constructor(flatDatas, svg, klasse, scale, tooltip, allAnswers){
+    // flatDatas = {Antwort, Anzahl, Aufgabe, Loesung}
+    this.rects = svg.select("g.circs")
+      .selectAll("rect")
+      .data(flatDatas)
+      .enter()
+      .append("rect")
+      .attr("x", function(d){
+        return scale.nameScaleX(
+          allAnswers.indexOf(d.Loesung)
+        +1);
+      })
+      .attr("y", function(d){
+        return scale.nameScaleY(
+          allAnswers.indexOf(d.Antwort)
+       +1);
+      })
+      .attr("width",  scale.nameScaleX.bandwidth())
+      .attr("height", scale.nameScaleY.bandwidth())
+      .attr("fill", function(d,i) {
+        return scale.colorScale(d.Anzahl+1);
+      })
+      .attr("stroke", function(d){
+        if (d.Antwort == d.Loesung)
+          return "orange";
+        else
+          return "none";
+      })
+      .attr("stroke-width", 1)
+      .on("mouseover", tooltip.show)
+      .on("mouseout", tooltip.hide);
+  }
+}
   
+class Clusterbars {  
+  constructor(vertices, svg, klasse, scale){
+    this.rects = svg.svg.select("g.circs")
+      .selectAll("rect")
+      .data(vertices.Antworten)
+      .enter()
+      .append("rect")
+      .attr("x", function(d){
+        if (d.start != undefined)
+          return scale.xScale(d.start) -scale.xScale(1) / 3;
+        else
+          return scale.xScale(d.end);
+      })
+      .attr("y", function(d){
+        return scale.yScale(d.anz);})
+      .attr("width", scale.xScale(1) / 3)
+      .attr("height", function(d){
+        return height - scale.yScale(d.anz);
+      })
+      .attr("fill", function(d,i) {
+        if (vertices.Loesung == d.start)
+          return "#00ff00";
+        else if (vertices.Loesung == d.end)
+          return "#007700";
+        else if (d.start != undefined && vertices.Loesung != d.start)
+          return "#ff0000";
+        else
+          return "#770000";
+      })
+      .on("mouseover", tooltipClusterNo.show)
+      .on("mouseout", tooltipClusterNo.hide);
+  }
+}
+
+class Animbars {  
+  constructor(vertices, svg, klasse, scale, tooltip){
+    this.rects = svg.svg.select("g.circs")
+      .selectAll("rect")
+      .data(vertices.Antworten)
+      .enter()
+      .append("rect")
+      .attr("x", function(d){
+        return scale.nameScaleX(d.name);
+      })
+      .attr("y", function(d){
+        return scale.yScale(d.anz);})
+      .attr("width", scale.nameScaleX.bandwidth())
+      .attr("height", function(d){
+        return height - scale.yScale(d.anz);
+      })
+      .attr("fill", function(d,i) {
+        return "#0000aa";
+      })
+      .on("mouseover", tooltip.show)
+      .on("mouseout", tooltip.hide);
+  }
+}
+
+class Durationbars {  
+  constructor(vertices, svg, klasse, scale, tooltip){
+    this.rects = svg.svg.select("g.circs")
+      .selectAll("rect")
+      .data(vertices.Antworten)
+      .enter()
+      .append("rect")
+      .attr("x", function(d){
+        return scale.xScale(+d.name) -15/2 +barPadding;
+      })
+      .attr("y", function(d){
+        return scale.yScale(d.anz);})
+      .attr("width", 15 - 2*barPadding)
+      .attr("height", function(d){
+        return height - scale.yScale(d.anz);
+      })
+      .attr("fill", function(d,i) {
+        return "#0000aa";
+      })
+      .on("mouseover", tooltip.show)
+      .on("mouseout", tooltip.hide);
+  }
+}
+
 //////////////// Kreise ///////////////
 class Kreise {
   constructor(vertices, svg, klasse, scale) {
@@ -340,22 +627,13 @@ function showDatas(site){
   // erstellt eine Datei mit den Ergebnissen
   // https://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
   // https://www.mediaevent.de/javascript/local-storage.html
-  var content = ["Aufgabe;Deutung;Loesung;Antwort1;Antwort2;Antwort3;Antwort4;Antwort5;Antwort6;Antwort7;Antwort8;Antwort9"];
+  var content = [];
   var keys = Object.keys(localStorage).sort();
   keys.forEach(function(key){
-    // modifiziert die Einträge
-    var value = localStorage.getItem(key);
-    var array = value.split(";");
-    var results = [key];
-    for (var i=0; i<array.length; i++)
-      if (i != 0 && i != 2 && i != 4)
-        results.push(array[i]);
-      else if (i == 0 && key=="Teilnehmer")
-        results.push(array[i]);
-    content.push(results.join(";"));
+    content.push(key + "; " + localStorage.getItem(key));
   });
   //var content = document.cookie;
-  download('results.csv', content.join("\n"));
+  download('results.txt', content.join("\n"));
 }
 
 function download(filename, text) {

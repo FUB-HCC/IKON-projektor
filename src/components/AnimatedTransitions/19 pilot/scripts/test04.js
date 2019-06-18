@@ -155,10 +155,10 @@ function update(){
     var form = d3.select("body").select("div#platzhalter")
       .append("form");
       
-    var cases = [
+    var cases = [//
       "Ein Cluster hat sich aufgeteilt und existiert nicht mehr.",// <- richtige Antwort
       "Ein Cluster hat sich aufgeteilt und existiert noch.", 
-      "Cluster sind zu einem verschmolzen.", 
+      "Cluster sind verschmolzen.", 
       "Projekte haben das Cluster gewechselt. Ihr altes Cluster exisitert noch."
     ];
     richtigeAntwort = randomizeArray(cases, richtigeAntwort);
@@ -195,7 +195,7 @@ function update(){
           }
         }
         if (selected != undefined) {
-          storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[richtigeAntwort].value);
+          storeDatas(me, "Deutung;" + selected.value + ";Lösung;" + radioList[richtigeAntwort].value + ";Antworten; " + cases.join(";"));
           var index = (websites.indexOf(me)+1) % websites.length;
           window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
         }

@@ -202,7 +202,7 @@ function update(){
           }
         }
         if (selected != undefined) {
-          storeDatas(me, "Deutung, " + selected.value + ", Lösung, " + radioList[richtigeAntwort].value);
+          storeDatas(me, "Deutung;" + selected.value + ";Lösung;" + radioList[richtigeAntwort].value + ";Antworten; " + cases.join(";"));
           var index = (websites.indexOf(me)+1) % websites.length;
           window.location.href = websites[index]+".html"; // https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
         }

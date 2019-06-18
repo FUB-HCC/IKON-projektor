@@ -43,8 +43,8 @@ function showResults(){
   var richtige = 0;
   for (var i = 1; i < websites.length -5; i++) {
     var zeile = tabelle.append("tr");
-    var deutung = localStorage.getItem(websites[i]).split(",")[1];
-    var loesung = localStorage.getItem(websites[i]).split(",")[3];
+    var deutung = localStorage.getItem(websites[i]).split(";")[1];
+    var loesung = localStorage.getItem(websites[i]).split(";")[3];
     zeile.append("td").text(i)// websites[i]
     zeile.append("td").text(deutung);
     zeile.append("td").text(loesung);
@@ -55,30 +55,35 @@ function showResults(){
   
   //////////// Clusterzahl ///////////
   container.append("h2").text("Clusterzahl");
-  var clusterzahlen = localStorage.getItem(websites[11]).split(",");
+  var clusterzahl = localStorage.getItem(websites[11]).split(";");
+  var clusterzahlen = [clusterzahl[1].split(",")[0], clusterzahl[1].split(",")[1], clusterzahl[3]];
   
   tabelle = container.append("table");
   head = tabelle.append("tr");
-  head.append("td").append("b").text("# vorher");
-  head.append("td").append("b").text("# nachher");
-  head.append("td").append("b").text("Lösung (vorher & nachher)");
+  head.append("td").append("b").text("Clusterzahlen");
+  head.append("td").append("b").text("Geschätzt");
+  head.append("td").append("b").text("Lösung");
   zeile = tabelle.append("tr");
+  zeile.append("td").text("vorher");
+  zeile.append("td").text(clusterzahlen[0]);
+  zeile.append("td").text(clusterzahlen[2]);
+  zeile = tabelle.append("tr");
+  zeile.append("td").text("nachher");
   zeile.append("td").text(clusterzahlen[1]);
-  zeile.append("td").text(clusterzahlen[3]);
-  zeile.append("td").text(clusterzahlen[5]);
+  zeile.append("td").text(clusterzahlen[2]);
   
-  var abw = Math.abs(clusterzahlen[1]-clusterzahlen[5]) + Math.abs(clusterzahlen[3]-clusterzahlen[5]);
-  container.append("p").text("Abweichung: " + (abw) + " ≈ " + d3.format(",.1f")(abw*100/clusterzahlen[5]) + "%");
+  var abw = Math.abs(clusterzahlen[0]-clusterzahlen[2]) + Math.abs(clusterzahlen[1]-clusterzahlen[2]);
+  container.append("p").text("Abweichung: " + (abw) + " ≈ " + d3.format(",.1f")(abw*100/clusterzahlen[2]) + "%");
   
   //////////// Animation ///////////
   container.append("h2").text("Animationsart");
-  var animation = localStorage.getItem(websites[12]).split(",");
+  var animation = localStorage.getItem(websites[12]).split(";");
   
   container.append("p").text("Bevorzugte Animationsart: " + animation[1]);  
   
   //////////// Duration ///////////
   container.append("h2").text("Transitionsdauer");
-  var prefDuration = localStorage.getItem(websites[13]).split(",");
+  var prefDuration = localStorage.getItem(websites[13]).split(";");
   
   container.append("p").text("Bevorzugte Transitionsdauer: " + parseInt(prefDuration[1])/1000 + " s");
 }
