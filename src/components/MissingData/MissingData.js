@@ -1,6 +1,8 @@
 import 'd3-transition'
+// import {Motion, spring} from 'react-motion'
 import styles from '../Visualizations/TimeLine/TimeLine.css'
 import React, {Component} from 'react'
+import {select as d3Select} from 'd3-selection'
 
 // Import the D3 libraries we'll be using for the spark line.
 /*
@@ -19,11 +21,11 @@ class MissingData extends Component {
       missingDataPoints: this.props.missingDataPoints,
       width: this.props.width,
       height: this.props.height,
-      visType: this.props.visType
+      visType: this.props.visType,
+      oldProps: {}
     }
     this.createSketchyData = this.createSketchyData.bind(this)
     this.createSketchyLine = this.createSketchyLine.bind(this)
-    this.RGBLogShade = this.RGBLogShade.bind(this)
   }
 
   // makes sure to not rerender if values did not change
@@ -31,7 +33,96 @@ class MissingData extends Component {
     if (JSON.stringify(this.props) === JSON.stringify(nextProps)) {
       return false
     } else {
+      this.setState({oldProps: nextProps})
       return true
+    }
+  }
+
+  componentDidMount () {
+    this.createChart()
+  }
+
+  componentDidUpdate () {
+    this.createChart()
+  }
+ 
+  createChart () {
+    const node = this.node
+    let lines = []
+
+    // deletes the last version
+    d3Select('.missingData')
+      .remove()
+
+    d3Select(node)
+      .append('g')
+      .attr('class', 'missingData')
+
+    switch (this.props.visType) {
+      case 'sketchiness': {
+        this.props.missingDataPoints.forEach(element => {
+          lines.push(this.createSketchyData(element, this.createSketchyLine))
+        })
+
+        // line factory for the sketchy points
+        const lineFactory = d3Line()
+          .curve(d3CurveBasis)
+
+        lines.forEach(line => {
+          let color = line[line.length - 1]
+          d3Select('.missingData')
+            .append('g')
+            .attr('class', color)
+            .attr('key', JSON.stringify(line))
+            // .attr('className', styles.line)
+            .append('path')
+            .style('stroke', color)
+            .style('opacity', 0.8)
+            .attr('d', lineFactory(line.slice(0, (line.length - 1))))
+        })
+        break
+      }
+      case 'dashing': {
+        this.props.missingDataPoints.forEach(element => {
+          lines.push(this.createSketchyData(element))
+        })
+        // Create a d3Line factory for our scales.
+        const lineFactory = d3Line()
+
+        lines.forEach(line => {
+          let color = line[line.length - 1]
+          d3Select('.missingData')
+            .append('g')
+            .attr('key', JSON.stringify(line))
+            .attr('className', styles.line)
+            .append('path')
+            .style('stroke', color)
+            .style('opacity', 0.8)
+            .style('stroke-dasharray', (5, 5))
+            .attr('d', lineFactory(line.slice(0, (line.length - 1))))
+        })
+        break
+      }
+      case 'blur': {
+        this.props.missingDataPoints.forEach(element => {
+          lines.push(this.createSketchyData(element))
+        })
+        // Create a d3Line factory for our scales.
+        const lineFactory = d3Line()
+
+        lines.forEach(line => {
+          let color = line[line.length - 1]
+          d3Select('.missingData')
+            .append('g')
+            .attr('key', JSON.stringify(line))
+            .attr('className', styles.line)
+            .append('path')
+            .style('stroke', color)
+            .style('opacity', 0.8)
+            .attr('d', lineFactory(line.slice(0, (line.length - 1))))
+        })      
+        break
+      }
     }
   }
 
@@ -105,95 +196,8 @@ class MissingData extends Component {
     return Math.floor(Math.random() * ((dmax * s * 2) + 1)) - (dmax * s)
   } 
 
-  // https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
-  // https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-  RGBLogShade (p, hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    const a = parseInt(result[1], 16)
-    const b = parseInt(result[2], 16)
-    const c = parseInt(result[3], 16)
-
-    const r = Math.round
-    let P = p < 0
-    const t = P ? 0 : p * 255 ** 2
-    P = P ? 1 + p : 1 - p
-    return '#' + ((1 << 24) + (r((P * a ** 2 + t) ** 0.5) << 16) + (r((P * b ** 2 + t) ** 0.5) << 8) + r((P * c ** 2 + t) ** 0.5)).toString(16).slice(1)
-  }
-
   render () {
-    let lines = []
-
-    switch (this.props.visType) {
-      case 'sketchiness': {
-        this.props.missingDataPoints.forEach(element => {
-          lines.push(this.createSketchyData(element, this.createSketchyLine))
-        })
-
-        // line factory for the sketchy points
-        const lineFactory = d3Line()
-          .curve(d3CurveBasis)
-    
-        return (
-          <svg>
-            {/* missing data lines */ }
-            {Object.values(lines).map((line) => {
-              let color = line[line.length - 1]
-              return (<g key={JSON.stringify(line)} className={styles.line}><path style={{stroke: color, opacity: '0.8'}} d={lineFactory(line.slice(0, (line.length - 1)))}/></g>)
-            })}
-    
-            {/* missing data circles 
-              Object.values(dataset).map((lines) => {
-                return (Object.values(lines).map((line, i) => {
-                  if (line.numberOfActiveProjects == null) {
-                    let x = selectScaledX(line)
-                    let y = yScale(linearInterpolation(lines, i))
-                    return (<circle cx={x} cy={y} r={4} fill={line.color} key={`circle - ${line.color},${x},${y}`}/>)
-                  }
-                }))
-              }) */}
-          </svg>
-        ) 
-      }           
-      case 'dashing': {
-        this.props.missingDataPoints.forEach(element => {
-          lines.push(this.createSketchyData(element))
-        })
-        // Create a d3Line factory for our scales.
-        const lineFactory = d3Line()
-
-        return (
-          <svg>
-            {/* missing data lines */ }
-            {Object.values(lines).map((line) => {
-              let color = line[line.length - 1]
-              return (<g key={JSON.stringify(line)} className={styles.line}><path style={{stroke: color, strokeDasharray: '5,5', opacity: '0.8'}} d={lineFactory(line)}/></g>)
-            })}
-          </svg>
-        )      
-      }    
-      case 'blur': {
-        this.props.missingDataPoints.forEach(element => {
-          lines.push(this.createSketchyData(element))
-        })
-        // Create a d3Line factory for our scales.
-        const lineFactory = d3Line()
-  
-        return (
-          <svg>
-            <filter id="blurMe" filterUnits="userSpaceOnUse">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="0.5"/>
-            </filter>
-            {/* missing data lines */ }
-            {Object.values(lines).map((line) => {
-              let color = line[line.length - 1]
-              return (<g key={JSON.stringify(line)} className={styles.line}><path style={{stroke: color, opacity: '1.5'}} filter="url(#blurMe)" d={lineFactory(line)}/></g>)
-            })}
-          </svg>
-        )  
-      }
-      default:
-        // execute default code block
-    }
+    return (<svg ref={node => (this.node = node)}></svg>) 
   }
 }
 
