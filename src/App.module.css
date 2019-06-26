@@ -15,10 +15,11 @@
     height: 74vh;
     overflow-y: scroll;
     float: left;
+    position: absolute;
+    left: 75vw;
 }
 .bodyWrap{
     display: block;
-
 }
 
 /* Let's get this party started */
