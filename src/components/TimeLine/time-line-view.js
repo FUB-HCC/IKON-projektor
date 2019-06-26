@@ -1,5 +1,5 @@
 import 'd3-transition'
-import styles from './time-line-view.css'
+import styles from './time-line-view.module.css'
 import React, {Component} from 'react'
 import SVGWithMargin from './SVGWithMargin'
 
@@ -18,7 +18,7 @@ import {
 import {select as d3Select} from 'd3-selection'
 import Modal from '../Modal/Modal'
 import DetailModal from '../Modal/DetailModal'
-import classes from '../AreaChart/area-chart-view.css'
+import classes from '../AreaChart/area-chart-view.module.css'
 import HoverPopover from '../HoverPopover/HoverPopover'
 import arrowHover from '../../assets'
 

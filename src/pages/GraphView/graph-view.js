@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import PetriDishGraph from '../components/PetriDish/petri-dish'
-import AreaChart from '../components/AreaChart/area-chart'
-import TimeGraph from '../components/TimeLine/time-line'
-import classes from './GraphView.css'
-import * as actions from '../store/actions/actions'
+import PetriDishGraph from '../../components/PetriDish/petri-dish'
+import AreaChart from '../../components/AreaChart/area-chart'
+import TimeGraph from '../../components/TimeLine/time-line'
+import classes from './graph-view.module.css'
+import * as actions from '../../store/actions/actions'
 
 class GraphView extends Component {
   constructor (props) {
@@ -62,8 +62,6 @@ class GraphView extends Component {
     
     return (
       <div className={classes.OuterDiv}>
-        <div className={classes.statisticsWrapper}>
-        </div>
         {Graph}
       </div>
     )

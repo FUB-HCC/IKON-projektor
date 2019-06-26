@@ -13,7 +13,7 @@ const distFields = []
 const distTopics = []
 const distSponsor = []
 
-Object.keys(data).map(dataEntry => {
+Object.keys(data).forEach(dataEntry => {
   data[dataEntry].hauptthema = (data[dataEntry].review_board ? data[dataEntry].review_board : 'Unbekannt')
   data[dataEntry].geldgeber = data[dataEntry].sponsor
 
@@ -33,7 +33,7 @@ Object.keys(data).map(dataEntry => {
     }
   }
   
-  Object.keys(data[dataEntry]).map(dataKey => {
+  Object.keys(data[dataEntry]).forEach(dataKey => {
     const val = data[dataEntry][dataKey]
     
     if (dataKey === 'forschungsbereichstr') {
@@ -122,8 +122,11 @@ const reducer = (state = initialState, action) => {
     case actionTypes.DEACTIVATE_POPOVER:
       return deactivatePopover(state)
 
-    default:
+    case actionTypes.GET_FILTERS_FROM_URL:
       return urlUpdatesFilters(state)
+
+    default:
+      return state
   }
 }
 

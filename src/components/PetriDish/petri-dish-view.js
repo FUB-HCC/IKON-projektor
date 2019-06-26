@@ -182,6 +182,7 @@ const setColor = (projectId) => {
     if (element.id === projectId) {
       return element
     }
+    return null
   })
 
   switch (projectDetail.research_area) {

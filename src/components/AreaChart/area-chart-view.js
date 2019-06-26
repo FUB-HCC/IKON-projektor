@@ -15,7 +15,7 @@ import {
 import {getCenterOfBounds} from 'geolib'
 import {Motion, spring} from 'react-motion'
 import {getResearchAreasForInstitutions, getAllInstitutions} from './areaUtility'
-import classes from './area-chart-view.css'
+import classes from './area-chart-view.module.css'
 import Hammer from 'react-hammerjs'
 import HoverPopover from '../HoverPopover/HoverPopover'
 import Modal from '../Modal/Modal'

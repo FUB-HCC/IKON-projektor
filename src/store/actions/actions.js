@@ -40,3 +40,9 @@ export const deactivatePopover = () => {
     type: actionTypes.DEACTIVATE_POPOVER
   }
 }
+
+export const getFiltersFromURL = () => {
+  return {
+    type: actionTypes.GET_FILTERS_FROM_URL
+  }
+}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import CloseIcon from '../../assets/Exit.svg'
-import classes from '../TimeLine/time-line-view.css'
+import classes from '../TimeLine/time-line-view.module.css'
 import * as actions from '../../store/actions/actions'
 import icon from '../../assets/geistes_icon.png'
 
@@ -77,7 +77,7 @@ class DetailModal extends Component {
           <p className={classes.controlBoard}> <span onClick={(evt) => this.projectControl('left')} className={classes.control + ' ' + classes.left}> ^ </span> {index} of {totalSize}<span onClick={(evt) => this.projectControl('right')} className={classes.control + ' ' + classes.right}> ^ </span></p>
         </div>
         <div className={classes.modalCloser}>
-          <img src={CloseIcon} onClick={this.closeProjectsModal} />
+          <img src={CloseIcon} onClick={this.closeProjectsModal} alt={'Here should a cross symbol to close the modal'}/>
         </div>
         <div className={classes.dt_modal_header}>
           <div className={classes.left_icon}>

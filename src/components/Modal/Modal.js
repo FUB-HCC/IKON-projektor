@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import CloseIcon from '../../assets/Exit.svg'
-import classes from '../TimeLine/time-line-view.css'
+import classes from '../TimeLine/time-line-view.module.css'
 
 class Modal extends Component {
   constructor (props) {
@@ -62,7 +62,7 @@ class Modal extends Component {
         <p style={{ color: color }}>{title}</p>
       </div>
       <div className={classes.modalCloser}>
-        <img src={CloseIcon} onClick={this.closeProjectsModal}/>
+        <img src={CloseIcon} onClick={this.closeProjectsModal} alt={'Here should a cross symbol to close the modal'}/>
       </div>
       {this.props.children}
     </div>

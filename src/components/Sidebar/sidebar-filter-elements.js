@@ -1,10 +1,10 @@
 /* eslint-disable no-multi-str */
 import React, {Component} from 'react'
 
-import classes from '../redesigned.css'
+import classes from '../redesigned.module.css'
 import {getFieldColor, getTopicColor} from '../../store/utility'
 
-const SidebarFilterElementsNew = (props) => {
+const SidebarFilterElements = (props) => {
   const filters = props.filters
   return (
     <div className={classes.Body}>
@@ -86,4 +86,4 @@ class CheckBox extends Component {
   }
 }
 
-export default SidebarFilterElementsNew
+export default SidebarFilterElements

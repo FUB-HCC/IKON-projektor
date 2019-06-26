@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import CloseIcon from '../../assets/Exit.svg'
 import assets from '../../assets/index'
-import classes from '../TimeLine/time-line-view.css'
+import classes from '../TimeLine/time-line-view.module.css'
 import * as actions from '../../store/actions/actions'
 import * as filteredData from '../../assets/publicData'
 
@@ -25,6 +25,7 @@ class PetriDishDetailModal extends Component {
       if (element.id === projectId) {
         return element
       }
+      return null
     })
     this.setState({ projectdetails: projectDetail })
   }
@@ -57,7 +58,7 @@ class PetriDishDetailModal extends Component {
           
         </div>
         <div className={classes.modalCloser}>
-          <img src={CloseIcon} onClick={this.closeProjectsModal} />
+          <img src={CloseIcon} onClick={this.closeProjectsModal} alt={'Here should a cross symbol to close the modal'}/>
         </div>
         <div className={classes.dt_modal_header}>
           <div className={classes.left_icon}>

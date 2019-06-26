@@ -7,16 +7,16 @@ import {
 } from "../utility";
 
 export const updateUrl = store => next => action  => {
-    console.log(window.location.search)
     const result = next(action)
     const newState = store.getState().main
     console.log(newState)
-    let newUrlData = {}
-    newUrlData.g = newState.graph
-    newUrlData.f = newState.filter[0].value
-    newUrlData.t = newState.filter[1].value
-    newUrlData.s = newState.filter[2].value
-    newUrlData.sP = newState.selectedProject
+    let newUrlData = {
+      g: newState.graph,
+      f: newState.filter[0].value,
+      t: newState.filter[1].value,
+      s: newState.filter[2].value,
+      sP: newState.selectedProject
+    }
 
     let minifiedUrlData = {
       ...newUrlData,
@@ -31,3 +31,13 @@ export const updateUrl = store => next => action  => {
 
     return result
 }
+
+export const logger = store => next => action => {
+  console.group(action.type)
+  console.info('dispatching', action)
+  let result = next(action)
+  console.log('next state', store.getState())
+  console.groupEnd()
+  return result
+}
+
