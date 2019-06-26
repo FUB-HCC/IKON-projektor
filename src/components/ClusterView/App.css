@@ -1,0 +1,11 @@
+.viz-1 *{
+  transition: 200ms ease-out;
+}
+
+.highlighted {
+  z-index: 999;
+}
+
+body {
+  background: #000;
+}
