@@ -1,5 +1,9 @@
 import * as actionTypes from '../actions/actionTypes'
-import {updateUrl, fieldsStringToInt, topicToField} from '../utility'
+import {
+  createNewStateFromUrlData,
+  fieldsStringToInt,
+  topicToField
+} from '../utility'
 import {getProjectsData, getInstitutionsData} from '../../assets/publicData'
 import {parse as queryStringParse} from 'query-string'
 
@@ -104,26 +108,21 @@ const reducer = (state = initialState, action) => {
         graph: action.value,
         filteredData: applyFilters(state.data, state.filter)
       }
-      updateUrl(newState)
       return newState
 
     case actionTypes.FILTER_CHANGE:
-      // console.log('STATE CHANGE: ', action.type, action)
       return changeFilter(state, action)
 
     case actionTypes.TOGGLE_FILTERS:
       return toggleFilters(state, action)
 
     case actionTypes.ACTIVATE_POPOVER:
-      console.log('STATE CHANGE: ', action.type, action)
       return activatePopover(state, action)
 
     case actionTypes.DEACTIVATE_POPOVER:
-      console.log('STATE CHANGE: ', action.type, action)
       return deactivatePopover(state)
 
     default:
-      // console.log('STATE CHANGE: DEFAULT')
       return urlUpdatesFilters(state)
   }
 }
@@ -141,9 +140,6 @@ const changeFilter = (state, action) => {
     filter: newFilter,
     filteredData: applyFilters(state.data, newFilter)
   }
-  
-  updateUrl(newState)
-  
   return newState
 }
 
@@ -173,18 +169,13 @@ const activatePopover = (state, action) => {
     const newState = {
       ...state,
       selectedProject: selectedProjectId
-    } 
-    updateUrl(newState)
-
+    }
     return newState
   } else {    
     const newState = {
       ...state,
       selectedProject: selectedProjectId
     }
-
-    updateUrl(newState)
-
     return newState
   }
 }
@@ -194,20 +185,19 @@ const deactivatePopover = (state) => {
     ...state,
     selectedProject: undefined
   }
-  updateUrl(newState)
   return newState
 }
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesFilters = (state) => {
-  const urlData = queryStringParse(location.search)
-  const dataFromUrl = updateUrl(state, urlData)
+  const urlData = queryStringParse(window.location.search)
+  const dataFromUrl = createNewStateFromUrlData(state, urlData)
   return {
     ...state,
     filter: dataFromUrl.filter,
     graph: dataFromUrl.graph,
-    filteredData: applyFilters(state.data, dataFromUrl.filter)
-    // selectedProject: dataFromUrl.selectedProject // TODO
+    filteredData: applyFilters(state.data, dataFromUrl.filter),
+    selectedProject: dataFromUrl.selectedProject
   }
 }
 

@@ -1,43 +1,16 @@
-// update the state in an immutable way and update the url without refreshing the page
-import {stringify as queryStringify} from 'query-string'
 
-export const updateUrl = (newState, urlData = {}) => {
-  let newUrlData = {}
-  urlData.g ? newUrlData.g = urlData.g : newUrlData.g = newState.graph
-
-  urlData.f ? newUrlData.f = urlData.f.map(f => { return fieldsIntToString(f) }) : newUrlData.f = newState.filter[0].value
-
-  urlData.t ? newUrlData.t = urlData.t.map(t => { return topicIntToString(t) }) : newUrlData.t = newState.filter[1].value
-
-  // Since the sponsor in the new dataset is always the same, the former code resulted in "urlData.s.map is not a function"
-  // This is a workaround for now, until we know what the sponsor filter will become eventually
-  // Check this issue for more information: https://github.com/FUB-HCC/IKON-projektor/issues/34
-  if (urlData.s && urlData.s instanceof Array) {
-    newUrlData.s = urlData.s.map(s => sponsorIntToString(newState, s))
-  } else newUrlData.s = urlData.s && !(urlData.s instanceof Array) ? [sponsorIntToString(newState, urlData.s)] : newState.filter[2].value
-
-  urlData.sP ? newUrlData.sP = urlData.sP : newUrlData.sP = newState.selectedProject
-
-  let minifiedUrlData = {
-    ...newUrlData,
-    t: newUrlData.t.map(f => topicStringToInt(f)),
-    f: newUrlData.f.map(t => fieldsStringToInt(t)),
-    s: newUrlData.s.map(s => sponsorStringToInt(newState, s))}
-  const newUrl = '?' + queryStringify(minifiedUrlData)
-  history.pushState(null, null, newUrl)
-
-  const filterValues = [newUrlData.f, newUrlData.t, newUrlData.s]
-  return {
-    graph: newUrlData.g,
-    filter: newState.filter.map((f, i) => ({
-      name: f.name,
-      filterKey: f.filterKey,
-      type: f.type,
-      distValues: f.distValues,
-      value: filterValues[i]
-    })),
-    selectedProject: newUrlData.sP
+export const createNewStateFromUrlData = (state, urlData) =>{
+  const filterValues = [
+    urlData.f ? urlData.f.map(f => fieldsIntToString(f)) : [],
+    urlData.t ? urlData.t.map(t => fieldsIntToString(t)) : [],
+    urlData.s ? urlData.s.map(s => fieldsIntToString(s)) : []
+    ]
+  let newState = {
+    graph: urlData.g ? urlData.g : '0',
+    filter: state.filter.map( (f, i) => Object.assign({}, f, {value: filterValues[i]})),
+    selectedProject: urlData.sP
   }
+  return newState
 }
 
 // field colors

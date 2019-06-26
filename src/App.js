@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import GraphView from './containers/GraphView/GraphView'
-import About from './containers/About/About'
-import Discoveries from './containers/Discoveries/Discoveries'
-import Projects from './containers/Projects/Projects'
+import GraphView from './pages/GraphView'
+import About from './pages/About'
+import Discoveries from './pages/Discoveries'
+import Projects from './pages/Projects'
 import { default as NavigationSubpages } from './components/NavigationSubpages/NavigationSubpages'
 import Footer from './components/Footer/Footer'
 import Sidebar from './components/Sidebar/Sidebar'
-import { ConnectedRouter } from 'react-router-redux'
+import { ConnectedRouter } from 'connected-react-router'
 import { Route, Redirect, Switch } from 'react-router'
 import {history} from './index'
 import classes from './App.css'
@@ -18,7 +18,6 @@ class App extends Component {
         <React.Fragment>
           <NavigationSubpages/>
           <div className={classes.bodyWrap}>
-            <div className={classes.BackGradient}>
               <Switch>
                 <Route exact path='/' render={() => (<Redirect to="/explore"/>)}/>
                 <Route path='/projects' component={Projects} />
@@ -26,7 +25,6 @@ class App extends Component {
                 <Route path='/discoveries' component={Discoveries} />
                 <Route path='/about' component={About} />
               </Switch>
-            </div>
             <div className={classes.sidebar}>
               <Sidebar />
             </div>

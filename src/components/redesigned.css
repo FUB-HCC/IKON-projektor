@@ -1,4 +1,4 @@
-/* Sidebar.js  starts from here */
+@import "../../node_modules/react-input-range/lib/css/index.css"; /* Sidebar.js  starts from here */
 .CheckBoxes{
     
 }
@@ -380,7 +380,6 @@
 /* Navigationsubpages.js Ends from here */
 
 /* footer.js Starts from here */
-@import "react-input-range/lib/css/index.css";
 .footer {
   position: fixed;
   bottom: 0;

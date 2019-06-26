@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import CloseIcon from '../../assets/Exit.svg'
-import classes from '../../components/Visualizations/TimeLine/TimeLine.css'
+import classes from '../TimeLine/time-line-view.css'
 import * as actions from '../../store/actions/actions'
 import icon from '../../assets/geistes_icon.png'
 

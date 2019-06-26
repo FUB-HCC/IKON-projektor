@@ -1,5 +1,5 @@
 import React from 'react'
-import classes from '../Visualizations/AreaChart/AreaChart.css'
+import classes from '../AreaChart/area-chart-view.css'
 
 const HoverPopover = (props) => {
   let {locationX, locationY, width, height} = props

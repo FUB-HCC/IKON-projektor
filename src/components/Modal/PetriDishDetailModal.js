@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import CloseIcon from '../../assets/Exit.svg'
-import assets from '../../assets'
-import classes from '../../components/Visualizations/TimeLine/TimeLine.css'
+import assets from '../../assets/index'
+import classes from '../TimeLine/time-line-view.css'
 import * as actions from '../../store/actions/actions'
 import * as filteredData from '../../assets/publicData'
 

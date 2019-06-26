@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import CloseIcon from '../../assets/Exit.svg'
-import classes from '../../components/Visualizations/TimeLine/TimeLine.css'
+import classes from '../TimeLine/time-line-view.css'
 
 class Modal extends Component {
   constructor (props) {
