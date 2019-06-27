@@ -6,7 +6,6 @@ import _ from "lodash";
 const mapStateToProps = state => {
   let clusters = [];
   if(state.main.clusterData){
-    console.log(state.main.clusterData)
     const { cluster_data, project_data } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
     const colors = cluster_data.cluster_colour;

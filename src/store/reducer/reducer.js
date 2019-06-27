@@ -7,7 +7,6 @@ import {
 } from '../utility'
 import {getProjectsData, getInstitutionsData} from '../../assets/publicData'
 import {parse as queryStringParse} from 'query-string'
-import axios from "axios";
 
 const institutionsData = getInstitutionsData()
 const data = getProjectsData()
