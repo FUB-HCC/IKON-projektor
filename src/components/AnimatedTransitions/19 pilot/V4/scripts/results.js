@@ -2,20 +2,14 @@ const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
 
 
 ///////////// Seite ////////////////
-// d3.select("div.layout")
-//   .append("p")
-//   .attr("name", "nummer")
-//   .text(aufgabenCounter(me))
-//   .style("text-align", "center");
-
 d3.select("div.layout")
   .append("h1")
   .text("Vielen Dank für die Teilnahme");
   
-// d3.select("div.layout")
-//   .append("p")
-//   .attr("name", "anweisung")
-//   .text("Schaue dir folgende Transition an! Was passiert hier? Beschreibe es in Worten. Wie findest du die Animation? Was könnte man besser machen?");
+d3.select("div.layout")
+  .append("p")
+  .attr("name", "anweisung")
+  .text("Bei den Aufgaben wurden Daten über die gewählte Animationsdauer gesammelt. Diese steht nun zum Download bereit.");
 
   
 /////////// Buttons ///////////////
@@ -29,7 +23,7 @@ d3.select("div.layout")
   })
   .on("click", function(){
     d3.event.preventDefault();
-    showDatas();
+    saveDatas();
   });
   
 

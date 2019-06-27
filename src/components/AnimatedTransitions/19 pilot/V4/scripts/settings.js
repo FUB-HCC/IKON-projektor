@@ -7,7 +7,7 @@ var pageWidth = document.body.clientWidth;
 var zeitspanne = [1990,2019];
 const durationSpan = [0, 3000];
 const schrittweite = 250;
-var transDuration = 1750;
+var transDuration = 750;
 const animCases = ["Überblendung", "Transition"];
 var animArt = animCases[0];
 var animDatas = [];
@@ -396,7 +396,7 @@ class LinkButton {
       .on("click", function(){
         //d3.event.preventDefault();
         //console.log("click",site,text);
-        fkt(site, result);
+        fkt(result.key, result.value);
       });
   }// ende Konstruktor
 }
@@ -418,8 +418,16 @@ class Button {
 }
 
 ////////////// Button Funktionen ///////////
-function storeDatas(site, res){
-  localStorage.setItem(site, res);// https://diveintohtml5.info/storage.html
+function setStorageContent(key, value){
+  localStorage.setItem(key, value);// https://diveintohtml5.info/storage.html
+}
+
+function updateStorageContent(key, value){
+  localStorage.setItem(key, getStorageContent(key) + ';' + value);
+}
+
+function getStorageContent(key){
+  return localStorage.getItem(key);
 }
 
 // https://www.d3-graph-gallery.com/graph/interactivity_button.html
@@ -434,26 +442,43 @@ function deleteAllDatas(site, res) {
   localStorage.clear();
 }
 
-function showDatas(site){ 
+function saveDatas(site){ 
   // erstellt eine Datei mit den Ergebnissen
   // https://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
   // https://www.mediaevent.de/javascript/local-storage.html
-  var content = ["Aufgabe;Deutung;Loesung;Antwort1;Antwort2;Antwort3;Antwort4;Antwort5;Antwort6;Antwort7;Antwort8;Antwort9"];
+  
   var keys = Object.keys(localStorage).sort();
+  var maxReplaysPerTask = Object.values(localStorage)
+    .map(d => d.split(';').length)
+    .reduce(function(akk,x){
+      return d3.max([akk,x]);
+    }, 0);
+  var content = "Aufgabe;" + new Array(maxReplaysPerTask).fill('Duration')
+    .map(function(d,i){
+      if (i < 9)
+        return d + '0' + (i+1);
+      else
+        return d + (i+1);
+    }).join(';');
+  // befüllt die Ergebnisse
   keys.forEach(function(key){
-    // modifiziert die Einträge
-    var value = localStorage.getItem(key);
-    var array = value.split(";");
-    var results = [key];
-    for (var i=0; i<array.length; i++)
-      if (i != 0 && i != 2 && i != 4)
-        results.push(array[i]);
-      else if (i == 0 && key=="Teilnehmer")
-        results.push(array[i]);
-    content.push(results.join(";"));
+    content = content + '\n' + key + ';' + localStorage.getItem(key);
   });
+    
+//   keys.forEach(function(key){
+//     // modifiziert die Einträge
+//     var value = localStorage.getItem(key);
+//     var array = value.split(";");
+//     var results = [key];
+//     for (var i=0; i<array.length; i++)
+//       if (i != 0 && i != 2 && i != 4)
+//         results.push(array[i]);
+//       else if (i == 0 && key=="Teilnehmer")
+//         results.push(array[i]);
+//     content.push(results.join(";"));
+//   });
   //var content = document.cookie;
-  download('results.csv', content.join("\n"));
+  download('results.csv', content);
 }
 
 function download(filename, text) {

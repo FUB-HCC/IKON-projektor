@@ -61,7 +61,7 @@ d3.select("div.layout")
 d3.select("div.layout")
   .append("p")
   .attr("name", "anweisung")
-  .text("In den vergangenen Aufgaben konntest du stets die Animationsdauer wählen. Welche Dauer bevorzugst du und warum?");
+  .text("In den vergangenen Aufgaben konntest du stets die Animationsdauer wählen. Welche Dauer bevorzugst du?");
   
 /////////////// Schieberegeler TransDuration ///////////
 var schieberegler = new Schieberegler();
@@ -75,7 +75,7 @@ var timeZeroBtn = new Button(form, function(){
   return callAusgangszustand();}, "⊲ Startzustand");
 
 var bereitBtn = new Button(form, function(){
-  animDatas.push(transDuration);
+  setStorageContent(me, transDuration);
   update();
   }, "Bereit");
 
@@ -121,13 +121,17 @@ function update(){// nach einmaliger Betätigung erscheinen Buttons
     bereitBtn.btn
       .text("↻ Replay")
       .on("click", function(){
-        animDatas.push({animArt: animArt, dauer: transDuration});
+        updateStorageContent(me, transDuration);
         replay();
       });
     // https://www.toptal.com/designers/htmlarrows/arrows/
+      
+    d3.select("div.layout")
+      .append("p")
+      .attr("name", "anweisung")
+      .text("Welche Gründe gibt es für die Wahl dieser Animationsdauer?");
     
-    var result = animDatas.join(';');
-    var weiterBtn = new LinkButton(me, storeDatas, +1, "Zur nächsten Aufgabe ⊳", result);
+    var weiterBtn = new LinkButton(me, function(){}, +1, "Zur nächsten Aufgabe ⊳", "");
   }
 }
 

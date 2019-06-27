@@ -66,7 +66,6 @@ var timeZeroBtn = new Button(form, function(){
   timeZeroBtn.btn.attr("id", "timeZeroBtn");
 
 var bereitBtn = new Button(form, function(){
-  animDatas.push(transDuration);
   if (toolT7 != undefined)
     toolT7.myTooltip.remove();
   update();
@@ -118,7 +117,6 @@ function update(){// nach einmaliger Betätigung erscheinen Buttons
     bereitBtn.btn
       .text("↻ Replay")
       .on("click", function(){
-        //animDatas.push(transDuration);
         replay();
       });
     // https://www.toptal.com/designers/htmlarrows/arrows/
@@ -127,8 +125,8 @@ function update(){// nach einmaliger Betätigung erscheinen Buttons
       .append("p")
       .attr("id", "frage")
       .text("An dieser Stelle stehen Fragen zu den jeweiligen Aufgaben.");
-    var result = animDatas.join(';');
-    var weiterBtn = new LinkButton(me, storeDatas, +1, "Zur ersten Aufgabe ⊳", result);
+      
+    var weiterBtn = new LinkButton(me, function(){}, +1, "Zur ersten Aufgabe ⊳", "");
     //weiterBtn.btn.attr("id", "next");
     toolT8 = new Tooltip(document.getElementById("next"), "Die Pilotstudie startet durch Drücken dieses Buttons.", weiterGehts);
     toolT8.repositionTooltip();
@@ -136,11 +134,11 @@ function update(){// nach einmaliger Betätigung erscheinen Buttons
 }
 
 function callAusgangszustand(){
-  ausgangszustand([svg1, svg2], oldDataset, oldNests, scale1);
+  ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1, scale2]);
 }
 
 function replay(){
-  ausgangszustand([svg1, svg2], oldDataset, oldNests, scale1);
+  ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1, scale2]);
   transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
 //   var t0 = d3.transition().duration(0).on("end", transitions);
 }

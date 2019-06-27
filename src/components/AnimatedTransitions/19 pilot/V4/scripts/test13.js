@@ -1,21 +1,15 @@
 const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
 
 var idx = 0;
-var randIDs = [21,18,13,3,5,20,26,12,0,14,22,25,2,15,10,16,23,19,11,1,4,24,17,7,9,8,6,27];
+var randIDs = [4,8,3,1,2,6,7,5,0];
 
 //////////////// Datasets ////////////////
 var oldDataset = [], newDataset = [];
 var pos, id, gerade, clusterNo, researchArea, year, keywords;
 var datas = [
-  // cluster0
-  [[0.5,7,0], [1.8,6.8,0], [1,5,0], [0.9,3.7,0], [1.5,2.5,0],// 1-5
-  [2,3.6,0], [2,4.5,0], [2.3,4.2,0], [3,4.1,0], [3.9,3.3,0],// 6-10
-  [4,4.7,0], [3.8,5,0], [4.2,6.2,0], [5.1,4.9,0]],// 11-14
-  // cluster1
-  [[3,1.2,1], [2.8,3,1], [2.4,0.2,1], [3.9,0.1,1], [4,2,1],//15-19 
-  [4.3,2.1,1], [5.2,1,1], [6.2,1,1]], //20-22
-  // cluster2
-  [[9,3.7,2], [9,5.1,2], [7.5,5,2], [8,6.2,2], [9,6.8,2], [7,6.3,2]]
+  [[0.5,3,0], [1,4.5,0], [2,4,0]], // cluster 0
+  [[4,3,1], [5,5,1], [5.5,3.5,1]],// cluster 1
+  [[3.5,0.5,2], [4.3,2,2], [6,1.5,2]] // cluster 2
 ];
 for(var c in datas){
   for (var p in datas[c]) {
@@ -29,15 +23,9 @@ var oldNests = new Nest(oldDataset);
 
 idx = 0;
 datas = [
-  // cluster0
-  [[0.5,6,0], [2.8,8,0], [2.6,3.7,0], [2,2.7,0], [2.1,5.1,0],// 1-5
-  [0.8,4.6,0], [8,7,0], [2.3,6.5,0], [6.3,3.2,0], [5.8,6.7,0],// 6-10
-  [5.2,2.7,0], [3.8,6.6,0], [5.8,7.5,0], [6.2,4.5,0]],// 11-14
-  // cluster1
-  [[2.5,1,1], [3.9,1.5,1], [3.7,4.5,1], [1.7,1,1], [5,4.4,1],//15-19 
-  [4.3,0.9,1], [6.2,2.5,1,1], [7.6,0.2,1]], //20-22
-  // cluster2
-  [[8.3,6,2], [7,3.9,2], [4,5.8,2], [6.3,7.5,2], [9.5,7.7,2], [7.8,7.4,2]]
+  [[1.7,0.7,2], [2.7,4.4,1], [4,3.5,1]], // cluster 0 aufgeteilt
+  [[3,3,1], [4,5,1], [4.5,3.5,1]],// cluster 1
+  [[0.7,0.5,2], [1.3,2,2], [2,1.5,2]] // cluster 2
 ];
 
 for(var c in datas){
@@ -73,7 +61,7 @@ d3.select("div.layout")
 d3.select("div.layout")
   .append("p")
   .attr("name", "anweisung")
-  .text("Du hast nun oft Transition und Überblendung gleichzeitig gesehen. Welche Animationsform bevorzugst du? Welche Gründe gibt es dafür?");
+  .text("Wenn man 0 s als Dauer einstellt, sieht man einen statischen Wechsel der Grafik. Ansonsten sieht man links eine Überblendung und rechts die animierte Transition. Welche Animationsform bevorzugst du?");
   
 /////////////// Schieberegeler TransDuration ///////////
 var schieberegler = new Schieberegler();
@@ -87,7 +75,7 @@ var timeZeroBtn = new Button(form, function(){
   return callAusgangszustand();}, "⊲ Startzustand");
 
 var bereitBtn = new Button(form, function(){
-  animDatas.push(transDuration);
+  setStorageContent(me, transDuration);
   update();
   }, "Bereit");
 
@@ -133,13 +121,17 @@ function update(){// nach einmaliger Betätigung erscheinen Buttons
     bereitBtn.btn
       .text("↻ Replay")
       .on("click", function(){
-        animDatas.push({animArt: animArt, dauer: transDuration});
+        updateStorageContent(me, transDuration);
         replay();
       });
     // https://www.toptal.com/designers/htmlarrows/arrows/
+      
+    d3.select("div.layout")
+      .append("p")
+      .attr("name", "anweisung")
+      .text(" Welche Gründe gibt es für deine Wahl?");
     
-    var result = animDatas.join(';');
-    var weiterBtn = new LinkButton(me, storeDatas, +1, "Zur nächsten Aufgabe ⊳", result);
+    var weiterBtn = new LinkButton(me, function(){}, +1, "Zur nächsten Aufgabe ⊳", "");
   }
 }
 

@@ -58,7 +58,7 @@ d3.select("div.layout")
 d3.select("div.layout")
   .append("p")
   .attr("name", "anweisung")
-  .text("Schaue dir folgende Transition an! Was passiert hier? Beschreibe es in Worten. Wie findest du die Animation? Was könnte man besser machen?");
+  .text("Schaue dir folgende Transition an! Was passiert hier? Beschreibe es in Worten.");
   
 /////////////// Schieberegeler TransDuration ///////////
 var schieberegler = new Schieberegler();
@@ -72,7 +72,7 @@ var timeZeroBtn = new Button(form, function(){
   return callAusgangszustand();}, "⊲ Startzustand");
 
 var bereitBtn = new Button(form, function(){
-  animDatas.push(transDuration);
+  setStorageContent(me, transDuration);
   update();
   }, "Bereit");
 
@@ -118,13 +118,17 @@ function update(){// nach einmaliger Betätigung erscheinen Buttons
     bereitBtn.btn
       .text("↻ Replay")
       .on("click", function(){
-        animDatas.push(transDuration);
+        updateStorageContent(me, transDuration);
         replay();
       });
     // https://www.toptal.com/designers/htmlarrows/arrows/
+      
+    d3.select("div.layout")
+      .append("p")
+      .attr("name", "anweisung")
+      .text("Wie findest du die Animation? Was könnte man besser machen?");
     
-    var result = animDatas.join(';');
-    var weiterBtn = new LinkButton(me, storeDatas, +1, "Zur nächsten Aufgabe ⊳", result);
+    var weiterBtn = new LinkButton(me, function(){}, +1, "Zur nächsten Aufgabe ⊳", "");
   }
 }
 

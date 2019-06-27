@@ -73,7 +73,7 @@ Promise.all([
       return callAusgangszustand();}, "⊲ Startzustand");
 
     bereitBtn = new Button(form, function(){
-      animDatas.push(transDuration);
+      setStorageContent(me, transDuration);
       update();
       }, "Bereit");
     
@@ -110,7 +110,7 @@ function update(){// nach einmaliger Betätigung erscheinen Buttons
     bereitBtn.btn
       .text("↻ Replay")
       .on("click", function(){
-        animDatas.push(transDuration);
+        updateStorageContent(me, transDuration);
         replay();
       });
     // https://www.toptal.com/designers/htmlarrows/arrows/
@@ -160,8 +160,7 @@ function update(){// nach einmaliger Betätigung erscheinen Buttons
           .transition().duration(2000)
           .style('opacity', 1);
         
-        var result = animDatas.join(';');
-        var weiterBtn = new LinkButton(me, storeDatas, +1, "Pilotstudie beenden", result);
+        var weiterBtn = new LinkButton(me, setStorageContent, +1, "Pilotstudie beenden", {key: "Clusterzahl", value: nummer});
       }// ende if-else gültige Eingabe
     }, "Eingabe bestätigen");
   }// ende funktion createForm

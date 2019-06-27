@@ -71,7 +71,7 @@ var timeZeroBtn = new Button(form, function(){
   return callAusgangszustand();}, "⊲ Startzustand");
 
 var bereitBtn = new Button(form, function(){
-  animDatas.push(transDuration);
+  setStorageContent(me, transDuration);
   update();
   }, "Bereit");
 
@@ -117,13 +117,12 @@ function update(){// nach einmaliger Betätigung erscheinen Buttons
     bereitBtn.btn
       .text("↻ Replay")
       .on("click", function(){
-        animDatas.push(transDuration);
+        updateStorageContent(me, transDuration);
         replay();
       });
     // https://www.toptal.com/designers/htmlarrows/arrows/
     
-    var result = animDatas.join(';');
-    var weiterBtn = new LinkButton(me, storeDatas, +1, "Zur nächsten Aufgabe ⊳", result);
+    var weiterBtn = new LinkButton(me, function(){}, +1, "Zur nächsten Aufgabe ⊳", "");
     //     weiterBtn.btn
     //       .on("click", function(){// wird ersetzt
     //         var optionsList = document.getElementsByName("animCases");
