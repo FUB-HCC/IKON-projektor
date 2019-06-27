@@ -86,36 +86,49 @@ class AreaChart extends Component {
   }
 
   updateData (projects, institutions, width, height) {
-    if (this.state.selectedDimension === INSTITUTIONS_STR) {
-      let allInstitutions = getAllInstitutions(institutions, projects)
-      let shownInstitutions = allInstitutions
-      this.setState({
-        allInstitutions: allInstitutions,
-        institutions: shownInstitutions,
-        projects: projects,
-        width: width * 0.6,
-        height: height * 0.6
-      })
-    } else if (this.state.selectedDimension === RESEARCH_AREA_STR) {
-      let allInstitutions = getAllInstitutions(institutions, projects)
-      let shownInstitutions = this.state.institutions
-      let selectedInstitutions = this.state.selectedInstitutions
-      if (this.state.selectedInstitutions.length === 0) {
-        selectedInstitutions = [allInstitutions[0].id]
-        shownInstitutions = [allInstitutions[0]]
+    console.log(projects, institutions)
+    if (institutions.length > 0 && projects.length > 0) {
+      if (this.state.selectedDimension === INSTITUTIONS_STR) {
+        let allInstitutions = getAllInstitutions(institutions, projects)
+        let shownInstitutions = allInstitutions
+        this.setState({
+          allInstitutions: allInstitutions,
+          institutions: shownInstitutions,
+          projects: projects,
+          width: width * 0.6,
+          height: height * 0.6
+        })
+      } else if (this.state.selectedDimension === RESEARCH_AREA_STR) {
+        let allInstitutions = getAllInstitutions(institutions, projects)
+        let shownInstitutions = this.state.institutions
+        let selectedInstitutions = this.state.selectedInstitutions
+        if (this.state.selectedInstitutions.length === 0) {
+          selectedInstitutions = [allInstitutions[0].id]
+          shownInstitutions = [allInstitutions[0]]
+        }
+
+        let allResearchAreas = getResearchAreasForInstitutions(shownInstitutions, projects)
+
+        this.setState({
+          allResearchAreas: allResearchAreas,
+          selectedInstitutions: selectedInstitutions,
+          allInstitutions: allInstitutions,
+          institutions: shownInstitutions,
+          projects: projects,
+          width: width * 0.6,
+          height: height * 0.6
+        })
       }
-
-      let allResearchAreas = getResearchAreasForInstitutions(shownInstitutions, projects)
-
+    } else {
       this.setState({
-        allResearchAreas: allResearchAreas,
-        selectedInstitutions: selectedInstitutions,
-        allInstitutions: allInstitutions,
-        institutions: shownInstitutions,
-        projects: projects,
+        allResearchAreas: [],
+        selectedInstitutions: [],
+        allInstitutions: [],
+        institutions: [],
+        projects: [],
         width: width * 0.6,
         height: height * 0.6
-      })
+      });
     }
   }
 
