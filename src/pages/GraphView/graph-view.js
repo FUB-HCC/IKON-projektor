@@ -19,6 +19,8 @@ class GraphView extends Component {
     window.addEventListener('resize', this.resize.bind(this))
     this.resize()
     this.props.fetchClusterData()
+    this.props.fetchProjectsData()
+    this.props.fetchInstitutionsData()
   }
 
   resize () {
@@ -71,30 +73,32 @@ class GraphView extends Component {
 
 const mapStateToProps = state => {
   let selectedProject
-  state.main.data.forEach(project => {
+  state.main.projects.forEach(project => {
     if (project.id === state.main.selectedProject) selectedProject = project
   })
 
   return {
     graph: state.main.graph,
-    filterAmount: state.main.filter.length,
+    filterAmount: Object.keys(state.main.filters).length,
     selectedProject: state.main.selectedProject,
     selectedDataPoint: selectedProject,
-    activeFilterCount: calculateActiveFilterCount(state.main.filter),
-    filter: state.main.filter,
-    filteredData: state.main.filteredData
+    activeFilterCount: calculateActiveFilterCount(state.main.filters),
+    filter: state.main.filters,
+    filteredData: state.main.filteredProjects
   }
 }
 
 const calculateActiveFilterCount = (filter) => {
   let activeFilterCount = 0
-  filter.forEach(f => { activeFilterCount += (f.distValues.length !== f.value.length ? 1 : 0) })
+  Object.values(filter).forEach(f => { activeFilterCount += (f.uniqueVals.length !== f.value.length ? 1 : 0) })
   return activeFilterCount
 }
 
 const mapDispatchToProps = dispatch => {
   return {
     fetchClusterData: () => dispatch(actions.fetchClusterData()),
+    fetchProjectsData:  () => dispatch(actions.fetchProjectsData()),
+    fetchInstitutionsData:  () => dispatch(actions.fetchInstitutionsData()),
     changeGraph: (value) => dispatch(actions.changeGraph(value)),
     activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
     deactivatePopover: () => dispatch(actions.deactivatePopover())

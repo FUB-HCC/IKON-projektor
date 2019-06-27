@@ -1,13 +1,28 @@
 
 export const createNewStateFromUrlData = (state, urlData) =>{
-  const filterValues = [
-    urlData.f ? urlData.f.map(f => fieldsIntToString(f)) : [],
-    urlData.t ? urlData.t.map(t => fieldsIntToString(t)) : [],
-    urlData.s ? urlData.s.map(s => fieldsIntToString(s)) : []
-    ]
+  const filterValues = {
+    forschungsgebiet: urlData.f ? urlData.f.map(f => fieldsIntToString(f)) : [],
+    hauptthema: urlData.t ? urlData.t.map(t => fieldsIntToString(t)) : [],
+    geldgeber: urlData.s ? urlData.s.map(s => fieldsIntToString(s)) : []
+  }
+
   let newState = {
     graph: urlData.g ? urlData.g : '0',
-    filter: state.filter.map( (f, i) => Object.assign({}, f, {value: filterValues[i]})),
+    filters: {
+      ...state.filters,
+      forschungsgebiet: {
+        ...state.filters.forschungsgebiet,
+        value: filterValues.forschungsgebiet
+      },
+      hauptthema: {
+        ...state.filters.hauptthema,
+        value: filterValues.hauptthema
+      },
+      geldgeber: {
+        ...state.filters.geldgeber,
+        value: filterValues.geldgeber
+      }
+    },
     selectedProject: urlData.sP
   }
   return newState

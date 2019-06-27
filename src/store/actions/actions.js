@@ -55,10 +55,42 @@ export const fetchClusterData = () => {
   }
 }
 
+export const fetchInstitutionsData = () => {
+  return (dispatch) => {
+    axios.get("https://localhost:5433/institutions")
+      .then((result) => {
+        dispatch(updateClusterData(result.data))
+      })
+  }
+}
+
+export const fetchProjectsData = () => {
+  return (dispatch) => {
+    axios.get("https://localhost:5433/projects")
+      .then((result) => {
+        dispatch(updateClusterData(result.data))
+      })
+  }
+}
+
 
 export const updateClusterData = (clusterData) => {
   return {
     type: actionTypes.UPDATE_CLUSTER_DATA,
+    value: clusterData
+  }
+}
+
+export const updateInstitutionsData = (clusterData) => {
+  return {
+    type: actionTypes.UPDATE_INSTITUTIONS_DATA,
+    value: clusterData
+  }
+}
+
+export const updateProjectsData = (clusterData) => {
+  return {
+    type: actionTypes.UPDATE_PROJECTS_DATA,
     value: clusterData
   }
 }

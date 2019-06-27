@@ -5,110 +5,49 @@ import {
   topicToField,
   categories
 } from '../utility'
-import {getProjectsData, getInstitutionsData} from '../../assets/publicData'
 import {parse as queryStringParse} from 'query-string'
 
-const institutionsData = getInstitutionsData()
-const data = getProjectsData()
-const distFields = []
-const distTopics = []
-const distSponsor = []
-
-Object.keys(data).forEach(dataEntry => {
-  data[dataEntry].hauptthema = (data[dataEntry].review_board ? data[dataEntry].review_board : 'Unbekannt')
-  data[dataEntry].geldgeber = data[dataEntry].sponsor
-
-  if (data[dataEntry].research_area) {
-    data[dataEntry] = {
-      ...data[dataEntry],
-      forschungsbereich: data[dataEntry].research_area.split(' (')[0],
-      forschungsbereichstr: data[dataEntry].research_area.split(' (')[0], // TODO please change API so it does not contain "(# Mitglieder)"
-      forschungsbereichNumber: fieldsStringToInt(data[dataEntry].research_area.split(' (')[0])
-    }
-  } else {
-    data[dataEntry] = {
-      ...data[dataEntry],
-      forschungsbereich: 'Unbekannt',
-      forschungsbereichstr: 'Unbekannt', // TODO please change API so it does not contain "(# Mitglieder)"
-      forschungsbereichNumber: fieldsStringToInt('Unbekannt')
-    }
-  }
-  
-  Object.keys(data[dataEntry]).forEach(dataKey => {
-    const val = data[dataEntry][dataKey]
-    
-    if (dataKey === 'forschungsbereichstr') {
-      if (!distFields.some(e => e === val)) distFields.push(val)
-    } else if (dataKey === 'hauptthema') {
-      if (!distTopics.some(e => e === val)) distTopics.push(val)
-    } else if (dataKey === 'geldgeber') {
-      if (!distSponsor.some(e => e === val)) distSponsor.push(val)
-    }
-  })
-}
-)
-const applyFilters = (data, filter) => {
-  let filteredData = data
-  filter.forEach(f => {
-    let newFilteredData = {}
-    filteredData = Object.keys(filteredData).forEach(d => {
-      if (f.type === 'a') {
-        if (f.value.some(value => value === filteredData[d][f.filterKey])) newFilteredData[d] = filteredData[d]
-      } else {
-        if (filteredData[d][f.filterKey].includes(f.value)) newFilteredData[d] = filteredData[d]
-      }
-    })
-    filteredData = newFilteredData
-  })
-  return filteredData
-}
-const compare = (a, b) => {
-  if (topicToField(a) < topicToField(b)) return -1
-  else return 1
-}
-
 const initialState = {
-  filter: [
-    {
+  filters: {
+    forschungsgebiet: {
       name: 'Forschungsgebiet',
       filterKey: 'forschungsbereichstr',
       type: 'a',
-      distValues: distFields.sort(compare),
-      value: distFields
+      uniqueVals: ['1','2','3','4'],
+      value: ['1','2','3','4']
     },
-    {
+    hauptthema: {
       name: 'Hauptthema',
       filterKey: 'hauptthema',
       type: 'a',
-      distValues: distTopics.sort(compare),
-      value: distTopics
+      uniqueVals: [],
+      value: []
     },
-    {
+    geldgeber: {
       name: 'Geldgeber',
       filterKey: 'geldgeber',
       type: 'a',
-      distValues: distSponsor.sort(compare),
-      value: distSponsor
+      uniqueVals: [],
+      value: []
     }
-  ],
+  },
   graph: '0',
-  data: data,
-  filteredData: data,
-  institutions: institutionsData,
+  projects: [],
+  filteredProjects: [],
+  institutions: [],
   categories: categories,
   clusterData: undefined,
   selectedProject: undefined
 }
 
 // Keep the reducer switch lean by outsourcing the actual code below
-
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.CHANGE_GRAPH:
       return {
         ...state,
         graph: action.value,
-        filteredData: applyFilters(state.data, state.filter)
+        filteredData: applyFilters(state.projects, state.filters)
       }
 
     case actionTypes.FILTER_CHANGE:
@@ -129,29 +68,117 @@ const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_CLUSTER_DATA:
       return updateClusterData(state, action)
 
+    case actionTypes.UPDATE_INSTITUTIONS_DATA:
+      return updateInstitutionsData(state, action)
+
+    case actionTypes.UPDATE_PROJECTS_DATA:
+      return updateProjectsData(state, action)
+
     default:
       return state
   }
+}
+
+const applyFilters = (data, filter) => {
+  let filteredData = data
+  Object.values(filter).forEach(f => {
+    let newFilteredData = {}
+    filteredData = Object.keys(filteredData).forEach(d => {
+      if (f.type === 'a') {
+        if (f.value.some(value => value === filteredData[d][f.filterKey])) newFilteredData[d] = filteredData[d]
+      } else {
+        if (filteredData[d][f.filterKey].includes(f.value)) newFilteredData[d] = filteredData[d]
+      }
+    })
+    filteredData = newFilteredData
+  })
+  return filteredData
+}
+const compare = (a, b) => {
+  if (topicToField(a) < topicToField(b)) return -1
+  else return 1
 }
 
 const updateClusterData = (state, action) => (Object.assign({}, state, {
   clusterData: action.value
 }));
 
+const updateInstitutionsData = (state, action) => (Object.assign({}, state, {
+  institutions: action.value
+}));
+
+const updateProjectsData = (state, action) => {
+  const projectData = action.value
+  const projects = Object.values(projectData).map(project => {
+    project.hauptthema = project.review_board ? project.review_board : 'Unbekannt'
+    project.geldgeber = project.sponsor
+    if (project.research_area) {
+      return {
+        ...project,
+        forschungsbereich: project.research_area.split(' (')[0],
+        forschungsbereichstr: project.research_area.split(' (')[0], // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereichNumber: fieldsStringToInt(project.research_area.split(' (')[0])
+      }
+    } else {
+      return {
+        ...project,
+        forschungsbereich: 'Unbekannt',
+        forschungsbereichstr: 'Unbekannt', // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereichNumber: fieldsStringToInt('Unbekannt')
+      }
+    }
+  })
+
+  const uniqueFields = []
+  const uniqueTopics = []
+  const uniqueSponsors = []
+
+  Object.values(projectData).forEach(project => {
+    Object.keys(project).forEach(property => {
+      const value = project[property]
+      if (property === 'forschungsbereichstr') {
+        if (!uniqueFields.some(e => e === value)) uniqueFields.push(value)
+      } else if (property === 'hauptthema') {
+        if (!uniqueTopics.some(e => e === value)) uniqueTopics.push(value)
+      } else if (property === 'geldgeber') {
+        if (!uniqueSponsors.some(e => e === value)) uniqueSponsors.push(value)
+      }
+    })
+  })
+
+  return Object.assign({}, state, {
+    projects: projects,
+    filters: {
+      ...state.filters,
+      forschungsgebiet: {
+        ...state.filters.forschungsgebiet,
+        uniqueVals: uniqueFields.sort(compare)
+      },
+      hauptthema: {
+        ...state.filters.hauptthema,
+        uniqueVals: uniqueTopics.sort(compare)
+      },
+      geldgeber: {
+        ...state.filters.geldgeber,
+        uniqueVals: uniqueSponsors.sort(compare)
+      }
+    }
+  })
+}
+
 const changeFilter = (state, action) => {
-  const newFilter = state.filter.slice()
+  const newFilter = state.filters.slice()
   const actionValue = action.value
-  if (state.filter[action.id].value.some(e => e === actionValue)) {
-    newFilter[action.id].value = state.filter[action.id].value.filter(key => key !== actionValue)
+  if (state.filters[action.id].value.some(e => e === actionValue)) {
+    newFilter[action.id].value = state.filters[action.id].value.filter(key => key !== actionValue)
   } else {
     newFilter[action.id].value.push(actionValue)
   }
-  const newState = {
+  return  {
     ...state,
-    filter: newFilter,
-    filteredData: applyFilters(state.data, newFilter)
+    filters: newFilter,
+    filteredProjects: applyFilters(state.projects, newFilter)
   }
-  return newState
 }
 
 const toggleFilters = (state, action) => state
@@ -171,23 +198,14 @@ const toggleFilters = (state, action) => state
 
 const activatePopover = (state, action) => {  
   let selectedProjectId = null
-  state.data.forEach(project => {
+  state.projects.forEach(project => {
     if (project.id === action.element.project.id) {
       selectedProjectId = project.id
     }
   })
-  if (action.vis === 1) {
-    const newState = {
-      ...state,
-      selectedProject: selectedProjectId
-    }
-    return newState
-  } else {    
-    const newState = {
-      ...state,
-      selectedProject: selectedProjectId
-    }
-    return newState
+  return {
+    ...state,
+    selectedProject: selectedProjectId
   }
 }
 
@@ -207,7 +225,7 @@ const urlUpdatesFilters = (state) => {
     ...state,
     filter: dataFromUrl.filter,
     graph: dataFromUrl.graph,
-    filteredData: applyFilters(state.data, dataFromUrl.filter),
+    filteredProjects: applyFilters(state.projects, dataFromUrl.filter),
     selectedProject: dataFromUrl.selectedProject
   }
 }

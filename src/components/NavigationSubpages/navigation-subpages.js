@@ -71,17 +71,17 @@ const mapDispatchToProps = dispatch => {
 }
 const mapStateToProps = state => {
   let selectedProject
-  state.main.data.forEach(project => {
+  state.main.projects.forEach(project => {
     if (project.id === state.main.selectedProject) selectedProject = project
   })
 
   return {
     graph: state.main.graph,
-    filterAmount: state.main.filter.length,
+    filterAmount: Object.keys(state.main.filters).length,
     selectedProject: state.main.selectedProject,
     selectedDataPoint: selectedProject,
-    filter: state.main.filter,
-    filteredData: state.main.filteredData
+    filter: state.main.filters,
+    filteredData: state.main.filteredProjects
   }
 }
 

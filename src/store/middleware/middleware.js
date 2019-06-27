@@ -11,9 +11,9 @@ export const updateUrl = store => next => action  => {
     const newState = store.getState().main
     let newUrlData = {
       g: newState.graph,
-      f: newState.filter[0].value,
-      t: newState.filter[1].value,
-      s: newState.filter[2].value,
+      f: newState.filters.forschungsgebiet.value,
+      t: newState.filters.hauptthema.value,
+      s: newState.filters.geldgeber.value,
       sP: newState.selectedProject
     }
 

@@ -39,7 +39,7 @@ export function createNewChildren (children, props) {
         itemName: props.itemName
       }) : children)
   } else {
-    return children.forEach((child, i) => {
+    return children.map((child, i) => {
       if (!child) return
       return isChildOfType(child, ['Geographies'])
         ? React.cloneElement(child, {

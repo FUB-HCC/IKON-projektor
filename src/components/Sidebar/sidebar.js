@@ -7,43 +7,42 @@ import SidebarFilterElements from './sidebar-filter-elements'
 class Sidebar extends Component {
   constructor (props) {
     super(props)
-    const expFilters = new Array(this.props.filters.length)
+    const expFilters = new Array(Object.keys(this.props.filters).length)
     expFilters.fill(true)
     this.state = {expandedFilters: expFilters, value: '', filters: this.getNewFilters(props.filters)}
     this.handleInputChange = this.handleInputChange.bind(this)
   }
 
   getNewFilters (filters) {
-    let newFilters = [{
-      name: filters[0].name,
-      filterKey: filters[0].filterKey,
-      type: filters[0].type,
+  return [{
+      name: filters.forschungsgebiet.name,
+      filterKey: filters.forschungsgebiet.filterKey,
+      type: filters.forschungsgebiet.type,
       subGroup: [
         {
-          name: filters[0].distValues[0],
-          values: filters[1].distValues.slice(0, 4)
+          name: filters.forschungsgebiet.uniqueVals[0],
+          values: filters.hauptthema.uniqueVals.slice(0, 4)
         },
         {
-          name: filters[0].distValues[1],
-          values: filters[1].distValues.slice(4, 7)
+          name: filters.forschungsgebiet.uniqueVals[1],
+          values: filters.hauptthema.uniqueVals.slice(4, 7)
         },
         {
-          name: filters[0].distValues[2],
-          values: filters[1].distValues.slice(7, 9)
+          name: filters.forschungsgebiet.uniqueVals[2],
+          values: filters.hauptthema.uniqueVals.slice(7, 9)
         },
         {
-          name: filters[0].distValues[3],
-          values: filters[1].distValues.slice(9, 10)
+          name: filters.forschungsgebiet.uniqueVals[3],
+          values: filters.hauptthema.uniqueVals.slice(9, 10)
         }
       ]
     },
-    {
-      name: filters[2].name,
-      filterKey: filters[2].filterKey,
-      type: filters[2].type,
-      values: filters[2].distValues
-    }]
-    return newFilters
+      {
+        name: filters.geldgeber.name,
+        filterKey: filters.geldgeber.filterKey,
+        type: filters.geldgeber.type,
+        values: filters.geldgeber.uniqueVals
+      }]
   }
 
   handleInputChange (event) {
@@ -70,7 +69,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   return {
-    filters: state.main.filter
+    filters: state.main.filters
   }
 }
 
