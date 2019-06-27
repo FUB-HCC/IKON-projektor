@@ -31,7 +31,7 @@ export const updateUrl = store => next => action  => {
 }
 
 export const logger = store => next => action => {
-  console.groupCollapsed(action.type)
+  console.groupCollapsed(action.type ? action.type : 'ASYNC ACTION')
   console.info('dispatching', action)
   let result = next(action)
   console.log('next state', store.getState())
