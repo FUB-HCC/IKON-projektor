@@ -22,26 +22,22 @@ class Tree extends Component {
   }
 
   mouseOutNode (d) {
-    // console.log('Mouse out')
     const {
       onNodeMouseOut,
       projection
     } = this.props
     d.coordinates = projection.invert([d.x, d.y])
-    // console.log(d)
     this.setState({hoveredNode: null})
     return onNodeMouseOut && onNodeMouseOut(d, projection.invert([d.x, d.y]))
   }
 
   mouseEnterNode (d) {
-    // console.log('Mouse over')
     if (d.parent) {
       const {
         onNodeMouseEnter,
         projection
       } = this.props
       d.coordinates = projection.invert([d.x, d.y])
-      // console.log(d)
       this.setState({hoveredNode: d})
       return onNodeMouseEnter && onNodeMouseEnter(d, projection.invert([d.x, d.y]))
     } else {
@@ -55,8 +51,6 @@ class Tree extends Component {
       projection
     } = this.props
     d.coordinates = projection.invert([d.x, d.y])
-    console.log('Click++++++++++++++++++++++++++++++++++++++++++++')
-    console.log(d)
     this.setState({selectedNode: d})
     return onNodeClick && onNodeClick(d, projection.invert([d.x, d.y]))
   }
@@ -72,9 +66,6 @@ class Tree extends Component {
       let newValue = Object.assign({name: value.titel, i: index}, value)
       if (newTreeData.children.length < 50) newTreeData.children.push(newValue)
     })
-
-    console.log(newTreeData)
-
     this.setState({treeData: newTreeData})
   }
 

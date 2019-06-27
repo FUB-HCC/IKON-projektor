@@ -347,7 +347,6 @@ class AreaChart extends Component {
         institution: marker,
         cooperationPartners
       }
-      console.log('Cooperations', cooperations)
       this.setState({markerCooperations: cooperations})
     }
   }
@@ -374,24 +373,19 @@ class AreaChart extends Component {
   handlePinch (event) {
     let scale = ((event.scale))
     if (Math.abs(this.state.zoom - (this.state.zoomOld * scale)) > 0.01) {
-      // console.log(Math.abs(this.state.zoom - (this.state.zoomOld * scale)))
       this.setState({zoom: this.state.zoomOld * scale})
     }
   }
 
   handlePinchEnd (event) {
-    console.log('Pinch zoom end')
     this.setState({zoom: this.state.zoomOld * event.scale, zoomOld: this.state.zoomOld * event.scale})
-    console.log({zoom: this.state.zoomOld * event.scale, zoomOld: this.state.zoomOld * event.scale})
   }
 
   handlePinchStart (event) {
-    console.log('Pinch zoom start')
     this.setState({zoomOld: this.state.zoom})
   }
 
   handleMoveStart (currentCenter) {
-    console.log('New center: ', currentCenter)
   }
 
   handleMoveEnd (newCenter) {

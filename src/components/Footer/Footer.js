@@ -16,12 +16,10 @@ class Footer extends Component {
   }  
   handleChange (selectedOption) {
     this.setState({ selectedOption })
-    // console.log(`Option selected:`, selectedOption)
   }
 
   render () {  
     const { selectedOption } = this.state
-    // console.log(selectedOption)
     const options = [
       { value: 'chocolate', label: 'Chocolate' },
       { value: 'strawberry', label: 'Strawberry' },

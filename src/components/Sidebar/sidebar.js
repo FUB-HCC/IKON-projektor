@@ -49,11 +49,7 @@ class Sidebar extends Component {
   handleInputChange (event) {
     this.setState({value: event.target.value})
   }
-  render () {  
-    // console.log(this.props.filters, 'this.props.filters')      
-    // console.log(this.state.filters, 'new filters')      
-    // const filterElements = this.props.filters.map((filter, key) => filter.type === 'a'
-    //   ? <SidebarFilterElements id={key} key={key} name={filter.name} keys={filter.distValues} value={filter.value} open={this.state.expandedFilters[key]} change={this.props.filterChangeHandler} expand={this.handleFilterExpand}/> : null)
+  render () {
     const filterElements = <SidebarFilterElements filters={this.state.filters} change={this.props.filterChangeHandler} />
     return (
       <div className={classes.FilterModal}>

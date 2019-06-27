@@ -28,8 +28,6 @@ export const getAllInstitutions = (institutionsData, projects) => {
 
     if (newInstitution.numberProjects > 0) institutions.push(newInstitution)
   })
-
-  console.log(institutions)
   return institutions
 }
 
@@ -70,6 +68,5 @@ export const getAllResearchAreas = (projects) => {
       }
     }
   }
-  console.log(researchAreas)
   return researchAreas
 }

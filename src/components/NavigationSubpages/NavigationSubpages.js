@@ -13,9 +13,7 @@ class NavigationSubpages extends Component {
     }
   }  
 
-  changeGraphHandler (graph) {   
-    console.log(this.state, graph)
-     
+  changeGraphHandler (graph) {
     if (graph === '0') {
       this.setState({active: 'WISSEN'})
     }
@@ -25,7 +23,6 @@ class NavigationSubpages extends Component {
     if (graph === '2') {
       this.setState({active: 'RAUM'})
     }
-    console.log(this.state, graph)
     this.props.changeGraph(graph)
     this.setState({
       activePopover: -1

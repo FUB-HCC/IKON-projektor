@@ -11,8 +11,6 @@ export const changeGraph = (value) => {
 }
 
 export const filterChange = (filterId, value) => {
-  console.log('filterId', filterId)
-  console.log('value', value)
   return {
     type: actionTypes.FILTER_CHANGE,
     id: filterId,
@@ -52,7 +50,6 @@ export const fetchClusterData = () => {
   return (dispatch) => {
     axios.get("/dataset_v3.json")
       .then((result) => {
-        console.log(result)
         dispatch(updateClusterData(result.data))
       })
   }

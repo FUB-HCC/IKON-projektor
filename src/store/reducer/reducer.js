@@ -106,7 +106,6 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.CHANGE_GRAPH:
-      // console.log('STATE CHANGE: ', action.type, action)
       return {
         ...state,
         graph: action.value,

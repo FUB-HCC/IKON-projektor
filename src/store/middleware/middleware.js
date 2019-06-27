@@ -9,7 +9,6 @@ import {
 export const updateUrl = store => next => action  => {
     const result = next(action)
     const newState = store.getState().main
-    console.log(newState)
     let newUrlData = {
       g: newState.graph,
       f: newState.filter[0].value,
@@ -24,7 +23,6 @@ export const updateUrl = store => next => action  => {
       f: newUrlData.f.map(t => fieldsStringToInt(t)),
       s: newUrlData.s.map(s => sponsorStringToInt(newState, s))}
     const newUrl = '?' + queryStringify(minifiedUrlData)
-    console.log(newUrl)
     if(newUrl !== window.location.search){
       history.push(newUrl)
     }

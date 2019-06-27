@@ -4,7 +4,6 @@ import classes from './SidebarFilterElements.css'
 
 class FilterElements extends Component {
   render () {
-    console.log(this.props, 'pros')
     // const labelString = 60
     // const color = getTopicColor(1) === '#989aa1' ? getFieldColor(1) : getTopicColor(1)
     return (
