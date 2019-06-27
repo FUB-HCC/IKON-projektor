@@ -1,7 +1,7 @@
 //////////////// Konstanten ////////////////////
 const margin = {top: 40, right: 100, bottom: 40, left: 40},
-  width = 400 - margin.left - margin.right,
-  height = 300 - margin.top - margin.bottom,
+  width = 450 - margin.left - margin.right,
+  height = 400 - margin.top - margin.bottom,
   radius = 4,
   barPadding = 2;
 var zeitspanne = [1990,2019];

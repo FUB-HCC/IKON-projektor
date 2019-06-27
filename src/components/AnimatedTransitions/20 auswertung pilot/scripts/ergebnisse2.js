@@ -10,7 +10,8 @@ Promise.all([
   d3.dsv(";", "dataFiles/results1.csv"),
   d3.dsv(";", "dataFiles/results2.csv"),
   d3.dsv(";", "dataFiles/results3.csv"),
-  d3.dsv(";", "dataFiles/results4.csv")
+  d3.dsv(";", "dataFiles/results4.csv"),
+  d3.dsv(";", "dataFiles/results5.csv")
 ]).then(function(allData){
   // http://learnjsdata.com/read_data.html
   // http://learnjsdata.com/combine_data.html

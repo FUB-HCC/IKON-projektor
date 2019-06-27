@@ -3,12 +3,12 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: #ddd;
   /*color: white;*/
-  font-size: 11px;
+  font-size: 12px;
   padding: 1ex;
   /*width: 750px;*/
   text-align: center;
-  width: 80%;
-  margin-left : 10%
+  width: 95%;
+  margin-left : 2.5%
 }
 
 html {
@@ -48,7 +48,7 @@ h2 {
 }
 
 p {
-  font-size: 11px;
+  font-size: 12px;
   margin-bottom: 1.6ex;
   /*width: 750px;*/
   text-align: justify;
@@ -68,6 +68,7 @@ td, th {
   border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;
+  width: 50%;
 }/* https://www.w3schools.com/html/tryit.asp?filename=tryhtml_table_intro */
 
 /* https://www.w3schools.com/cssref/sel_nth-child.asp
