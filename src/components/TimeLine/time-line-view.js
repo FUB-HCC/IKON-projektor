@@ -59,7 +59,7 @@ class TimeLineView extends Component {
     let index = 0
     if (selectedProjects) {
       title = selectedProjects[0].research_area  
-      selectedProjects.map((project, i) => {
+      selectedProjects.forEach((project) => {
         counter++
         year = project.start_date   
         if (current.id === project.id) {
@@ -84,7 +84,7 @@ class TimeLineView extends Component {
     }
 
     let forschungsbereiche = this.state.forschungsbereiche
-    Object.keys(data.dataSplitFbYear).map(value => {
+    Object.keys(data.dataSplitFbYear).forEach(value => {
       if (this.state.forschungsbereiche.indexOf(value) === -1) forschungsbereiche = [...forschungsbereiche, value]
     })
 
@@ -103,7 +103,7 @@ class TimeLineView extends Component {
     let counter = 0
     if (selectedProjects) {
       title = selectedProjects[0].research_area  
-      selectedProjects.map((project, i) => {
+      selectedProjects.forEach((project) => {
         counter++
         year = project.start_date     
       })

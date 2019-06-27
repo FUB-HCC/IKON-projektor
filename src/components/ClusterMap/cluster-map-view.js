@@ -3,37 +3,6 @@ import _ from "lodash"
 import Cluster from "./cluster";
 import style from './cluster-map-view.module.css'
 
-const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
-  var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
-
-  return {
-    x: centerX + radius * Math.cos(angleInRadians),
-    y: centerY + radius * Math.sin(angleInRadians)
-  };
-}
-
-const describeArc = (x, y, radius, startAngle, endAngle) => {
-  var start = polarToCartesian(x, y, radius, endAngle);
-  var end = polarToCartesian(x, y, radius, startAngle);
-
-  var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-  var d = [
-    "M",
-    start.x,
-    start.y,
-    "A",
-    radius,
-    radius,
-    0,
-    largeArcFlag,
-    0,
-    end.x,
-    end.y
-  ].join(" ");
-  return d;
-}
-
 export default class ClusterMapView extends React.Component {
   state = {
     highlightedCat: null
@@ -86,7 +55,6 @@ export default class ClusterMapView extends React.Component {
               const startAngle = (each * i) - 180;
               const angle = startAngle * (Math.PI / 180);
               const conLen = cat.connections.length;
-              const endAngle = startAngle + each / 1;
               const x = shiftX + radius * Math.cos(angle);
               const y = shiftY + radius * Math.sin(angle);
               const textX = shiftX + (radius + 40) * Math.cos(angle);

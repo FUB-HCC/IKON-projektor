@@ -1,4 +1,3 @@
-import React from 'react'
 import {connect} from 'react-redux'
 import ClusterMapView from './cluster-map-view'
 import _ from "lodash";

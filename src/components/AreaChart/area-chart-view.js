@@ -912,7 +912,7 @@ class AreaChart extends Component {
 
                   <Markers>
                     {
-                      this.state.projectCurves.map((projectCurve, i) => {
+                      this.state.projectCurves.forEach((projectCurve, i) => {
                         let markerFillColor = '#cc3540'
                         if (this.state.hoveredProject === projectCurve.project) {
                           markerFillColor = '#4b9123'
