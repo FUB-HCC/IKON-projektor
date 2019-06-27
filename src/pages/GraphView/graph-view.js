@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import PetriDishGraph from '../../components/PetriDish/petri-dish'
+import ClusterMap from '../../components/ClusterMap/cluster-map'
 import AreaChart from '../../components/AreaChart/area-chart'
 import TimeGraph from '../../components/TimeLine/time-line'
 import classes from './graph-view.module.css'
@@ -18,6 +18,7 @@ class GraphView extends Component {
   componentDidMount () {
     window.addEventListener('resize', this.resize.bind(this))
     this.resize()
+    this.props.fetchClusterData()
   }
 
   resize () {
@@ -45,10 +46,10 @@ class GraphView extends Component {
   }
 
   render () {
-    let Graph = (<PetriDishGraph/>) // render conditional according to state. Petridish rendered as default
+    let Graph = (<ClusterMap/>) // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
       case '0':
-        Graph = (<PetriDishGraph height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
+        Graph = (<ClusterMap height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
         break
       case '1':
         Graph = (<TimeGraph height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
@@ -93,6 +94,7 @@ const calculateActiveFilterCount = (filter) => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    fetchClusterData: () => dispatch(actions.fetchClusterData()),
     changeGraph: (value) => dispatch(actions.changeGraph(value)),
     activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
     deactivatePopover: () => dispatch(actions.deactivatePopover())

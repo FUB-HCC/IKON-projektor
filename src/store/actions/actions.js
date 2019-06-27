@@ -1,4 +1,5 @@
 import * as actionTypes from './actionTypes'
+import axios from "axios";
 
 // action emitters to keep the containers clean
 
@@ -44,5 +45,23 @@ export const deactivatePopover = () => {
 export const getFiltersFromURL = () => {
   return {
     type: actionTypes.GET_FILTERS_FROM_URL
+  }
+}
+
+export const fetchClusterData = () => {
+  return (dispatch) => {
+    axios.get("/dataset_v3.json")
+      .then((result) => {
+        console.log(result)
+        dispatch(updateClusterData(result.data))
+      })
+  }
+}
+
+
+export const updateClusterData = (clusterData) => {
+  return {
+    type: actionTypes.UPDATE_CLUSTER_DATA,
+    value: clusterData
   }
 }

@@ -2,10 +2,12 @@ import * as actionTypes from '../actions/actionTypes'
 import {
   createNewStateFromUrlData,
   fieldsStringToInt,
-  topicToField
+  topicToField,
+  categories
 } from '../utility'
 import {getProjectsData, getInstitutionsData} from '../../assets/publicData'
 import {parse as queryStringParse} from 'query-string'
+import axios from "axios";
 
 const institutionsData = getInstitutionsData()
 const data = getProjectsData()
@@ -94,6 +96,8 @@ const initialState = {
   data: data,
   filteredData: data,
   institutions: institutionsData,
+  categories: categories,
+  clusterData: undefined,
   selectedProject: undefined
 }
 
@@ -103,12 +107,11 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.CHANGE_GRAPH:
       // console.log('STATE CHANGE: ', action.type, action)
-      const newState = {
+      return {
         ...state,
         graph: action.value,
         filteredData: applyFilters(state.data, state.filter)
       }
-      return newState
 
     case actionTypes.FILTER_CHANGE:
       return changeFilter(state, action)
@@ -125,10 +128,17 @@ const reducer = (state = initialState, action) => {
     case actionTypes.GET_FILTERS_FROM_URL:
       return urlUpdatesFilters(state)
 
+    case actionTypes.UPDATE_CLUSTER_DATA:
+      return updateClusterData(state, action)
+
     default:
       return state
   }
 }
+
+const updateClusterData = (state, action) => (Object.assign({}, state, {
+  clusterData: action.value
+}));
 
 const changeFilter = (state, action) => {
   const newFilter = state.filter.slice()

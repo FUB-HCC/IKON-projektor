@@ -8,7 +8,7 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import { createBrowserHistory } from 'history'
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import reducer from './store/reducer/reducer'
-import {updateUrl, logger} from "./store/middleware/middleware";
+import {updateUrl, logger, thunk} from "./store/middleware/middleware";
 
 export const history = createBrowserHistory()
 
@@ -24,7 +24,8 @@ export const store =  (preloadedState) => {
       applyMiddleware(
         routerMiddleware(history),
         updateUrl,
-        logger
+        logger,
+        thunk
       )
     ),
   )

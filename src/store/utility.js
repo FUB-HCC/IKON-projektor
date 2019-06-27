@@ -61,6 +61,30 @@ const topicMapping = [
   {name: 'Unbekannt', num: '30', field: 5, color: '#959ef9'}
 ]
 
+export const categories = [
+  { title: "Museumsbesucher", connections: [], id: 0 },
+  { title: "Laien", connections: [], id: 1 },
+  { title: "Forschungsinstitute", connections: [], id: 2 },
+  { title: "Museen", connections: [], id: 3 },
+  { title: "Behörden", connections: [], id: 4 },
+  { title: "Biodiversitätsforschende", connections: [], id: 5 },
+  { title: "Öffentlichkeit", connections: [], id: 6 },
+  { title: "Ethikrat", connections: [], id: 7 },
+  { title: "Fachpublikum", connections: [], id: 8 },
+  { title: "LehrerInnen & ErzieherInnen", connections: [], id: 9 },
+  { title: "SchülerInnen", connections: [], id: 10 },
+  { title: "Leibniz-Institute", connections: [], id: 11 },
+  { title: "Akteure i. d. nat. Biodiv.-Forschung und -Politik", connections: [], id: 12 },
+  { title: "Politik", connections: [], id: 13 },
+  { title: "Forschungsförderer", connections: [], id: 14 },
+  { title: "Studierende", connections: [], id: 15 },
+  { title: "Vereine und Naturschutzverbände", connections: [], id: 16 },
+  { title: "Wissenschaft", connections: [], id: 17 },
+  { title: "Medien", connections: [], id: 18 },
+  { title: "Wirtschaft", connections: [], id: 19 },
+  // { title: "Tester", connections: [], id: 16 },
+]
+
 export const fieldsIntToString = (number) => {
   number = parseInt(number, 10) // pls fix
   return fieldsMapping.find(e => e.field === number) ? fieldsMapping.find(e => e.field === number).name : number
