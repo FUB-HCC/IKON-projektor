@@ -34,26 +34,26 @@ class NavigationSubpages extends Component {
         <div className={classes.leftpanel}>
           <ul className={classes.ContainerSub}>
             <li>
-              <a className={classes.NavigationElement + ' ' + classes.logo} to='/projects'><img src={logo} /></a>
+              <div className={classes.NavigationElement + ' ' + classes.logo} to='/projects'><img src={logo} alt={'The logo should be here!'} /></div>
             </li>
             <li>
-              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'WISSEN') ? classes.active : '')} onClick={() => this.changeGraphHandler('0')}>WISSEN <small className={classes.smallHeadTxt}>Projekte in Clustern</small> </a>
+              <div className={classes.NavigationElement + ' ' + ((this.state.active === 'WISSEN') ? classes.active : '')} onClick={() => this.changeGraphHandler('0')}>WISSEN <small className={classes.smallHeadTxt}>Projekte in Clustern</small> </div>
             </li>
             <li>
-              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'ZEIT') ? classes.active : '') } onClick={() => this.changeGraphHandler('1')}>ZEIT <small className={classes.smallHeadTxt}>Anzahl der Projekte uber Jahre</small> </a>
+              <div className={classes.NavigationElement + ' ' + ((this.state.active === 'ZEIT') ? classes.active : '') } onClick={() => this.changeGraphHandler('1')}>ZEIT <small className={classes.smallHeadTxt}>Anzahl der Projekte uber Jahre</small> </div>
             </li>
             <li>
-              <a className={classes.NavigationElement + ' ' + ((this.state.active === 'RAUM') ? classes.active : '')} onClick={() => this.changeGraphHandler('2')}>RAUM</a>
+              <div className={classes.NavigationElement + ' ' + ((this.state.active === 'RAUM') ? classes.active : '')} onClick={() => this.changeGraphHandler('2')}>RAUM</div>
             </li>
           </ul>
         </div>
         <div className={classes.rightPanel}>
           <ul>
             <li>
-              <a className={classes.NavigationRightElement}>SUCHE</a>
+              <div className={classes.NavigationRightElement}>SUCHE</div>
             </li>
             <li>
-              <a className={classes.NavigationRightElement}>MENU</a>
+              <div className={classes.NavigationRightElement}>MENU</div>
             </li>
           </ul>
         </div>

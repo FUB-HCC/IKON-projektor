@@ -58,6 +58,7 @@
 .NavigationRightElement:hover::after{
     opacity: 1;
 }
+
 .NavigationRightElement li a{
     text-align: left;
 }
@@ -124,6 +125,9 @@
     opacity: 1;
 }
 .NavigationElement{
+    margin: 0;
+    border: none;
+    cursor: pointer;
     text-decoration: none;
     color: #50e3c2;
     font-size: 13px;

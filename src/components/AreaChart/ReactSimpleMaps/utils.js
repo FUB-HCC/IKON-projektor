@@ -40,7 +40,7 @@ export function createNewChildren (children, props) {
       }) : children)
   } else {
     return children.map((child, i) => {
-      if (!child) return
+      if (!child) return null
       return isChildOfType(child, ['Geographies'])
         ? React.cloneElement(child, {
           key: `zoomable-child-${i}`,
