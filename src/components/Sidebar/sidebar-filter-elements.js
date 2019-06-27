@@ -35,11 +35,11 @@ const SidebarFilterElements = (props) => {
             }
             return (
               <div className={classes.CheckContainer} key={sgIndex} >
-                <CheckBox checkColor={checkColor} show={true} disable={false} checked={true} name={subGroup.name.toUpperCase()} classes={classes.subGroup} color={color} change={props.change} id={0} value={subGroup.name} />
+                <CheckBox checkColor={checkColor} show={true} disable={false} checked={true} name={subGroup.name.toUpperCase()} classes={classes.subGroup} color={color} change={props.change} id={'forschungsgebiet'} value={subGroup.name} />
                 <div className={classes.groupMarginFix} >
                   {subGroup.values.map((name, nIndex) => {
                     return (
-                      <CheckBox checkColor={checkColor} show={true} disable={false} key={nIndex} checked={true} name={name} classes={classes.subGroup} color={color} change={props.change} id={sgIndex === 3 ? 0 : 1} value={name} />
+                      <CheckBox checkColor={checkColor} show={true} disable={false} key={nIndex} checked={true} name={name} classes={classes.subGroup} color={color} change={props.change} id={sgIndex === 3 ? 'forschungsgebiet' : 'hauptthema'} value={name} />
                     )
                   })}
                 </div>
@@ -54,7 +54,7 @@ const SidebarFilterElements = (props) => {
           <CheckBox show={false} disable={true} checked={false} name={filters[1].name.toUpperCase()} classes={classes.Title} />
         </div>
         <div className={`${classes.CheckContainer} ${classes.groupMarginFix}`} >
-          {filters[1].values.map((item, index) => <CheckBox checkColor={classes.grey} show={true} disable={false} key={index} checked={true} name={item} classes={classes.subGroup} color={getTopicColor(item) === '#989aa1' ? getFieldColor(item) : getTopicColor(item)} change={props.change} id={2} value={item} />)}
+          {filters[1].values.map((item, index) => <CheckBox checkColor={classes.grey} show={true} disable={false} key={index} checked={true} name={item} classes={classes.subGroup} color={getTopicColor(item) === '#989aa1' ? getFieldColor(item) : getTopicColor(item)} change={props.change} id={'geldgeber'} value={item} />)}
         </div>
       </div>
     </div>

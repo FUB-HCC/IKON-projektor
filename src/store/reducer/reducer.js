@@ -167,12 +167,11 @@ const updateProjectsData = (state, action) => {
 }
 
 const changeFilter = (state, action) => {
-  const newFilter = state.filters.slice()
-  const actionValue = action.value
-  if (state.filters[action.id].value.some(e => e === actionValue)) {
-    newFilter[action.id].value = state.filters[action.id].value.filter(key => key !== actionValue)
+  const newFilter = state.filters
+  if (state.filters[action.id].value.some(e => e === action.value)) {
+    newFilter[action.id].value = state.filters[action.id].value.filter(key => key !== action.value)
   } else {
-    newFilter[action.id].value.push(actionValue)
+    newFilter[action.id].value.push(action.value)
   }
   return  {
     ...state,
