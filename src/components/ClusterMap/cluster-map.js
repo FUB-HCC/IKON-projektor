@@ -3,7 +3,9 @@ import ClusterMapView from './cluster-map-view'
 import _ from "lodash";
 
 const mapStateToProps = state => {
+  console.log(state.main.categories)
   let clusters = [];
+  let categories = state.main.categories
   if(state.main.clusterData){
     const { cluster_data, project_data } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
@@ -12,8 +14,9 @@ const mapStateToProps = state => {
     const minX = _.min(_.map(projects, c => c.embpoint[0]));
     const minY = _.min(_.map(projects, c => c.embpoint[1]));
 
+    categories = state.main.categories.map(cat => cat)
     const transformedPoints = projects.map(p => {
-      const cat = _.sample(state.main.categories)
+      const cat = _.sample(categories)
       const point = ({
         ...p,
         location: [
@@ -39,7 +42,7 @@ const mapStateToProps = state => {
 
   return {
     clusterData: clusters,
-    categories: state.main.categories
+    categories: categories
   }
 }
 

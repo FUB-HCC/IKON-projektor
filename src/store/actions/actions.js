@@ -59,7 +59,7 @@ export const fetchInstitutionsData = () => {
   return (dispatch) => {
     axios.get("https://localhost:5433/institutions")
       .then((result) => {
-        dispatch(updateClusterData(result.data))
+        dispatch(updateInstitutionsData(result.data))
       })
   }
 }
@@ -68,7 +68,7 @@ export const fetchProjectsData = () => {
   return (dispatch) => {
     axios.get("https://localhost:5433/projects")
       .then((result) => {
-        dispatch(updateClusterData(result.data))
+        dispatch(updateProjectsData(result.data))
       })
   }
 }
