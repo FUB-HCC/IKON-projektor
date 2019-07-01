@@ -187,7 +187,7 @@ class TimeLine extends Component {
 
         d3Select('.dots')
           .selectAll('circle')
-          .filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) })
+          .filter(function (d) { return (d.color === color) })
           .data(line.filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) }))
           .attr('class', 'changedDot')
           .transition()
