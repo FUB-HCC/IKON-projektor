@@ -57,11 +57,6 @@ class TimeLine extends Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    if (JSON.stringify(this.state.dataSplitYears) !== JSON.stringify(prevState.dataSplitYears)) {
-      console.log('anders!')
-    } else {
-
-    }
     this.createChart()
   }
 
@@ -133,6 +128,10 @@ class TimeLine extends Component {
       d3Select(node)
         .append('g')
         .attr('class', 'lines')
+      
+      d3Select(node)
+        .append('g')
+        .attr('class', 'dots')
 
       dataset.forEach(line => {
         const color = (line.length > 0) ? line[0].color : ''
@@ -149,14 +148,12 @@ class TimeLine extends Component {
           .style('stroke', 'transparent')
           .attr('d', sparkLine)
           .transition()
-          .duration(500)
+          .duration(1250)
           .style('stroke', color)
 
-        d3Select(node)
+        d3Select('.dots')
           .append('g')
-          .attr('class', 'dots')
-          .append('g')
-          .attr('class', 'c' + color.substring(1, 7))
+          .attr('class', styles.line)
           .selectAll('circle')
           .data(line.filter(function (d) { return (d.numberOfActiveProjects !== null) }))
           .enter()
@@ -168,7 +165,7 @@ class TimeLine extends Component {
           .attr('r', 4)
           .style('fill', 'transparent')
           .transition()
-          .duration(500)
+          .duration(1250)
           .style('fill', function (d) { return d.color })
       })
 
@@ -182,7 +179,7 @@ class TimeLine extends Component {
           .select('#c' + color.substring(1, 7))
           .attr('class', 'changedPath')
           .transition()
-          .duration(500)
+          .duration(1250)
           .delay(200)
           .attr('d', sparkLine)
           .style('stroke', color)
@@ -191,34 +188,36 @@ class TimeLine extends Component {
           .data(line)
           .enter()
           .selectAll('circle')
-          .filter(function (d) { return (d.numberOfActiveProjects !== null) && d.color === color })
+          .filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) })
           .attr('class', 'changedDot')
           .transition()
           .attr('cx', sparkLine.x())
           .attr('cy', sparkLine.y())
           .delay(200)
-          .duration(500)
+          .duration(1250)
           .style('fill', function (d) { return d.color })
       })
+
+      console.log(d3Select('.dots'))
 
       // makes all unchanged lines invisible
       d3Select('.lines')
         .selectAll('.unchangedPath')
         .transition()
         .delay(200)
-        .duration(500)
+        .duration(1250)
         .style('stroke', 'transparent')
 
       d3Select('.lines')
         .selectAll('.changedPath')
         .attr('class', 'unchangedPath')
-      
+
       // all circles that are not in the new list need to be made invisible
       d3Select('.dots')
         .selectAll('.unchangedDot')
         .transition()
         .delay(200)
-        .duration(250)
+        .duration(1250)
         .style('fill', 'transparent')
 
       d3Select('.dots')
@@ -441,41 +440,7 @@ class TimeLine extends Component {
           />
           <g className={styles.yAxis} ref={node => d3Select(node).call(yAxis)}/>
           <svg ref={node => (this.node = node)}></svg>
-          {/* Lines without missing data }
-          {Object.values(dataset).map((line, i) => {
-            let color = '#e2e2e2'
-            // get color even if i value of dataset is missing
-            line.forEach(element => {
-              if (element !== null) {
-                color = element.color 
-              }
-            })
-            return (<g key={JSON.stringify(line)} className={styles.line}><path style={{stroke: color}} d={sparkLine(line)}/></g>)
-          })}
 
-          {/* a group for our scatter plot, and render a circle at each `circlePoint`. }
-          <g className={styles.scatter}>
-            {circlePoints.map(circlePoint => (
-              <circle
-                cx={circlePoint.x}
-                cy={circlePoint.y}
-                style={{
-                  fill: circlePoint.color,
-                  pointerEvents: 'fill'
-                }}
-                key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.color}`}
-                onClick={(evt) => { this.handleCircleClick(evt, circlePoint) }}
-                onMouseLeave={this.handleCircleMouseLeave}
-                onMouseMove={(event) => {
-                  this.handleCircleMouseEnter(circlePoint, event)
-                }}
-                onMouseEnter={(event) => {
-                  this.handleCircleMouseEnter(circlePoint, event)
-                }}
-                r={4}
-              />
-            ))}
-              </g> */}
         </SVGWithMargin>
         {this.renderProjectsPopover()}
         {this.renderProjectsHover()}
