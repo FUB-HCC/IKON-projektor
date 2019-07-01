@@ -176,6 +176,7 @@ class TimeLine extends Component {
         const color = (line.length > 0) ? line[0].color : ''
 
         d3Select('.lines')
+          .datum(line)
           .select('#c' + color.substring(1, 7))
           .attr('class', 'changedPath')
           .transition()
@@ -185,10 +186,9 @@ class TimeLine extends Component {
           .style('stroke', color)
 
         d3Select('.dots')
-          .data(line)
-          .enter()
           .selectAll('circle')
           .filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) })
+          .data(line.filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) }))
           .attr('class', 'changedDot')
           .transition()
           .attr('cx', sparkLine.x())
@@ -197,8 +197,6 @@ class TimeLine extends Component {
           .duration(1250)
           .style('fill', function (d) { return d.color })
       })
-
-      console.log(d3Select('.dots'))
 
       // makes all unchanged lines invisible
       d3Select('.lines')
