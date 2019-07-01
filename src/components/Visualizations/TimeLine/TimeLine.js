@@ -21,7 +21,7 @@ import DetailModal from '../../Modal/DetailModal'
 import classes from '../AreaChart/AreaChart.css'
 import HoverPopover from '../../HoverPopover/HoverPopover'
 import arrowHover from '../../../assets'
-// import MissingData from '../../MissingData/MissingData'
+import MissingData from '../../MissingData/MissingData'
 
 class TimeLine extends Component {
   constructor (props) {
@@ -70,12 +70,6 @@ class TimeLine extends Component {
   }
 
   createChart () {
-    // delete old one
-    // d3Select('.lines')
-    //   .remove()
-    // d3Select('.dots')
-    //   .remove()
-
     const node = this.node
 
     let array = [].concat.apply([], Object.values(this.state.dataSplitYears))
@@ -96,16 +90,6 @@ class TimeLine extends Component {
       .domain(d3ArrayExtent(array, selectY))
       .range([this.state.height, 0])
   
-    // Add an axis for our x scale which has half as many ticks as there are rows in the data set.
-    /* const xAxis = d3AxisBottom()
-      .scale(xScale)
-      .ticks(array.length / 4)
-  
-    // Add an axis for our y scale that has 3 ticks
-    const yAxis = d3AxisLeft()
-      .scale(yScale)
-      .ticks(3) */
-  
     // These two functions select the scaled x and y values (respectively) of our data.
     const selectScaledX = datum => xScale(selectX(datum))
     const selectScaledY = datum => yScale(selectY(datum))
@@ -116,20 +100,11 @@ class TimeLine extends Component {
       .y(selectScaledY)
       .defined(function (d) { return (d.numberOfActiveProjects !== null) })
   
-    // map our data to scaled points.
-    const circlePoints = array.map(datum => (Object.assign({
-      x: selectScaledX(datum),
-      y: selectScaledY(datum),
-      color: datum.color}, datum)))
-  
     // create dataset with missing data input as null
     let dataset = JSON.parse(JSON.stringify(Object.values(this.state.dataSplitYears)))
 
-    let missingData = []
-
     dataset.forEach(element => {
       if (element.length > 0) {
-        let missingElements = []
         const fb = element[0].fb
         const color = element[0].color
         for (let i = 0; i <= this.state.maxYear - this.state.minYear; i++) {
@@ -147,37 +122,14 @@ class TimeLine extends Component {
               'numberOfActiveProjects': null,
               'color': color
             })
-          } else {
-            if (i !== 0) {
-              if (element[i - 1].numberOfActiveProjects == null) {
-                missingElements.push({
-                  'x': xScale(new Date((this.state.minYear + i).toString())),
-                  'y': yScale(element[i].numberOfActiveProjects),
-                  'year': element[i].year,
-                  'color': color,
-                  'state': 'end'})
-                missingData.push(missingElements)
-                missingElements = []
-              }
-            }
-            if (element.length > i + 1) {
-              if (element[i + 1].year !== this.state.minYear + i + 1) {
-                missingElements.push({
-                  'x': xScale(new Date((this.state.minYear + i).toString())),
-                  'y': yScale(element[i].numberOfActiveProjects),
-                  'year': element[i].year,
-                  'color': color,
-                  'state': 'start'})
-              }
-            }
-          } 
+          }
         }
-        if (missingElements.length !== 0) { missingData.push(missingElements) }
       }
     })
 
     // on first creation
     if (d3Select('.lines').empty() && d3Select('.dots').empty()) {
+      // creation of the lines
       d3Select(node)
         .append('g')
         .attr('class', 'lines')
@@ -185,48 +137,71 @@ class TimeLine extends Component {
       dataset.forEach(line => {
         const color = (line.length > 0) ? line[0].color : ''
 
+        // the class gets used as an identifier to check if the part has been
+        // updated in the current rendering
         d3Select('.lines')
           .append('g')
-          // .attr('key', JSON.stringify(line))
           .attr('class', styles.line)
           .append('path')
+          .datum(line)
           .attr('id', 'c' + color.substring(1, 7))
           .attr('class', 'unchangedPath')
+          .style('stroke', 'transparent')
+          .attr('d', sparkLine)
+          .transition()
+          .duration(500)
           .style('stroke', color)
-          .attr('d', sparkLine(line))
+
+        d3Select(node)
+          .append('g')
+          .attr('class', 'dots')
+          .append('g')
+          .attr('class', 'c' + color.substring(1, 7))
+          .selectAll('circle')
+          .data(line.filter(function (d) { return (d.numberOfActiveProjects !== null) }))
+          .enter()
+          .append('circle')
+          .attr('id', function (d) { return ((d.fb).replace(/\W+/g, '') + d.year) })
+          .attr('class', 'unchangedDot')
+          .attr('cx', sparkLine.x())
+          .attr('cy', sparkLine.y())
+          .attr('r', 4)
+          .style('fill', 'transparent')
+          .transition()
+          .duration(500)
+          .style('fill', function (d) { return d.color })
       })
 
-      d3Select(node)
-        .append('g')
-        .attr('class', 'dots')
-
-      d3Select('.dots')
-        .selectAll('circle')
-        .data(circlePoints)
-        .enter()
-        .append('circle')
-        // fb is changed to be alphanumeric so that it is a valid
-        .attr('id', function (d) { return ((d.fb).replace(/\W+/g, '') + d.year) })
-        .attr('class', 'unchangedDot')
-        .attr('cx', function (d) { return d.x })
-        .attr('cy', function (d) { return d.y })
-        .attr('r', 4)
-        .style('fill', function (d) { return d.color })
+    // in case of an update of the visualization
     } else {
+      // line update
       dataset.forEach(line => {
         const color = (line.length > 0) ? line[0].color : ''
 
-        // line update
         d3Select('.lines')
           .select('#c' + color.substring(1, 7))
           .attr('class', 'changedPath')
           .transition()
           .duration(500)
           .delay(200)
-          .attr('d', sparkLine(line))
+          .attr('d', sparkLine)
           .style('stroke', color)
+
+        d3Select('.dots')
+          .data(line)
+          .enter()
+          .selectAll('circle')
+          .filter(function (d) { return (d.numberOfActiveProjects !== null) && d.color === color })
+          .attr('class', 'changedDot')
+          .transition()
+          .attr('cx', sparkLine.x())
+          .attr('cy', sparkLine.y())
+          .delay(200)
+          .duration(500)
+          .style('fill', function (d) { return d.color })
       })
 
+      // makes all unchanged lines invisible
       d3Select('.lines')
         .selectAll('.unchangedPath')
         .transition()
@@ -237,18 +212,6 @@ class TimeLine extends Component {
       d3Select('.lines')
         .selectAll('.changedPath')
         .attr('class', 'unchangedPath')
-
-      // circle update
-      circlePoints.forEach(circlePoint => {
-        d3Select('#' + (circlePoint.fb).replace(/\W+/g, '') + circlePoint.year)
-          .attr('class', 'changedDot')
-          .transition()
-          .attr('cx', circlePoint.x)
-          .attr('cy', circlePoint.y)
-          .delay(200)
-          .duration(500)
-          .style('fill', circlePoint.color)
-      })
       
       // all circles that are not in the new list need to be made invisible
       d3Select('.dots')
@@ -466,8 +429,7 @@ class TimeLine extends Component {
           margin={this.state.margin}
           width={this.state.width}
         >
-          { // <MissingData missingDataPoints={missingData} width={this.state.width} height={this.state.height} visType={this.state.visType}/>
-          }
+          <MissingData missingDataPoints={missingData} width={this.state.width} height={this.state.height} visType={this.state.visType}/>
 
           {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */ }
           <g

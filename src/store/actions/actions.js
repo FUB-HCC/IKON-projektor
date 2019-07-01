@@ -54,3 +54,10 @@ export const visTypeChange = (value) => {
     value: value
   }
 }
+
+export const viewTypeChange = (value) => {
+  return {
+    type: actionTypes.CHANGE_VIEWTYPE,
+    value: value
+  }
+}

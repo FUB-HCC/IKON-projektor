@@ -10,9 +10,11 @@ class Footer extends Component {
     super(props)
     this.state = {
       value: { min: 1996, max: 2018 },
-      selectedOption: 'sketchiness'
+      selectedOption: 'sketchiness',
+      secondSelectedOption: 'standard'
     }
     this.handleChange = this.handleChange.bind(this)
+    this.handleOptionChange = this.handleOptionChange.bind(this)
     this.handleYearChange = this.handleYearChange.bind(this)
   }  
   handleChange (selectedOption) {
@@ -29,12 +31,29 @@ class Footer extends Component {
     this.props.yearChangeHandler(selectedValue)
   }
 
+  handleOptionChange (selectedSecondOption) {
+    this.setState({ selectedSecondOption })
+    // console.log(selectedOption.value)
+    this.props.changeViewType(selectedSecondOption.value)
+    // console.log(`Option selected:`, selectedOption)
+  }
+
   render () {  
     const { selectedOption } = this.state
     const options = [
       { value: 'sketchiness', label: 'Sketchiness' },
       { value: 'dashing', label: 'Dashing' },
-      { value: 'blur', label: 'Blur' }
+      { value: 'blur', label: 'Blur' },
+      { value: 'none', label: 'None' }
+    ]
+
+    // console.log(this.state.value, this.props.selectedYears.value)
+
+    const { secondSelectedOption } = this.state
+    const secondOptions = [
+      { value: 'standard', label: 'Standard' },
+      { value: 'other1', label: 'Other' },
+      { value: 'other2', label: 'Other' }
     ]
     return (
 
@@ -42,7 +61,7 @@ class Footer extends Component {
         <div className={classes.footer}>
           <div className={classes.leftFooter}>
             <div className={classes.timeSlider}>
-              <InputRange maxValue={2018} minValue={1996} value={this.state.value} onChange={this.handleYearChange} />
+              <InputRange maxValue={this.props.selectedYears.distValues.max} minValue={this.props.selectedYears.distValues.min} value={this.props.selectedYears.value} onChange={this.handleYearChange} />
             </div>
           </div>
           
@@ -59,9 +78,9 @@ class Footer extends Component {
               <div className={classes.filterWrap}>
                 <label className={classes.selectLabel} >VIEW</label>
                 <Select
-                  value={selectedOption}
-                  onChange={this.handleChange}
-                  options={options}
+                  value={secondSelectedOption}
+                  onChange={this.handleOptionChange}
+                  options={secondOptions}
                 />
               </div>
             </div>
@@ -87,7 +106,8 @@ const mapDispatchToProps = dispatch => {
     activatePopover: (value, vis) => dispatch(actions.activatePopover(value, vis)),
     deactivatePopover: () => dispatch(actions.deactivatePopover()),
     yearChangeHandler: (value) => dispatch(actions.yearChange(value)),
-    changeVisType: (value) => dispatch(actions.visTypeChange(value))
+    changeVisType: (value) => dispatch(actions.visTypeChange(value)),
+    changeViewType: (value) => dispatch(actions.viewTypeChange(value))
   }
 }
 const mapStateToProps = state => {

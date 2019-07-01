@@ -1,6 +1,5 @@
 import 'd3-transition'
 // import {Motion, spring} from 'react-motion'
-import styles from '../Visualizations/TimeLine/TimeLine.css'
 import React, {Component} from 'react'
 import {select as d3Select} from 'd3-selection'
 
@@ -21,8 +20,7 @@ class MissingData extends Component {
       missingDataPoints: this.props.missingDataPoints,
       width: this.props.width,
       height: this.props.height,
-      visType: this.props.visType,
-      oldProps: {}
+      visType: this.props.visType
     }
     this.createSketchyData = this.createSketchyData.bind(this)
     this.createSketchyLine = this.createSketchyLine.bind(this)
@@ -30,12 +28,7 @@ class MissingData extends Component {
 
   // makes sure to not rerender if values did not change
   shouldComponentUpdate (nextProps) {
-    if (JSON.stringify(this.props) === JSON.stringify(nextProps)) {
-      return false
-    } else {
-      this.setState({oldProps: nextProps})
-      return true
-    }
+    return !(JSON.stringify(this.props) === JSON.stringify(nextProps))
   }
 
   componentDidMount () {
@@ -50,13 +43,12 @@ class MissingData extends Component {
     const node = this.node
     let lines = []
 
-    // deletes the last version
-    d3Select('.missingData')
-      .remove()
-
-    d3Select(node)
-      .append('g')
-      .attr('class', 'missingData')
+    // on first creation
+    if (d3Select('.missingData').empty()) {
+      d3Select(node)
+        .append('g')
+        .attr('class', 'missingData')
+    }
 
     switch (this.props.visType) {
       case 'sketchiness': {
@@ -69,17 +61,46 @@ class MissingData extends Component {
           .curve(d3CurveBasis)
 
         lines.forEach(line => {
-          let color = line[line.length - 1]
-          d3Select('.missingData')
-            .append('g')
-            .attr('class', color)
-            .attr('key', JSON.stringify(line))
-            // .attr('className', styles.line)
-            .append('path')
-            .style('stroke', color)
-            .style('opacity', 0.8)
-            .attr('d', lineFactory(line.slice(0, (line.length - 1))))
+          let color = line[line.length - 2]
+          if (d3Select('#c' + line[line.length - 2].replace(/\W+/g, '') + line[line.length - 1]).empty()) {
+            d3Select('.missingData')
+              .append('path')
+              .attr('id', 'c' + line[line.length - 2].replace(/\W+/g, '') + line[line.length - 1])
+              .datum(line.slice(0, (line.length - 2)))
+              .attr('class', 'changedMD')
+              .style('stroke', 'transparent')
+              .style('stroke-dasharray', 0)
+              .style('opacity', 0.8)
+              .attr('d', lineFactory)
+              .transition()
+              .duration(500)
+              .delay(200)
+              .style('stroke', color)
+          } else {
+            d3Select('#c' + line[line.length - 2].replace(/\W+/g, '') + line[line.length - 1])
+              .attr('class', 'changedMD')
+              .datum(line.slice(0, (line.length - 2)))
+              .transition()
+              .delay(200)
+              .duration(500)
+              .style('stroke', color)
+              .style('stroke-dasharray', 0)
+              .style('opacity', 0.8)
+              .attr('d', lineFactory)
+          }
         })
+
+        d3Select('.missingData')
+          .selectAll('.unchangedMD')
+          .transition()
+          .delay(200)
+          .duration(500)
+          .style('stroke', 'transparent')
+          .remove()
+
+        d3Select('.missingData')
+          .selectAll('.changedMD')
+          .attr('class', 'unchangedMD')  
         break
       }
       case 'dashing': {
@@ -90,17 +111,52 @@ class MissingData extends Component {
         const lineFactory = d3Line()
 
         lines.forEach(line => {
-          let color = line[line.length - 1]
-          d3Select('.missingData')
-            .append('g')
-            .attr('key', JSON.stringify(line))
-            .attr('className', styles.line)
-            .append('path')
-            .style('stroke', color)
-            .style('opacity', 0.8)
-            .style('stroke-dasharray', (5, 5))
-            .attr('d', lineFactory(line.slice(0, (line.length - 1))))
+          let color = line[line.length - 1][0]
+
+          if (d3Select('#c' + line[line.length - 1][0].replace(/\W+/g, '') + line[line.length - 1][1]).empty()) {
+            d3Select('.missingData')
+              .append('path')
+              .attr('id', 'c' + line[line.length - 1][0].replace(/\W+/g, '') + line[line.length - 1][1])
+              .attr('class', 'changedMD')
+              .style('stroke', 'transparent')
+              .style('opacity', 1.0)
+              .style('stroke-dasharray', (5, 5))
+              .attr('d', lineFactory(line.slice(0, (line.length - 1))))
+              .transition()
+              .duration(200)
+              .style('stroke', color)
+              .delay(200)
+              .style('stroke-dasharray', (8, 8))
+              .style('stroke', '#242424')
+              .transition()
+              .duration(200)
+              .delay(400)
+              .style('opacity', 0.8)
+              .style('stroke-dasharray', (5, 5)) 
+              .style('stroke', color)               
+          } else {
+            d3Select('#c' + line[line.length - 1][0].replace(/\W+/g, '') + line[line.length - 1][1])
+              .attr('class', 'changedMD')
+              .transition()
+              .delay(200)
+              .duration(500)
+              .style('stroke', color)
+              .style('opacity', 0.8)
+              .style('stroke-dasharray', (5, 5))
+              .attr('d', lineFactory(line.slice(0, (line.length - 1))))           
+          }
         })
+        d3Select('.missingData')
+          .selectAll('.unchangedMD')
+          .transition()
+          .delay(200)
+          .duration(500)
+          .style('stroke', 'transparent')
+          .remove()
+
+        d3Select('.missingData')
+          .selectAll('.changedMD')
+          .attr('class', 'unchangedMD')   
         break
       }
       case 'blur': {
@@ -111,31 +167,36 @@ class MissingData extends Component {
         const lineFactory = d3Line()
 
         lines.forEach(line => {
-          let color = line[line.length - 1]
+          let color = line[line.length - 1][0]
           d3Select('.missingData')
             .append('g')
-            .attr('key', JSON.stringify(line))
-            .attr('className', styles.line)
             .append('path')
+            .attr('id', 'c' + line[line.length - 1][0].replace(/\W+/g, '') + line[line.length - 1][1])
+            .attr('class', 'unchangedMD')
             .style('stroke', color)
             .style('opacity', 0.8)
             .attr('d', lineFactory(line.slice(0, (line.length - 1))))
         })      
         break
       }
+      default: {
+        d3Select('.missingData')
+          .remove()
+      }
     }
   }
 
   createSketchyData (data, func) {
     // if missing data is at the end or beginning of the line
+    const conc = [data[0].color, data[0].year]
     if (data.length < 2) {
       if (data[0].state === 'end') {
-        return func ? (func(0, data[0].x, data[0].y, data[0].y, data[0].year - 1996).concat(data[0].color)) : [[0, data[0].y], [data[0].x, data[0].y], data[0].color]
+        return func ? (func(0, data[0].x, data[0].y, data[0].y, data[0].year - 1996).concat(conc)) : [[0, data[0].y], [data[0].x, data[0].y], conc]
       } else {
-        return func ? (func(data[0].x, this.props.width, data[0].y, data[0].y, 2019 - data[0].year).concat(data[0].color)) : [[data[0].x, data[0].y], [this.props.width, data[0].y], data[0].color]   
+        return func ? (func(data[0].x, this.props.width, data[0].y, data[0].y, 2019 - data[0].year).concat(conc)) : [[data[0].x, data[0].y], [this.props.width, data[0].y], conc]   
       }
     } else {
-      return func ? (func(data[0].x, data[1].x, data[0].y, data[1].y, data[1].year - data[0].year).concat(data[0].color)) : [[data[0].x, data[0].y], [data[1].x, data[1].y], data[0].color]
+      return func ? (func(data[0].x, data[1].x, data[0].y, data[1].y, data[1].year - data[0].year).concat(conc)) : [[data[0].x, data[0].y], [data[1].x, data[1].y], conc]
     }
   }
 

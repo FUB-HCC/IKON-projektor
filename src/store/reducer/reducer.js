@@ -140,6 +140,11 @@ const reducer = (state = initialState, action) => {
     case actionTypes.CHANGE_VISTYPE:
       return changeVisType(state, action)
 
+    case actionTypes.CHANGE_VIEWTYPE:
+      // for changing to different views of the visualization
+      // used for pilot study
+      return changeViewType(state, action)
+
     default:
       // console.log('STATE CHANGE: DEFAULT')
       return urlUpdatesFilters(state)
@@ -219,7 +224,9 @@ const deactivatePopover = (state) => {
 const changeYears = (state, action) => {
   const newState = {
     ...state,
-    selectedYears: {value: action.value}
+    selectedYears: {
+      distValues: state.selectedYears.distValues,
+      value: action.value}
   }
   updateUrl(newState)
   return newState
@@ -231,6 +238,20 @@ const changeVisType = (state, action) => {
     missingVisType: action.value
   }
   updateUrl(newState)
+  return newState
+}
+
+const changeViewType = (state, action) => {
+  let newState = state
+  if (action.value === 'standard') {
+    newState = {
+      ...state,
+      selectedYears: {
+        distValues: state.selectedYears.distValues,
+        value: {min: state.selectedYears.distValues.min,
+          max: state.selectedYears.distValues.max}}
+    }
+  }
   return newState
 }
 
