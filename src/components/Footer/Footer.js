@@ -10,7 +10,7 @@ class Footer extends Component {
     super(props)
     this.state = {
       value: { min: 1996, max: 2018 },
-      selectedOption: 'sketchiness',
+      selectedOption: 'dashing',
       secondSelectedOption: 'standard'
     }
     this.handleChange = this.handleChange.bind(this)

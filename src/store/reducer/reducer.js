@@ -101,7 +101,7 @@ const initialState = {
       max: Math.max(...distYears)},
     value: {min: Math.min(...distYears),
       max: Math.max(...distYears)}},
-  missingVisType: 'sketchiness'
+  missingVisType: 'dashing'
 }
 
 // Keep the reducer switch lean by outsourcing the actual code below

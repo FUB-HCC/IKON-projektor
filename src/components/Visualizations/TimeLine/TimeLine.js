@@ -42,7 +42,8 @@ class TimeLine extends Component {
       index: 0,
       minYear: 1996,
       maxYear: 2018,
-      visType: 'sketchiness'
+      visType: 'dashing',
+      dataset: []
     }
     this.handleCircleClick = this.handleCircleClick.bind(this)
     this.renderProjectsHover = this.renderProjectsHover.bind(this)
@@ -89,33 +90,6 @@ class TimeLine extends Component {
       .x(selectScaledX)
       .y(selectScaledY)
       .defined(function (d) { return (d.numberOfActiveProjects !== null) })
-  
-    // create dataset with missing data input as null
-    let dataset = JSON.parse(JSON.stringify(Object.values(this.state.dataSplitYears)))
-
-    dataset.forEach(element => {
-      if (element.length > 0) {
-        const fb = element[0].fb
-        const color = element[0].color
-        for (let i = 0; i <= this.state.maxYear - this.state.minYear; i++) {
-          if (element.length <= i) {
-            element.push({
-              'year': this.state.minYear + i,
-              'fb': fb,
-              'numberOfActiveProjects': null,
-              'color': color
-            })
-          } else if (element[i].year !== this.state.minYear + i) {
-            element.splice(i, 0, {
-              'year': this.state.minYear + i,
-              'fb': fb,
-              'numberOfActiveProjects': null,
-              'color': color
-            })
-          }
-        }
-      }
-    }) 
 
     // on first creation
     if (d3Select('.lines').empty() && d3Select('.dots').empty()) {
@@ -128,7 +102,7 @@ class TimeLine extends Component {
         .append('g')
         .attr('class', 'dots')
 
-      dataset.forEach(line => {
+      this.state.dataset.forEach(line => {
         const color = (line.length > 0) ? line[0].color : ''
 
         // the class gets used as an identifier to check if the part has been
@@ -143,7 +117,7 @@ class TimeLine extends Component {
           .style('stroke', 'transparent')
           .attr('d', sparkLine)
           .transition()
-          .duration(1250)
+          .duration(750)
           .style('stroke', color)
 
         d3Select('.dots')
@@ -160,45 +134,75 @@ class TimeLine extends Component {
           .attr('r', 4)
           .style('fill', 'transparent')
           .transition()
-          .duration(1250)
+          .duration(750)
           .style('fill', function (d) { return d.color })
       })
 
     // in case of an update of the visualization
     } else {
-      // line update
-      dataset.forEach(line => {
+      // line & dot update
+      // both line and dot animation have two phases
+      // first phase actually changes scale and position
+      // to ensure that one is not wiggly
+      // the second part updates the data when the position
+      // is okay otherwise
+      this.state.dataset.forEach(line => {
         const color = (line.length > 0) ? line[0].color : ''
 
+        // change of scale and position
         d3Select('.lines')
-          // .datum(line)
           .select('#c' + color.substring(1, 7))
           .attr('class', 'changedPath')
           .transition()
-          .duration(1250)
-          .delay(200)
+          .duration(750)
           .attr('d', sparkLine)
           .style('stroke', color)
 
+        // update of data
+        d3Select('.lines')
+          .select('#c' + color.substring(1, 7))
+          .transition()
+          .duration(750)
+          .delay(750)
+          .attr('d', sparkLine(line))
+          .style('stroke', color)   
+
+        // change of scale and position
         d3Select('.dots')
           .selectAll('circle')
           .filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) })
-          // .data(line.filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) }))
           .attr('class', 'changedDot')
           .transition()
           .attr('cx', sparkLine.x())
           .attr('cy', sparkLine.y())
-          .delay(200)
-          .duration(1250)
-          .style('fill', function (d) { return d.color })
+          .duration(750)
+          .style('fill', function (d) { 
+            return (d.numberOfActiveProjects !== null) ? d.color : 'transparent' 
+          })
+
+        // update of data
+        line.forEach(element => {
+          d3Select('.dots')
+            .select('#' + (element.fb).replace(/\W+/g, '') + element.year)
+            // .filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) })
+            // .data(line.filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) }))
+            .attr('class', 'changedDot')
+            .transition()
+            .attr('cx', selectScaledX(element))
+            .attr('cy', selectScaledY(element))
+            .delay(750)
+            .duration(750)
+            .style('fill', function (d) { 
+              return (element.numberOfActiveProjects !== null) ? element.color : 'transparent' 
+            })
+        })
       })
 
       // makes all unchanged lines invisible
       d3Select('.lines')
         .selectAll('.unchangedPath')
         .transition()
-        .delay(200)
-        .duration(1250)
+        .duration(750)
         .style('stroke', 'transparent')
 
       d3Select('.lines')
@@ -209,8 +213,7 @@ class TimeLine extends Component {
       d3Select('.dots')
         .selectAll('.unchangedDot')
         .transition()
-        .delay(200)
-        .duration(1250)
+        .duration(750)
         .style('fill', 'transparent')
 
       d3Select('.dots')
@@ -256,8 +259,35 @@ class TimeLine extends Component {
     Object.keys(data.dataSplitFbYear).map(value => {
       if (this.state.forschungsbereiche.indexOf(value) === -1) forschungsbereiche = [...forschungsbereiche, value]
     })
+    let dataset = JSON.parse(JSON.stringify(Object.values(data.dataSplitFbYear)))
 
-    this.setState({dataSplitYears: data.dataSplitFbYear, projectsData: data.projects, forschungsbereiche: forschungsbereiche, firstUpdate: false, minYear: minYear, maxYear: maxYear, visType: visType})
+    dataset.forEach(element => {
+      if (element.length > 0) {
+        const fb = element[0].fb
+        const color = element[0].color
+        for (let i = 0; i <= this.state.maxYear - this.state.minYear; i++) {
+          if (element.length <= i) {
+            element.push({
+              'year': this.state.minYear + i,
+              'fb': fb,
+              'numberOfActiveProjects': null,
+              'color': color
+            })
+          } else if (element[i].year !== this.state.minYear + i) {
+            element.splice(i, 0, {
+              'year': this.state.minYear + i,
+              'fb': fb,
+              'numberOfActiveProjects': null,
+              'color': color
+            })
+          }
+        }
+      }
+    })
+    // console.log(dataset)
+    this.setState({dataSplitYears: data.dataSplitFbYear, projectsData: data.projects, forschungsbereiche: forschungsbereiche, firstUpdate: false, minYear: minYear, maxYear: maxYear, visType: visType, dataset: dataset})
+    // console.log({...this.state, dataset: JSON.parse(JSON.stringify(Object.values(this.state.dataSplitYears)))})
+    // this.setState({...this.state, dataset: JSON.parse(JSON.stringify(Object.values(this.state.dataSplitYears)))})
   }
 
   handleCircleClick (circlePoint) {
