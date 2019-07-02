@@ -83,7 +83,7 @@ var links = d3.select("div.layout")
     .attr("id", "Animationsarten")
     .style("text-align", "center")
     .style("font-weight", "bold")
-    .text("Transition");
+    .text("Überblendung");
   
 var svg1 = new SVG("svg", d3.select("div#links"));
 var kreise1 = new Kreise (oldDataset, svg1, "projekt", scale1);
@@ -96,7 +96,7 @@ var rechts = d3.select("div.layout")
   .append("text")
   .style("text-align", "center")
   .style("font-weight", "bold")
-  .text("Überblendung");
+  .text("Transition");
 
 var svg2 = new SVG("svg", d3.select("div#rechts"));
 var kreise2 = new Kreise (oldDataset, svg2, "projekt", scale2);
@@ -138,9 +138,19 @@ function callAusgangszustand(){
 }
 
 function replay(){
-  ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1, scale2]);
-  transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
-//   var t0 = d3.transition().duration(0).on("end", transitions);
+//   ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1,scale2]);
+//   transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
+  var t0 = d3.transition().duration(250)
+    .on("start", function(){
+      ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1,scale2]);
+    })
+    .on("end", function(){
+      transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
+    });
+}
+
+function whoAmI(){
+  return me;
 }
 
 //////////// Tutorial ////////////

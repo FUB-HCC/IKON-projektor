@@ -1,14 +1,15 @@
 const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
 
 var idx = 0;
-var randIDs = [6,0,3,4,5,2,1];
+var randIDs = [6,1,8,5,2,10,4,0,7,3,11,9];
 
 //////////////// Datasets ////////////////
 var oldDataset = [], newDataset = [];
 var pos, id, gerade, clusterNo, researchArea, year, keywords;
 var datas = [
-  [[5,6,0], [10,6,0], [9,10,0], [6,9,0]], // cluster 0
-  [[3,1,1], [6,1,1], [5,3,1]] // cluster 1
+  [[2,8,0], [2.5,10,0], [4.5,7,0], [5,9,0]], // cluster0
+  [[2.5,2,1], [3,5,1], [5.5,2,1]], // cluster1
+  [[8,7,2], [8.2,5,2], [9.3,5.5,2], [10.5,4,2], [10,8,2]] // cluster2
 ];
 for(var c in datas){
   for (var p in datas[c]) {
@@ -18,13 +19,15 @@ for(var c in datas){
     oldDataset.push(new Knoten(pos, id, clusterNo, {}, 2019, ""));
   }
 }
+
 var oldNests = new Nest(oldDataset);
 
 idx = 0;
 datas = [
-  [[7,5,0], [10,6,0], [9,10,0], [6,9,0]], // cluster 0
-  [[1,4,1], [4,4,1], [3,6,1]] // cluster 1
-  ];
+  [[1,9,0], [2,12,0], [5,6,0], [5.5,9.5,0]], // cluster0
+  [[2,1,1], [3.8,7.7,0], [11,6,2]], // cluster1, 2 Knoten gehen
+  [[8.4,7.2,2], [8,4.5,2], [9,5,2], [10,5,2], [10.7,9,2]] // cluster2
+];
 
 for(var c in datas){
   for (var p in datas[c]) {
@@ -36,9 +39,8 @@ for(var c in datas){
 }
 
 var newNests = new Nest(newDataset);
-
+  
 var transTable = oldNests.createTransitionNests(newNests);
-
   
 //////////////// Scaling ////////////////////
 var scale1 = new Scale(oldDataset);
@@ -139,17 +141,17 @@ function callAusgangszustand(){
 }
 
 function replay(){
-//   ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1,scale2]);
-//   transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
-  var t0 = d3.transition().duration(250)
-    .on("start", function(){
-      ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1,scale2]);
-    })
-    .on("end", function(){
-      transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
-    });
+  ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1,scale2]);
+  transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
+//   var t0 = d3.transition().duration(250)
+//     .on("start", function(){
+//       ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1,scale2]);
+//     })
+//     .on("end", function(){
+//       transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
+//     });
 }
 
-function whoAmI(){
-  return me;
-}
+// function invokeInterpolation(step){
+//   interpolate([svg1, svg2], [oldDataset, newDataset], [oldNests, newNests], transTable, [scale1, scale2], step);
+// }

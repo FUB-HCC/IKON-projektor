@@ -136,7 +136,17 @@ function callAusgangszustand(){
 }
 
 function replay(){
-  ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1,scale2]);
-  transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
-//   var t0 = d3.transition().duration(0).on("end", transitions);
+//   ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1,scale2]);
+//   transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
+  var t0 = d3.transition().duration(250)
+    .on("start", function(){
+      ausgangszustand([svg1, svg2], oldDataset, oldNests, [scale1,scale2]);
+    })
+    .on("end", function(){
+      transitions([svg1, svg2], newDataset, newNests, transTable, [scale1, scale2]);
+    });
+}
+
+function whoAmI(){
+  return me;
 }

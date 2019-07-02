@@ -821,22 +821,6 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
     var esGibtEnter = circles.enter()._groups[0]
       .map(c => c != undefined).some(b => b);
     //console.log('esGibtExit',esGibtExit, 'esGibtEnter',esGibtEnter);
-    
-    function gibtEsAggregateOPs(){
-      if (transTable.old.nest.length != transTable.new.nest.length)
-        return true;
-      var ungleichheiten = false;
-      transTable.old.nest.forEach(function(c,i){
-        var d = transTable.new.nest[i];
-        if (c.id != d.id)
-          ungleichheiten = true;
-        if (c.makeHulls2Path(scale2) != d.makeHulls2Path(scale2))
-          ungleichheiten = true;
-      });
-      return ungleichheiten;
-    }
-    var esGibtAggregatOP = gibtEsAggregateOPs();
-    //console.log('esGibtAggregatOP', esGibtAggregatOP);
       
     ///////// Hüllen 
     var hullsOld = svg2.svg.select("g.hulls")
@@ -882,20 +866,20 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
     hullsNew.exit()
       .attr("class", "remove")
       .transition()
-      .duration(transDuration/3)
+      .duration(transDuration/4)
       .style("opacity", 0)
       .remove();
       
     hullsNew.transition().ease(d3.easeQuadInOut)
       .delay(function(){
         if (esGibtExit)
-          return transDuration/3;
+          return transDuration/4;
         else
           return 0;
       })
       .duration(function(){
         if (esGibtExit || esGibtEnter)
-          return transDuration*2/3;
+          return transDuration*3/4;
         else
           return transDuration;
       })
@@ -925,13 +909,13 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
       .transition()
       .delay(function(){
         if (esGibtExit)
-          return transDuration/3;
+          return transDuration/4;
         else
           return 0;
       })
       .duration(function(){
         if (esGibtExit || esGibtEnter)
-          return transDuration*2/3;
+          return transDuration*3/4;
         else
           return transDuration;
       })
@@ -956,12 +940,7 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
     circles.exit()
       .attr("class", "remove")
       .transition()
-      .duration(function(){
-        if (esGibtAggregatOP)
-          return transDuration/3;
-        else
-          return transDuration;
-      })
+      .duration(transDuration/4)
       .ease(d3.easeBackIn.overshoot(6))
       .attr("r", 0)
       .remove();
@@ -971,13 +950,13 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
       .transition()
       .delay(function(){
         if (esGibtExit)
-          return transDuration/3;
+          return transDuration/4;
         else
           return 0;
       })
       .duration(function(){
         if (esGibtExit || esGibtEnter)
-          return transDuration*2/3;
+          return transDuration*3/4;
         else
           return transDuration;
       })
@@ -1000,18 +979,8 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
       .style("opacity", 1)
       .style("pointer-events", "all")
       .transition()
-      .delay(function(){
-        if (esGibtAggregatOP)
-          return transDuration*2/3;
-        else
-          return 0;
-      })
-      .duration(function(){
-        if (esGibtAggregatOP)
-          return transDuration/3;
-        else
-          return transDuration;
-      })
+      .delay(transDuration*3/4)
+      .duration(transDuration/4)
       .ease(d3.easeBackOut.overshoot(6))
       .attr("r", radius);
       
@@ -1023,12 +992,7 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
     labelsCircs.exit()
       .attr("class", "remove")
       .transition()
-      .duration(function(){
-        if (esGibtAggregatOP)
-          return transDuration/3;
-        else
-          return transDuration;
-      })
+      .duration(transDuration/4)
       .ease(d3.easeBackIn.overshoot(6))
       .style("font-size", "0px")
       //.style("opacity", 0)
@@ -1040,13 +1004,13 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
       .ease(d3.easeQuadInOut)
       .delay(function(){
         if (esGibtExit)
-          return transDuration/3;
+          return transDuration/4;
         else
           return 0;
       })
       .duration(function(){
         if (esGibtExit || esGibtEnter)
-          return transDuration*2/3;
+          return transDuration*3/4;
         else
           return transDuration;
       })
@@ -1058,29 +1022,17 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
       .attr("class", "projekt")
       .attr("x", function(d) {return scale2.xScale(d.pos.x);})
       .attr("y", function(d) {return scale2.yScale(d.pos.y);})
-      .style("font-size", "0px")
+      .style("font-size", "10px")
       .style("text-anchor", "middle")
       .attr("dy", "0.7ex")
-      //.style("opacity", 0)
+      .style("opacity", 0)
       .text(function(d){return d.id;})
       .on("mouseover", tooltipNode.show)
       .on("mouseout", tooltipNode.hide)
       .transition()
-      .delay(function(){
-        if (esGibtAggregatOP)
-          return transDuration*2/3;
-        else
-          return 0;
-      })
-      .duration(function(){
-        if (esGibtAggregatOP)
-          return transDuration/3;
-        else
-          return transDuration;
-      })
-      .ease(d3.easeBackOut.overshoot(6))
-      //.style("opacity", 1)
-      .style("font-size", "10px");
+      .delay(transDuration*3/4)
+      .duration(transDuration/4)
+      .style("opacity", 1);
       
     var labelsHulls = svg2.svg.select("g.beschriftung")
       .selectAll("text.huelle")
@@ -1099,13 +1051,13 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
       .ease(d3.easeQuadInOut)
       .delay(function(){
         if (esGibtExit)
-          return transDuration/3;
+          return transDuration/4;
         else
           return 0;
       })
       .duration(function(){
         if (esGibtExit || esGibtEnter)
-          return transDuration*2/3;
+          return transDuration*3/4;
         else
           return transDuration;
       })
@@ -1133,8 +1085,8 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
       .on("mouseover", tooltipCluster.show)
       .on("mouseout", tooltipCluster.hide)
       .transition()
-      .delay(transDuration*2/3)
-      .duration(transDuration/3)
+      .delay(transDuration*3/4)
+      .duration(transDuration/4)
       .style("opacity", 1);
   }// Ende if != null (Transition)
 }// Ende Funktion transition
@@ -1149,57 +1101,61 @@ function changeView(keypress) {
     saveImage(1,1);
   }
   else if (keypress.key == "Enter") {
-    var zip = new JSZip();// https://jalara-studio.de/mit-javascript-eine-zip-datei-erstellen
-    if ( JSZip.support.arraybuffer )
-      console.log( "ArrayBuffer wird unterstützt." );
-    else
-      console.log( "ArrayBuffer wird nicht unterstützt." );
-    if ( JSZip.support.uint8array )
-      console.log( "Uint8Array wird unterstützt." );
-    else
-      console.log( "Uint8Array wird nicht unterstützt." );
-    if ( JSZip.support.blob )
-      console.log( "Blob wird unterstützt." );
-    else
-      console.log( "Blob wird nicht unterstützt." );
     callAusgangszustand();
-    var aufgabe = whoAmI();
-    var inhalt, fileNr;
-    var counter = 1;//var date = new Date();
-    var n = 10;
-    inhalt = createSVGcontent();
-    zip.file(aufgabe +"-"+ "01.svg", inhalt);
+    var date = new Date();
+    var counter = 1;
+    var n = 4;
+    saveImage(counter,n);
     replay();
+    var timer = 0;
     // https://stackoverflow.com/questions/2170923/whats-the-easiest-way-to-call-a-function-every-5-seconds-in-jquery
     var interval = setInterval(function(){// hat eine leichte Verschiebung : 170 ms
-      if (++counter <= n+1) {
-        inhalt = createSVGcontent();
-        fileNr = "0".slice(0, 2-counter.toString().length) +counter;
-        zip.file((aufgabe +"-"+ fileNr +".svg"), inhalt);
+      if (counter++ <= n) {
+        if (counter == n){}// vorletztes Bild unbrauchbar
+        else if (counter > n) {// letztes Bild
+          saveImage(counter-1,n);
+          console.log(new Date()-date);
+        }
+        else {
+          saveImage(counter,n);
+          console.log(new Date()-date);
+        }
       }
-      else {
+      else
         clearInterval(interval);
-        /*zip.generateAsync({type:"base64"}).then(function(base64){
-          location.href = "data:application/zip; base64," + base64;
-        });*/
-        zip.generateAsync({type:"blob"}).then(function(blob) {
-          saveAs(blob, aufgabe + ".zip" );
-        });
-      }
     }, transDuration/n);
   }
+//   else if (keypress.key == "x") {
+//     var c = 0;
+//     var date = new Date();
+//     var timerOne = setInterval(function(){
+//       if (c < 7)
+//         console.log("bla", (new Date()-date));
+//       else
+//         clearInterval(timerOne);
+//     }, 1000);
+//     var timerTwo = setInterval(function(){
+//       if (c++ < 7)
+//         console.log("blub", (new Date()-date));
+//       else
+//         clearInterval(timerTwo);
+//     }, 1000);
+//   }
 }
 
-function createSVGcontent(){
+function saveImage(counter,n){// speichert jedes SVG einzeln
   // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
-  var svgElem;
-  var svgElements = document.getElementsByClassName("svg");
-  if (svgElements.length > 1)
-    svgElem = document.getElementsByClassName("svg")[1];
-  else
-    svgElem = document.getElementsByClassName("svg")[0];
+  var svgElem = document.getElementsByClassName("svg")[1];
+  //var svgElem = document.getElementById("rechts").lastChild;
   svgElem.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   var svgData = svgElem.outerHTML;
   var preface = '<?xml version="1.0" standalone="no"?>\r\n';
-  return preface + svgData;
+  var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
+  var svgUrl = URL.createObjectURL(svgBlob);
+  var downloadLink = document.createElement("a");
+  downloadLink.href = svgUrl;
+  downloadLink.download = "transition_"+ counter +"-"+ n +".svg";
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
 }

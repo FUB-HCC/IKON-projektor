@@ -25,16 +25,16 @@ var oldDataset, newDataset, oldNests, newNests, transTable, scale, schieberegler
 //////////////// Datasets ////////////////
 /*"c4-t20_tSNE_p30-lr806.json"
  * c4-t19_LDA.json // naja 5-4
- * c4-t22_LDA.json // super 3-3
  * c4-t23_LDA.json // nett 4-4
+ * c4-t22_LDA.json // super 3-3
  * c6-t20_LDA.json // nett 3-5
  * c7-t20_LDA.json // nett 3-5
  * c7-t22_LDA.json // gut 3-6
  */
 //d3.json("c4-t20_tSNE_p30-lr806").then(function(data){}
 Promise.all([
-  d3.json("c6-t20_LDA.json"),
-  d3.json("c7-t20_LDA.json")
+  d3.json("c4-t19_LDA.json"),
+  d3.json("c4-t23_LDA.json")
 ]).then(function(allData){
   //console.log(allData);
   oldDataset = allData[0].project_data.map(function(d){
@@ -171,7 +171,17 @@ function callAusgangszustand(){
 }
 
 function replay(){
-  ausgangszustand([null, svg], oldDataset, oldNests, [null,scale]);
-  transitions([null, svg], newDataset, newNests, transTable, [null, scale]);
-//   var t0 = d3.transition().duration(0).on("end", transitions);
+//   ausgangszustand([null, svg], oldDataset, oldNests, [null,scale]);
+//   transitions([null, svg], newDataset, newNests, transTable, [null, scale]);
+  var t0 = d3.transition().duration(250)
+    .on("start", function(){
+      ausgangszustand([null, svg], oldDataset, oldNests, [null,scale]);
+    })
+    .on("end", function(){
+      transitions([null, svg], newDataset, newNests, transTable, [null, scale]);
+    });
+}
+
+function whoAmI(){
+  return me;
 }
