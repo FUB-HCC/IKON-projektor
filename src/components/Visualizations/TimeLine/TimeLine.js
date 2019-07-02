@@ -42,8 +42,7 @@ class TimeLine extends Component {
       index: 0,
       minYear: 1996,
       maxYear: 2018,
-      visType: 'sketchiness',
-      oldState: {}
+      visType: 'sketchiness'
     }
     this.handleCircleClick = this.handleCircleClick.bind(this)
     this.renderProjectsHover = this.renderProjectsHover.bind(this)
@@ -58,10 +57,6 @@ class TimeLine extends Component {
 
   componentDidUpdate (prevProps, prevState) {
     this.createChart()
-  }
-
-  componentDidMount () {
-
   }
 
   createChart () {
@@ -120,7 +115,7 @@ class TimeLine extends Component {
           }
         }
       }
-    })
+    }) 
 
     // on first creation
     if (d3Select('.lines').empty() && d3Select('.dots').empty()) {
@@ -176,7 +171,7 @@ class TimeLine extends Component {
         const color = (line.length > 0) ? line[0].color : ''
 
         d3Select('.lines')
-          .datum(line)
+          // .datum(line)
           .select('#c' + color.substring(1, 7))
           .attr('class', 'changedPath')
           .transition()
@@ -187,8 +182,8 @@ class TimeLine extends Component {
 
         d3Select('.dots')
           .selectAll('circle')
-          .filter(function (d) { return (d.color === color) })
-          .data(line.filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) }))
+          .filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) })
+          // .data(line.filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) }))
           .attr('class', 'changedDot')
           .transition()
           .attr('cx', sparkLine.x())
