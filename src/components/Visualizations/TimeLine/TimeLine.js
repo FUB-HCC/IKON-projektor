@@ -117,7 +117,7 @@ class TimeLine extends Component {
           .style('stroke', 'transparent')
           .attr('d', sparkLine)
           .transition()
-          .duration(750)
+          .duration(1250)
           .style('stroke', color)
 
         d3Select('.dots')
@@ -134,7 +134,7 @@ class TimeLine extends Component {
           .attr('r', 4)
           .style('fill', 'transparent')
           .transition()
-          .duration(750)
+          .duration(1250)
           .style('fill', function (d) { return d.color })
       })
 
@@ -154,18 +154,18 @@ class TimeLine extends Component {
           .select('#c' + color.substring(1, 7))
           .attr('class', 'changedPath')
           .transition()
-          .duration(750)
+          .duration(1250)
           .attr('d', sparkLine)
           .style('stroke', color)
 
-        // update of data
-        d3Select('.lines')
+        // update of data 
+        /* d3Select('.lines')
           .select('#c' + color.substring(1, 7))
           .transition()
           .duration(750)
           .delay(750)
           .attr('d', sparkLine(line))
-          .style('stroke', color)   
+          .style('stroke', color)    */
 
         // change of scale and position
         d3Select('.dots')
@@ -175,13 +175,13 @@ class TimeLine extends Component {
           .transition()
           .attr('cx', sparkLine.x())
           .attr('cy', sparkLine.y())
-          .duration(750)
+          .duration(1250)
           .style('fill', function (d) { 
             return (d.numberOfActiveProjects !== null) ? d.color : 'transparent' 
           })
 
         // update of data
-        line.forEach(element => {
+        /* line.forEach(element => {
           d3Select('.dots')
             .select('#' + (element.fb).replace(/\W+/g, '') + element.year)
             // .filter(function (d) { return (d.numberOfActiveProjects !== null) && (d.color === color) })
@@ -195,14 +195,14 @@ class TimeLine extends Component {
             .style('fill', function (d) { 
               return (element.numberOfActiveProjects !== null) ? element.color : 'transparent' 
             })
-        })
+        }) */
       })
 
       // makes all unchanged lines invisible
       d3Select('.lines')
         .selectAll('.unchangedPath')
         .transition()
-        .duration(750)
+        .duration(1250)
         .style('stroke', 'transparent')
 
       d3Select('.lines')
@@ -213,7 +213,7 @@ class TimeLine extends Component {
       d3Select('.dots')
         .selectAll('.unchangedDot')
         .transition()
-        .duration(750)
+        .duration(1250)
         .style('fill', 'transparent')
 
       d3Select('.dots')
