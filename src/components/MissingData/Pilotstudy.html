@@ -28,7 +28,7 @@
   color: white;
 }
 
-#transDurationSlider {
+#transDurationSlider, #yearSlider {
     margin-top: 50px;
     margin-bottom: 20px;
     margin-left: 25px;
@@ -55,6 +55,9 @@
     stroke: #0E0E0E !important;
 }
 
+.yAxis{
+    background: #50E3C2;
+}
 
 .yAxis line {
     stroke: #0E0E0E;
@@ -191,7 +194,8 @@ input:checked + .slider:before {
                 <span class="slider round"></span>
             </label> Toggle Circles for Missing Dat On/Off <br><br>
             <hr><br>
-            <div id="transDurationSlider" onchange="console.log('test')"></div> Duration of Transition (in ms)
+            <div id="transDurationSlider"></div> Duration of Transition (in ms)<br>
+            <div id="yearSlider"></div> Years visible
         </div>
     </div>
 </body>
@@ -203,7 +207,8 @@ input:checked + .slider:before {
 <script>
 
     // OPTIONS:
-    mDVizOn = false, mDDotsOn = false, array1On = true, transDuration = 0
+    let mDVizOn = false, mDDotsOn = false, array1On = true, transDuration = 0
+    let minyear = 2000, maxyear = 2018
 
     // Sliders
     const transDurationSlider = document.getElementById('transDurationSlider');
@@ -223,12 +228,32 @@ input:checked + .slider:before {
         update(false)
     });
 
+    // year slider
+    const yearSlider = document.getElementById('yearSlider');
+
+    noUiSlider.create(yearSlider, {
+        start: [2000, 2018],
+        step: 1,
+        connect: true,
+        margin: 3,
+        range: {
+            'min': [2000],
+            'max': [2018]
+        },
+        tooltips: [wNumb({decimals: 0}), wNumb({decimals: 0})]
+    });
+
+    yearSlider.noUiSlider.on('change',function(v,handle){
+        minyear = parseInt(v[0])
+        maxyear = parseInt(v[1])
+        update(false)
+        update(false)
+    })
     // ---------------------------------------------------------
     const margin = { top: 50, right: 20, bottom: 20, left: 50 },
         width = 900 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
-    let minyear = 2000, maxyear = 2018
     let array = [[[2000,'#A4782E',5,'visible'],
         [2001,'#A4782E',6,'visible'],
         [2002,'#A4782E',7,'visible'],
@@ -344,6 +369,7 @@ input:checked + .slider:before {
         [2016,'#994A49',10,'visible'],
         [2017,'#994A49',12,'visible'],
         [2018,'#994A49',13,'visible']]]    
+
     // Missing Data update
     array.forEach(line => {
         for (let i = 0; i <= line.length - 1; i++) {
@@ -469,6 +495,7 @@ input:checked + .slider:before {
         const arr = (array1On) ? array2 : array
         array1On = !array1On
 
+        // line update
         arr.forEach(line => {
             for (let i = 0; i < line.length-1 ; i ++) {
                 d3.select('#c' + line[i][0] + line[i][1].substring(1, 7))
@@ -489,25 +516,45 @@ input:checked + .slider:before {
                         }
                         return sparkLine([d0,d1])})
                     .style('stroke', function (d) { return (d[0][3] == 'invisible' && d[1][3] == 'invisible') ? 'transparent' : d[0][1]})
-                    .style('opacity', function (d) { return (d[0][2] === null || d[1][2] === null) ? ( mDVizOn ? 0.8 : 0) : 1.0})
+                    .style('opacity', function (d) { 
+                        // in case the points are left of the y axis:
+                        if (d[1][0] <= minyear) { return 0}
+                        // in case the points are missing:
+                        return (d[0][2] === null || d[1][2] === null) ? ( mDVizOn ? 0.8 : 0) : 1.0})
                     .attr('stroke-dasharray', function (d) { return (d[0][2] === null || d[1][2] === null) ? (5,5) : width})
         }
 
+        // dot update
         d3.select('#cdots' + line[0][1].substring(1, 7))
             .selectAll('circle')
             .data(line)
             .transition()
             .duration(transDuration)
             .delay(100)
-            .style('fill', function (d) { return (d[2] !== null) ? d[1] : 'transparent'})
+            .style('fill', function (d) { 
+                if (d[0] < minyear) { return 'transparent'}
+                return (d[2] !== null) ? d[1] : 'transparent'
+            })
             .style('stroke', function (d) { return (mDDotsOn) ? d[1] : 'transparent' })
             .attr('cx', function (d, i) { return ((d[2] !== null) ? selectScaledX(d) : (this.getAttribute('cx'))) })
             .attr('cy', function (d, i) { return ((d[2] !== null) ? selectScaledY(d) : yScale(interpolatePoint(line, i))) })
             .attr('r', 4)
         })
 
+        // time scale update
+
+        xScale.domain([new Date(minyear.toString()).setHours(0, 0, 0, 0), new Date(maxyear.toString()).setHours(0, 0, 0, 0)]).range([0, width])
+
+      d3.select('.xAxis')
+        //.attr("transform", "translate(0," + height + ")")
+        .transition()
+        .duration(transDuration)
+        .call(d3.axisBottom(xScale))
+
     }
 
+    // function to interpolate on which height a point should be
+    // depending on the location in the array and the missing data around it
     function interpolatePoint (array, i) {
         // first check how many steps to the left
         let start = null, end = null
@@ -539,11 +586,13 @@ input:checked + .slider:before {
         return height
     }
 
+    // updates whether or not missing data should be depictured with circles
     function handleMDDotChange () {
         mDDotsOn = !mDDotsOn
         update(false)
     }
 
+    // updates whether or not missing data should be visualized
     function handleMDVizChange () {
         mDVizOn = !mDVizOn
         update(false)
