@@ -1,7 +1,39 @@
 <!DOCTYPE html>
 <meta charset="utf-8" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.css">
 
 <style type="text/css">
+
+/* https://www.w3schools.com/css/css3_buttons.asp */
+.button {
+  font-family: IBM_Plex_Mono;
+  background-color: #1C1D1F;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  border: 2px solid #1C1D1F;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 0px;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #1C1D1F;
+  border: 2px solid #50E3C2;
+  color: white;
+}
+
+#transDurationSlider {
+    margin-top: 50px;
+    margin-bottom: 20px;
+    margin-left: 25px;
+    margin-right: 25px;
+}
 
 @font-face {
     font-family: IBM_Plex_Mono;
@@ -148,11 +180,8 @@ input:checked + .slider:before {
         <div id='svg'> <svg id="graph"></svg></div>
         <div id="options">
             <h3>OPTIONS</h1>
-            <input name="transition" type="button" value="Transition" onclick="update()" /> <br>
-            <label class="switch">
-                <input type="checkbox" onchange="handleTransChange()">
-                <span class="slider round"></span>
-            </label> Toggle Transitions On/Off<br>
+            <button class="button" onclick="update()">Transition</button> <br><br>
+            <hr><br>
             <label class="switch">
                 <input type="checkbox" onchange="handleMDVizChange()">
                 <span class="slider round"></span>
@@ -160,18 +189,41 @@ input:checked + .slider:before {
             <label class="switch">
                 <input type="checkbox" onchange="handleMDDotChange()">
                 <span class="slider round"></span>
-            </label> Toggle Circles in Missing Data Vis. On/Off
+            </label> Toggle Circles for Missing Dat On/Off <br><br>
+            <hr><br>
+            <div id="transDurationSlider" onchange="console.log('test')"></div> Duration of Transition (in ms)
         </div>
     </div>
 </body>
 
 <!-- Load in the d3 library -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.1.0/wNumb.min.js"></script>
 <script>
 
     // OPTIONS:
-    let transOn = false, mDVizOn = false, mDDotsOn = false, array1On = true
+    mDVizOn = false, mDDotsOn = false, array1On = true, transDuration = 0
 
+    // Sliders
+    const transDurationSlider = document.getElementById('transDurationSlider');
+
+    noUiSlider.create(transDurationSlider, {
+        start: [0],
+        step: 10,
+        range: {
+            'min': 0,
+            'max': 2000
+        },
+        tooltips: wNumb({decimals: 0})
+    });
+
+    transDurationSlider.noUiSlider.on('change',function(v,handle){
+        transDuration = parseInt(v[0])
+        update(false)
+    });
+
+    // ---------------------------------------------------------
     const margin = { top: 50, right: 20, bottom: 20, left: 50 },
         width = 900 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
@@ -416,8 +468,6 @@ input:checked + .slider:before {
         } 
         const arr = (array1On) ? array2 : array
         array1On = !array1On
-        // if transitions are toggled on the animation time will be 1,25 sec
-        const animTime = (transOn) ? 1250 : 0
 
         arr.forEach(line => {
             for (let i = 0; i < line.length-1 ; i ++) {
@@ -427,7 +477,7 @@ input:checked + .slider:before {
                     // .style('stroke', 'transparent')
                     .transition()
                     .delay(100)
-                    .duration(animTime)
+                    .duration(transDuration)
                     .attr('d', function (d) { 
                         d0 = [].concat.apply([], Object.values(d[0]))
                         d1 = [].concat.apply([], Object.values(d[1]))
@@ -447,7 +497,7 @@ input:checked + .slider:before {
             .selectAll('circle')
             .data(line)
             .transition()
-            .duration(animTime)
+            .duration(transDuration)
             .delay(100)
             .style('fill', function (d) { return (d[2] !== null) ? d[1] : 'transparent'})
             .style('stroke', function (d) { return (mDDotsOn) ? d[1] : 'transparent' })
@@ -499,7 +549,4 @@ input:checked + .slider:before {
         update(false)
     }
 
-    function handleTransChange () {
-        transOn = !transOn
-    }
 </script>
