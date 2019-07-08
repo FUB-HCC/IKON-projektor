@@ -1,179 +1,19 @@
 //////////////// Konstanten ////////////////////
-const margin = {top: 40, right: 100, bottom: 40, left: 40},
+const margin = {top: 40, right: 140, bottom: 50, left: 60},
   width = 450 - margin.left - margin.right,
-  height = 400 - margin.top - margin.bottom,
+  height = 460 - margin.top - margin.bottom,
   radius = 4,
-  barPadding = 2;
-var zeitspanne = [1990,2019];
+  barPadding = 2,
+  yAbstand = 1;//1.6
 
-var colorScheme = d3.schemeCategory10;//schemeDark2;//schemeSet1;// https://github.com/d3/d3-scale-chromatic/blob/master/README.md#schemeCategory10
+var transDur = [];// mögliche Zeiten
+for (var i=0; i <= 3; i=i+0.25)
+  transDur.push(i);
 
-const disziplinen = [
-  {id: 1, farbe: "#A4782E", name: "Naturwissenschaften"},
-  {id: 2, farbe: "#994A49", name: "Lebenswissenschaften"},
-  {id: 3, farbe: "#435B22", name: "Geistes- und Sozialwissenschaften"},
-  {id: 4, farbe: "#ed9798", name: "Ingenieurwissenschaften"}
-];
-
-const forschungsgebiete = [
-  { id: 0,
-    name: "Geochemie, Mineralogie u. Kristallographie",
-    disziplin: 1
-  },
-  { id: 1,
-    name: "Geophysik u. Geodäsie",
-    disziplin: 1
-  },
-  { id: 2,
-    name: "Geologie u. Paläontologie",
-    disziplin: 1
-  },
-  { id: 3,
-    name: "Atmosphären-, Meeres- u. Klimaforschung",
-    disziplin: 1
-  },
-  { id: 4,
-    name: "Zoologie",
-    disziplin: 2
-  },
-  { id: 5,
-    name: "Agrar-, Forstwissenschaften u. Tiermedizin",
-    disziplin: 2
-  },
-  { id: 6,
-    name: "Pflanzenwissenschaften",
-    disziplin: 2
-  },
-  { id: 7,
-    name: "Kunst-, Musik-, Theater- u. Medienwissenschaften",
-    disziplin: 3
-  },
-  { id: 8,
-    name: "Geschichtswissenschaften",
-    disziplin: 3
-  }
-];
-
-const websites = ["../index", 
-  "test10", // neue Knoten + wirken sich nicht auf die Form aus
-  "test11", // neue Knoten + Verformung durch diese
-  "test08", // Verschiebung
-  "test05", // Verschmelzung
-  "test13", // Knoten verschwinden + Verformung durch diese aus
-  "test04", // ein Cluster teilt sich auf 2 andere auf
-  "test09", // Knoten verschwinden + wirken sich nicht auf die Form
-  "test06", // Clusterwechsel (alte bleibt bestehen)
-  "test07", // Clusterwechsel + neues Cluster
-  "test12", // neue Knoten => neues Cluster
-  "test14", // Clusterzahl raten (altes Template)
-  "test15", // Vergleich: Trans. vs. Überblendung
-  "test16", // Transitionsdauer
-  "results"
-];
-/* "test01", // Objektverfolgung 
- * "test02", // Knoten kommen hinzu
- * "test03", // Knoten verschwinden
- */
-
-function aufgabenNr(site){
-  return websites.indexOf(site);
-}
-
-function aufgabenCounter(site) {
-  return "Aufgabe " + aufgabenNr(site) + "/" + (websites.length-2);
-}
-
-var allAnswers = [
-  // neue Projekte
-  "Neue Projekte kamen hinzu. Sie haben die Hüllenform nicht beeinflusst.",
-  "Neue Projekte kamen hinzu und veränderten die Hüllenform.",
-  "Die Hüllenform hat sich bei konstanter Projektzahl verändert.",
-  "Die Cluster haben sich verschoben, aber die Form blieb unverändert.",
-  "Das Verschwinden von Projekten beeinflusste die Hüllenform.",
-  "Projekte sind verschwunden und beeinflussten nicht die Hüllenform.",
-  // del Projekte
-  "Alte Projekte haben ein neues Cluster erzeugt.",
-  "Neue Projekte haben ein neues Cluster erzeugt.",
-  "Projekte kamen hinzu, aber die Clusterzahl blieb konstant.",
-  "Ein Cluster hat sich aufgeteilt.",
-  "Ein Cluster ist mitsamt der Projekte verschwunden.",
-  "Projekte haben das Cluster gewechselt. Ihr altes Cluster exisitert noch.",
-  // verschmelzen
-  "Cluster sind verschmolzen.",
-  "Cluster haben sich bewegt und verformt.",
-  "Cluster haben sich aufgeteilt.",
-  "Projekte haben das Cluster gewechselt.",
-  "Ein neues Cluster ist hinzu gekommen.",
-  "Ein Cluster hat sich aufgeteilt und existiert nicht mehr.",
-  // aufteilen
-  "Ein Cluster hat sich aufgeteilt und existiert noch.",
-  "Ein Cluster hat sich aufgeteilt und ein neues ist entstanden.",
-  "Ein Projekt ist hinzu gekommen und hat ein neues Cluster gebildet.",
-  // clusterwechsel
-  "Ein Projekt ist zu einem anderem, existierenden Cluster gewechselt.",
-  "Ein Cluster hat ein Projekt an ein anderes existierendes abgegeben."
-];
-
-// var allAnswersOrig = [
-//   "Ein Cluster hat sich aufgeteilt und existiert nicht mehr.",
-//   "Cluster sind zu einem verschmolzen.",
-//   "Projekte haben das Cluster gewechselt. Ihr altes Cluster exisitert noch.",
-//   "Ein Cluster hat sich aufgeteilt und existiert noch.",
-//   "Cluster sind verschmolzen.",
-//   "Ein Cluster hat sich aufgeteilt.",
-//   "Ein Cluster ist mitsamt der Projekte verschwunden.",
-//   "Projekte haben das Cluster gewechselt.",
-//   "Ein neues Cluster ist hinzu gekommen.",
-//   "Ein Cluster hat sich aufgeteilt und ein neues ist entstanden.",
-//   "Ein Projekt ist hinzu gekommen und hat ein neues Cluster gebildet.",
-//   "Ein Projekt ist zu einem anderem, existierenden Cluster gewechselt.",
-//   "Ein Cluster hat ein Projekt an ein anderes existierendes abgegeben.",
-//   "Cluster haben sich aufgeteilt.",
-//   "Cluster haben sich bewegt und verformt.",
-//   "Projekte sind verschwunden und beeinflussten nicht die Hüllenform.",
-//   "Die Cluster haben sich verschoben, aber die Form blieb unverändert.",
-//   "Das Verschwinden von Projekten beeinflusste die Hüllenform.",
-//   "Die Hüllenform hat sich bei konstanter Projektzahl verändert.",
-//   "Neue Projekte kamen hinzu. Sie haben die Hüllenform nicht beeinflusst.",
-//   "Neue Projekte kamen hinzu und veränderten die Hüllenform.",
-//   "Projekte kamen hinzu, aber die Clusterzahl blieb konstant.",
-//   "Neue Projekte haben ein neues Cluster erzeugt.",
-//   "Alte Projekte haben ein neues Cluster erzeugt."
-// ];
-
-function romanize(num) { // https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
-  var roman = {
-    M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, 
-    L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1};
-  var str = '';
-  for (var i of Object.keys(roman)) {
-    var q = Math.floor(num / roman[i]);
-    num -= q * roman[i];
-    str += i.repeat(q);
-  }
-  return str;
-}
-
-function randomizeArray(arr, initialIndex) {
-  var tmp, randI;
-  for (var i=0; i < arr.length; i++) {
-    randI = Index.getRandInt(0, arr.length-1);
-    //console.log("vertausche", i, "und", randI);
-    tmp = arr[randI];
-    arr[randI] = arr[i];
-    arr[i] = tmp;
-    //console.log(arr);
-    if (initialIndex == i){// passt Stelle an
-      initialIndex = randI;
-      //console.log("neuer Index", initialIndex);
-    }
-    else if (initialIndex == randI){// passt Stelle an
-      initialIndex = i;
-      //console.log("neuer Index", initialIndex);
-    }
-  }
-  return initialIndex;
-}
+// gewählte Zeit bei Aufgabe 12
+var favDuration = {A: 3, B: 2, C: 3, D: 1.5, E: 1.5, F: 1.5}
+var personenzahl = Object.keys(favDuration).length;
+favDuration.Gesamt = d3.sum(Object.values(favDuration)) / personenzahl;
 
 ////////////////// SVG ////////////
 class SVG {
@@ -182,17 +22,14 @@ class SVG {
     this.svg = ort.append("div")
       .attr("class", "box")
       .append("svg")
-      .attr("class", id)
+      .attr("id", id)
       .attr("width",  width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
+      .style("border", "1px solid #999")
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    this.svg.append("g").attr("class", "hulls");
-    this.svg.append("g").attr("class", "circs");
-  }
-  
-  get getSvg(){
-    return this.svg;
+    this.svg.append("g").attr("class", "bars");
+    this.svg.append("g").attr("class", "beschriftung");
   }
 }
 
@@ -203,364 +40,319 @@ class Scale {
       .domain([0, width])
       .range([0, width]);
     this.yScale = d3.scaleLinear()
-      .domain([0, height])
-      .range([height, 0]);
+      .range([height, 0])
+      .domain([0, height]);
+    this.yScale2 = d3.scaleLinear()
+      .range([height, 0])
+      .domain([0, height]);
     this.nameScaleX = d3.scaleBand()
-      .domain([])
+      .domain([1,2,3,4,5,6,7,8,9,10,11,12,13,14])// aufgabenNr
       .range([0, width])
       .paddingInner(0.2) // 2 set padding between bands
       .paddingOuter(0.1);// 0.55
+      //.align(1);
     this.nameScaleY = d3.scaleBand()
       // https://github.com/d3/d3-scale
-      .domain([])
+      .domain(transDur)
       .range([height, 0])// inverse
-      .paddingInner(0.2) // 2 set padding between bands
-      .paddingOuter(0.1);// 0.55
+      .paddingInner(0) // 2 set padding between bands
+      .paddingOuter(0);// 0.55
     this.colorScale = d3.scaleSequential()
       // https://www.d3-graph-gallery.com/graph/custom_color.html
       // https://github.com/d3/d3-scale-chromatic
-      .domain([1,10])
-      .interpolator(d3.interpolateBlues);
+      .domain([1,14])
+      .interpolator(d3.interpolateCool);
   }
   
-  setDomainDeutung(daten4, allAnswers, anzTN) {
-    this.xScale.domain([0, allAnswers.length]);
-    this.yScale.domain([0, anzTN]);
-    this.colorScale.domain([0, anzTN+1]);
-    this.nameScaleX.domain(daten4.map(d =>
-      allAnswers.indexOf(d.Loesung)+1
-    ).sort(function(a,b){return a-b}));
-    this.nameScaleY.domain(allAnswers.map(function(d,i){return i+1}));
-  }
-  
-  setDomainAnimation(vertices) {
+  setDomainStackedBars(data) {// pro Person
     // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Functions/set
-    this.xScale.domain([0, vertices.length]);
-    this.yScale.domain([0, d3.max(vertices.map(d => d.anz))]);
-    this.nameScaleX.domain(vertices.map(d => d.name));
-    this.nameScaleY.domain(vertices.map(d => d.name));
+    this.xScale.domain([1, 14]);// aufgabennummern
+    this.yScale.domain([0, d3.max(data.Aufgaben, d => d.total)]);
+    this.yScale2.domain([0, 3]);
+    this.nameScaleX.domain([0,1,2,3,4,5,6,7,8,9,10,11,12,13]);
+    this.nameScaleY.domain(transDur);
+    this.colorScale.domain([0,3]);// sekunden
   }
   
-  setDomainDauer(vertices) {
-    // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Functions/set
-    this.xScale.domain([0, d3.max(vertices.map(d => +d.name))]);
-    this.yScale.domain([0, d3.max(vertices.map(d => d.anz))]);
-    this.nameScaleX.domain(vertices.map(d => d.name));
-    this.nameScaleY.domain(vertices.map(d => d.name));
-  }
-  
-  setDomainClusterzahl(vertices) {
-    this.xScale.domain([0, d3.max(vertices, function(d){
-      if (d.start != undefined)
-        return d.start;
-      else
-        return d.end;
-    })]);
-    this.yScale.domain([0, d3.max(vertices, function(d){
-      return d.anz;
-    })]);
+  setDomainMidBars(data, personenzahl) {// gesamt
+    this.xScale.domain([1, 14]);// aufgabennummern
+    this.yScale.domain([0, d3.max(data.Aufgaben, d => d.total) / personenzahl]);
+    this.yScale2.domain([0, 3]);
+    this.nameScaleX.domain([0,1,2,3,4,5,6,7,8,9,10,11,12,13]);
+    this.nameScaleY.domain(transDur);
+    this.colorScale.domain([0,3]);// sekunden
   }
 }
 
-//////////////// Area ///////////////
-class Area {  
-  constructor(vertices, svg, klasse, scale){
-    this.area = d3.area()
-      .x(function(d){return scale.xScale(d.x);})
-      .y0(scale.yScale(0))
-      .y1(function(d){return scale.yScale(d.y);});
-    this.line = d3.line()
-      .x(function(d){return scale.xScale(d.x);})
-      .y(function(d){return scale.yScale(d.y);});
-    this.fill = svg.svg.select("g.hulls")
-      .selectAll("path."+klasse)
-      .datum(vertices)
-//       .data([vertices])
-//       .enter()
-      .attr("class", klasse)
-      .attr("d", d3.area()
-        .x(function(d){return scale.xScale(d.x);})
-        .y0(scale.yScale(0))
-        .y1(function(d){return scale.yScale(d.y);})
-      )
-      .attr("fill", "yellow")
-      .style("opacity", 0.3);
-//     this.stroke = svg.svg.select("g.hulls")
-//       .selectAll("path."+klasse)
-//       .data([vertices])
-//       .enter()
-//       .attr("class", "area")
-//       .attr("d", function(){return this.line})
-//       .attr("fill", "none")
-//       .attr("stroke", "orange")
-//       .attr("stroke-width", 2);
-  }
-}
 
 ////////////////////// Tooltip //////////////
 // http://bl.ocks.org/davegotz/bd54b56723c154d25eedde6504d30ad7
   
-var tooltipNode = d3.tip()
+var tooltipBar = d3.tip()
   .attr("class", "d3-tip")
   .offset([-8, 0])
-  .html(function(d) {
-    return "ID: " + d.id + "<br>Cluster: " + d.clusterNo + "<br>Pos: (" + d3.format(",.2f")(d.pos.x) + " |  " + d3.format(",.2f")(d.pos.y) + ")<br>Jahr: " + d.year + "<br><span style='color:" +  d3.rgb(colorScheme[d.researchArea.disziplin]) + "'>Fach: " + d.researchArea.name + "</span><br>Keywords: " + d.keywords.join(",<br>" + "&nbsp".repeat(20));
+  .html(function(d) {// {h,y,last,x,number,aufgabe}
+    return "Aufgabe: " + (d.aufgabe) + "<br>x: " + (d.x+1) + "<br>y: " + d.y + "<br>Wiederholung: " + d.number + "<br>Dauer: " + d.h + " s";
   });
-
-var tooltipCluster = d3.tip()
-  .attr("class", "d3-tip")
-  .offset([-8, 0])
-  .html(function(d) {
-    return "ID: " + d.id + "<br>major keys: " + d.getKeywords().join(",<br>" + "&nbsp".repeat(22));
-  });
-  
-var tooltipClusterNo = d3.tip()
-  .attr("class", "d3-tip")
-  .offset([-8, 0])
-  .html(function(d) {// Antworten
-    if (d.start != undefined)
-      return "Start: " + d.start +"<br>Personenzahl: " + d.anz;
-    else
-      return "End: " + d.end +"<br>Personenzahl: " + d.anz;
-  });
-  
-var tooltipAnim = d3.tip()
-  .attr("class", "d3-tip")
-  .offset([-8, 0])
-  .html(function(d) {return "Name: " + d.name +"<br>Personenzahl: " + d.anz;
-  });
-  
-var tooltipDeutung = d3.tip()
-  .attr("class", "d3-tip")
-  .offset([-8, 0])
-  .html(function(d) {return "Aufgaben-Nr:  " + aufgabenNr(d.Aufgabe)  + "<br>Deutungs-Nr.: " + (allAnswers.indexOf(d.Antwort)+1) + "<br>Lösungs-Nr.:  " + (allAnswers.indexOf(d.Loesung)+1) + "<br>Personenzahl: " + d.Anzahl;
-  });
-  
-var tooltipDauer = d3.tip()
-  .attr("class", "d3-tip")
-  .offset([-8, 0])
-  .html(function(d) {return "Dauer: " + (parseInt(d.name)/1000) +" s<br>Personenzahl: " + d.anz;
-  });
-  
-var tooltipNodePoor = d3.tip()// zum Verbergen von Informationen
-  .attr("class", "d3-tip")
-  .offset([-8, 0])
-  .html(function(d){return "keine Informationen"});
 
 //////////////// Rectangles ///////////////
-class Deutungsbars {  
-  constructor(flatDatas, svg, klasse, scale, tooltip, allAnswers){
-    // flatDatas = {Antwort, Anzahl, Aufgabe, Loesung}
-    this.rects = svg.select("g.circs")
+class MyStackedBars {  
+  constructor(dataset, svg, scale, tooltip, proPerson){
+    this.dataset = dataset;
+    this.rects = svg.svg.select("g.bars")
+      // Gruppen
+      .selectAll("g")
+      .data(dataset.Aufgaben)
+      .enter()
+      .append("g")
+      //.attr("transform", "translate(0,"+ (-height) +")")
+      // Rechtecke
       .selectAll("rect")
-      .data(flatDatas)
+      .data(function(aufg,i){// Aufgaben[pos_i]
+        return aufg.arr.map(function(dur,j){// arr[pos_j]
+          return {
+            h: dur, 
+            y: (d3.sum(aufg.arr.slice(0,j))), 
+            last: aufg.last, 
+            x: i, 
+            number: j,
+            aufgabe: aufg.name
+          };
+        });
+      })
       .enter()
       .append("rect")
-      .attr("x", function(d){
-        return scale.nameScaleX(
-          allAnswers.indexOf(d.Loesung)
-        +1);
-      })
-      .attr("y", function(d){
-        return scale.nameScaleY(
-          allAnswers.indexOf(d.Antwort)
-       +1);
+      .attr("x", function(d){// {h,y,last,x,number,aufgabe}
+        return scale.nameScaleX(d.x);})
+      .attr("y", function(d,i){
+        if (proPerson)
+          return scale.yScale(d.y+d.h) + yAbstand;
+        else
+          return scale.yScale((d.y+d.h) / personenzahl) + yAbstand;
       })
       .attr("width",  scale.nameScaleX.bandwidth())
-      .attr("height", scale.nameScaleY.bandwidth())
-      .attr("fill", function(d,i) {
-        return scale.colorScale(d.Anzahl+1);
-      })
-      .attr("stroke", function(d){
-        if (d.Antwort == d.Loesung)
-          return "orange";
-        else
-          return "none";
-      })
-      .attr("stroke-width", 1)
-      .on("mouseover", tooltip.show)
-      .on("mouseout", tooltip.hide);
-  }
-}
-  
-class Clusterbars {  
-  constructor(vertices, svg, klasse, scale){
-    this.rects = svg.svg.select("g.circs")
-      .selectAll("rect")
-      .data(vertices.Antworten)
-      .enter()
-      .append("rect")
-      .attr("x", function(d){
-        if (d.start != undefined)
-          return scale.xScale(d.start) -scale.xScale(1) / 3;
-        else
-          return scale.xScale(d.end);
-      })
-      .attr("y", function(d){
-        return scale.yScale(d.anz);})
-      .attr("width", scale.xScale(1) / 3)
       .attr("height", function(d){
-        return height - scale.yScale(d.anz);
-      })
-      .attr("fill", function(d,i) {
-        if (vertices.Loesung == d.start)
-          return "#00ff00";
-        else if (vertices.Loesung == d.end)
-          return "#007700";
-        else if (d.start != undefined && vertices.Loesung != d.start)
-          return "#ff0000";
+        if (proPerson)
+          return height-scale.yScale(d.h) - yAbstand;
         else
-          return "#770000";
+          return height-scale.yScale(d.h / personenzahl) - yAbstand
       })
-      .on("mouseover", tooltipClusterNo.show)
-      .on("mouseout", tooltipClusterNo.hide);
-  }
-}
-
-class Animbars {  
-  constructor(vertices, svg, klasse, scale, tooltip){
-    this.rects = svg.svg.select("g.circs")
-      .selectAll("rect")
-      .data(vertices.Antworten)
-      .enter()
-      .append("rect")
-      .attr("x", function(d){
-        return scale.nameScaleX(d.name);
-      })
-      .attr("y", function(d){
-        return scale.yScale(d.anz);})
-      .attr("width", scale.nameScaleX.bandwidth())
-      .attr("height", function(d){
-        return height - scale.yScale(d.anz);
-      })
-      .attr("fill", function(d,i) {
-        return "#0000aa";
+      .attr("fill", function(d){
+        return scale.colorScale(d.h);
       })
       .on("mouseover", tooltip.show)
       .on("mouseout", tooltip.hide);
+    svg.svg.call(tooltip);
   }
 }
 
-class Durationbars {  
-  constructor(vertices, svg, klasse, scale, tooltip){
-    this.rects = svg.svg.select("g.circs")
-      .selectAll("rect")
-      .data(vertices.Antworten)
-      .enter()
-      .append("rect")
-      .attr("x", function(d){
-        return scale.xScale(+d.name) -15/2 +barPadding;
-      })
-      .attr("y", function(d){
-        return scale.yScale(d.anz);})
-      .attr("width", 15 - 2*barPadding)
-      .attr("height", function(d){
-        return height - scale.yScale(d.anz);
-      })
-      .attr("fill", function(d,i) {
-        return "#0000aa";
-      })
-      .on("mouseover", tooltip.show)
-      .on("mouseout", tooltip.hide);
-  }
-}
-
-//////////////// Kreise ///////////////
-class Kreise {
-  constructor(vertices, svg, klasse, scale) {
-    this.circles = svg.svg.select("g.circs")
-      .selectAll("circle."+klasse)
-      .data(vertices, function(d){return d.id;})
-      .enter()
-      .append("circle")
-      .attr("class", klasse)
-      .attr("cx", function(d) {return scale.xScale(d.pos.x);})
-      .attr("cy", function(d) {return scale.yScale(d.pos.y);})
-      .attr("r", radius)
-      .on("mouseover", tooltipNode.show)
-      .on("mouseout", tooltipNode.hide)
-      // https://github.com/d3/d3-scale-chromatic
-      .style("stroke", function(d){
-        return d3.rgb(colorScheme[d.researchArea.disziplin]).brighter(2);
-      })// .darker(2)
-      .style("fill", function(d){
-        return d3.rgb(colorScheme[d.researchArea.disziplin]);
-      })
-      .style("opacity", 1)
-      .style("pointer-events", "all");
-      
-    svg.svg.call(tooltipNode);// call the function on the selection
-  }
-}
-
-//////////////// Hüllen ///////////////
-class Pfade {  
-  constructor(gruppen, svg, klasse, scale){
-    this.nester = gruppen.nest;
-    this.hull = svg.svg.select("g.hulls")
-      .selectAll("path."+klasse)
-      .data(gruppen.nest, function(d){return d.id;})
+class Graph {
+  constructor(dataset, svg, scale, favDuration) {
+    this.d3Graph = d3.line()
+      .x(d => scale.nameScaleX(d.aufgabe)+scale.nameScaleX.bandwidth()/2)
+      .y(d => scale.yScale2(d.mittel));
+    this.graph = svg.svg.select("g.bars")
+      .selectAll("path.graph")
+      .data([
+        dataset.Aufgaben.map(function(d,i) {
+          return {mittel: d.med, aufgabe: i};
+        })
+      ])
       .enter()
       .append("path")
-      .attr("class", klasse)
-      .attr("d", function(c){// c = Cluster{id, polygons}
-        return c.makePolygons2Path(scale);}
-      )
-      .attr('fill', "gray")
-      .attr('stroke', "gray")
-      .attr('opacity', 0.3)
-      .on("mouseover", tooltipCluster.show)
-      .on("mouseout", tooltipCluster.hide);
-    
-    svg.svg.call(tooltipCluster);// call the function on the selection
+      .attr("class", "graph")
+      .attr("fill", "none")
+      .attr("stroke", "orange")
+      .attr("stroke-width", 1.5)
+      .attr("d", this.d3Graph);
+    this.d3Line = d3.line()
+      .x(d => scale.nameScaleX(d.aufgabe)+scale.nameScaleX.bandwidth()/2)
+      .y(d => scale.yScale2(d.fav));
+    this.chosen = svg.svg.select("g.bars")
+      .selectAll("path.chosenDur")
+      .data([
+        dataset.Aufgaben.map(function(d,i) {
+          return {fav: favDuration[dataset.Person], aufgabe: i};
+        })
+      ])
+      .enter()
+      .append("path")
+      .attr("class", "chosenDur")
+      .attr("fill", "none")
+      .attr("stroke", "gray")
+      .attr("stroke-width", 0.4)
+      .attr("d", this.d3Line);
   }
 }
 
-//////////////// Funktionen ///////////////
-function getMinXofShapes(vertices){
-  return Math.min(0, d3.min(vertices.filter(function(d){
-    return d.year >= zeitspanne[0] && d.year <= zeitspanne[1];
-  }), function(d){return d.pos.x;}));
-}
-function getMaxXofShapes(vertices){
-  return d3.max(vertices.filter(function(d){
-    return d.year >= zeitspanne[0] && d.year <= zeitspanne[1];
-  }), function(d){return d.pos.x;});
-}
-function getMinYofShapes(vertices){
-  return Math.min(0, d3.min(vertices.filter(function(d){
-    return d.year >= zeitspanne[0] && d.year <= zeitspanne[1];
-  }), function(d){return d.pos.y;}));
-}
-function getMaxYofShapes(vertices){
-  return d3.max(vertices.filter(function(d){
-    return d.year >= zeitspanne[0] && d.year <= zeitspanne[1];
-  }), function(d){return d.pos.y;});
+
+class Axen{
+  constructor(svg, scale, xBeschriftung, yBeschriftung, yBeschriftung2) {
+    this.xAxis = d3.axisBottom(scale.nameScaleX);
+    //.ticks(6)
+    //.tickPadding(-10);
+    //.tickFormat(d3.formatPrefix(".2",1e-2));// https://github.com/d3
+    //.tickFormat(function(d){return d3.format(".2f")(d/1000)});// https://github.com/d3/d3-format
+    this.yAxis = d3.axisLeft()
+      .scale(scale.yScale);
+    //.ticks(5);
+    this.yAxis2 = d3.axisRight()
+      .scale(scale.yScale2)
+      .ticks(10);
+    this.xAchse = svg.svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(this.xAxis);
+    this.yAchse = svg.svg.append("g")
+      .attr("class", "y axis")
+      .call(this.yAxis)
+      .append("text")
+        .attr("transform", "translate(-38," + (height/2) + ") rotate(-90)")
+        //.attr("transform", "translate(-38,"+(height/2)+") rotate(-90)")
+        .attr("font-size", "11px")
+        .attr("fill", "black")
+        .attr("dy", ".71em")
+        .style("text-anchor", "middle")//middle, end
+        .text(yBeschriftung);
+    this.yAchse2 = svg.svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + width + ", 0)")
+      .call(this.yAxis2)
+      .append("text")
+        .attr("transform", "translate(38," + (height/2) + ") rotate(-90)")
+        //.attr("transform", "translate(-38,"+(height/2)+") rotate(-90)")
+        .attr("font-size", "11px")
+        .attr("fill", "black")
+        .attr("dy", "0em")
+        .style("text-anchor", "middle")//middle, end
+        .text(yBeschriftung2);
+      
+    // Einstellungen
+    this.xAchse.selectAll("text")// https://bl.ocks.org/d3noob/3c040800ff6457717cca586ae9547dbf
+      .attr("transform", "translate(0,1)")
+      .text(x => x+1)
+      //.attr("transform", "translate(" + (scale4.nameScaleX.bandwidth() / 2 + 1) + ",12) rotate(-90)")
+      .attr("font-size", "11px")
+      .attr("fill", "black")
+      .attr("dy", ".71em")
+      .style("text-anchor", "middle");// end
+    this.xAchse.append("text")
+      .attr("transform", "translate(" + (width/2) + ", 23)")
+      .attr("font-size", "11px")
+      .attr("fill", "black")
+      .attr("dy", ".71em")
+      .style("text-anchor", "middle")//middle, end
+      .text(xBeschriftung);
+  }
 }
 
-//////////////// Button ///////////////
-class LinkButton {  
-  constructor(site, fkt, sign, text, result){
-    this.btn = d3.select("body")
-      .append("a")// https://stackoverflow.com/questions/16461512/add-a-link-to-another-page-with-d3-js
-      .attr("href", function(){
-        //event.preventDefault();// https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault
-        var index = (websites.indexOf(site)+sign) % websites.length;
-        return websites[index]+".html";
+
+class Legende {
+  constructor(svg, scale, dataset, titel, proPerson) {
+    // Überschrift
+    this.grafikname = svg.svg.select("g.beschriftung")
+      .append("text")
+      .text(function(){
+        if (dataset.Person.length == 1)
+          return "Person " + dataset.Person + ": " + titel;
+        else
+          return dataset.Person + ": " + titel;
       })
-      //.html(text) // text für <a href></a>
-      .append("button")
-      .text(text)
-      .on("contextmenu", function(d) {
-        d3.event.preventDefault();
+      .attr("font-size", "11px")
+      .attr("fill", "black")
+      .attr("x", (width/2))
+      .attr("y", -20)
+      .style("font-weight", "bold")
+      .style("text-anchor", "middle");
+    // Gruppe für Legende
+    this.gruppe = svg.svg.select("g.beschriftung")
+      .append("g")
+      .attr("transform", "translate(" + (width+60) + ", -5)");
+      // Legendentitel
+      this.legendenName = this.gruppe.append("text")
+        .text("Dauer in s")
+        .attr("font-size", "11px")
+        .attr("fill", "black")
+        .attr("x", 0)
+        .attr("y", -5)
+        .attr("dy", "-0.4ex");
+      // Legendenrechtecke
+      this.legende = this.gruppe.selectAll("rect")
+        .data(transDur.slice(1,transDur.length).reverse())
+        .enter()
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", function(d,i){return i*12;})
+        .attr("width",  15)
+        .attr("height", 10)
+        .attr("fill", d => scale.colorScale(d));
+      this.gruppe.append("rect")
+        .attr("x", 0)
+        .attr("y", 12.6*12)
+        .attr("width",  15)
+        .attr("height", 2)
+        .attr("fill", "orange");
+      this.gruppe.append("rect")
+        .attr("x", 0)
+        .attr("y", 13.7*12)
+        .attr("width",  15)
+        .attr("height", 0.4)
+        .attr("fill", "gray");
+      // Legendenbeschriftung
+      this.labels = this.gruppe.selectAll("text.legende")
+        .data(transDur.slice(1,transDur.length).reverse())
+        .enter()
+        .append("text")
+        .attr("class", "legende")
+        .text(d => d + ' s')
+        .attr("font-size", "11px")
+        .attr("fill", "black")
+        .attr("x", 20)
+        .attr("y", function(d,i){return (i+1)*12;})
+        .attr("dy", "-0.5ex");
+      this.gruppe.append("text")
+        .attr("class", "legende")
+        .text("Mittel")
+        .attr("font-size", "11px")
+        .attr("fill", "black")
+        .attr("x", 20)
+        .attr("y", 13*12)
+        .attr("dy", "-0.2ex");
+      this.gruppe.append("text")
+        .attr("class", "legende")
+        .text("fav. Dauer")
+        .attr("font-size", "11px")
+        .attr("fill", "black")
+        .attr("x", 20)
+        .attr("y", 14*12)
+        .attr("dy", "-0.2ex");
+    // Barbeschriftung
+    this.barlabel = svg.svg.select("g.beschriftung")
+      .selectAll("text.total")
+      .data(dataset.Aufgaben)
+      .enter()
+      .append("text")
+      .attr("class", "total")
+      .text(function(d){
+        if (proPerson)
+          return d.arr.length;
+        else// https://github.com/d3/d3-format
+          return d3.format("d")(d.arr.length / personenzahl);
       })
-      .on("click", function(){
-        //d3.event.preventDefault();
-        //console.log("click",site,text);
-        fkt(site, result);
-      });
-  }// ende Konstruktor
+      .attr("x", function(d,i){return scale.nameScaleX(i) + scale.nameScaleX.bandwidth()/2;})
+      .attr("y", function(d,i){
+        if (proPerson)
+          return scale.yScale(d.total);
+        else
+          return scale.yScale(d.total / personenzahl);
+      })
+      .attr("font-size", "11px")
+      .attr("fill", "black")
+      .style("text-anchor", "middle")
+      .attr("dy", "-0.5ex");
+  }
 }
+
 
 class Button {  
   constructor(fkt, text){
@@ -579,84 +371,59 @@ class Button {
   }// ende Konstruktor
 }
 
-////////////// Button Funktionen ///////////
-function storeDatas(site, res){
-  sessionStorage.setItem(site, res);// https://www.w3schools.com/jsref/prop_win_sessionstorage.asp
-  localStorage.setItem(site, res);// https://diveintohtml5.info/storage.html
-  document.cookie = site + "=" + res;// ; expires=Tue, 31 Dec 2019 12:00:00 UTC; path=thanks.html
-  // https://www.w3schools.com/js/js_cookies.asp
-  //console.log(site,"Datei hinzugefügt");
-}
-
-// https://www.d3-graph-gallery.com/graph/interactivity_button.html
-// https://stackoverflow.com/questions/26964006/using-d3-instead-of-jquery-to-process-form-input-causes-re-load-of
-
-function deleteDatas(site, res) {
-  sessionStorage.removeItem(site);
-  localStorage.removeItem(site);
-  document.cookie = site + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-  //console.log(site,"letzte Datei gelöscht");
-}
-
-function deleteAllDatas(site, res) {
-  sessionStorage.clear();
-  localStorage.clear();
-  document.cookie.split(";").forEach(function(c){
-    var key = c.split("=")[0];
-    document.cookie = key + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-  });
-  //console.log(site,"alle Dateien gelöscht");
-}
-
-function showDatas(site){
-  // window.sessionStorage
-  // https://www.w3schools.com/jsref/prop_win_sessionstorage.asp
-  
-  //alert(document.cookie.split("; ").join("\n"));
-  
-  //console.log(document.cookie.split("; ").join("\n"));
-  // https://www.w3schools.com/js/js_cookies.asp
-  //console.log(site,"Daten angezeigt");
-  
-//   document.cookie.split("; ").forEach(line =>
-//     d3.select("body")
-//       .append("p")
-//       .text(line)
-//   );
-  
-  // erstellt eine Datei mit den Ergebnissen
-  // https://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
-  // https://www.mediaevent.de/javascript/local-storage.html
-  var content = [];
-  var keys = Object.keys(localStorage).sort();
-  keys.forEach(function(key){
-    content.push(key + "; " + localStorage.getItem(key));
-  });
-  //var content = document.cookie;
-  download('results.txt', content.join("\n"));
-}
-
-function download(filename, text) {
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    pom.setAttribute('download', filename);
-
-    if (document.createEvent) {
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
+//////////// Event Listener zum Speichern der SVG ////////////
+document.addEventListener('keypress', changeView);
+// https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
+function changeView(keypress) {
+  console.log(keypress);
+  if (keypress.key == "p") {
+    var zip = new JSZip();// https://jalara-studio.de/mit-javascript-eine-zip-datei-erstellen
+    if (! JSZip.support.arraybuffer )
+      console.log( "ArrayBuffer wird nicht unterstützt." );
+    if (! JSZip.support.uint8array )
+      console.log( "Uint8Array wird nicht unterstützt." );
+    if (! JSZip.support.blob )
+      console.log( "Blob wird nicht unterstützt." );
+    
+    var inhalt;
+    for (var p in Object.keys(favDuration)) {
+      var person = Object.keys(favDuration)[p];
+      inhalt = createSVGcontent(person);
+      zip.file("Pilot-Results-Durations-Person" + person + ".svg", inhalt);
     }
-    else {
-        pom.click();
-    }
+    /*zip.generateAsync({type:"base64"}).then(function(base64){
+      location.href = "data:application/zip; base64," + base64;
+    });*/
+    zip.generateAsync({type:"blob"}).then(function(blob) {
+      saveAs(blob, "Pilotstudie-Auswertung-Durations.zip");
+    });
+  }// ende if key=='p'
 }
 
-function cloneDataset(dataset){
-  return dataset.map(function(d){return d.copy();});
+function createSVGcontent(person){
+  // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
+  var svgElem;
+  var svgElements = document.getElementsByClassName("svg");
+    svgElem = document.getElementById(person);
+  svgElem.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  var svgData = svgElem.outerHTML;
+  var preface = '<?xml version="1.0" standalone="no"?>\r\n';
+  return preface + svgData;
 }
 
-function getFilteredData(datas){// https://stackoverflow.com/questions/39964570/how-to-filter-data-with-d3-js
-  return datas.filter(function(node){
-    return node.year >= zeitspanne[0] && node.year <= zeitspanne[1];
-  });
+function saveImage(){// speichert ein einzelnes SVG
+  // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
+  var svgElem = document.getElementsByClassName("svg")[0];
+  //var svgElem = document.getElementById("rechts").lastChild;
+  svgElem.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  var svgData = svgElem.outerHTML;
+  var preface = '<?xml version="1.0" standalone="no"?>\r\n';
+  var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
+  var svgUrl = URL.createObjectURL(svgBlob);
+  var downloadLink = document.createElement("a");
+  downloadLink.href = svgUrl;
+  downloadLink.download = "test14-final.svg";
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
 }

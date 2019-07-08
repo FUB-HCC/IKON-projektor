@@ -197,7 +197,7 @@ var toolT1, toolT2, toolT3, toolT4, toolT5, toolT6, toolT7, toolT8;
 hinweis1();
 
 function hinweis1() {
-  toolT1 = new Tooltip(document.getElementById("Animationsarten"), "Es gibt zwei Grafiken. Die linke zeigt einen weichen Übergang (Transition) und die rechte eine Überblendung vom Start- zum Endzustand.", hinweis2);
+  toolT1 = new Tooltip(document.getElementById("Animationsarten"), "Es gibt zwei Grafiken. Die linke zeigt eine Überblendung vom Start- zum Endzustand und die rechte einen weichen Übergang (Transition).", hinweis2);
   toolT1.repositionTooltip();
 }
 

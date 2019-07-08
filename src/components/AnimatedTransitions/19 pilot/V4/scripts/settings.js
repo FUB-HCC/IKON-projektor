@@ -1146,7 +1146,7 @@ document.addEventListener('keypress', changeView);
 function changeView(keypress) {
   console.log(keypress);
   if (keypress.key == "p"){// speichert das rechte SVG
-    saveImage(1,1);
+    saveImage();
   }
   else if (keypress.key == "Enter") {
     var zip = new JSZip();// https://jalara-studio.de/mit-javascript-eine-zip-datei-erstellen
@@ -1202,4 +1202,21 @@ function createSVGcontent(){
   var svgData = svgElem.outerHTML;
   var preface = '<?xml version="1.0" standalone="no"?>\r\n';
   return preface + svgData;
+}
+
+function saveImage(){// speichert ein einzelnes SVG
+  // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
+  var svgElem = document.getElementsByClassName("svg")[0];
+  //var svgElem = document.getElementById("rechts").lastChild;
+  svgElem.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  var svgData = svgElem.outerHTML;
+  var preface = '<?xml version="1.0" standalone="no"?>\r\n';
+  var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
+  var svgUrl = URL.createObjectURL(svgBlob);
+  var downloadLink = document.createElement("a");
+  downloadLink.href = svgUrl;
+  downloadLink.download = "test14-final.svg";
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
 }
