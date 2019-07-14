@@ -498,6 +498,7 @@ input:checked + .slider:before {
                     .style('stroke', function (d) { return (d[0][3] == 'invisible' && d[1][3] == 'invisible') ? 'transparent' : d[0][1]})
                     .style('opacity', function (d) { return (d[0][2] === null || d[1][2] === null) ? ( mDVizOn ? 0.8 : 0) : 1.0})
                     .attr('stroke-dasharray', function (d) { return (d[0][2] === null || d[1][2] === null) ? (5,5) : width})
+                    .attr('stroke-dashoffset', function (d) { return (d[0][2] === null || d[1][2] === null) ? 0 : width/2})
             }
 
             d3.select('.dots')
