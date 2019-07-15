@@ -1,31 +1,8 @@
-//////////////// Scaling ////////////////////
-class Scale {
-  constructor(){
-    this.xScale = d3.scaleLinear()
-      .domain([0, width])
-      .range([0, width]);
-    this.yScale = d3.scaleLinear()
-      .domain([0, height])
-      .range([height, 0]);
-  }
-  
-  setDomain(vertices) {
-    // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Functions/set
-    this.xScale.domain([
-      d3.min(getFilteredData(vertices), d => d.pos.x), d3.max(getFilteredData(vertices), d => d.pos.x)
-    ]);
-    this.yScale.domain([
-      d3.min(getFilteredData(vertices), d => d.pos.y),
-      d3.max(getFilteredData(vertices), d => d.pos.y)
-    ]);
-  }
-}
-
 //////////////// Projekte ////////////////////
 function createCircs(selection){
   selection.enter()
     .append("circle")
-    .attr("class", "enter")
+    .attr("class", "existent")
     .attr("cx", d => scale.xScale(d.pos.x))
     .attr("cy", d => scale.yScale(d.pos.y))
     .attr("r", radius)
@@ -35,22 +12,68 @@ function createCircs(selection){
     .style("fill", c => getNodeColor(c))
     .style("stroke", c => getNodeColor(c).darker(1))
     .style("stroke-width", "2px")
-    .style("opacity", 1)
+    .style("opacity", c => getCircOpacity(c))
     .style("pointer-events", "all");
+}
+
+function createCircsTrans(selection){
+  selection.enter()
+    .append("circle")
+    .attr("class", "existent")
+    .attr("cx", d => scale.xScale(d.pos.x))
+    .attr("cy", d => scale.yScale(d.pos.y))
+    .attr("r", 0)
+    .on("mouseover", tooltipNode.show)
+    .on("mouseout", tooltipNode.hide)
+    // https://github.com/d3/d3-scale-chromatic
+    .style("fill", c => getNodeColor(c))
+    .style("stroke", c => getNodeColor(c).darker(1))
+    .style("stroke-width", "2px")
+    .style("opacity", c => getCircOpacity(c))
+    .style("pointer-events", "all")
+    .transition()
+    .delay(getDelayOfEnter())
+    .duration(getDurationOfEnter())
+    .ease(d3.easeBackOut.overshoot(overshoot))
+    .attr("r", radius);
 }
 
 function deleteCircs(selection) {
   selection.exit()
     .attr("class", "remove")
-    .duration(function(){
-      if (esGibtAggregatOP)
-        return transDuration/3;
-      else
-        return transDuration;
-    })
-    .ease(d3.easeBackIn.overshoot(6))
+    .remove();
+}
+
+function deleteCircsTrans(selection) {
+  selection.exit()
+    .attr("class", "remove")
+    .transition()
+    .duration(getDurationOfExit())
+    .ease(d3.easeBackIn.overshoot(overshoot))
     .attr("r", 0)
     .remove();
+}
+
+function moveCircsTrans(selection){
+  selection.transition()
+    .delay(getDelayOfAggregate())
+    .duration(getDurationOfAggregate())
+    .ease(d3.easeQuadInOut)
+    .attr("cx", d => scale.xScale(d.pos.x))
+    .attr("cy", d => scale.yScale(d.pos.y))
+    .style("fill", c => getNodeColor(c))
+    .style("stroke", c => getNodeColor(c).darker(1))
+    .style("opacity", c => getCircOpacity(c));
+    //.style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
+}
+
+function moveCircs(selection){
+  selection.attr("cx", d => scale.xScale(d.pos.x))
+    .attr("cy", d => scale.yScale(d.pos.y))
+    .style("fill", c => getNodeColor(c))
+    .style("stroke", c => getNodeColor(c).darker(1))
+    .style("opacity", c => getCircOpacity(c));
+    //.style("pointer-events","visible");// https://stackoverflow.com/questions/34605916/d3-circle-onclick-event-not-firing
 }
 
 
@@ -81,7 +104,7 @@ var tooltipNodeMod = d3.tip()
 function createHulls(selection){
   selection.enter()
     .append("path")
-    .attr("class", "enter")
+    .attr("class", "existent")
     .attr("d", c => c.makePolygons2Path(scale))// c={id, polygons}
     .attr('fill', "#993")
     .attr('stroke', "#993")
@@ -92,13 +115,79 @@ function createHulls(selection){
     .on("mouseout", tooltipCluster.hide);
 }
 
-function deleteHulls(selection) {
+function createHullsTransTabOld(selection){
+  selection.enter()
+    .append("path")
+    .attr("class", "existent")
+    .attr("d", c => c.makeHulls2Path(scale))// c={id, polygons}
+    .attr('fill', "#993")
+    .attr('stroke', "#993")
+    .style("stroke-linejoin", "round")
+    .style("stroke-width", "29px")
+    .style('opacity', currHullOpacity)
+    .on("mouseover", tooltipCluster.show)
+    .on("mouseout", tooltipCluster.hide);
+}
+
+function createHullsTransTabNew(selection){
+  selection.enter()
+    .append("path")
+    .attr("class", "existent")
+    .attr("d", c => c.makeHulls2Path(scale))// c={id, polygons}
+    /*.attr("d", function(c){// c = Cluster{id, polygons}
+      // Hülle taucht aus ihrem Mittelpunkt aus
+      var pos = c.getSchwerpunkt();
+      var node = new Knoten(pos, 0, 0, {}, 2019, [""])
+      var poly = new Array(c.getLength()).fill(node);
+      return new Polygon(poly).makeHulls2Path(scale);
+    })*/
+    .attr('fill', "#993")
+    .attr('stroke', "#993")
+    .style("stroke-linejoin", "round")
+    .style("stroke-width", "29px")
+    .style('opacity', 0)
+    .on("mouseover", tooltipCluster.show)
+    .on("mouseout", tooltipCluster.hide)
+    .transition()
+    .delay(getDelayOfAggregate())
+    .duration(getDurationOfAggregate())
+    .style('opacity', currHullOpacity)
+    .attr("d", c => c.makeHulls2Path(scale));// c={id, polygons}
+}
+
+function deleteHullsTrans(selection) {
   selection.exit()
     .attr("class", "remove")
     .transition()
-    .duration(transDuration/3)
+    .duration(getDurationOfExit())
     .style("opacity", 0)
     .remove();
+}
+
+function deleteHulls(selection) {
+  selection.exit()
+    .attr("class", "remove")
+    .remove();
+}
+
+function morphHullsTrans(selection){
+  selection.transition()
+    .ease(d3.easeQuadInOut)
+    .delay(getDelayOfAggregate())
+    .duration(getDurationOfAggregate())
+    .style('opacity', currHullOpacity)
+    .attr("d", d => d.makeHulls2Path(scale));
+}
+
+function morphHulls(selection){
+  selection.style('opacity', currHullOpacity)
+    .attr("d", d => d.makeHulls2Path(scale));
+}
+
+function showNewHulls(){
+  svg.select("g.hulls").selectAll("path.existent")
+    .data(newNests.nest, d => d.id)
+    .attr("d", d => d.makePolygons2Path(scale));
 }
 
 var tooltipCluster = d3.tip()
@@ -114,6 +203,35 @@ var tooltipClusterMod = d3.tip()
   .html(function(d) {
     return "<b>Cluster-ID: " + (d.id -100) + "</b><br>Knotenzahl: " + d.getLength();
   });
+  
+function getTakteGes() {
+  return d3.max([1, 1*esGibtExit + 2*esGibtAggregatOP + 1*esGibtEnter]);
+}
+  
+function getDurationOfAggregate(){
+  return transDuration * 2*esGibtAggregatOP / getTakteGes();
+}
+
+function getDurationOfEnter(){
+  return transDuration * d3.min([esGibtEnter / getTakteGes(), 0.33]);
+}
+
+function getDurationOfExit(){
+  return transDuration * d3.min([esGibtExit / getTakteGes(), 0.33]);
+}
+
+function getDelayOfAggregate(){
+  return getDurationOfExit();// transDuration * esGibtExit / getTakteGes();
+}
+
+function getDelayOfEnter(){
+  return transDuration * (esGibtExit + 2*esGibtAggregatOP) / getTakteGes();
+}
+
+function getDelayOfExit(){// sollte eig. nicht benötigt werden
+  return 0;
+}
+
 /*  
 
 function download(filename, text) {

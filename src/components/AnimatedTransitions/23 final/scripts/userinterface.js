@@ -111,11 +111,42 @@ function parseSec(ms){
   return ((+ms)/1000).toString() + " s";
 }
 
-////////// Animationsbuttons //////////
-zelleLinks.append("p").text("Animation:");
-var divAnimControl = zelleLinks.append("div")
+///////////////////// Parameter ////////////// NEU
+const clusterResults = [
+  "c4-t19_LDA.json",
+  "c4-t23_LDA.json",
+  "c4-t22_LDA.json",
+  "c6-t20_LDA.json",
+  "c7-t20_LDA.json",
+  "c7-t22_LDA.json"
+];
+zelleLinks.append("p").text("Parameterwechsel:");// zelleRechts
+var divPerspective = zelleLinks.append("div")//zelleRechts
+  .attr("class", "centerBar")
   .style("width", "100%")
   .style("text-align", "left");
+  
+divPerspective.append("input")// Schieberegler
+  .attr("type", "range")
+  .attr("id", "perspective")
+  .style("width", ((clusterResults.length-1)*1.3) + "em")
+  .style("display", "inline-block")
+  .attr("value", 0)
+  .attr("min", 0)
+  .attr("max", clusterResults.length-1)
+  .attr("step", 1);
+
+d3.select("#perspective")
+  .on("change", function(){// aktualisiert Variable 
+    console.log("Parameter " + this.value);
+    parseJsonToKnoten(clusterResults[this.value]);
+  });
+  
+////////// Animationsbuttons //////////
+// zelleLinks.append("p").text("Animation:");
+// var divAnimControl = zelleLinks.append("div")
+//   .style("width", "100%")
+//   .style("text-align", "left");
 
 // divAnimControl.append("button")
 //   .attr("class", "button")
@@ -129,7 +160,7 @@ var divAnimControl = zelleLinks.append("div")
 //     // ausgangszustand();
 //   });
   
-divAnimControl.append("button")
+divPerspective.append("button")// divAnimControl
   .attr("class", "button")
   .attr("type", "button")// default: submit -> let's reload page
   // https://stackoverflow.com/questions/7803814/prevent-refresh-of-page-when-button-inside-form-clicked
@@ -138,7 +169,7 @@ divAnimControl.append("button")
     d3.event.preventDefault();
   })
   .on("click", function(){
-    update();
+    replay();
   });
   
 ////////// Darstellung //////////
@@ -150,15 +181,19 @@ var selectDarst = divSelectDarst.append("select");
 selectDarst.append("option")
   .attr("value", "embpoint")
   .attr("selected", true)
-  .text("Scatterplot")
+  .text("Scatterplot");
+selectDarst.append("option")
+  .attr("value", "hexgrid")
+  .text("Hexgrid");
 selectDarst.append("option")
   .attr("value", "mappoint")
-  .text("Honeycomb");
+  .text("Gitterplot");
   
 selectDarst.on("change", function(){// aktualisiert Variable 
     projectPlot = this.value;
     console.log("Knotenanordnung " + this.value);
-    //update();
+    var idx = +document.getElementById("perspective").value;
+    parseJsonToKnoten(clusterResults[idx]);
   });
   
 ////////// Hüllensichtbarkeit //////////
@@ -188,12 +223,12 @@ var divSelectColor = zelleLinks.append("div")
   .style("text-align", "left");
 var selectColor = divSelectColor.append("select");
 selectColor.append("option")
-  .attr("value", "researchArea")
-  .attr("selected", true)
-  .text("Nach Forschungsgebiet")
-selectColor.append("option")
   .attr("value", "cluster")
+  .attr("selected", true)
   .text("Nach Cluster");
+selectColor.append("option")
+  .attr("value", "researchArea")
+  .text("Nach Forschungsgebiet");
   
 selectColor.on("change", function(){// aktualisiert Variable 
     projectColorBy = this.value;
@@ -202,49 +237,9 @@ selectColor.on("change", function(){// aktualisiert Variable
   });
 
 
-////////////////// SVG /////////////////////
-var svg = zelleMitte.append("svg")
-  .attr("width",  width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  svg.append("g").attr("class", "hulls");
-  svg.append("g").attr("class", "circs");
-  svg.append("g").attr("class", "beschriftung");
-
-
-////////////////// Forschungsgebiete /////////////////////
-zelleRechts.append("p").text("Forschungsgebiete:");
-var radios = zelleRechts.selectAll('input[name="forschungsgebiete"]')
-  .data(forschungsgebiete);
-
-var labels = radios.enter()
-  .append("div")
-  .append("label")
-  .attr("class", "checkboxen")
-  .append("input")
-  .attr("type", "checkbox")
-  .attr("name", "forschungsgebiete")
-  .attr("value", d => d.name)
-  .attr("checked", true)
-  .each(function(d,i){checkResearchArea[i] = true;});
-  
-d3.selectAll("label.checkboxen")
-  .append("text")
-  .text(function(d) {return d.name;})
-  .style("color", d => getColorByDisziplin(d));
-
-d3.selectAll('input[name="forschungsgebiete"]')
-  .on('change', function(d,i) {
-    checkResearchArea[i] = this.checked;
-    console.log('Forschungsgebiete ',checkResearchArea);
-    update();
-  });
-  
 ////////////////// Zeitspanne /////////////////////
-zelleRechts.append("p").text("Zeitspanne:");
-var divTimeSpan = zelleRechts.append("div")
-  //.attr("class", "centerBar")
+zelleLinks.append("p").text("Zeitspanne:");
+var divTimeSpan = zelleLinks.append("div")
   .style("width", "100%")
   .style("text-align", "left");
   
@@ -306,39 +301,47 @@ divTimeSpan.append("button")
       currYearSpan[1] = value1;
     }
     console.log('Zeitspanne: ',currYearSpan);
-    //update();
+    update();
   });
-  
-/////////////// Perspektive /////////////////
-const clusterResults = [
-  "c4-t19_LDA.json",
-  "c4-t23_LDA.json",
-  "c4-t22_LDA.json",
-  "c6-t20_LDA.json",
-  "c7-t20_LDA.json",
-  "c7-t22_LDA.json"
-];
-zelleRechts.append("p").text("Parameterwechsel:");
-// var divPerspective = zelleRechts.append("div")
-//   .attr("class", "centerBar")
-//   .style("width", "100%")
-//   .style("text-align", "left");
-  
-zelleRechts.append("input")// Schieberegler
-  .attr("type", "range")
-  .attr("id", "perspective")
-  .style("width", ((clusterResults.length-1)*1.3) + "em")
-  .style("display", "inline-block")
-  .attr("value", 0)
-  .attr("min", 0)
-  .attr("max", clusterResults.length-1)
-  .attr("step", 1);
-  
 
-d3.select("#perspective")
-  .on("change", function(){// aktualisiert Variable 
-    console.log("Parameter " + this.value);
-    parseJsonToKnoten(clusterResults[this.value]);
+
+////////////////// SVG /////////////////////
+var svg = zelleMitte.append("svg")
+  .attr("width",  width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  svg.append("g").attr("class", "hulls");
+  svg.append("g").attr("class", "circs");
+  svg.append("g").attr("class", "beschriftung");
+
+
+////////////////// Forschungsgebiete /////////////////////
+zelleRechts.append("p").text("Forschungsgebiete:");
+var radios = zelleRechts.selectAll('input[name="forschungsgebiete"]')
+  .data(forschungsgebiete);
+
+var labels = radios.enter()
+  .append("div")
+  .append("label")
+  .attr("class", "checkboxen")
+  .append("input")
+  .attr("type", "checkbox")
+  .attr("name", "forschungsgebiete")
+  .attr("value", d => d.name)
+  .attr("checked", true)
+  .each(function(d,i){checkResearchArea[i] = true;});
+  
+d3.selectAll("label.checkboxen")
+  .append("text")
+  .text(function(d) {return d.name;})
+  .style("color", d => getColorByDisziplin(d));
+
+d3.selectAll('input[name="forschungsgebiete"]')
+  .on('change', function(d,i) {
+    checkResearchArea[i] = this.checked;
+    console.log('Forschungsgebiete ',checkResearchArea);
+    update();
   });
   
 
