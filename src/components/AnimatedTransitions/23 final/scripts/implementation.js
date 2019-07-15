@@ -34,79 +34,64 @@ var esGibtAggregatOP = false;
 ////////// Datas ///////////
 var oldDatas = [], newDatas = [];
 var oldNests, newNests, transitionTable;
-var oldCluster, newClusters;// {id, color, keywords}
-var subjectsByID = {};// {<id>: subjectName}
-
-function fillSubjects(datas) {
-  datas.forEach(function(d){
-    var id = d.project_id;
-    subjectsByID[id] = d.subject_area;
-    // macht ein Wörterbuch draus, damit die IDs nachher in O(1) gefunden werden können
-  });
-  //console.log('subjectsByID',subjectsByID);
-}
+var oldClusters, newClusters;// {id, color, keywords}
 
 function parseJsonToKnoten(jsonFilename){
+  var isInitial = false;
+  if (oldDatas.length > 0) {// Transition steht bevor
+    oldDatas = copyDatas(newDatas);
+    oldNests = new Nest(getFilteredData(oldDatas));
+    oldClusters = newClusters.map(function(d){
+      return {id: d.id, color: d.color, keywords: d.keywords};
+    });
+  }
+  else
+    isInitial = true;
+    
+  // befüllt neue Daten
   d3.json(jsonFilename).then(function(dataset){
     newDatas = dataset.project_data.map(function(d){
       var pos = new Position(d[projectPlot][0], d[projectPlot][1]);
       var year = Index.getRandInt(yearSpan[0], yearSpan[1]);
-      var subjectArea = topicMapping[topicMapping.length-1];// default
-      var id = d.id;
-      if (subjectsByID[id] == undefined)
-        console.log("ProjectID konnte nicht gefunden werden.");
-      else {// Problem, die Namen der Forschungsgebiete sind nicht gleich (==), darum müssen die einzelnen Wörter extrahiert werden
-        var subjectName = subjectsByID[id];
-        var topic = topicMapping.filter(function(d){
-          var arr1 = subjectName.replace("FK ", "")
-            .replace("- ", " ").replace("-, ", ", ")
-            .split(", ").map(d => d.split(" und "))
-            .reduce((akk,d) => akk.concat(d), []);
-          var arr2 = d.name.split(", ").map(d => d.split(" und ")).reduce((akk,d) => akk.concat(d), []);
-          return arr1.some(function(word){return arr2.indexOf(word) >= 0});
-        });
-        if (topic.length > 0)
-          subjectArea = topic[0];// shorter than subjectName
-        else {
-          console.log("Passendes Topic konnte nicht gefunden werden.");
-          console.log('id',id,'name',subjectsByID[id]);
-        }
-      }
+      var subjectArea = findSubjectAreaByProjID(d.id);
       var knoten = new Knoten(pos, d.id, d.cluster, subjectArea, year, d.words, d.title);
       return knoten;
     });
+    
+    newNests = new Nest(getFilteredData(newDatas));
     
     newClusters = dataset.cluster_data.cluster_colour
       .map(function(d,i){
         return {id: i, color: d, 
           keywords: dataset.cluster_data.cluster_words[i]};
       });
-      
-    if (oldDatas.length == 0)
+    // startet Ablauf  
+    if (isInitial)
       init();
+    else
+      update();
   });
 }
 
-function getFilteredData() {
-  return newDatas.filter(d => d.year >= currYearSpan[0] && d.year <= currYearSpan[1]);
+function getFilteredData(dataset) {
+  return dataset.filter(d => d.year >= currYearSpan[0] && d.year <= currYearSpan[1]);
 }
 
-function copyDatas() {
-  return newDatas.map(d => d.copy());
+function copyDatas(dataset) {
+  return dataset.map(d => d.copy());
 }
 
 
 ///////////////// Zeichnet Elemente ////////////
 function init(){
   // scaling
-  scale.setDomain(getFilteredData());
+  scale.setDomain(newDatas);
   // circles
   var circSel = svg.select("g.circs").selectAll("circle.enter")
-    .data(getFilteredData(), d => d.id);
+    .data(getFilteredData(newDatas), d => d.id);
   createCircs(circSel);
   svg.call(tooltipNode);
   // hulls
-  newNests = new Nest(getFilteredData());
   var hullSel = svg.select("g.hulls").selectAll("path.enter")
     .data(newNests.nest, d => d.id);
   createHulls(hullSel);
@@ -114,5 +99,6 @@ function init(){
 }
 
 function update() {
-  
+  // neu setzen, wenn Zeitspanne erweitert wurde
+  newNests = new Nest(getFilteredData(newDatas));
 }

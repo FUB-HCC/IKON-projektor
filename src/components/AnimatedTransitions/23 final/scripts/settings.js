@@ -12,11 +12,11 @@ class Scale {
   setDomain(vertices) {
     // https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Functions/set
     this.xScale.domain([
-      d3.min(getFilteredData(), d => d.pos.x), d3.max(getFilteredData(), d => d.pos.x)
+      d3.min(getFilteredData(vertices), d => d.pos.x), d3.max(getFilteredData(vertices), d => d.pos.x)
     ]);
     this.yScale.domain([
-      d3.min(getFilteredData(), d => d.pos.y),
-      d3.max(getFilteredData(), d => d.pos.y)
+      d3.min(getFilteredData(vertices), d => d.pos.y),
+      d3.max(getFilteredData(vertices), d => d.pos.y)
     ]);
   }
 }

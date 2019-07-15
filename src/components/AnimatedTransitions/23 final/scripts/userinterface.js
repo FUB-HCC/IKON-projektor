@@ -117,17 +117,17 @@ var divAnimControl = zelleLinks.append("div")
   .style("width", "100%")
   .style("text-align", "left");
 
-divAnimControl.append("button")
-  .attr("class", "button")
-  .attr("type", "button")// default: submit -> let's reload page
-  // https://stackoverflow.com/questions/7803814/prevent-refresh-of-page-when-button-inside-form-clicked
-  .text("⊲ Zurück")
-  .on("contextmenu", function(d) {
-    d3.event.preventDefault();
-  })
-  .on("click", function(){
-    // back();
-  });
+// divAnimControl.append("button")
+//   .attr("class", "button")
+//   .attr("type", "button")// default: submit -> let's reload page
+//   // https://stackoverflow.com/questions/7803814/prevent-refresh-of-page-when-button-inside-form-clicked
+//   .text("⊲ Zurück")
+//   .on("contextmenu", function(d) {
+//     d3.event.preventDefault();
+//   })
+//   .on("click", function(){
+//     // ausgangszustand();
+//   });
   
 divAnimControl.append("button")
   .attr("class", "button")
@@ -138,7 +138,7 @@ divAnimControl.append("button")
     d3.event.preventDefault();
   })
   .on("click", function(){
-    // update();
+    update();
   });
   
 ////////// Darstellung //////////
@@ -158,7 +158,7 @@ selectDarst.append("option")
 selectDarst.on("change", function(){// aktualisiert Variable 
     projectPlot = this.value;
     console.log("Knotenanordnung " + this.value);
-    // update();
+    //update();
   });
   
 ////////// Hüllensichtbarkeit //////////
@@ -173,13 +173,12 @@ selectOpacity.append("option")
   .text("Hüllen sichtbar")
 selectOpacity.append("option")
   .attr("value", "0")
-  //.attr("selected", false)
   .text("Hüllen unsichtbar");
   
 selectOpacity.on("change", function(){// aktualisiert Variable 
     currHullOpacity = +this.value;
     console.log("Hüllentransparenz " + this.value);
-    // update();
+    update();
   });
   
 ////////// Färbung //////////
@@ -199,7 +198,7 @@ selectColor.append("option")
 selectColor.on("change", function(){// aktualisiert Variable 
     projectColorBy = this.value;
     console.log("Porjektfarbe nach " + this.value);
-    // update();
+    update();
   });
 
 
@@ -237,11 +236,9 @@ d3.selectAll("label.checkboxen")
 
 d3.selectAll('input[name="forschungsgebiete"]')
   .on('change', function(d,i) {
-//     var oldDatas = getFilteredData(cloneDataset());
-//     var oldNests = new Nest(oldDatas);
     checkResearchArea[i] = this.checked;
     console.log('Forschungsgebiete ',checkResearchArea);
-    //update(oldDatas, oldNests);
+    update();
   });
   
 ////////////////// Zeitspanne /////////////////////
@@ -309,7 +306,7 @@ divTimeSpan.append("button")
       currYearSpan[1] = value1;
     }
     console.log('Zeitspanne: ',currYearSpan);
-    // update();
+    //update();
   });
   
 /////////////// Perspektive /////////////////
@@ -338,17 +335,49 @@ zelleRechts.append("input")// Schieberegler
   .attr("step", 1);
   
 
-//////////////// ProjectIDs ////////////
-d3.csv("scripts/project_ids_to_subject_areas.csv")
-  .then(function(dataset){
-    fillSubjects(dataset);
-    parseJsonToKnoten(clusterResults[0]);
-  });
-  
-//window.onload = parseJsonToKnoten(clusterResults[0]);
-  
 d3.select("#perspective")
   .on("change", function(){// aktualisiert Variable 
     console.log("Parameter " + this.value);
     parseJsonToKnoten(clusterResults[this.value]);
-  })
+  });
+  
+
+//////////////// ProjectIDs ////////////
+var subjectsByID = {};// {<id>: subjectName}
+
+d3.csv("scripts/project_ids_to_subject_areas.csv")
+  .then(function(dataset){
+    dataset.forEach(function(d){
+      var id = d.project_id;
+      subjectsByID[id] = d.subject_area;
+      // macht ein Wörterbuch draus, damit die IDs nachher in O(1) gefunden werden können
+    });
+    parseJsonToKnoten(clusterResults[0]);// initialisiert
+  });
+
+//window.onload = parseJsonToKnoten(clusterResults[0]);
+  
+///////////////// weitere Funktionen ///////////////
+function findSubjectAreaByProjID(id){
+  var subjectArea = topicMapping[topicMapping.length-1];// default
+  if (subjectsByID[id] == undefined)
+    console.log("ProjectID konnte nicht gefunden werden.");
+  else {// Problem, die Namen der Forschungsgebiete sind nicht gleich (==), darum müssen die einzelnen Wörter extrahiert werden
+    var subjectName = subjectsByID[id];
+    var topic = topicMapping.filter(function(d){
+      var arr1 = subjectName.replace("FK ", "")
+        .replace("- ", " ").replace("-, ", ", ")
+        .split(", ").map(d => d.split(" und "))
+        .reduce((akk,d) => akk.concat(d), []);
+      var arr2 = d.name.split(", ").map(d => d.split(" und ")).reduce((akk,d) => akk.concat(d), []);
+      return arr1.some(function(word){return arr2.indexOf(word) >= 0});
+    });
+    if (topic.length > 0)
+      subjectArea = topic[0];// shorter than subjectName
+    else {
+      console.log("Passendes Topic konnte nicht gefunden werden.");
+      console.log('id',id,'name',subjectsByID[id]);
+    }
+  }
+  return subjectArea;
+}
