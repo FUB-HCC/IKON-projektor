@@ -6,7 +6,7 @@
 
 /* https://www.w3schools.com/css/css3_buttons.asp */
 .button {
-  font-family: IBM_Plex_Mono;
+  /* font-family: IBM_Plex_Mono; */
   background-color: #1C1D1F;
   border: none;
   color: white;
@@ -29,7 +29,7 @@
 }
 
 .tinybutton {
-  font-family: IBM_Plex_Mono;
+  /* font-family: IBM_Plex_Mono; */
   background-color: #1C1D1F;
   border: none;
   color: white;
@@ -67,7 +67,7 @@
 
 .xAxis text {
     fill: #717071;
-    font-family: IBM_Plex_Mono;
+    /* font-family: IBM_Plex_Mono; */
 }
 
 .xAxis line {
@@ -88,7 +88,7 @@
 
 .yAxis text {
     fill: #717071;
-    font-family: IBM_Plex_Mono;
+    /* font-family: IBM_Plex_Mono; */
 }
 
 .yAxis path {
@@ -104,6 +104,7 @@
 
 
 #options {
+    font: Arial;
     width: 400px;
     overflow: hidden;
     line-height: 2;
@@ -123,6 +124,7 @@ body {
     text-decoration: none;
     color: #a8a2a8;
     font-size: 13px;
+    font-family: Arial;
     display: block;
     padding: 36px 15px;
     padding-left: 30px;
@@ -132,7 +134,7 @@ body {
     cursor: pointer;
     margin-top: 3px;
     position: relative;
-    font-family: IBM_Plex_Mono;
+    /* font-family: IBM_Plex_Mono; */
 }
 
 /* SWITCH CODE: https://www.w3schools.com/howto/howto_css_switch.asp */
@@ -204,15 +206,18 @@ input:checked + .slider:before {
     position:absolute;                  
     bottom:0;                                                   
 } 
+#currentview {
+    position: absolute;
+    bottom:0;
+    right: 500px;
+}
 </style>
 
 <body>
     <div id='wrapper'>
         <div id='svg'> <svg id="graph"></svg></div>
         <div id="options">
-            <h3>OPTIONS</h1>
-            <button class="button" onclick="update()">Transition</button> <br><br>
-            <hr><br>
+            <h3>OPTIONS</h3>
             <label class="switch">
                 <input type="checkbox" onchange="handleMDVizChange()">
                 <span class="slider round"></span>
@@ -222,19 +227,24 @@ input:checked + .slider:before {
                 <span class="slider round"></span>
             </label> Toggle Circles for Missing Data On/Off <br><br>
             <hr><br>
-            <div id="transDurationSlider"></div> Duration of Transition (in ms)<br>
-            <div id="yearSlider"></div> Years visible
+            Duration of Transition (in ms):<br>
+            <div id="transDurationSlider"></div> 
+            Years visible:<br>
+            <div id="yearSlider"></div>
+            <hr><br>
+            <button class="button" onclick="update()">Filter On/Off</button> <br><br>
         </div>
     </div>
     <div id='bottom'>
         <button class="tinybutton" onclick="updateData('11')">1.1</button>
         <button class="tinybutton" onclick="updateData('12')">1.2</button>
-        <button class="tinybutton" onclick="updateData('13')">1.3</button>
-        <button class="tinybutton" onclick="updateData('14')">1.4</button>
-        <button class="tinybutton" onclick="updateData('15')">1.5</button>
-        <button class="tinybutton" onclick="updateData('16')">1.6</button>
-        <button class="tinybutton" onclick="updateData('21')">2</button>
+        <button class="tinybutton" onclick="updateData('21')">2.1</button>
+        <button class="tinybutton" onclick="updateData('22')">2.2</button>
+        <button class="tinybutton" onclick="updateData('31')">3.1</button>
+        <button class="tinybutton" onclick="updateData('32')">3.2</button>
+        <!--<button class="tinybutton" onclick="updateData('21')">2</button>-->
     </div>
+    <div id='currentview'></div>
 </body>
 
 <!-- Load in the d3 library -->
@@ -246,6 +256,8 @@ input:checked + .slider:before {
     // OPTIONS:
     let mDVizOn = false, mDDotsOn = false, array1On = true, transDuration = 0
     let minyear = 2000, maxyear = 2018
+
+    const currentview = document.getElementById("currentview");
 
     // Sliders
     const transDurationSlider = document.getElementById('transDurationSlider');
@@ -495,10 +507,12 @@ input:checked + .slider:before {
                     .transition()
                     .delay(100)
                     .duration(750)
-                    .style('stroke', function (d) { return (d[0][3] == 'invisible' && d[1][3] == 'invisible') ? 'transparent' : d[0][1]})
+                    .style('stroke', function (d) { 
+                        if ((d[0][2] === null || d[1][2] === null) && !mDVizOn) { return 'transparent'}
+                        return (d[0][3] == 'invisible' && d[1][3] == 'invisible') ? 'transparent' : d[0][1]
+                    })
                     .style('opacity', function (d) { return (d[0][2] === null || d[1][2] === null) ? ( mDVizOn ? 0.8 : 0) : 1.0})
                     .attr('stroke-dasharray', function (d) { return (d[0][2] === null || d[1][2] === null) ? (5,5) : width})
-                    .attr('stroke-dashoffset', function (d) { return (d[0][2] === null || d[1][2] === null) ? 0 : width/2})
             }
 
             d3.select('.dots')
@@ -510,8 +524,9 @@ input:checked + .slider:before {
                 .append('circle')
                 .attr('id', function (d) { return ((d[1]) + d[0]) })
                 .attr('cx', sparkLine.x())
-                .attr('cy', sparkLine.y())
+                .attr('cy', function (d, i) { return ((d[2] !== null) ? selectScaledY(d) : yScale(interpolatePoint(line, i))) })
                 .attr('r', 4)
+                .style('stroke','transparent')
                 .style('fill', 'transparent')
                 .transition()
                 .delay(100)
@@ -523,6 +538,11 @@ input:checked + .slider:before {
 
     // function to update data and animate transition
     function update(newArray = true) {
+        if (currentview.innerHTML === "State 1") {
+            currentview.innerHTML = "State 2";
+        } else if (currentview.innerHTML === "State 2"){
+            currentview.innerHTML = "State 1";
+        }
         // in case data itself should not be updated
         if (!newArray){
             array1On = !array1On
@@ -603,18 +623,21 @@ input:checked + .slider:before {
         }
         // then check how many steps to the right
         i2 = i + 1
-        while (i < array.length-1) {
-            if (array[i2][2] !== null || i2 === array.length - 1){
+        while (i2 < array.length-1) {
+            if (array[i2][2] !== null){
                 end = array[i2]
                 break
             }
             i2++
         }
         // if end or start point it'll be only a horizontal line
-        if (start[2] === null) { 
-            start[2] = end[2]
-        } else if (end[2] === null) {
-            end[2] = start[2]
+        if (start === null && end !== null) { 
+            start = [2000,array[0][1],end[2],'missing']
+        } else if (end === null && start !== null) {
+            end = [2018,array[0][1],start[2],'missing']
+        } else if (end === null && start === null) {
+            start = [2000,array[0][1],null,'missing']
+            end = [2018,array[0][1],null,'missing']
         }
         // actual height of the dot in comparison to the others
         const height = ((end[2] - start[2]) * (array[i][0] - start[0])) / (end[0] - start[0]) + start[2]
@@ -634,6 +657,7 @@ input:checked + .slider:before {
     }
 
     function updateData(n='11'){
+        currentview.innerHTML = 'State 1'
         switch (n) {
             case '11':
                 // existing data <-> existing data
@@ -677,7 +701,7 @@ input:checked + .slider:before {
                     [2018,'#A4782E',5,'visible']]]
                 break;
             case '12':
-                // existing data <-> one missing data point
+                // existing data <-> missing data
                 array = [[[2000,'#A4782E',13,'visible'],
                     [2001,'#A4782E',13,'visible'],
                     [2002,'#A4782E',12,'visible'],
@@ -702,199 +726,118 @@ input:checked + .slider:before {
                     [2002,'#A4782E',4,'visible'],
                     [2003,'#A4782E',4,'visible'],
                     [2004,'#A4782E',4,'visible'],
+                    [2005,'#A4782E',null,'visible'],
+                    [2006,'#A4782E',null,'visible'],
+                    [2007,'#A4782E',6,'visible'],
+                    [2008,'#A4782E',7,'visible'],
+                    [2009,'#A4782E',6,'visible'],
+                    [2010,'#A4782E',null,'visible'],
+                    [2011,'#A4782E',12,'visible'],
+                    [2012,'#A4782E',null,'visible'],
+                    [2013,'#A4782E',14,'visible'],
+                    [2014,'#A4782E',null,'visible'],
+                    [2015,'#A4782E',null,'visible'],
+                    [2016,'#A4782E',15,'visible'],
+                    [2017,'#A4782E',null,'visible'],
+                    [2018,'#A4782E',null,'visible']]]
+                break;
+            case '21':
+                // two lines 1
+                array = [[[2000,'#A4782E',3,'visible'],
+                    [2001,'#A4782E',3,'visible'],
+                    [2002,'#A4782E',4,'visible'],
+                    [2003,'#A4782E',4,'visible'],
+                    [2004,'#A4782E',3,'visible'],
                     [2005,'#A4782E',5,'visible'],
                     [2006,'#A4782E',5,'visible'],
                     [2007,'#A4782E',6,'visible'],
                     [2008,'#A4782E',7,'visible'],
-                    [2009,'#A4782E',9,'visible'],
-                    [2010,'#A4782E',11,'visible'],
-                    [2011,'#A4782E',12,'visible'],
-                    [2012,'#A4782E',null,'visible'],
-                    [2013,'#A4782E',14,'visible'],
-                    [2014,'#A4782E',13,'visible'],
-                    [2015,'#A4782E',16,'visible'],
-                    [2016,'#A4782E',15,'visible'],
-                    [2017,'#A4782E',12,'visible'],
-                    [2018,'#A4782E',10,'visible']]]
-                break;
-            case '13':
-                // existing data <-> half of data missing
-                array = [[[2000,'#A4782E',6,'visible'],
-                    [2001,'#A4782E',6,'visible'],
-                    [2002,'#A4782E',7,'visible'],
-                    [2003,'#A4782E',6,'visible'],
-                    [2004,'#A4782E',7,'visible'],
-                    [2005,'#A4782E',7,'visible'],
-                    [2006,'#A4782E',8,'visible'],
-                    [2007,'#A4782E',10,'visible'],
-                    [2008,'#A4782E',11,'visible'],
-                    [2009,'#A4782E',14,'visible'],
-                    [2010,'#A4782E',14,'visible'],
-                    [2011,'#A4782E',13,'visible'],
-                    [2012,'#A4782E',12,'visible'],
-                    [2013,'#A4782E',11,'visible'],
-                    [2014,'#A4782E',11,'visible'],
-                    [2015,'#A4782E',10,'visible'],
-                    [2016,'#A4782E',9,'visible'],
-                    [2017,'#A4782E',9,'visible'],
-                    [2018,'#A4782E',8,'visible']]]
-                array2 = [[[2000,'#A4782E',14,'visible'],
-                    [2001,'#A4782E',13,'visible'],
-                    [2002,'#A4782E',12,'visible'],
-                    [2003,'#A4782E',11,'visible'],
-                    [2004,'#A4782E',9,'visible'],
-                    [2005,'#A4782E',10,'visible'],
-                    [2006,'#A4782E',11,'visible'],
-                    [2007,'#A4782E',null,'visible'],
-                    [2008,'#A4782E',null,'visible'],
-                    [2009,'#A4782E',null,'visible'],
-                    [2010,'#A4782E',null,'visible'],
-                    [2011,'#A4782E',null,'visible'],
-                    [2012,'#A4782E',null,'visible'],
-                    [2013,'#A4782E',null,'visible'],
-                    [2014,'#A4782E',null,'visible'],
-                    [2015,'#A4782E',null,'visible'],
-                    [2016,'#A4782E',8,'visible'],
-                    [2017,'#A4782E',7,'visible'],
-                    [2018,'#A4782E',7,'visible']]]
-                break;
-            case '14':
-                array = [[[2000,'#A4782E',2,'visible'],
-                    [2001,'#A4782E',3,'visible'],
-                    [2002,'#A4782E',4,'visible'],
-                    [2003,'#A4782E',5,'visible'],
-                    [2004,'#A4782E',5,'visible'],
-                    [2005,'#A4782E',6,'visible'],
-                    [2006,'#A4782E',7,'visible'],
-                    [2007,'#A4782E',7,'visible'],
-                    [2008,'#A4782E',5,'visible'],
-                    [2009,'#A4782E',6,'visible'],
-                    [2010,'#A4782E',7,'visible'],
-                    [2011,'#A4782E',8,'visible'],
-                    [2012,'#A4782E',null,'visible'],
-                    [2013,'#A4782E',10,'visible'],
-                    [2014,'#A4782E',11,'visible'],
-                    [2015,'#A4782E',10,'visible'],
-                    [2016,'#A4782E',9,'visible'],
-                    [2017,'#A4782E',9,'visible'],
-                    [2018,'#A4782E',10,'visible']]]
-                array2 = [[[2000,'#A4782E',5,'visible'],
-                    [2001,'#A4782E',4,'visible'],
-                    [2002,'#A4782E',4,'visible'],
-                    [2003,'#A4782E',6,'visible'],
-                    [2004,'#A4782E',6,'visible'],
-                    [2005,'#A4782E',7,'visible'],
-                    [2006,'#A4782E',7,'visible'],
-                    [2007,'#A4782E',8,'visible'],
-                    [2008,'#A4782E',8,'visible'],
-                    [2009,'#A4782E',9,'visible'],
+                    [2009,'#A4782E',8,'visible'],
                     [2010,'#A4782E',9,'visible'],
-                    [2011,'#A4782E',10,'visible'],
-                    [2012,'#A4782E',null,'visible'],
-                    [2013,'#A4782E',12,'visible'],
-                    [2014,'#A4782E',11,'visible'],
-                    [2015,'#A4782E',11,'visible'],
-                    [2016,'#A4782E',10,'visible'],
-                    [2017,'#A4782E',12,'visible'],
-                    [2018,'#A4782E',13,'visible']]]
-                break;
-            case '15':
-                array = [[[2000,'#A4782E',6,'visible'],
-                    [2001,'#A4782E',6,'visible'],
-                    [2002,'#A4782E',7,'visible'],
-                    [2003,'#A4782E',6,'visible'],
-                    [2004,'#A4782E',7,'visible'],
-                    [2005,'#A4782E',7,'visible'],
-                    [2006,'#A4782E',8,'visible'],
-                    [2007,'#A4782E',10,'visible'],
-                    [2008,'#A4782E',null,'visible'],
-                    [2009,'#A4782E',null,'visible'],
-                    [2010,'#A4782E',null,'visible'],
-                    [2011,'#A4782E',null,'visible'],
-                    [2012,'#A4782E',null,'visible'],
-                    [2013,'#A4782E',null,'visible'],
-                    [2014,'#A4782E',null,'visible'],
-                    [2015,'#A4782E',null,'visible'],
-                    [2016,'#A4782E',null,'visible'],
-                    [2017,'#A4782E',9,'visible'],
-                    [2018,'#A4782E',8,'visible']]]
-                array2 = [[[2000,'#A4782E',14,'visible'],
-                    [2001,'#A4782E',13,'visible'],
-                    [2002,'#A4782E',12,'visible'],
-                    [2003,'#A4782E',11,'visible'],
-                    [2004,'#A4782E',9,'visible'],
-                    [2005,'#A4782E',10,'visible'],
-                    [2006,'#A4782E',11,'visible'],
-                    [2007,'#A4782E',9,'visible'],
-                    [2008,'#A4782E',null,'visible'],
-                    [2009,'#A4782E',null,'visible'],
-                    [2010,'#A4782E',null,'visible'],
-                    [2011,'#A4782E',null,'visible'],
-                    [2012,'#A4782E',null,'visible'],
-                    [2013,'#A4782E',null,'visible'],
-                    [2014,'#A4782E',null,'visible'],
-                    [2015,'#A4782E',null,'visible'],
-                    [2016,'#A4782E',null,'visible'],
-                    [2017,'#A4782E',7,'visible'],
-                    [2018,'#A4782E',7,'visible']]]
-                break;
-            case '16':
-                array = [[[2000,'#A4782E',6,'visible'],
-                    [2001,'#A4782E',6,'visible'],
-                    [2002,'#A4782E',7,'visible'],
-                    [2003,'#A4782E',6,'visible'],
-                    [2004,'#A4782E',7,'visible'],
-                    [2005,'#A4782E',7,'visible'],
-                    [2006,'#A4782E',8,'visible'],
-                    [2007,'#A4782E',10,'visible'],
-                    [2008,'#A4782E',11,'visible'],
-                    [2009,'#A4782E',14,'visible'],
-                    [2010,'#A4782E',14,'visible'],
-                    [2011,'#A4782E',null,'visible'],
-                    [2012,'#A4782E',12,'visible'],
-                    [2013,'#A4782E',11,'visible'],
-                    [2014,'#A4782E',11,'visible'],
+                    [2011,'#A4782E',9,'visible'],
+                    [2012,'#A4782E',7,'visible'],
+                    [2013,'#A4782E',7,'visible'],
+                    [2014,'#A4782E',9,'visible'],
                     [2015,'#A4782E',10,'visible'],
-                    [2016,'#A4782E',9,'visible'],
-                    [2017,'#A4782E',9,'visible'],
-                    [2018,'#A4782E',8,'visible']]]
-                array2 = [[[2000,'#A4782E',2,'visible'],
-                    [2001,'#A4782E',3,'visible'],
-                    [2002,'#A4782E',2,'visible'],
+                    [2016,'#A4782E',11,'visible'],
+                    [2017,'#A4782E',11,'visible'],
+                    [2018,'#A4782E',13,'visible']],
+                    [[2000,'#435B22',7,'visible'],
+                    [2001,'#435B22',7,'visible'],
+                    [2002,'#435B22',6,'visible'],
+                    [2003,'#435B22',6,'visible'],
+                    [2004,'#435B22',7,'visible'],
+                    [2005,'#435B22',6,'visible'],
+                    [2006,'#435B22',6,'visible'],
+                    [2007,'#435B22',7,'visible'],
+                    [2008,'#435B22',6,'visible'],
+                    [2009,'#435B22',6,'visible'],
+                    [2010,'#435B22',5,'visible'],
+                    [2011,'#435B22',5,'visible'],
+                    [2012,'#435B22',4,'visible'],
+                    [2013,'#435B22',5,'visible'],
+                    [2014,'#435B22',4,'visible'],
+                    [2015,'#435B22',4,'visible'],
+                    [2016,'#435B22',5,'visible'],
+                    [2017,'#435B22',4,'visible'],
+                    [2018,'#435B22',4,'visible']]]
+                array2 = [[[2000,'#A4782E',4,'visible'],
+                    [2001,'#A4782E',5,'visible'],
+                    [2002,'#A4782E',4,'visible'],
                     [2003,'#A4782E',4,'visible'],
                     [2004,'#A4782E',4,'visible'],
-                    [2005,'#A4782E',6,'visible'],
-                    [2006,'#A4782E',7,'visible'],
-                    [2007,'#A4782E',null,'visible'],
-                    [2008,'#A4782E',null,'visible'],
-                    [2009,'#A4782E',null,'visible'],
-                    [2010,'#A4782E',null,'visible'],
-                    [2011,'#A4782E',null,'visible'],
-                    [2012,'#A4782E',null,'visible'],
-                    [2013,'#A4782E',null,'visible'],
-                    [2014,'#A4782E',null,'visible'],
-                    [2015,'#A4782E',null,'visible'],
-                    [2016,'#A4782E',10,'visible'],
-                    [2017,'#A4782E',11,'visible'],
-                    [2018,'#A4782E',11,'visible']]]
+                    [2005,'#A4782E',5,'visible'],
+                    [2006,'#A4782E',5,'visible'],
+                    [2007,'#A4782E',6,'visible'],
+                    [2008,'#A4782E',8,'visible'],
+                    [2009,'#A4782E',8,'visible'],
+                    [2010,'#A4782E',7,'visible'],
+                    [2011,'#A4782E',13,'visible'],
+                    [2012,'#A4782E',13,'visible'],
+                    [2013,'#A4782E',13,'visible'],
+                    [2014,'#A4782E',14,'visible'],
+                    [2015,'#A4782E',15,'visible'],
+                    [2016,'#A4782E',15,'visible'],
+                    [2017,'#A4782E',14,'visible'],
+                    [2018,'#A4782E',15,'visible']],
+                    [[2000,'#435B22',0,'visible'],
+                    [2001,'#435B22',2,'visible'],
+                    [2002,'#435B22',null,'visible'],
+                    [2003,'#435B22',3,'visible'],
+                    [2004,'#435B22',3,'visible'],
+                    [2005,'#435B22',5,'visible'],
+                    [2006,'#435B22',4,'visible'],
+                    [2007,'#435B22',5,'visible'],
+                    [2008,'#435B22',5,'visible'],
+                    [2009,'#435B22',5,'visible'],
+                    [2010,'#435B22',5,'visible'],
+                    [2011,'#435B22',7,'visible'],
+                    [2012,'#435B22',5,'visible'],
+                    [2013,'#435B22',6,'visible'],
+                    [2014,'#435B22',8,'visible'],
+                    [2015,'#435B22',7,'visible'],
+                    [2016,'#435B22',9,'visible'],
+                    [2017,'#435B22',10,'visible'],
+                    [2018,'#435B22',11,'visible']]]
                 break;
-            case '21':
+            case '22':
+                // two lines - missing data
                 array = [[[2000,'#A4782E',13,'visible'],
                     [2001,'#A4782E',13,'visible'],
                     [2002,'#A4782E',12,'visible'],
-                    [2003,'#A4782E',null,'visible'],
+                    [2003,'#A4782E',12,'visible'],
                     [2004,'#A4782E',null,'visible'],
-                    [2005,'#A4782E',null,'visible'],
+                    [2005,'#A4782E',6,'visible'],
                     [2006,'#A4782E',null,'visible'],
                     [2007,'#A4782E',null,'visible'],
                     [2008,'#A4782E',4,'visible'],
                     [2009,'#A4782E',4,'visible'],
                     [2010,'#A4782E',5,'visible'],
                     [2011,'#A4782E',5,'visible'],
-                    [2012,'#A4782E',4,'visible'],
+                    [2012,'#A4782E',null,'visible'],
                     [2013,'#A4782E',4,'visible'],
                     [2014,'#A4782E',4,'visible'],
-                    [2015,'#A4782E',4,'visible'],
+                    [2015,'#A4782E',null,'visible'],
                     [2016,'#A4782E',4,'visible'],
                     [2017,'#A4782E',5,'visible'],
                     [2018,'#A4782E',4,'visible']],
@@ -954,14 +897,245 @@ input:checked + .slider:before {
                     [2015,'#435B22',7,'visible'],
                     [2016,'#435B22',10,'visible'],
                     [2017,'#435B22',10,'visible'],
-                    [2018,'#435B22',11,'visible']]]
+                    [2018,'#435B22',11,'visible']]]                
                 break;
+            case '31':
+                array = [[[2000,'#A4782E',5,'visible'],
+                    [2001,'#A4782E',6,'visible'],
+                    [2002,'#A4782E',7,'visible'],
+                    [2003,'#A4782E',4,'visible'],
+                    [2004,'#A4782E',9,'visible'],
+                    [2005,'#A4782E',10,'visible'],
+                    [2006,'#A4782E',10,'visible'],
+                    [2007,'#A4782E',12,'visible'],
+                    [2008,'#A4782E',15,'visible'],
+                    [2009,'#A4782E',14,'visible'],
+                    [2010,'#A4782E',15,'visible'],
+                    [2011,'#A4782E',16,'visible'],
+                    [2012,'#A4782E',16,'visible'],
+                    [2013,'#A4782E',14,'visible'],
+                    [2014,'#A4782E',14,'visible'],
+                    [2015,'#A4782E',16,'visible'],
+                    [2016,'#A4782E',19,'visible'],
+                    [2017,'#A4782E',17,'visible'],
+                    [2018,'#A4782E',17,'visible']],
+                    [[2000,'#435B22',0,'visible'],
+                    [2001,'#435B22',2,'visible'],
+                    [2002,'#435B22',2,'visible'],
+                    [2003,'#435B22',3,'visible'],
+                    [2004,'#435B22',7,'visible'],
+                    [2005,'#435B22',5,'visible'],
+                    [2006,'#435B22',4,'visible'],
+                    [2007,'#435B22',null,'visible'],
+                    [2008,'#435B22',null,'visible'],
+                    [2009,'#435B22',null,'visible'],
+                    [2010,'#435B22',8,'visible'],
+                    [2011,'#435B22',7,'visible'],
+                    [2012,'#435B22',5,'visible'],
+                    [2013,'#435B22',6,'visible'],
+                    [2014,'#435B22',8,'visible'],
+                    [2015,'#435B22',7,'visible'],
+                    [2016,'#435B22',10,'visible'],
+                    [2017,'#435B22',10,'visible'],
+                    [2018,'#435B22',11,'visible']],
+                    [[2000,'#994A49',11,'visible'],
+                    [2001,'#994A49',18,'visible'],
+                    [2002,'#994A49',17,'visible'],
+                    [2003,'#994A49',16,'visible'],
+                    [2004,'#994A49',17,'visible'],
+                    [2005,'#994A49',15,'visible'],
+                    [2006,'#994A49',15,'visible'],
+                    [2007,'#994A49',15,'visible'],
+                    [2008,'#994A49',14,'visible'],
+                    [2009,'#994A49',11,'visible'],
+                    [2010,'#994A49',13,'visible'],
+                    [2011,'#994A49',15,'visible'],
+                    [2012,'#994A49',17,'visible'],
+                    [2013,'#994A49',16,'visible'],
+                    [2014,'#994A49',17,'visible'],
+                    [2015,'#994A49',17,'visible'],
+                    [2016,'#994A49',18,'visible'],
+                    [2017,'#994A49',16,'visible'],
+                    [2018,'#994A49',19,'visible']]]
+                array2 = [[[2000,'#A4782E',5,'visible'],
+                    [2001,'#A4782E',6,'visible'],
+                    [2002,'#A4782E',5,'visible'],
+                    [2003,'#A4782E',4,'visible'],
+                    [2004,'#A4782E',4,'visible'],
+                    [2005,'#A4782E',3,'visible'],
+                    [2006,'#A4782E',3,'visible'],
+                    [2007,'#A4782E',2,'visible'],
+                    [2008,'#A4782E',4,'visible'],
+                    [2009,'#A4782E',4,'visible'],
+                    [2010,'#A4782E',5,'visible'],
+                    [2011,'#A4782E',4,'visible'],
+                    [2012,'#A4782E',5,'visible'],
+                    [2013,'#A4782E',3,'visible'],
+                    [2014,'#A4782E',3,'visible'],
+                    [2015,'#A4782E',2,'visible'],
+                    [2016,'#A4782E',3,'visible'],
+                    [2017,'#A4782E',3,'visible'],
+                    [2018,'#A4782E',4,'visible']],
+                    [[2000,'#435B22',0,'visible'],
+                    [2001,'#435B22',0,'visible'],
+                    [2002,'#435B22',1,'visible'],
+                    [2003,'#435B22',2,'visible'],
+                    [2004,'#435B22',4,'visible'],
+                    [2005,'#435B22',3,'visible'],
+                    [2006,'#435B22',4,'visible'],
+                    [2007,'#435B22',4,'visible'],
+                    [2008,'#435B22',7,'visible'],
+                    [2009,'#435B22',6,'visible'],
+                    [2010,'#435B22',8,'visible'],
+                    [2011,'#435B22',7,'visible'],
+                    [2012,'#435B22',7,'visible'],
+                    [2013,'#435B22',6,'visible'],
+                    [2014,'#435B22',8,'visible'],
+                    [2015,'#435B22',9,'visible'],
+                    [2016,'#435B22',9,'visible'],
+                    [2017,'#435B22',11,'visible'],
+                    [2018,'#435B22',11,'visible']],
+                    [[2000,'#994A49',6,'visible'],
+                    [2001,'#994A49',7,'visible'],
+                    [2002,'#994A49',11,'visible'],
+                    [2003,'#994A49',14,'visible'],
+                    [2004,'#994A49',15,'visible'],
+                    [2005,'#994A49',15,'visible'],
+                    [2006,'#994A49',15,'visible'],
+                    [2007,'#994A49',14,'visible'],
+                    [2008,'#994A49',14,'visible'],
+                    [2009,'#994A49',15,'visible'],
+                    [2010,'#994A49',14,'visible'],
+                    [2011,'#994A49',15,'visible'],
+                    [2012,'#994A49',15,'visible'],
+                    [2013,'#994A49',13,'visible'],
+                    [2014,'#994A49',13,'visible'],
+                    [2015,'#994A49',11,'visible'],
+                    [2016,'#994A49',10,'visible'],
+                    [2017,'#994A49',12,'visible'],
+                    [2018,'#994A49',13,'visible']]]    
+                break;
+            case '32':
+                array = [[[2000,'#A4782E',4,'visible'],
+                    [2001,'#A4782E',5,'visible'],
+                    [2002,'#A4782E',6,'visible'],
+                    [2003,'#A4782E',6,'visible'],
+                    [2004,'#A4782E',7,'visible'],
+                    [2005,'#A4782E',7,'visible'],
+                    [2006,'#A4782E',8,'visible'],
+                    [2007,'#A4782E',10,'visible'],
+                    [2008,'#A4782E',11,'visible'],
+                    [2009,'#A4782E',14,'visible'],
+                    [2010,'#A4782E',14,'visible'],
+                    [2011,'#A4782E',13,'visible'],
+                    [2012,'#A4782E',12,'visible'],
+                    [2013,'#A4782E',12,'visible'],
+                    [2014,'#A4782E',11,'visible'],
+                    [2015,'#A4782E',10,'visible'],
+                    [2016,'#A4782E',11,'visible'],
+                    [2017,'#A4782E',10,'visible'],
+                    [2018,'#A4782E',11,'visible']],
+                    [[2000,'#435B22',0,'visible'],
+                    [2001,'#435B22',null,'visible'],
+                    [2002,'#435B22',null,'visible'],
+                    [2003,'#435B22',3,'visible'],
+                    [2004,'#435B22',3,'visible'],
+                    [2005,'#435B22',null,'visible'],
+                    [2006,'#435B22',4,'visible'],
+                    [2007,'#435B22',5,'visible'],
+                    [2008,'#435B22',5,'visible'],
+                    [2009,'#435B22',5,'visible'],
+                    [2010,'#435B22',5,'visible'],
+                    [2011,'#435B22',null,'visible'],
+                    [2012,'#435B22',5,'visible'],
+                    [2013,'#435B22',6,'visible'],
+                    [2014,'#435B22',8,'visible'],
+                    [2015,'#435B22',null,'visible'],
+                    [2016,'#435B22',9,'visible'],
+                    [2017,'#435B22',null,'visible'],
+                    [2018,'#435B22',11,'visible']],
+                    [[2000,'#994A49',7,'visible'],
+                    [2001,'#994A49',7,'visible'],
+                    [2002,'#994A49',7,'visible'],
+                    [2003,'#994A49',7,'visible'],
+                    [2004,'#994A49',8,'visible'],
+                    [2005,'#994A49',9,'visible'],
+                    [2006,'#994A49',15,'visible'],
+                    [2007,'#994A49',15,'visible'],
+                    [2008,'#994A49',15,'visible'],
+                    [2009,'#994A49',16,'visible'],
+                    [2010,'#994A49',16,'visible'],
+                    [2011,'#994A49',17,'visible'],
+                    [2012,'#994A49',17,'visible'],
+                    [2013,'#994A49',16,'visible'],
+                    [2014,'#994A49',15,'visible'],
+                    [2015,'#994A49',15,'visible'],
+                    [2016,'#994A49',15,'visible'],
+                    [2017,'#994A49',17,'visible'],
+                    [2018,'#994A49',18,'visible']]]
+                array2 = [[[2000,'#A4782E',12,'visible'],
+                    [2001,'#A4782E',11,'visible'],
+                    [2002,'#A4782E',10,'visible'],
+                    [2003,'#A4782E',9,'visible'],
+                    [2004,'#A4782E',9,'visible'],
+                    [2005,'#A4782E',null,'visible'],
+                    [2006,'#A4782E',10,'visible'],
+                    [2007,'#A4782E',8,'visible'],
+                    [2008,'#A4782E',7,'visible'],
+                    [2009,'#A4782E',6,'visible'],
+                    [2010,'#A4782E',6,'visible'],
+                    [2011,'#A4782E',7,'visible'],
+                    [2012,'#A4782E',null,'visible'],
+                    [2013,'#A4782E',5,'visible'],
+                    [2014,'#A4782E',4,'visible'],
+                    [2015,'#A4782E',5,'visible'],
+                    [2016,'#A4782E',5,'visible'],
+                    [2017,'#A4782E',6,'visible'],
+                    [2018,'#A4782E',5,'visible']],
+                    [[2000,'#435B22',7,'visible'],
+                    [2001,'#435B22',7,'visible'],
+                    [2002,'#435B22',null,'visible'],
+                    [2003,'#435B22',null,'visible'],
+                    [2004,'#435B22',7,'visible'],
+                    [2005,'#435B22',6,'visible'],
+                    [2006,'#435B22',null,'visible'],
+                    [2007,'#435B22',null,'visible'],
+                    [2008,'#435B22',6,'visible'],
+                    [2009,'#435B22',6,'visible'],
+                    [2010,'#435B22',null,'visible'],
+                    [2011,'#435B22',null,'visible'],
+                    [2012,'#435B22',null,'visible'],
+                    [2013,'#435B22',5,'visible'],
+                    [2014,'#435B22',4,'visible'],
+                    [2015,'#435B22',null,'visible'],
+                    [2016,'#435B22',5,'visible'],
+                    [2017,'#435B22',4,'visible'],
+                    [2018,'#435B22',4,'visible']],
+                    [[2000,'#994A49',13,'visible'],
+                    [2001,'#994A49',13,'visible'],
+                    [2002,'#994A49',13,'visible'],
+                    [2003,'#994A49',15,'visible'],
+                    [2004,'#994A49',null,'visible'],
+                    [2005,'#994A49',15,'visible'],
+                    [2006,'#994A49',15,'visible'],
+                    [2007,'#994A49',14,'visible'],
+                    [2008,'#994A49',null,'visible'],
+                    [2009,'#994A49',null,'visible'],
+                    [2010,'#994A49',14,'visible'],
+                    [2011,'#994A49',8,'visible'],
+                    [2012,'#994A49',8,'visible'],
+                    [2013,'#994A49',8,'visible'],
+                    [2014,'#994A49',null,'visible'],
+                    [2015,'#994A49',7,'visible'],
+                    [2016,'#994A49',null,'visible'],
+                    [2017,'#994A49',12,'visible'],
+                    [2018,'#994A49',13,'visible']]]
+                break;        
             default:
                 break;
         }
         postprocessData()
         createLines()
-
     }
 
     function postprocessData(){
