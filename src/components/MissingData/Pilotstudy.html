@@ -586,7 +586,7 @@ input:checked + .slider:before {
                 return (d[2] !== null) ? d[1] : 'transparent'
             })
             .style('stroke', function (d) { return (mDDotsOn) ? d[1] : 'transparent' })
-            .attr('cx', function (d, i) { return ((d[2] !== null) ? selectScaledX(d) : (this.getAttribute('cx'))) })
+            .attr('cx', function (d, i) { return selectScaledX(d) })
             .attr('cy', function (d, i) { return ((d[2] !== null) ? selectScaledY(d) : yScale(interpolatePoint(line, i))) })
             .attr('r', 4)
         })
