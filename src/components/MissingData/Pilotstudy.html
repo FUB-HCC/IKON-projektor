@@ -99,7 +99,7 @@
 .lines path {
     fill: transparent;
     stroke: #50e3c2;
-    stroke-width: 1;
+    stroke-width: 2;
 }
 
 
@@ -206,11 +206,7 @@ input:checked + .slider:before {
     position:absolute;                  
     bottom:0;                                                   
 } 
-#currentview {
-    position: absolute;
-    bottom:0;
-    right: 500px;
-}
+
 </style>
 
 <body>
@@ -226,13 +222,12 @@ input:checked + .slider:before {
                 <input type="checkbox" onchange="handleMDDotChange()">
                 <span class="slider round"></span>
             </label> Toggle Circles for Missing Data On/Off <br><br>
-            <hr><br>
             Duration of Transition (in ms):<br>
-            <div id="transDurationSlider"></div> 
+            <div id="transDurationSlider"></div> <br>
+            <button id="transbutton" class="button" onclick="update()">Turn Filter On</button> <br><br>
+            <hr>
             Years visible:<br>
             <div id="yearSlider"></div>
-            <hr><br>
-            <button class="button" onclick="update()">Filter On/Off</button> <br><br>
         </div>
     </div>
     <div id='bottom'>
@@ -242,9 +237,7 @@ input:checked + .slider:before {
         <button class="tinybutton" onclick="updateData('22')">2.2</button>
         <button class="tinybutton" onclick="updateData('31')">3.1</button>
         <button class="tinybutton" onclick="updateData('32')">3.2</button>
-        <!--<button class="tinybutton" onclick="updateData('21')">2</button>-->
     </div>
-    <div id='currentview'></div>
 </body>
 
 <!-- Load in the d3 library -->
@@ -257,7 +250,7 @@ input:checked + .slider:before {
     let mDVizOn = false, mDDotsOn = false, array1On = true, transDuration = 0
     let minyear = 2000, maxyear = 2018
 
-    const currentview = document.getElementById("currentview");
+    const transbutton = document.getElementById("transbutton");
 
     // Sliders
     const transDurationSlider = document.getElementById('transDurationSlider');
@@ -532,16 +525,18 @@ input:checked + .slider:before {
                 .delay(100)
                 .duration(750)
                 .style('stroke', function (d) { return (mDDotsOn) ? d[1] : 'transparent' })
-                .style('fill', function (d) { return (d[2] !== null) ? d[1] : (mDDotsOn ? d[1] : 'transparent') })
+                .style('fill', function (d) { return (d[2] !== null) ? d[1] : 'transparent' })
             })
     }
 
     // function to update data and animate transition
     function update(newArray = true) {
-        if (currentview.innerHTML === "State 1") {
-            currentview.innerHTML = "State 2";
-        } else if (currentview.innerHTML === "State 2"){
-            currentview.innerHTML = "State 1";
+        if(newArray === true){
+            if (transbutton.innerHTML === "Turn Filter On") {
+            transbutton.innerHTML = "Turn Filter Off";
+        } else if (transbutton.innerHTML === "Turn Filter Off"){
+            transbutton.innerHTML = "Turn Filter On";
+        }
         }
         // in case data itself should not be updated
         if (!newArray){
@@ -623,7 +618,7 @@ input:checked + .slider:before {
         }
         // then check how many steps to the right
         i2 = i + 1
-        while (i2 < array.length-1) {
+        while (i2 < array.length) {
             if (array[i2][2] !== null){
                 end = array[i2]
                 break
@@ -657,7 +652,6 @@ input:checked + .slider:before {
     }
 
     function updateData(n='11'){
-        currentview.innerHTML = 'State 1'
         switch (n) {
             case '11':
                 // existing data <-> existing data
