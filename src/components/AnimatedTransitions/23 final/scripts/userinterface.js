@@ -1,8 +1,4 @@
-/////////// H1 ///////////////
-d3.select("body")
-  .append("h1")
-  .text("Clustering");
-  
+
 /////////// Tabelle ///////////////
 var table = d3.select("body")
   .append("table");
@@ -312,8 +308,8 @@ var svg = zelleMitte.append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   svg.append("g").attr("class", "hulls");
-  svg.append("g").attr("class", "circs");
   svg.append("g").attr("class", "beschriftung");
+  svg.append("g").attr("class", "circs");
 
 
 ////////////////// Forschungsgebiete /////////////////////

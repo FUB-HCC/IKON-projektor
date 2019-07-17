@@ -1,5 +1,5 @@
 //////////////// Konstanten ////////////////////
-const margin = {top: 30, right: 30, bottom: 30, left: 30};
+const margin = {top: 50, right: 50, bottom: 50, left: 50};
 var pageWidth = document.body.clientWidth;
   width = d3.min([pageWidth, 300]) - margin.left - margin.right,
   height = 300 - margin.top - margin.bottom;
@@ -7,7 +7,7 @@ var pageWidth = document.body.clientWidth;
 var zeitspanne = [1990,2019];
 const durationSpan = [0, 3000];
 const schrittweite = 250;
-var transDuration = 750;
+var transDuration = 3000;
 const animCases = ["Überblendung", "Transition"];
 var animArt = animCases[0];
 var animDatas = [];
@@ -17,45 +17,6 @@ var colorScheme = d3.schemeCategory10;//schemeDark2;//schemeSet1;// https://gith
 
 const hullOpacity = 0.3;
 var radius = 8;
-
-const websites = ["../index", 
-  "test01", // neue Knoten + wirken sich nicht auf die Form aus
-  "test02", // Knoten verschw., ohne Verformung
-  "test03", // Bewegung & Verformung
-  "test04", // neue Proj. -> neues Cluster
-  "test05", // Verschmelzung ohne Bewegung
-  "test06", // Aufteilung: altes ex. + neues (aus 1 macht 2)
-  "test07", // Clusterwechsel: altes ex., kein neues
-  "test08", // neue Knoten + Verformung durch diese
-  "test09", // Viele Cluster spenden für ein neues
-  "test10", // 3 verschmelzen zu einem
-  "test11", // Aufteilung: altes ex., kein neues
-  "test12", // Transitionsdauer
-  "test13", // Vergleich: Trans. vs. Überblendung
-  "test14", // Clusterzahl raten (JSON)
-  "results"
-];// "test15", // Clusterwechsel: altes ex. + neues + Verformung
-
-function aufgabenNr(site){
-  return websites.indexOf(site);
-}
-
-function aufgabenCounter(site) {
-  return "Aufgabe " + aufgabenNr(site) + "/" + (websites.length-2);
-}
-
-function romanize(num) { // https://stackoverflow.com/questions/9083037/convert-a-number-into-a-roman-numeral-in-javascript
-  var roman = {
-    M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, 
-    L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1};
-  var str = '';
-  for (var i of Object.keys(roman)) {
-    var q = Math.floor(num / roman[i]);
-    num -= q * roman[i];
-    str += i.repeat(q);
-  }
-  return str;
-}
 
 function parseSec(ms){
   return ((+ms)/1000).toString() + " s";
@@ -261,7 +222,7 @@ class Pfade {
       .style("font-size", "10px")
       .style("text-anchor", "middle")
       .attr("dy", "0.7ex")
-      .text(function(c){return "Cluster " + c.id;})
+      .text(function(d){return "Cluster " + d.id;})
       .on("mouseover", tooltipCluster.show)
       .on("mouseout", tooltipCluster.hide);
     
@@ -445,85 +406,6 @@ class Button {
         fkt();
       });
   }// ende Konstruktor
-}
-
-////////////// Button Funktionen ///////////
-function setStorageContent(key, value){
-  localStorage.setItem(key, value);// https://diveintohtml5.info/storage.html
-}
-
-function updateStorageContent(key, value){
-  localStorage.setItem(key, getStorageContent(key) + ';' + value);
-}
-
-function getStorageContent(key){
-  return localStorage.getItem(key);
-}
-
-// https://www.d3-graph-gallery.com/graph/interactivity_button.html
-// https://stackoverflow.com/questions/26964006/using-d3-instead-of-jquery-to-process-form-input-causes-re-load-of
-
-function deleteDatas(site, res) {
-  localStorage.removeItem(site);
-}
-
-function deleteAllDatas(site, res) {
-  //sessionStorage.clear();
-  localStorage.clear();
-}
-
-function saveDatas(site){ 
-  // erstellt eine Datei mit den Ergebnissen
-  // https://stackoverflow.com/questions/2897619/using-html5-javascript-to-generate-and-save-a-file
-  // https://www.mediaevent.de/javascript/local-storage.html
-  
-  var keys = Object.keys(localStorage).sort();
-  var maxReplaysPerTask = Object.values(localStorage)
-    .map(d => d.split(';').length)
-    .reduce(function(akk,x){
-      return d3.max([akk,x]);
-    }, 0);
-  var content = "Aufgabe;" + new Array(maxReplaysPerTask).fill('Duration')
-    .map(function(d,i){
-      if (i < 9)
-        return d + '0' + (i+1);
-      else
-        return d + (i+1);
-    }).join(';');
-  // befüllt die Ergebnisse
-  keys.forEach(function(key){
-    content = content + '\n' + key + ';' + localStorage.getItem(key);
-  });
-    
-//   keys.forEach(function(key){
-//     // modifiziert die Einträge
-//     var value = localStorage.getItem(key);
-//     var array = value.split(";");
-//     var results = [key];
-//     for (var i=0; i<array.length; i++)
-//       if (i != 0 && i != 2 && i != 4)
-//         results.push(array[i]);
-//       else if (i == 0 && key=="Teilnehmer")
-//         results.push(array[i]);
-//     content.push(results.join(";"));
-//   });
-  //var content = document.cookie;
-  download('results.csv', content);
-}
-
-function download(filename, text) {
-    var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    pom.setAttribute('download', filename);
-
-    if (document.createEvent) {
-        var event = document.createEvent('MouseEvents');
-        event.initEvent('click', true, true);
-        pom.dispatchEvent(event);
-    }
-    else {
-        pom.click();
-    }
 }
 
 function cloneDataset(dataset){
@@ -856,14 +738,14 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
       .append("path")
       .attr("class", "huelle")
       .attr("d", function(c){// c = Cluster{id, polygons}
-//         //Hülle taucht aus ihrem Mittelpunkt aus
-//         var pos = c.getSchwerpunkt();
-//         var node = new Knoten(pos, 0, 0, {}, 2019, [""])
-//         var poly = new Array(c.getLength()).fill(node);
-//         return new Polygon(poly).makeHull2Path(scale2);
+        /* Hülle taucht aus ihrem Mittelpunkt aus
+        var pos = c.getSchwerpunkt();
+        var node = new Knoten(pos, 0, 0, {}, 2019, [""])
+        var poly = new Array(c.getLength()).fill(node);
+        return new Polygon(poly).makeHull2Path(scale2);*/
         return c.makeHulls2Path(scale2);
       })
-      .style('opacity', 0)// 0
+      .style('opacity', 0.1)// 0
       .on("mouseover", tooltipCluster.show)
       .on("mouseout", tooltipCluster.hide)
       .attr('fill', "#993")
@@ -908,12 +790,12 @@ function transitions(svgs, newDataset, newNests, transTable, scales){
       .append("path")
       .attr("class", "huelle")
       .attr("d", function(c){// c = Cluster{id, polygons}
-//         // Hülle taucht aus ihrem Mittelpunkt aus
-//         var pos = c.getSchwerpunkt();
-//         var node = new Knoten(pos, 0, 0, {}, 2019, [""])
-//         var poly = new Array(c.getLength()).fill(node);
-//         return new Polygon(poly).makeHulls2Path(scale2);
-        return c.makeHulls2Path(scale2);
+        // Hülle taucht aus ihrem Mittelpunkt aus
+        var pos = c.getSchwerpunkt();
+        var node = new Knoten(pos, 0, 0, {}, 2019, [""])
+        var poly = new Array(c.getLength()).fill(node);
+        return new Polygon(poly).makeHulls2Path(scale2);
+        //return c.makeHulls2Path(scale2);
       })
       .style('opacity', hullOpacity)// 0
       .on("mouseover", tooltipCluster.show)
@@ -1163,19 +1045,18 @@ function changeView(keypress) {
     else
       console.log( "Blob wird nicht unterstützt." );
     callAusgangszustand();
-    var aufgabe = whoAmI();
     var inhalt, fileNr;
     var counter = 1;//var date = new Date();
     var n = 10;
     inhalt = createSVGcontent();
-    zip.file(aufgabe +"-"+ "01.svg", inhalt);
+    zip.file("Limitierung-01.svg", inhalt);
     replay();
     // https://stackoverflow.com/questions/2170923/whats-the-easiest-way-to-call-a-function-every-5-seconds-in-jquery
     var interval = setInterval(function(){// hat eine leichte Verschiebung : 170 ms
       if (++counter <= n+1) {
         inhalt = createSVGcontent();
         fileNr = "0".slice(0, 2-counter.toString().length) +counter;
-        zip.file((aufgabe +"-"+ fileNr +".svg"), inhalt);
+        zip.file(("Limitierung-"+ fileNr +".svg"), inhalt);
       }
       else {
         clearInterval(interval);
@@ -1183,7 +1064,7 @@ function changeView(keypress) {
           location.href = "data:application/zip; base64," + base64;
         });*/
         zip.generateAsync({type:"blob"}).then(function(blob) {
-          saveAs(blob, aufgabe + ".zip" );
+          saveAs(blob, "Limitierung.zip" );
         });
       }
     }, transDuration/n);
@@ -1215,7 +1096,7 @@ function saveImage(){// speichert ein einzelnes SVG
   var svgUrl = URL.createObjectURL(svgBlob);
   var downloadLink = document.createElement("a");
   downloadLink.href = svgUrl;
-  downloadLink.download = "test14-final.svg";
+  downloadLink.download = "Limitierung.svg";
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);

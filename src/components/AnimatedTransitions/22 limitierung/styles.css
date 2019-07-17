@@ -7,7 +7,7 @@ html {
 body {
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   font-size: 12px;
-  /*text-align: center;*/
+  text-align: center;
   margin-right: 15px;
 }
 
@@ -69,11 +69,11 @@ input.radio {
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
-  /*width: 100%;*/
+  width: 100%;
 }
 
 td, th {
-  border: 0px solid #ff;
+  border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;
 }/* https://www.w3schools.com/html/tryit.asp?filename=tryhtml_table_intro */
@@ -105,7 +105,7 @@ svg {
   border: 1px solid #999;
   /*float: left;*/
 }
-
+/*
 path {
   fill: #993;
   stroke: #993;
@@ -113,7 +113,7 @@ path {
   opacity: 0.3;
   paint-order: stroke markers fill;
   stroke-linejoin: round;
-}
+}*/
 
 path.line {
   fill: none;

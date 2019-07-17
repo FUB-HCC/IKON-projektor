@@ -91,6 +91,63 @@ class Index { // statische Klasse
 }// Ende: Klasse Index
 
 
+class Keywords {
+  static getRandStr(researchArea,clusterNo){// wählt ein zufälliges Keyword für das Cluster i
+    var keylist = {// gelb
+      0: ["Mineral", "Lava", "Gestein", "Kristall", "Eisen", "Element", "Erde", "Aufbau", "Schichten", "Abbau", "MRT", "Analyse", "Legierung", "Keramik", "Metall", "Herstellung", "Bearbeitung", "Schliff", "Reinheit", "Wachstum", "Verbindung", "Vulkan", "Beschaffenheit", "Material", "Stabilität", "Kreislauf", "Isotop", "Boden", "Wasser", "Biosphäre", "Erdkruste", "Fluid", "Flöz", "Arsen", "Chrom", "Selen", "Endlager", "Radionukliden", "Schadstoff", "Partikeln", "Kolloiden", "Ressource", "Rohstoff", "Untergrund", "Spurenmetall", "Sediment", "Stalagmit", "Bodenkunde", "Chemie", "Formel", "Gleichung"],
+      
+      1: ["Erdbeben", "Höhenlage", "Zusammensetzung", "Probe", "Erdoberfläche", "Schwerefeld", "Vermessung", "Grenzen", "Kartierung", "Planet", "Karte", "Beschaffenheit", "Einteilung", "Globus", "Breitengrad", "Längengrad", "Schwerkraft", "Staumaür", "Windkraftanlage", "Grundstück", "Feld", "Pol", "Rotationsellipsoid", "Kugel", "Festlegung", "Bestimmung", "Seimologie", "Dynamik", "Physik", "Atmosphäre", "Kontinentalplatte", "Tektonik", "verschiebung", "Erdkern", "Sedimentbecken", "Klima", "Gebirge", "Kontinent", "Rohstoff", "Umweltschutz", "Seismik", "Meteor", "Formel", "Versuch", "Gleichung", "Forschung"],
+      
+      2: ["Gestein", "Erdkruste", "Fossil", "MRT", "Einordnung", "Ausgrabung", "Mikroorganismus", "Mikroskoph", "Sediment", "Systematik", "versteinert", "Röntgen", "Sammlung", "Entstehung", "Beschaffenheit", "Entwicklung", "Tektonik", "Vulkan", "Pluton", "Statigraphie", "Datierung", "Baugrund", "Biologie", "Probe", "Messung", "Analyse", "Forschung", "Ergebnis"],
+      
+      3: ["Erwärmung", "Sauerstoffgehalt", "CO2", "Ozon", "Wasser", "Riff", "Verschmutzung", "Erdatmosphäre", "Stickstoff", "O2", "O3", "Temperatur", "Wetter", "Nachhaltigkeit", "Umwelt", "Athmosphäre", "Gas", "Wolken", "Klima", "Messung", "Gewitter", "Tsunami", "Astronaut", "Astronomie", "Planet", "Fische", "Meeressäuger", "Strudel", "Salzwasser", "Ozean", "Expedition", "Tiefsee", "Schleppnetz", "Atlantik", "Plankton", "Fischfang", "Arktis", "Taucher", "Küste", "Plastikmüll", "Eisberg", "Wal", "Bohrinsel", "Umweltschutz", "Fisch", "Technik", "Innovation", "Forschung", "Methode", "Technologie"],
+      
+      // grün
+      4: ["Gewebe", "DNA", "Nahrung", "Medizin", "Molekularbiologie", "Pharmazie", "Biodiversität", "Vermehrung", "Biochemie", "Zelle", "Umweltschutz", "Protein", "Genom", "Biodiversität", "Systembiologie", "Biomedizin", "Neurowissenschaft", "Infektionsbiologie", "Krebsforschung", "Alzheimer", "Krebs", "Einzelzellanalyse", "Grundlagenforschung", "Forschung", "Photonik", "Krankheit", "Ursache", "Molekül", "Lebensmittel", "Analyse", "Kultur", "Tomographie", "MRT", "Diagnostik", "Tumor", "Spektroskophie", "Blut", "Blutplasma", "Herz", "Kreislauf", "Proband", "Mikroskoph", "Organismus"],
+      
+      5: ["Tiger", "Fortpflanzung", "Milbe", "Sammlung", "Metazoa", "Animalia", "Anatomie", "Morphologie", "Physiologie", "Genetik", "Verbreitung", "Entwicklung", "Systematik", "Tier", "Verhalten", "Biologie", "Organismus", "Saügetier", "Wirbeltier", "Evolution", "Population", "Tierschutz", "Museum", "Biodiversität", "Ökosystem", "Raubtier", "Fisch", "Meeressäuger"],
+      
+      6: ["Humus", "Agrar", "Baumbestand", "Pfote", "Knochen", "Skelett", "Zahnmedizin", "Ernährung", "Lebensmittel", "Wald", "Plantage", "Landschaft", "Holz", "Nachhaltigkeit", "Ressource", "Boden", "Dünger", "Forst", "Obst", "Gemüse", "Knolle", "Saat", "Kultur", "Freiland", "Veterinärmedizin", "Tierarzt", "Anatomie", "Arznei", "Bakteriologie", "Botanik", "Futterpflanze", "Giftpflanze", "Heilpflanze", "Chirurgie", "Anästhesie", "Fleisch", "Hygiene", "Genetik", "Parasit", "Pathologie", "Pharmakologie", "Toxikologie", "Tierhaltung", "Tierschutz", "Seuche", "Virologie", "Zoologie", "Viehzucht", "Ackerbau", "Ökologie", "Trockenheit", "Getreide", "Eier", "Milch", "Fisch", "Bodenkunde", "Agrarpolitik", "Phytomedizin", "Nutztier", "Biometrie", "Grünland", "Futterbau", "Pflanzenschutz", "Membran", "Wirkung"],
+      
+//       8: ["Trieb", "Sonnenlicht", "Wasser", "Wachstum", "Erde", "Zucht", "Botanik", "Weidepflanze", "Futterpflanze", "Stoffwechsel", "Wachstum", "Systematik", "Inhaltsstoffe", "Biozönose", "Osmoplasmose", "Fotosynthese", "Wurzel", "Blatt", "Frucht", "Saat", "Samen", "Kultur", "Pflanzenschutz", "Artenschutz", "Biodiversität", "Gene", "Landbau", "Gartenbau", "Gemüse", "Obst", "Knolle", "Landwirtschaft", "Freiland", "Biotechnologie"],
+      
+      // rot      
+      7: ["Schwinngung", "Guitarre", "Saite", "Note", "Takt", "Maske", "Licht", "Trauer", "Kommunikation", "Medium", "TV", "Kino", "Bühne", "Instrument", "Malerei", "Acryl", "Farben", "Film", "Video", "Raubkopie", "Individuum", , "Sport"],
+      
+      8: ["Politik", "Historiker", "König", "Schemata", "Einordnung", "Gemeinschaft", "Gesetze", "Literatur", "Ereignis", "Überlieferung", "Edda", "Vergangenheit", "Migration", "Epoche", "Dokument", "Schrift", "Herrscher", "Tyrann", "Kirche", "Krieg", "Schlacht", "Frieden", "Handel", "Lyrik", "Sprache", "Gesellschaft", "Zusammenleben", "Institutionen", "Anthropologie", "Ethnologie", "Religion", "Soziologie"],
+      
+      9: ["12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht", "12 gibt es nicht"]
+    };
+    var keys = keylist[researchArea.id].filter(function(d,i){
+      return i % 4 == clusterNo;// 4=clusterzahl
+    });
+    return keys[Index.getRandInt(0, keys.length-1)];
+  }
+  /**
+  * @class Keywords
+  * @param {Object} wordlist - [String]
+  * @param {Double} x2
+  * @return {Object} [String] - Gibt die 4 am häufigsten vorkommenden Keywords der im Cluster enthaltenen Knoten aus
+  */
+  static getMajorWords(wordlist){
+    var buckets = d3.nest()
+      .key(function(d) {return d;})
+      .entries(wordlist);
+    
+    var haeufigkeit = buckets.map(function(d){
+        return {key: d.values.length, values: d.key};
+    });
+      
+    haeufigkeit.sort(function(a,b){
+      return b.key - a.key;
+    });
+    return haeufigkeit.map(obj => obj.values).slice(0,4);
+  }
+  
+} // Ende: Klasse Keywords
+
+
+
 ///////////////////// POSITION /////////////////
 class Position {
   /**
@@ -199,10 +256,9 @@ class Position {
   * @return {Double} berechnet den Winkel zwischen x-Achse und dem Punkt, result in [0,2pi)
   */
   getAngle() {
-    /*if (Float.isZero(this.x))
-      return Math.PI/2;
-    else
-      */
+//     if (Float.isZero(this.x))
+//       return Math.PI/2;
+//     else
     return (Math.atan2(this.y, this.x) + 2*Math.PI) % (2*Math.PI);
   }
   
@@ -300,8 +356,10 @@ class Gerade{
   getAngle(){
     const p1 = this.getPositionA();
     const p2 = this.getPositionB();
-//     if (Float.equal(p1.x, p2.x))
+//     if (Float.equal(p1.x, p2.x) && p1.y < p2.y)
 //       return Math.PI/2;
+//     else if (Float.equal(p1.x, p2.x) && p1.y >= p2.y)
+//       return Math.PI*3/4;
 //     else
     return (Math.atan2(p2.y-p1.y, p2.x-p1.x) + 2*Math.PI) % (2*Math.PI);
   }
@@ -389,14 +447,13 @@ class Knoten {
   * @param {Integer}  year - Jahr des Projekts
   * @param {Object}   keywords - [String]
   */
-  constructor(pos, id, clusterNo, researchArea, year, keywords, title){
+  constructor(pos, id, clusterNo, researchArea, year, keywords){
     this.pos = pos; // Position
     this.id = id;   // Integer
     this.clusterNo = clusterNo;
     this.researchArea = researchArea;// {id, name, disziplin}
     this.year = year;
     this.keywords = keywords;
-    this.title = title;
   }
   
   /**
@@ -406,7 +463,7 @@ class Knoten {
   copy(){
     // falls der String kopiert werden muss: 
     // var newStr = (' ' + oldStr).slice(1);
-    return new Knoten(this.pos.copy(), this.id, this.clusterNo, this.researchArea, this.year, this.keywords, this.title);
+    return new Knoten(this.pos.copy(), this.id, this.clusterNo, this.researchArea, this.year, this.keywords);
   }
   
   /**
@@ -441,7 +498,7 @@ class Knoten {
   * @return {Object} gibt den Knoten als Array aus, wobei die ersten beiden Stellen die x- und y-Koordinaten sind. Wird für calculateHull() gebraucht. Der Knoten wird in ein Array gepackt, result: [x, y, id, clusterNo, researchArea, year, keywords]
   */
   morphToArray() {
-    return [this.pos.x, this.pos.y, this.id, this.clusterNo, this.researchArea, this.year, this.keywords, this.title];
+    return [this.pos.x, this.pos.y, this.id, this.clusterNo, this.researchArea, this.year, this.keywords];
   }
   
   /**
@@ -451,10 +508,10 @@ class Knoten {
   * @return {Knoten} wandelt das Array in einen Knoten zurück
   */
   static morphBack(arr) { // erstellt aus dem Array einen Knoten. Wird für calculateHull() gebraucht
-    if (arr.length != 8)
+    if (arr.length != 7)
       throw Error("Das Array hat nicht die richtige Anzahl an Informationen, um in einen Knoten gewandelt zu werden.");
     else
-      return new Knoten(new Position(arr[0], arr[1]), arr[2], arr[3], arr[4], arr[5], arr[6], arr[7]);
+      return new Knoten(new Position(arr[0], arr[1]), arr[2], arr[3], arr[4], arr[5], arr[6]);
   }
 } // Ende: Knoten-Klasse
 
@@ -565,16 +622,14 @@ class Polygon {
   * @return {} ordnet die Knoten im Uhrzeigersinn um den Mittelpunkt an
   */
   putUhrzeigersinn(){
-    if (this.vertices.length > 1) {
-      const s = this.getSchwerpunkt();
-      var p = this.vertices.sort(
-        // ordnet die Punkte im Uhrzeigersinn an
-        function(a,b){
-          const g1 = new Gerade(s, a.pos);
-          const g2 = new Gerade(s, b.pos);
-          return g2.getAngle() - g1.getAngle();}
-      );
-    }
+    const s = this.getSchwerpunkt();
+    var p = this.vertices.sort(
+      // ordnet die Punkte im Uhrzeigersinn an
+      function(a,b){
+        const g1 = new Gerade(s, a.pos);
+        const g2 = new Gerade(s, b.pos);
+        return g2.getAngle() - g1.getAngle();}
+    );
   }
   
   /**
@@ -591,6 +646,10 @@ class Polygon {
   * @class Polygon
   * @return {Polygon} berechnet eine konvexe Hülle
   */
+  /*
+  calculateHull() {// wenn die Richtung nicht angepasst wird, für limes03 interessant
+    return this;
+  }*/
   calculateHull() {
     if (this.getLength() == 0)
       throw new Error("Es existiert kein Knoten, weswegen keine Hülle berechnet werden kann.");
@@ -602,6 +661,7 @@ class Polygon {
     }
     else { // mind. 2 Knoten
       // ordnet die Punkte im Uhrzeigersinn an und übergibt sie als [x,y]-Koordinate an die Funktion d3.polygonHull()
+      //this.sort();//this.putUhrzeigersinn();
       var hull = (this.getLength() < 3)? this.vertices : d3.polygonHull(this.vertices.map(function(d){
         return d.morphToArray();
       })).map(function(d){return Knoten.morphBack(d);});
@@ -631,6 +691,11 @@ class Polygon {
     this.vertices.map(function(n){return n.moveBy(richtung)});
   }
   
+  /**
+  * @class Polygon
+  * @param {Object} Polygon - Zielpolygon, beide Hüllen liegen im Uhrzeigersinn vor und haben die gleichen Anfangsknoten
+  * @return {Object} [Polygon] - gleicht beide Polygone aneinander an: füllt sie mit Knoten auf
+  */
   compensateNodeNumber(newPoly) {
     // füllt das Polygon mit geringerer Knotenzahl auf
     // wird von der Funktion huellenAbgleichen aufgerufen
@@ -724,6 +789,28 @@ class Polygon {
     }// ende else
   }
   
+  delUnneccessaryNodes(){
+    // löscht zuvor erstellte, doppelte Knoten, die nun überflüssig sind
+    var i = 0;
+    var pred, succ, geradePredI;
+    var verts = this.copy().vertices;
+    while (i < verts.length && verts.length > 2) {// wenn nur 2 Punkte vorhanden, sollen diese nicht gelöscht werden, da mind. 2 für eine Hülle notwendig sind
+      pred = verts[Index.pred(i, verts.length)]; // Knoten
+      succ = verts[Index.succ(i, verts.length)];
+      geradePredI = new Gerade(pred.pos, succ.pos);
+      // gleiche Elemente werden nebeneinander sein
+      if (geradePredI.contains(verts[i].pos))
+        verts.splice(i, 1);
+      else if (verts[i].equal(succ))
+        verts.splice(i, 1);
+      else if (verts[i].equal(pred))
+        verts.splice(i, 1);
+      else
+        i++;
+    }
+    return new Polygon(verts);
+  }
+  
   mapToNodes(fkt){
     this.vertices.map(function(n){fkt(n);});
   }
@@ -773,11 +860,13 @@ class Cluster {
   
   /**
   * @class Cluster
-  * @return {Object} [String] min. und max. Jahr aller Projekte
+  * @return {Object} [String] gibt die 3 meist vorkommenden Keywords der Knoten aus
   */
-  getYears() {
-    var jahre = this.reduceToOnePolygon().vertices.map(k => k.year);
-    return d3.min(jahre) + " - " + d3.max(jahre);
+  getKeywords(){
+    var allKeywords = this.reduceToOnePolygon()
+      .vertices.map(k => k.keywords)
+      .reduce(function(akk,p){return akk.concat(p)},[]);
+    return Keywords.getMajorWords(allKeywords);
   }
   
   /**
@@ -981,8 +1070,7 @@ class Nest {// [Cluster_1,... , Cluster_n]
         if (iOld == null) {// Knoten ex. nicht in oldNests
           iOldTarget = oldNests.findClusterOfID(nNew.clusterNo);
           if (iOldTarget == -1) {// Cluster ex. nicht
-            var newPoly = new Polygon([nNew]);
-            cluOldTarget = new Cluster(nNew.clusterNo, [newPoly]);
+            cluOldTarget = new Cluster(nNew.clusterNo, [new Polygon([nNew])]);
             oldNests.nest.push(cluOldTarget);
           }
           //else {} // Cluster existiert breits. Nichts zu tun
@@ -995,21 +1083,32 @@ class Nest {// [Cluster_1,... , Cluster_n]
           if (nOld.clusterNo != nNew.clusterNo) {// ungleiche clusterNo
             iOldTarget = oldNests.findClusterOfID(nNew.clusterNo);
             if (iOldTarget == -1) {// Cluster ex. nicht
-              var newPoly = new Polygon([nNew]);
-              // ALT: leeres Cluster ([] statt [newPoly]
-              cluOldTarget = new Cluster(nNew.clusterNo, [newPoly]);
+              cluOldTarget = new Cluster(nNew.clusterNo, []);
               oldNests.nest.push(cluOldTarget);
             }
-            /* ALT
             else {// Cluster ex. bereits
               cluOldTarget = oldNests.nest[iOldTarget];
             }
+            /* ALT
+            else {// Cluster ex. breits
+              // muss Cluster der ID nNew.clusterNo kopieren
+              cluOldTarget = oldNests.nest[iOldTarget];
+              // ob bereits Polygon gleicher Clusterno ex.
+              pOld = cluOldTarget.polygonOfSameClusterNo(nNew);
+              // pOld = {poly, idx}
+              if (pOld == null) {// es ex. kein Cluster gleicher Nr.
+                cluOldTarget.polygons.push(fstPolOld.copy());
+              }
+              // else {} es ex. ein Cluster gleicher Nr. Nichts zu tun
+            }*/
+            /*      NEU      */
             // Cluster ex. bereits oder ex. nun
             istEnthalten = cluOldTarget.contains(nNew);
             if (!istEnthalten) {// Knoten wurde noch nicht in sein neues Cluster eingefügt 
               cluOldTarget.polygons.push(fstPolOld.copy());
-            }*/
+            }
             // else {} Knoten bereits im neuen Cluster enthalten
+            /*    Ende NEU      */
           }// Ende IF ungleiche ClusterNo
           // else {} // gleiche clusterNo. Nichts zu tun
         } // Ende: ELSE Knoten ex. in oldnests
@@ -1017,7 +1116,6 @@ class Nest {// [Cluster_1,... , Cluster_n]
     }// Ende: Durchlauf newNests
     
     // löscht Cluster in oldNests, wenn es diese in newNests nicht gibt und alle deren Knoten in NewNests ex. – interessant, wenn alle Knoten woanders übergehen
-    /* ALT
     iOld = 0;
     while (iOld < oldNests.nest.length) {// durchläuft oldNests
       cluOld = oldNests.nest[iOld];
@@ -1033,20 +1131,6 @@ class Nest {// [Cluster_1,... , Cluster_n]
       }
       else
         iOld++;
-    }*/
-    ///////////// NEU ///////////
-    // Macht aus Clustern in oldNests, die nicht in newNests ex. Hüllenpolygone
-    for (var iOld in oldNests.nest) {
-      cluOld = oldNests.nest[iOld];
-      if (newNests.findClusterOfID(cluOld.id) == -1) {
-        // cluOld ex. nicht in newNests
-        anzPoly = cluOld.polygons.length;
-        for (var i = 0; i < anzPoly; i++){
-          // macht eine Hülle daraus
-          polyOld = cluOld.polygons[i].calculateHull();
-          cluOld.polygons[i] = polyOld;
-        }
-      }
     }
     
     // gleicht Anzahl der Polygone eines jeden Clusters (vorher/nachher) aus
@@ -1072,6 +1156,7 @@ class Nest {// [Cluster_1,... , Cluster_n]
         // passt Polygone an
         polyOld = cluOld.polygons[i].calculateHull();
         polyNew = cluNew.polygons[i].calculateHull();
+        // gleicht Hüllenknotenzahl an
         huellen = polyOld.huellenAbgleichen(polyNew);
         cluOld.polygons[i] = huellen[0];
         cluNew.polygons[i] = huellen[1];

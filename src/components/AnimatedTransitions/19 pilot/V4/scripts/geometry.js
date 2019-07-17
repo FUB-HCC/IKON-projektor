@@ -12,6 +12,8 @@
 const fehler = 0.00000000001;
 const verschiebung = 0.001; // für Hüllen mit nur 1 Punkt
 
+// https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Klassen
+
 ///////////////// FLOAT //////////////////
 class Float { // statische Klasse
 
@@ -445,13 +447,14 @@ class Knoten {
   * @param {Integer}  year - Jahr des Projekts
   * @param {Object}   keywords - [String]
   */
-  constructor(pos, id, clusterNo, researchArea, year, keywords){
+  constructor(pos, id, clusterNo, researchArea, year, keywords, title){
     this.pos = pos; // Position
     this.id = id;   // Integer
     this.clusterNo = clusterNo;
     this.researchArea = researchArea;// {id, name, disziplin}
     this.year = year;
     this.keywords = keywords;
+    this.title = title;
   }
   
   /**
@@ -461,7 +464,7 @@ class Knoten {
   copy(){
     // falls der String kopiert werden muss: 
     // var newStr = (' ' + oldStr).slice(1);
-    return new Knoten(this.pos.copy(), this.id, this.clusterNo, this.researchArea, this.year, this.keywords);
+    return new Knoten(this.pos.copy(), this.id, this.clusterNo, this.researchArea, this.year, this.keywords, this.title);
   }
   
   /**
@@ -496,7 +499,7 @@ class Knoten {
   * @return {Object} gibt den Knoten als Array aus, wobei die ersten beiden Stellen die x- und y-Koordinaten sind. Wird für calculateHull() gebraucht. Der Knoten wird in ein Array gepackt, result: [x, y, id, clusterNo, researchArea, year, keywords]
   */
   morphToArray() {
-    return [this.pos.x, this.pos.y, this.id, this.clusterNo, this.researchArea, this.year, this.keywords];
+    return [this.pos.x, this.pos.y, this.id, this.clusterNo, this.researchArea, this.year, this.keywords, this.title];
   }
   
   /**
@@ -506,10 +509,10 @@ class Knoten {
   * @return {Knoten} wandelt das Array in einen Knoten zurück
   */
   static morphBack(arr) { // erstellt aus dem Array einen Knoten. Wird für calculateHull() gebraucht
-    if (arr.length != 7)
+    if (arr.length != 8)
       throw Error("Das Array hat nicht die richtige Anzahl an Informationen, um in einen Knoten gewandelt zu werden.");
     else
-      return new Knoten(new Position(arr[0], arr[1]), arr[2], arr[3], arr[4], arr[5], arr[6]);
+      return new Knoten(new Position(arr[0], arr[1]), arr[2], arr[3], arr[4], arr[5], arr[6], arr[7]);
   }
 } // Ende: Knoten-Klasse
 
@@ -853,7 +856,7 @@ class Cluster {
   * @class Cluster
   * @return {Object} [String] gibt die 3 meist vorkommenden Keywords der Knoten aus
   */
-  getKeywords(){
+  getKeywords(){// wird nicht mehr gebraucht
     var allKeywords = this.reduceToOnePolygon()
       .vertices.map(k => k.keywords)
       .reduce(function(akk,p){return akk.concat(p)},[]);
@@ -1074,30 +1077,18 @@ class Nest {// [Cluster_1,... , Cluster_n]
           if (nOld.clusterNo != nNew.clusterNo) {// ungleiche clusterNo
             iOldTarget = oldNests.findClusterOfID(nNew.clusterNo);
             if (iOldTarget == -1) {// Cluster ex. nicht
-              cluOldTarget = new Cluster(nNew.clusterNo, []);
+              cluOldTarget = new Cluster(nNew.clusterNo, [new Polygon([nNew])]);// NEU: wie Zeile 1067
               oldNests.nest.push(cluOldTarget);
             }
+            /* ALT
             else {// Cluster ex. bereits
               cluOldTarget = oldNests.nest[iOldTarget];
             }
-            /* ALT
-            else {// Cluster ex. breits
-              // muss Cluster der ID nNew.clusterNo kopieren
-              cluOldTarget = oldNests.nest[iOldTarget];
-              // ob bereits Polygon gleicher Clusterno ex.
-              pOld = cluOldTarget.polygonOfSameClusterNo(nNew);
-              // pOld = {poly, idx}
-              if (pOld == null) {// es ex. kein Cluster gleicher Nr.
-                cluOldTarget.polygons.push(fstPolOld.copy());
-              }
-              // else {} es ex. ein Cluster gleicher Nr. Nichts zu tun
-            }*/
-            /*      NEU      */
             // Cluster ex. bereits oder ex. nun
             istEnthalten = cluOldTarget.contains(nNew);
             if (!istEnthalten) {// Knoten wurde noch nicht in sein neues Cluster eingefügt 
               cluOldTarget.polygons.push(fstPolOld.copy());
-            }
+            }*/
             // else {} Knoten bereits im neuen Cluster enthalten
             /*    Ende NEU      */
           }// Ende IF ungleiche ClusterNo

@@ -529,7 +529,7 @@ class Polygon {
     else {
       var max, idx, point;
       this.vertices.forEach(function(d,i){
-        if (max == undefined || d.pos.x > max.pos.x /*|| Float.equal(d.pos.x, max.pos.x) && d.pos.y > max.pos.y*/) {
+        if (max == undefined || d.pos.x > max.pos.x) {
           max = d;
           idx = i;
         }
@@ -602,12 +602,12 @@ class Polygon {
     }
     else { // mind. 2 Knoten
       // ordnet die Punkte im Uhrzeigersinn an und übergibt sie als [x,y]-Koordinate an die Funktion d3.polygonHull()
+      //this.sort();
+      this.putUhrzeigersinn();
       var hull = (this.getLength() < 3)? this.vertices : d3.polygonHull(this.vertices.map(function(d){
         return d.morphToArray();
       })).map(function(d){return Knoten.morphBack(d);});
-      var newPoly = new Polygon(hull);
-      newPoly.sort();
-      return newPoly;
+      return new Polygon(hull);
     }
   }
   
@@ -633,95 +633,120 @@ class Polygon {
   
   compensateNodeNumber(newPoly) {
     // füllt das Polygon mit geringerer Knotenzahl auf
-    // wird von der Funktion huellenAbgleichen aufgerufen
-    // this und newPoly sind bereits Kopien, auf denen gearbeitet werden kann
-    var L = this.vertices, R = newPoly.vertices;
-    var i = 0, j = 0;
-    function curr(A,i) {return A[i % A.length]}
-    function succ(A,i) {return A[(i+1) % A.length]}
-    function prev(A,i) {return A[(A.length+i-1) % A.length]}
-    function getNewPoint(A,a,B,b) {// fügt Knoten B[b] mit modifizierter Position in A zwischen A[a-1] und A[a] ein.
-      var gerade = new Gerade(prev(A,a).pos, curr(A,a).pos);
-      var d1 = B[b].pos.getDistance(prev(A,a).pos);
-      var d2 = B[b].pos.getDistance(curr(A,a).pos);
-      var lambda = gerade.getLength() / (d1+d2) * d1;
-      var richtVek = gerade.richtung.getNormvektor().mul(lambda);
-      gerade.richtung = richtVek;
-      var newNode = B[b].copy();
-      newNode.pos = gerade.getPositionB();
-      // fügt den neuen Knoten ein
-      A.splice(a,0,newNode);
+    // wird von der Funktion huellenAbgleichen aufgerufen, d.h. die nicht-smoothen(!) Hüllen liegen im Uhrzeigersinn vor und haben die gleichen Anfangsknoten
+    // erhält ein Polygon und gibt 2 Polygone aus
+    var smallerP, biggerP, fst, snd;
+    if (this.getLength() < newPoly.getLength()) {// füllt this.vertices auf
+      smallerP = this.copy().vertices;
+      biggerP = newPoly.copy().vertices;
+      fst = smallerP;
+      snd = biggerP;
     }
-    while (i < L.length && j < R.length) {
-      if (L[i].equal(R[j])) {
-        i++; j++;
-      }
-      else if (succ(L,i).equal(R[j])) {
-        getNewPoint(R,j,L,i);//R.splice(j,0,L[i]);
-        i+=2; j+=2;
-      }
-      else if (L[i].equal(succ(R,j))) {
-        getNewPoint(L,i,R,j);//L.splice(i,0,R[j]);
-        i+=2; j+=2;
-      }
-      else {
-        getNewPoint(L,i,R,j);//L.splice(i,0,R[j]);
-        getNewPoint(R,j+1,L,i);//R.splice(j+1,0,L[i]);
-        i+=2; j+=2;
-      }
-    }// ende der Schleife
-    while (i < L.length || j < R.length) {
-      if (i < L.length) {// R ist kürzer
-        getNewPoint(R,j,L,i);//R.splice(j,0,L[i]);
-        i++; j++;
-      }
-      else {// L ist kürzer
-        getNewPoint(L,i,R,j);//L.splice(i,0,R[j]);
-        i++; j++;
-      }
+    else {// füllt newPoly.vertices auf
+      smallerP = newPoly.copy().vertices;
+      biggerP = this.copy().vertices;
+      fst = biggerP;
+      snd = smallerP;
     }
-    return [this, newPoly];// L,R sind Pointer
+    var diff = Math.abs(biggerP.length - smallerP.length);
+    // findet die Stellen, die aufgefüllt werden müssen
+    var i=0, pred, curr, succ, gerade, posBetween, d1, d2, newNode, lambda, richtVek;
+    while (i < biggerP.length && diff > 0) {
+      if (i >= smallerP.length || ! biggerP[i].equal(smallerP[i])) {
+        // hier muss ein neuer Knoten berechnet werden
+        newNode = biggerP[i].copy();
+        pred = Index.pred(i, smallerP.length);
+        curr = Index.curr(i, smallerP.length);
+        //succ = Index.succ(i, smallerP.length);
+        gerade = new Gerade(smallerP[pred].pos, smallerP[curr].pos);
+        d1 = biggerP[i].pos.getDistance(smallerP[pred].pos);
+        d2 = biggerP[i].pos.getDistance(smallerP[curr].pos);
+        lambda = gerade.getLength() / (d1+d2) * d1;
+        richtVek = gerade.richtung.getNormvektor().mul(lambda);
+        gerade.richtung = richtVek;
+        newNode.pos = gerade.getPositionB();
+        // fügt den neuen Knoten ein
+        smallerP.splice(i,0, newNode);
+        diff --;
+      }
+    i = i+1;
+    }
+    return [new Polygon(fst), new Polygon(snd)];
   }
   
-  /**
-  * @class Polygon
-  * @param {Object} Polygon - Zielpolygon, muss im Uhrzeigersinn vorliegen
-  * @return {Object} [Polygon] - gleicht beide Polygone aneinander an: findet gleiche Punkte und bringt sie an den gleichen Index, fügt ggf. fehlende Punkte hinzu
-  */
   huellenAbgleichen(newPoly){
-    var iOld = 0, iNew = 0; // Anfangsindex
-    var polyOld = this.copy();
-    var polyNew = newPoly.copy();
-    var haveSameElem = false;
-    if (polyOld.getLength() == 0 || polyNew.getLength() == 0)
+    // beide nicht-smoothen(!) Hüllen müssen im Uhrzeigersinn vorliegen, findet gleiche Punkte und bringt sie an den gleichen Index, fügt ggf. fehlende Punkte hinzu
+    var idxOld = 0, idxNew = 0; // Anfangsindex
+    var abbrechen = false;
+    if (this.getLength() == 0 || newPoly.getLength() == 0)
       throw new Error("Eines der Polygone hat keine Knoten. Darum kann kein Vergleich stattfinden.");
-    else {// sucht gleiche Knoten
+    else {
+      // sucht gleiche Knoten
       var erstesElem = this.vertices[0];
-      // findet gleiche Elemente, O(n*m) worst-case
-      while (iOld < polyOld.getLength() && !haveSameElem) {
-        while (iNew < polyNew.getLength() && !haveSameElem) {
-          if (polyOld.vertices[iOld].equal(polyNew.vertices[iNew]))
-            haveSameElem = true;
-          iNew++;
+      var huellen;
+      for (var i=0; i<this.getLength(); i++){
+        for (var j=0; j<newPoly.getLength(); j++) {
+          if (this.vertices[i].equal(newPoly.vertices[j])) {
+            idxOld = i;
+            idxNew = j;
+            abbrechen = true;
+            break;// doppeltes break funktioniert nicht
+          }
         }
-        iOld++;
-      }// hat gleiche Punkte gefunden, oder aber (iOld,iNew=0)
+        if (abbrechen)
+          break;
+      }// hat gleiche Punkte gefunden
       // bringt diese an die Position 0
-      if (iOld > 0) {// O(n)
-        polyOld.vertices = this.vertices.slice(iOld)
-          .concat(this.vertices.slice(0,iOld));
+      var polygon1 = this.copy();
+      var polygon2 = newPoly.copy();
+      if (idxOld != idxNew || idxOld != 0) {
+        polygon1.vertices = this.vertices.slice(idxOld);
+        polygon1.vertices = polygon1.vertices
+          .concat(this.vertices.slice(0, idxOld));
+        polygon2.vertices = newPoly.vertices.slice(idxNew);
+        polygon2.vertices = polygon2.vertices
+          .concat(newPoly.vertices.slice(0, idxNew));
       }
-      if (iNew > 0) {// O(m)
-        polyNew.vertices = newPoly.vertices.slice(iNew)
-          .concat(newPoly.vertices.slice(0, iNew));
+      // füllt kürzeres Polygon mit weiteren Punkten auf
+      if (polygon1.getLength() != polygon2.getLength()) {
+        huellen = polygon1.compensateNodeNumber(polygon2);
+        polygon1.vertices = huellen[0].vertices;
+        polygon2.vertices = huellen[1].vertices;
       }
-      // gleicht an und füllt kürzeres Polygon mit weiteren Punkten auf, O(n+m)
-      var huellen = polyOld.compensateNodeNumber(polyNew);
-      polyOld.vertices = huellen[0].vertices;
-      polyNew.vertices = huellen[1].vertices;
-      console.log('polyOld',polyOld,'polyNew',polyNew);
-      return [polyOld, polyNew];
+      // bringt das ursprüngliche Element wieder nach vorne
+      idxOld = 0;
+      while (! polygon1.vertices[idxOld].equal(erstesElem) && idxOld < polygon1.getLength())
+        idxOld++;
+      if (idxOld > 0) {
+        polygon1.vertices = polygon1.vertices.slice(idxOld)
+          .concat(polygon1.vertices.slice(0, idxOld));
+        polygon2.vertices = polygon2.vertices.slice(idxOld)
+          .concat(polygon2.vertices.slice(0, idxOld));
+      }
+      return [polygon1, polygon2];
     }// ende else
+  }
+  
+  delUnneccessaryNodes(){
+    // löscht zuvor erstellte, doppelte Knoten, die nun überflüssig sind
+    var i = 0;
+    var pred, succ, geradePredI;
+    var verts = this.copy().vertices;
+    while (i < verts.length && verts.length > 2) {// wenn nur 2 Punkte vorhanden, sollen diese nicht gelöscht werden, da mind. 2 für eine Hülle notwendig sind
+      pred = verts[Index.pred(i, verts.length)]; // Knoten
+      succ = verts[Index.succ(i, verts.length)];
+      geradePredI = new Gerade(pred.pos, succ.pos);
+      // gleiche Elemente werden nebeneinander sein
+      if (geradePredI.contains(verts[i].pos))
+        verts.splice(i, 1);
+      else if (verts[i].equal(succ))
+        verts.splice(i, 1);
+      else if (verts[i].equal(pred))
+        verts.splice(i, 1);
+      else
+        i++;
+    }
+    return new Polygon(verts);
   }
   
   mapToNodes(fkt){

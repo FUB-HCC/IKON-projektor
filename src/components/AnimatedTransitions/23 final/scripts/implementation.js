@@ -8,8 +8,10 @@ const durationSpan = [0, 3000];
 var transDuration = 1750, schrittweite = 250;
 
 /////// Hüllen ///////
-const maxHullOpacity = 0.3;
-var currHullOpacity = 0.3;
+const maxHullOpacity = 0.3, hullOffset = 29, 
+  hullColor = "#441";// "#993"
+var currHullOpacity = 0.2;
+const textSize = 12;
 
 /////// Knoten ///////
 var projectColorBy = "cluster";// und "researchArea"
@@ -19,7 +21,7 @@ var checkResearchArea = {};
 const forschungsgebiete = topicMapping.sort((a,b) => a.field - b.field).slice(0, topicMapping.length-1);
 const yearSpan = [1980, 2019];
 var currYearSpan = [yearSpan[0], yearSpan[1]];
-const radius = 5, nodeOpacity = 0.5;
+const radius = 4, nodeOpacity = 0.5, strokeWidth = 1.2;
 const overshoot = radius*1.2;
 
 function getColorByDisziplin(topic){// forschungsgebiet
@@ -176,6 +178,14 @@ function init(){
     .data(newNests.nest, d => d.id);
   createHulls(hullSel);
   svg.call(tooltipCluster);
+  ////// Beschriftung
+  var textSel = svg.select("g.beschriftung")
+    .selectAll("text.existent").data(newNests.nest, d => d.id);
+  createHullText(textSel);
+  
+  oldDatas = newDatas;
+  oldNests = newNests;
+  oldClusters = newClusters;
 }
 
 
@@ -190,6 +200,7 @@ function update() {
   startTransition();
 }
 
+/////////////////////// TRANSITIONS /////////////////////////
 function startTransition() {
   var fDatas = getFilteredData(newDatas);
   ////// neu setzen, wenn Zeitspanne erweitert wurde
@@ -224,16 +235,9 @@ function startTransition() {
   var hullsOld = svg.select("g.hulls")
     .selectAll("path.existent")
     .data(transTable.old.nest, d => d.id);
-    
-  hullsOld.exit()// sollte es nicht geben
-    .attr("class", "remove")
-    .style("opacity", 0)
-    .remove();
-    
-  hullsOld.attr("d", function(d){
-    return d.makeHulls2Path(scale);
-  });
   
+  deleteHulls(hullsOld);// sollte es nicht geben
+  hullsOld.attr("d", d => d.makeHulls2Path(scale));
   createHullsTransTabOld(hullsOld);
     
   ///////// Scaling
@@ -243,15 +247,23 @@ function startTransition() {
   var hullsNew = svg.select("g.hulls")
     .selectAll("path.existent")
     .data(transTable.new.nest, d => d.id);
-    
+  
   deleteHullsTrans(hullsNew);
   morphHullsTrans(hullsNew);
   createHullsTransTabNew(hullsNew);
-  
   d3.transition()
+    .delay(getDelayOfAggregate())
     .duration(getDurationOfAggregate())
-    .on("end", showNewHulls);
-    
+    .on("end", function(){showNewHulls();});
+  
+  var hullsText = svg.select("g.beschriftung")
+    .selectAll("text.existent")
+    .data(newNests.nest, d => d.id);
+  
+  deleteHullTextTrans(hullsText);
+  moveHullTextTrans(hullsText);
+  createHullTextTrans(hullsText);
+  
   //////// Kreise
   deleteCircsTrans(circles);
   moveCircsTrans(circles);
@@ -260,6 +272,8 @@ function startTransition() {
 
 function goToAusgangszustand(){
   var fDatas = getFilteredData(oldDatas);
+  var tmp = newClusters;
+  newClusters = oldClusters;
   var circles = svg.select("g.circs").selectAll("circle.existent")
     .data(fDatas, d => d.id);
   // scaling
@@ -268,16 +282,28 @@ function goToAusgangszustand(){
   deleteCircs(circles);
   moveCircs(circles);
   createCircs(circles);
+  
   // Hüllen
   var hulls = svg.select("g.hulls").selectAll("path.existent")
     .data(oldNests.nest, d => d.id);
   deleteHulls(hulls);
   morphHulls(hulls);
   createHulls(hulls);
+  
+  // Beschriftung
+  var hullText = svg.select("g.beschriftung")
+    .selectAll("text.existent")
+    .data(oldNests.nest, d => d.id);
+  deleteHullText(hullText);
+  moveHullText(hullText);
+  createHullText(hullText);
+  
+  oldClusters = newClusters;
+  newClusters = tmp;
 }
 
 function replay() {
   var t0 = d3.transition().duration(500)
-    .on("start", goToAusgangszustand())
-    .on("end", startTransition());
+    .on("start", function(){goToAusgangszustand()})
+    .on("end", function(){startTransition()});
 }
