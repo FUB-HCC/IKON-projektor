@@ -107,26 +107,26 @@ function createHulls(selection){
     .on("mouseout", tooltipCluster.hide);
 }
 
-function createHullsTransTabOld(selection){// sollte nicht vorkommen
-  selection.enter()
-    .append("path")
-    .attr("class", "existent")
-    //.attr("d", c => c.makeHulls2Path(scale))// makeHulls2Path
-    .attr("d", function(c){// c = Cluster{id, polygons}
-      // Hülle taucht aus ihrem Mittelpunkt aus
-      var pos = c.getSchwerpunkt();
-      var node = new Knoten(pos, 0, 0, {}, 2019, [""])
-      var poly = new Array(c.getLength()).fill(node);
-      return new Polygon(poly).makeHull2Path(scale);
-    })
-    .attr('fill', hullColor)
-    .attr('stroke', hullColor)
-    .style("stroke-linejoin", "round")
-    .style("stroke-width", hullOffset + "px")
-    .style('opacity', 0)
-    .on("mouseover", tooltipCluster.show)
-    .on("mouseout", tooltipCluster.hide);
-}
+// function createHullsTransTabOld(selection){// sollte nicht vorkommen
+//   selection.enter()
+//     .append("path")
+//     .attr("class", "existent")
+//     //.attr("d", c => c.makeHulls2Path(scale))// makeHulls2Path
+//     .attr("d", function(c){// c = Cluster{id, polygons}
+//       // Hülle taucht aus ihrem Mittelpunkt aus
+//       var pos = c.getSchwerpunkt();
+//       var node = new Knoten(pos, 0, 0, {}, 2019, [""])
+//       var poly = new Array(c.getLength()).fill(node);
+//       return new Polygon(poly).makeHull2Path(scale);
+//     })
+//     .attr('fill', hullColor)
+//     .attr('stroke', hullColor)
+//     .style("stroke-linejoin", "round")
+//     .style("stroke-width", hullOffset + "px")
+//     .style('opacity', 0)
+//     .on("mouseover", tooltipCluster.show)
+//     .on("mouseout", tooltipCluster.hide);
+// }
 
 function createHullsTransTabNew(selection){// sollte nicht vorkommen,
   // da oldNests angepasst wurden
@@ -142,8 +142,12 @@ function createHullsTransTabNew(selection){// sollte nicht vorkommen,
     .on("mouseover", tooltipCluster.show)
     .on("mouseout", tooltipCluster.hide)
     .transition()
-    .delay(getDelayOfAggregate())
-    .duration(getDurationOfAggregate())
+    .delay(function(){
+      console.log(getDelayOfEnter()+"s", getDurationOfEnter()+"s");
+      return getDelayOfEnter();
+    })
+    .duration(getDurationOfEnter())
+    .ease(d3.easeQuadOut)
     .style('opacity', currHullOpacity)
     .attr("d", c => c.makeHulls2Path(scale));// makeHulls2Path
 }
@@ -152,16 +156,17 @@ function deleteHullsTrans(selection) {
   selection.exit()
     .attr("class", "remove")
     .transition()
-    .delay(getDelayOfAggregate())
-    .duration(getDurationOfAggregate())
+    .delay(getDelayOfExit())
+    .duration(getDurationOfExit())
+    .ease(d3.easeQuadIn)
     //.attr("d", c => c.makeHulls2Path(scale))
-    .attr("d", function(c){// c = Cluster{id, polygons}
-      // Hülle verschwindet in ihrem Mittelpunkt
-      var pos = c.getSchwerpunkt();
-      var node = new Knoten(pos, 0, 0, {}, 2019, [""])
-      var poly = new Array(c.getLength()).fill(node);
-      return new Polygon(poly).makeHull2Path(scale);
-    })
+//     .attr("d", function(c){// c = Cluster{id, polygons}
+//       // Hülle verschwindet in ihrem Mittelpunkt
+//       var pos = c.getSchwerpunkt();
+//       var node = new Knoten(pos, 0, 0, {}, 2019, [""])
+//       var poly = new Array(c.getLength()).fill(node);
+//       return new Polygon(poly).makeHull2Path(scale);
+//     })
     .style("opacity", 0)
     .remove();
 }
@@ -229,11 +234,10 @@ function createHullTextTrans(selection){
     .on("mouseover", tooltipCluster.show)
     .on("mouseout", tooltipCluster.hide)
     .transition()
-      .delay(getDelayOfAggregate())
-      .duration(getDurationOfAggregate())
-      .style('opacity', getHullTextOpacity())
-      .attr("x", c => getClusterLabelPos(c).x)
-      .attr("y", c => getClusterLabelPos(c).y);
+    .delay(getDelayOfEnter())
+    .duration(getDurationOfEnter())
+    .ease(d3.easeQuadOut)
+    .style('opacity', getHullTextOpacity());
 }
 
 function moveHullTextTrans(selection){
@@ -255,10 +259,9 @@ function deleteHullTextTrans(selection){
   selection.exit()
     .attr("class", "exit")
     .transition()
-    .delay(getDelayOfAggregate())
-    .duration(getDurationOfAggregate())
-    .attr("x", c => getClusterLabelPos(c).x)
-    .attr("y", c => getClusterLabelPos(c).y)
+    .delay(getDelayOfExit())
+    .duration(getDurationOfExit())
+    .ease(d3.easeQuadIn)
     .style("opacity", 0)
     .remove();
 }

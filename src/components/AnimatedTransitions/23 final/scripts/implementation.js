@@ -238,29 +238,32 @@ function startTransition() {
   
   deleteHulls(hullsOld);// sollte es nicht geben
   hullsOld.attr("d", d => d.makeHulls2Path(scale));
-  createHullsTransTabOld(hullsOld);
+  //createHullsTransTabOld(hullsOld);
     
-  ///////// Scaling
-  scale.setDomain(fDatas);
   
   ///////// hier startet die Transition
   var hullsNew = svg.select("g.hulls")
     .selectAll("path.existent")
     .data(transTable.new.nest, d => d.id);
   
+  var hullsText = svg.select("g.beschriftung")
+    .selectAll("text.existent")
+    .data(newNests.nest, d => d.id);
+  
   deleteHullsTrans(hullsNew);
+  deleteHullTextTrans(hullsText);
+  
+  ///////// Scaling
+  scale.setDomain(fDatas);
+  
   morphHullsTrans(hullsNew);
   createHullsTransTabNew(hullsNew);
+  
   d3.transition()
     .delay(getDelayOfAggregate())
     .duration(getDurationOfAggregate())
     .on("end", function(){showNewHulls();});
   
-  var hullsText = svg.select("g.beschriftung")
-    .selectAll("text.existent")
-    .data(newNests.nest, d => d.id);
-  
-  deleteHullTextTrans(hullsText);
   moveHullTextTrans(hullsText);
   createHullTextTrans(hullsText);
   

@@ -1025,15 +1025,6 @@ class Nest {// [Cluster_1,... , Cluster_n]
               cluOldTarget = new Cluster(nNew.clusterNo, [newPoly]);
               oldNests.nest.push(cluOldTarget);
             }
-            /* ALT
-            else {// Cluster ex. bereits
-              cluOldTarget = oldNests.nest[iOldTarget];
-            }
-            // Cluster ex. bereits oder ex. nun
-            istEnthalten = cluOldTarget.contains(nNew);
-            if (!istEnthalten) {// Knoten wurde noch nicht in sein neues Cluster eingefügt 
-              cluOldTarget.polygons.push(fstPolOld.copy());
-            }*/
             // else {} Knoten bereits im neuen Cluster enthalten
           }// Ende IF ungleiche ClusterNo
           // else {} // gleiche clusterNo. Nichts zu tun
@@ -1041,25 +1032,6 @@ class Nest {// [Cluster_1,... , Cluster_n]
       }// Ende: Durchlauf des 1. Polygons von newNests
     }// Ende: Durchlauf newNests
     
-    // löscht Cluster in oldNests, wenn es diese in newNests nicht gibt und alle deren Knoten in NewNests ex. – interessant, wenn alle Knoten woanders übergehen
-    /* ALT
-    iOld = 0;
-    while (iOld < oldNests.nest.length) {// durchläuft oldNests
-      cluOld = oldNests.nest[iOld];
-      if (newNests.findClusterOfID(cluOld.id) == -1) {
-        // cluOld ex. nicht. Prüft, ob alle Knoten in newNests sind
-        var nodesStillEx = cluOld.polygons[0].vertices.every(function(node){
-          return newNests.contains(node);
-        });
-        if (nodesStillEx)
-          oldNests.nest.splice(iOld, 1);
-        else
-          iOld++;
-      }
-      else
-        iOld++;
-    }*/
-    ///////////// NEU ///////////
     // Macht aus Clustern in oldNests, die nicht in newNests ex. Hüllenpolygone
     for (var iOld in oldNests.nest) {
       cluOld = oldNests.nest[iOld];
