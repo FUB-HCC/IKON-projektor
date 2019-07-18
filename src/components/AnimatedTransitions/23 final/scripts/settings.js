@@ -88,7 +88,7 @@ var tooltipNode = d3.tip()
   .attr("class", "d3-tip")
   .offset([-8, 0])
   .html(function(d) {
-    return "<b>Projekt-ID: " + d.id + "</b><br>Cluster-Nr.: " + d.clusterNo + "<br>Jahr: " + d.year + "<br>Pos: (" + d3.format(",.2f")(d.pos.x) + " |  " + d3.format(",.2f")(d.pos.y) + ")" + "<br>Titel: " + d.title.slice(0,25) + "...<br>Keywords: " + d.keywords.join(",<br>" + "&nbsp".repeat(20)) + "<br>Subject: " + d.researchArea.name.slice(0,25) + "...";
+    return "<b>Projekt-ID: " + d.id + "</b><br>Cluster-Nr.: " + d.clusterNo + "<br>Jahr: " + d.year + "<br>Subject: " + d.researchArea.name.slice(0,25) + "..." + "<br>Titel: " + d.title.slice(0,25) + "...<br>Keywords: " + d.keywords.join(",<br>" + "&nbsp".repeat(20)) + "<br>Pos: (" + d3.format(",.2f")(d.pos.x) + " |  " + d3.format(",.2f")(d.pos.y) + ")";
   });
 
 
@@ -142,10 +142,7 @@ function createHullsTransTabNew(selection){// sollte nicht vorkommen,
     .on("mouseover", tooltipCluster.show)
     .on("mouseout", tooltipCluster.hide)
     .transition()
-    .delay(function(){
-      console.log(getDelayOfEnter()+"s", getDurationOfEnter()+"s");
-      return getDelayOfEnter();
-    })
+    .delay(getDelayOfEnter())
     .duration(getDurationOfEnter())
     .ease(d3.easeQuadOut)
     .style('opacity', currHullOpacity)
@@ -295,11 +292,11 @@ function getDurationOfAggregate(){
 }
 
 function getDurationOfEnter(){
-  return transDuration * d3.min([esGibtEnter / getTakteGes(), 0.33]);
+  return transDuration * esGibtEnter / getTakteGes();
 }
 
 function getDurationOfExit(){
-  return transDuration * d3.min([esGibtExit / getTakteGes(), 0.33]);
+  return transDuration * esGibtExit / getTakteGes();
 }
 
 function getDelayOfAggregate(){
@@ -336,13 +333,13 @@ function changeView(keypress) {
       console.log( "Blob wird unterstützt." );
     else
       console.log( "Blob wird nicht unterstützt." );
-    callAusgangszustand();
+    //callAusgangszustand();
     var inhalt, fileNr;
-    var counter = 1;//var date = new Date();
-    var n = 10;
-    inhalt = createSVGcontent();
+    var counter = 0;// 1
+    var n = 60;// 10
+    /*inhalt = createSVGcontent();
     zip.file("PetriDish-"+ "01.svg", inhalt);
-    replay();
+    replay();*/
     // https://stackoverflow.com/questions/2170923/whats-the-easiest-way-to-call-a-function-every-5-seconds-in-jquery
     var interval = setInterval(function(){// hat eine leichte Verschiebung : 170 ms
       if (++counter <= n+1) {
@@ -356,7 +353,7 @@ function changeView(keypress) {
           saveAs(blob, "PetriDish.zip" );
         });
       }
-    }, transDuration/n);
+    }, 250);// transDuration/n
   }
 }
 
@@ -364,7 +361,7 @@ function createSVGcontent(){
   // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
   var svgElem;
   var svgElements = document.getElementsByClassName("svg");
-  svgElem = document.getElementsByClassName("svg")[0];
+  svgElem = document.getElementById("svg");
   svgElem.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   var svgData = svgElem.outerHTML;
   var preface = '<?xml version="1.0" standalone="no"?>\r\n';

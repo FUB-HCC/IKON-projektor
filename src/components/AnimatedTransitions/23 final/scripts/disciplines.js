@@ -48,18 +48,7 @@ const topicMapping = [
   {name: 'Unbekannt', num: '30', field: 5, color: '#959ef9'},
   ///////////// weitere
   {name: 'Evolution, Anthropologie', num: '31', field: 2, color: '#959ef9'},
-  {name: 'Systematik und Morphologie der Tiere', num: '32', field: 2, color: '#959ef9'},
-  {name: 'Biologie des Verhaltens und der Sinne', num: '33', field: 2, color: '#959ef9'},
-  {name: 'Pflanzenökologie und Ökosystemforschung', num: '34', field: 2, color: '#959ef9'},
-  {name: 'Physik des Erdkörpers', num: '35', field: 1, color: '#959ef9'},
-  {name: 'Kunstgeschichte', num: '36', field: 3, color: '#959ef9'},
-  {name: 'Biochemie und Physiologie der Tiere', num: '37', field: 2, color: '#959ef9'},
-  {name: 'Grundlagen von Pathogenese, Diagnostik, Therapie und Klinische Tiermedizin', num: '38', field: 2, color: '#959ef9'},
-  {name: 'Entwicklungsbiologie', num: '39', field: 2, color: '#959ef9'},
-  {name: 'Neuere und Neueste Geschichte', num: '40', field: 3, color: '#959ef9'},// (einschl. Europäische Geschichte der Neuzeit und Außereuropäische Geschichte)
-  {name: 'Anatomie', num: '41', field: 2, color: '#959ef9'},
-  {name: 'Physik, Chemie und Biologie des Meeres', num: '42', field: 1, color: '#959ef9'}
-  // 
+  {name: 'Ökologie der Tiere, Biodiversität und Ökosystemforschung', num: '32', field: 2, color: '#959ef9'},
 ]
 
 const fieldsIntToString = (number) => {

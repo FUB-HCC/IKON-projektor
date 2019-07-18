@@ -213,9 +213,9 @@ function startTransition() {
     
   ////// Prüft, welche Änderungen es gibt
   esGibtExit  = circles.exit()._groups[0]
-    .map(c => c != undefined).some(b => b);
+    .map(c => c != undefined).some(b => b) || oldClusters.some(c => newClusters.filter(d => d.id == c.id).length == 0);
   esGibtEnter = circles.enter()._groups[0]
-    .map(c => c != undefined).some(b => b);
+    .map(c => c != undefined).some(b => b) || newClusters.some(c => oldClusters.filter(d => d.id == c.id).length == 0);
   function gibtEsAggregateOPs(){
     if (transTable.old.nest.length != transTable.new.nest.length)
       return true;
@@ -230,6 +230,11 @@ function startTransition() {
     return ungleichheiten;
   }
   esGibtAggregatOP = gibtEsAggregateOPs() || !(esGibtExit && esGibtEnter);// irgendeine Änderung gibt es ja schließlich
+  
+  console.log('taktzahl',getTakteGes());
+  console.log('exit',esGibtExit, 'delay', getDelayOfExit(), 'dur', getDurationOfExit());
+  console.log('agg',esGibtAggregatOP, 'delay', getDelayOfAggregate(), 'dur', getDurationOfAggregate());
+  console.log('enter',esGibtEnter, 'delay', getDelayOfEnter(), 'dur', getDurationOfEnter());
   
   ////// Hüllen 
   var hullsOld = svg.select("g.hulls")
