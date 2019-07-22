@@ -90,10 +90,12 @@ const applyFilters = (data, filter) => {
         if (filteredData[d][f.filterKey].includes(f.value)) newFilteredData[d] = filteredData[d]
       }
     })
+    console.log(filteredData)
     filteredData = newFilteredData
   })
-  return filteredData
+  return Object.values(filteredData)
 }
+
 const compare = (a, b) => {
   if (topicToField(a) < topicToField(b)) return -1
   else return 1
@@ -133,7 +135,7 @@ const updateProjectsData = (state, action) => {
   const uniqueTopics = []
   const uniqueSponsors = []
 
-  Object.values(projectData).forEach(project => {
+  Object.values(projects).forEach(project => {
     Object.keys(project).forEach(property => {
       const value = project[property]
       if (property === 'forschungsbereichstr') {
@@ -146,23 +148,29 @@ const updateProjectsData = (state, action) => {
     })
   })
 
+  const newFilters = {
+    ...state.filters,
+    forschungsgebiet: {
+      ...state.filters.forschungsgebiet,
+      uniqueVals: uniqueFields.sort(compare),
+      value: uniqueFields
+    },
+    hauptthema: {
+      ...state.filters.hauptthema,
+      uniqueVals: uniqueTopics.sort(compare),
+      value: uniqueTopics
+    },
+    geldgeber: {
+      ...state.filters.geldgeber,
+      uniqueVals: uniqueSponsors.sort(compare),
+      value: uniqueSponsors
+    }
+  }
+
   return Object.assign({}, state, {
     projects: projects,
-    filters: {
-      ...state.filters,
-      forschungsgebiet: {
-        ...state.filters.forschungsgebiet,
-        uniqueVals: uniqueFields.sort(compare)
-      },
-      hauptthema: {
-        ...state.filters.hauptthema,
-        uniqueVals: uniqueTopics.sort(compare)
-      },
-      geldgeber: {
-        ...state.filters.geldgeber,
-        uniqueVals: uniqueSponsors.sort(compare)
-      }
-    }
+    filters: newFilters,
+    filteredProjects: applyFilters(projects, newFilters)
   })
 }
 

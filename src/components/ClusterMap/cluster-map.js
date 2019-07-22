@@ -3,7 +3,6 @@ import ClusterMapView from './cluster-map-view'
 import _ from "lodash";
 
 const mapStateToProps = state => {
-  console.log(state.main.categories)
   let clusters = [];
   let categories = state.main.categories
   if(state.main.clusterData){

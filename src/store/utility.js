@@ -130,11 +130,11 @@ export const getTopicColor = (topic) => {
 }
 
 export const sponsorStringToInt = (state, str) => {
-  return state.filter[2].distValues.find(e => e === str) ? state.filter[2].distValues.indexOf(str) : str
+  return state.filters.geldgeber.uniqueVals.find(e => e === str) ? state.filters.geldgeber.uniqueVals.indexOf(str) : str
 }
 
 export const sponsorIntToString = (state, int) => {
-  return state.filter[2].distValues[int] ? state.filter[2].distValues[int] : int
+  return state.filters.geldgeber.uniqueVals[int] ? state.filters.geldgeber.uniqueVals[int] : int
 }
 
 export const getColor = (input) => {
