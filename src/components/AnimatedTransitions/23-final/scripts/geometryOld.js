@@ -1,5 +1,5 @@
 /**
- * Summary. (use period)
+ * Summary.
  *
  * Description. Dieses Dokument enthält alle Klassen, welche Hüllentransformationen unterstützen.
  *
