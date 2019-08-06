@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import GraphView from './containers/GraphView/GraphView'
+// import AreaChart from './containers/GraphView/AreaChart'
+import GraphViewPetri from './containers/GraphView/GraphViewPetri'
+// import GraphViewTimeLine from './containers/GraphView/GraphViewTimeLine'
 import About from './containers/About/About'
 import Discoveries from './containers/Discoveries/Discoveries'
 import Projects from './containers/Projects/Projects'
@@ -27,6 +30,23 @@ class App extends Component {
                 <Route path='/about' component={About} />
               </Switch>
             </div>
+            <div className={classes.BackGradientRight}>
+              <Switch>
+                {/* <Route exact path='/' render={() => (<Redirect to="/explore"/>)}/> */}
+                <Route path='/projects' component={Projects} />
+                <Route path='/explore' component={GraphViewPetri}/>
+                <Route path='/discoveries' component={Discoveries} />
+                <Route path='/about' component={About} />
+              </Switch>
+            </div>
+            {/* <div className={classes.BackGradientTimeLine}>
+              <Switch>
+                <Route path='/projects' component={Projects} />
+                <Route path='/explore' component={GraphViewTimeLine}/>
+                <Route path='/discoveries' component={Discoveries} />
+                <Route path='/about' component={About} />
+              </Switch>
+            </div> */}
             <div className={classes.sidebar}>
               <Sidebar />
             </div>

@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
-import classes from '../redesigned.css'
+// import classes from '../redesigned.css'
 import {connect} from 'react-redux'
 import * as actions from '../../store/actions/actions'
-import logo from '../../assets/ikon_logo.png'
+// import logo from '../../assets/ikon_logo.png'
 
 class NavigationSubpages extends Component {
   constructor (props) {
@@ -33,8 +33,9 @@ class NavigationSubpages extends Component {
   }
   render () {
     return (
-      <div className={classes.navbar}>
-        <div className={classes.leftpanel}>
+      // <div className={classes.navbar}>
+      <div>
+        {/* <div className={classes.leftpanel}>
           <ul className={classes.ContainerSub}>
             <li>
               <a className={classes.NavigationElement + ' ' + classes.logo} to='/projects'><img src={logo} /></a>
@@ -59,7 +60,7 @@ class NavigationSubpages extends Component {
               <a className={classes.NavigationRightElement}>MENU</a>
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
     )
   }
