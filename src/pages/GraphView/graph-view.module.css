@@ -62,9 +62,6 @@
 .OuterDiv {
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 .statisticsWrapper {
     height: 70vh;

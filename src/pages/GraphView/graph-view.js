@@ -1,21 +1,28 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {connect} from 'react-redux'
 import ClusterMap from '../../components/ClusterMap/cluster-map'
-import AreaChart from '../../components/AreaChart/area-chart'
+import GeoMap from '../../components/GeoMap/geo-map-view'
 import TimeGraph from '../../components/TimeLine/time-line'
 import classes from './graph-view.module.css'
 import * as actions from '../../store/actions/actions'
 
-class GraphView extends Component {
+class GraphView extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {activePopover: this.props.selectedProject ? 1 : -1, height: window.innerHeight, width: window.innerWidth}
+    this.margins = {top: 10, left: 10, bottom: 10, right: 10}
+    this.state = {
+      activePopover: this.props.selectedProject ? 1 : -1,
+    }
     this.changeModalHandler = this.changeModalHandler.bind(this)
     this.changeGraphHandler = this.changeGraphHandler.bind(this)
     this.projectClickHandler = this.projectClickHandler.bind(this)
   }
 
   componentDidMount () {
+    this.setState({
+      height: window.innerHeight * 0.70 - this.margins.top - this.margins.bottom,
+      width: window.innerWidth * 0.75 - this.margins.left - this.margins.right
+    })
     window.addEventListener('resize', this.resize.bind(this))
     this.resize()
     this.props.fetchClusterData()
@@ -24,7 +31,10 @@ class GraphView extends Component {
   }
 
   resize () {
-    this.setState({width: window.innerWidth, height: window.innerHeight})
+    this.setState({
+      height: window.innerHeight * 0.70 - this.margins.top - this.margins.bottom,
+      width: window.innerWidth * 0.75 - this.margins.left - this.margins.right
+    })
   }
 
   changeModalHandler (filter) {
@@ -57,7 +67,7 @@ class GraphView extends Component {
         Graph = (<TimeGraph height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
         break
       case '2':
-        Graph = (<AreaChart height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
+        Graph = (<GeoMap height={this.state.height} width={this.state.width} onProjectClick={this.projectClickHandler}/>)
         break
       default:
         break
