@@ -7,18 +7,26 @@ import {ReactComponent as SouthAmerica} from '../../assets/GeoMap/continents/sou
 import {ReactComponent as Asia} from '../../assets/GeoMap/continents/asia.svg'
 import {ReactComponent as Australia} from '../../assets/GeoMap/continents/australia.svg'
 
-
+//EXPECTS: institutions, projects, width, height, onProjectClickHandler
 const GeoMapView = (props) => {
-  const continents = ["Europa", "Nordamerika", "Südamerika", "Asien", "Afrika", "Australien"]
   const anchorPoints = Array(6).fill().map((v,i) => props.width/12 * (i * 2 + 1))
-  console.log(anchorPoints)
+  let continents = {
+    Europa: { latMin: -10.4608, latMax: 40.1669, longMin: 34.8088, longMax: 71.113, institutions:[] },
+    Nordamerika:{ latMin: -168.1311, latMax: -12.155, longMin: 25.1155, longMax: 83.5702, institutions:[] },
+    Südamerika:{ latMin: -81.2897, latMax: -26.2463, longMin: -59.473, longMax: 12.6286, institutions:[] },
+    Asien:{ latMin: -9.12, latMax: 180, longMin: -67.6, longMax: 81.852, institutions:[] },
+    Afrika:{ latMin: -17.537, latMax: 51.412, longMin: -34.822, longMax: 37.34, institutions:[] },
+    Australien:{ latMin: 112.9511, latMax: 159.1019, longMin: -54.749, longMax: -10.0516, institutions:[] }
+  }
+  let connections = []
+
   return(
     <div className={style.geoViewWrapper} style={{width: props.width, height: props.height}}>
       <div className={style.arcWrapper}>
       </div>
       <div className={style.labelWrapper}>
         {anchorPoints.map((p, i) => {
-          return (<div className={style.continentLabel} key={continents[i]} style={{left: p}}>
+          return (<div className={style.continentLabel} key={Object.keys(continents)[i]} style={{left: p}}>
             {continents[i]}
           </div>)
         })}
