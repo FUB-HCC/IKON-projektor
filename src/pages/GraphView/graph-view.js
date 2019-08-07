@@ -62,7 +62,7 @@ class GraphView extends React.Component {
       width: this.state.width,
       height: this.state.height,
       onProjectClick: this.projectClickHandler,
-      institution: this.props.institutions,
+      institutions: this.props.institutions,
       projects: this.props.filteredProjects
     }
     let Graph = (<ClusterMap/>) // render conditional according to state. Petridish rendered as default

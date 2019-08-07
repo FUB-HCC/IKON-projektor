@@ -31,7 +31,7 @@ const initialState = {
       value: []
     }
   },
-  graph: '0',
+  graph: '2',
   projects: [],
   filteredProjects: [],
   institutions: [],
