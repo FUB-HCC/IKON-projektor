@@ -12,6 +12,7 @@ const getInstitutionFromId = (institutionsList, id) => (institutionsList.find(in
 const distance = (continent, instiution) => Math.sqrt(Math.pow(continent.centroidX - instiution.long, 2) + Math.pow(continent.centroidY - instiution.lat, 2))
 const disambiguateContinents = (candidates, institution) => candidates.sort((a,b) => distance(a,institution) - distance(b, institution))
 const getContinentOfInstitution = (continentList, institution) => {
+  if(!institution) return null
   if(institution.continent){return institution.continent}
   const candidates = continentList.filter(con =>
     (con.longMin < institution.lon &&
@@ -26,8 +27,8 @@ const getContinentOfInstitution = (continentList, institution) => {
   return institution.continent
 }
 
-const mapLongToWidth = (width, continent, long) => (long - continent.longMin) / (continent.longMax - continent.longMin) * width
-const mapLatToHeight = (height, continent, lat) => (lat - continent.latMin) / (continent.latMax - continent.latMin) * height
+const mapLongToWidth = (width, continent, long) => (-continent.longMin + long) * width / (continent.longMax - continent.longMin)
+const mapLatToHeight = (height, continent, lat) => (-continent.latMin + lat) * height / (continent.latMax - continent.latMin)
 
 const edgesFromClique = (clique) => {
   let pairs = []
@@ -44,15 +45,13 @@ const GeoMapView = (props) => {
   const { projects, height } = props
   let institutions = props.institutions
   if(projects.length === 0 || institutions.length === 0){return (<div></div>)}
-  institutions = institutions.map(ins => Object.assign(ins, {}, {
-    lon: Math.random() * 180 - 90,
-    lat: Math.random() * 360 - 180
-  }))
+  institutions = institutions.map(ins => Object.assign(ins))
+  institutions = institutions.filter(ins => ins.lon && ins.lat)
   const width = props.width ? props.width : 1000
   const institution = id => getInstitutionFromId(institutions, id)
 
   const continents = [
-    { name:'Europa', svg: <Europe/>, longMin: -10.4608, longMax: 40.1669, latMin: 34.8088, latMax: 71.113, institutionCount:0 },
+    { name:'Europa', svg: <Europe/>, longMin: -10.4608, longMax: 47.822, latMin: 34.8088, latMax: 71.113, institutionCount:0 },
     { name:'Nordamerika', svg: <NorthAmerica/> , longMin: -168.1311, longMax: -12.155, latMin: 25.1155, latMax: 83.5702, institutionCount:0  },
     { name:'Südamerika', svg: <SouthAmerica/>, longMin: -81.2897, longMax: -26.2463, latMin: -59.473, latMax: 12.6286, institutionCount:0  },
     { name:'Asien', svg: <Asia/>, longMin: -9.12, longMax: 180, latMin: -67.6, latMax: 81.852, institutionCount:0  },
@@ -69,7 +68,7 @@ const GeoMapView = (props) => {
   let connections = []
   let institutionsInProjects = {}
   const appendInstitutionsInProjects = (ins) => {
-    if(!institutionsInProjects[ins.id]){institutionsInProjects[ins.id] = Object.assign(ins)}
+    if(ins && !institutionsInProjects[ins.id]){institutionsInProjects[ins.id] = Object.assign(ins)}
   }
 
   projects.forEach(project => {
@@ -85,6 +84,7 @@ const GeoMapView = (props) => {
   })
   let continentConnections = {}
   connections.forEach(con => {
+    if(!institution(con[0]) || !institution(con[1])){return}
     const continent1 = institution(con[0]).continent
     const continent2 = institution(con[1]).continent
     if(continent1 && continent2 && continent1 !== continent2){
@@ -112,6 +112,7 @@ const GeoMapView = (props) => {
               strokeWidth={con.weight}
               fill='none'
               opacity={0.5}
+              key={JSON.stringify([con.start, con.end])}
             />
           ))}
         </svg>
@@ -129,19 +130,23 @@ const GeoMapView = (props) => {
         {continents.map((c) => {
           const instititutionsOnContinent = Object.values(institutionsInProjects).filter(ins => ins.continent === c.name)
           return (
-            <div className={style.continentWrapper}>
-              <svg width={width / 6} viewBox={'0 0 500 500'}>
+            <div className={style.continentWrapper} key={c.name}>
+              <svg width={width / 6} viewBox={'0 0 292 384'}>
                 <g fill={'white'}>
                   {c.svg}
                 </g>
-                <g fill={'red'}>
-                  {instititutionsOnContinent.map(ins => ((
-                    <circle
-                      cx={mapLongToWidth(500, c, ins.lon)}
-                      cy={mapLatToHeight(500, c, ins.lat)}
-                      r={10}/>
-                  )))}
-                </g>
+                <svg>
+                  <g fill={'red'}>
+                    {instititutionsOnContinent.map(ins => ((
+                      <circle
+                        cx={mapLongToWidth(292, c, ins.lon)}
+                        cy={384 - mapLatToHeight(384, c, ins.lat)}
+                        r={5}
+                        key={ins.name + ins.id}
+                      />
+                    )))}
+                  </g>
+                </svg>
               </svg>
             </div>
           )
