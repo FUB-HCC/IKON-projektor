@@ -1,10 +1,10 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import ClusterMap from '../../components/ClusterMap/cluster-map';
-import GeoMap from '../../components/GeoMap/geo-map-view';
-import TimeGraph from '../../components/TimeLine/time-line';
-import classes from './graph-view.module.css';
-import * as actions from '../../store/actions/actions';
+import React from "react";
+import { connect } from "react-redux";
+import ClusterMap from "../../components/ClusterMap/cluster-map";
+import GeoMap from "../../components/GeoMap/geo-map-view";
+import TimeGraph from "../../components/TimeLine/time-line";
+import classes from "./graph-view.module.css";
+import * as actions from "../../store/actions/actions";
 
 class GraphView extends React.Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class GraphView extends React.Component {
       height: window.innerHeight * 0.7 - this.margins.top - this.margins.bottom,
       width: window.innerWidth * 0.75 - this.margins.left - this.margins.right
     });
-    window.addEventListener('resize', this.resize.bind(this));
+    window.addEventListener("resize", this.resize.bind(this));
     this.resize();
     this.props.fetchClusterData();
     this.props.fetchProjectsData();
@@ -69,7 +69,7 @@ class GraphView extends React.Component {
     };
     let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
-      case '0':
+      case "0":
         Graph = (
           <ClusterMap
             height={this.state.height}
@@ -78,7 +78,7 @@ class GraphView extends React.Component {
           />
         );
         break;
-      case '1':
+      case "1":
         Graph = (
           <TimeGraph
             height={this.state.height}
@@ -87,7 +87,7 @@ class GraphView extends React.Component {
           />
         );
         break;
-      case '2':
+      case "2":
         Graph = <GeoMap {...geoMapProps} />;
         break;
       default:

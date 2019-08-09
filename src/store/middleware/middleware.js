@@ -1,10 +1,10 @@
-import { stringify as queryStringify } from 'query-string';
-import { history } from '../../index';
+import { stringify as queryStringify } from "query-string";
+import { history } from "../../index";
 import {
   fieldsStringToInt,
   sponsorStringToInt,
   topicStringToInt
-} from '../utility';
+} from "../utility";
 
 export const updateUrl = store => next => action => {
   const result = next(action);
@@ -23,7 +23,7 @@ export const updateUrl = store => next => action => {
     f: newUrlData.f.map(t => fieldsStringToInt(t)),
     s: newUrlData.s.map(s => sponsorStringToInt(newState, s))
   };
-  const newUrl = '?' + queryStringify(minifiedUrlData);
+  const newUrl = "?" + queryStringify(minifiedUrlData);
   if (newUrl !== window.location.search) {
     history.push(newUrl);
   }
@@ -32,15 +32,15 @@ export const updateUrl = store => next => action => {
 };
 
 export const logger = store => next => action => {
-  console.groupCollapsed(action.type ? action.type : 'ASYNC ACTION');
-  console.info('dispatching', action);
+  console.groupCollapsed(action.type ? action.type : "ASYNC ACTION");
+  console.info("dispatching", action);
   let result = next(action);
-  console.log('next state', store.getState());
+  console.log("next state", store.getState());
   console.groupEnd();
   return result;
 };
 
 export const thunk = store => next => action =>
-  typeof action === 'function'
+  typeof action === "function"
     ? action(store.dispatch, store.getState)
     : next(action);

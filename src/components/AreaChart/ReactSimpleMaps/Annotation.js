@@ -1,14 +1,10 @@
+import React, { Component } from "react";
+import { geoLength } from "d3-geo";
 
-import React, { Component } from 'react'
-import { geoLength } from 'd3-geo'
-
-import {
-  createConnectorPath,
-  createTextAnchor
-} from './utils'
+import { createConnectorPath, createTextAnchor } from "./utils";
 
 class Annotation extends Component {
-  render () {
+  render() {
     const {
       projection,
       subject,
@@ -24,57 +20,58 @@ class Annotation extends Component {
       markerEnd,
       width,
       height
-    } = this.props
+    } = this.props;
 
-    const connectorPath = createConnectorPath(null, [-dx / zoom, -dy / zoom], curve)
-    const translation = projection(subject)
+    const connectorPath = createConnectorPath(
+      null,
+      [-dx / zoom, -dy / zoom],
+      curve
+    );
+    const translation = projection(subject);
 
     const lineString = {
-      'type': 'Feature',
-      'geometry': {
-        'type': 'LineString',
-        'coordinates': [
-          projection.invert([width / 2, height / 2]),
-          subject
-        ]
+      type: "Feature",
+      geometry: {
+        type: "LineString",
+        coordinates: [projection.invert([width / 2, height / 2]), subject]
       }
-    }
+    };
 
-    const radians = Math.PI / 2
-    const degrees = 90
-    const isGlobe = projection.clipAngle && projection.clipAngle() === degrees
-    const isHidden = isGlobe && geoLength(lineString) > radians
+    const radians = Math.PI / 2;
+    const degrees = 90;
+    const isGlobe = projection.clipAngle && projection.clipAngle() === degrees;
+    const isHidden = isGlobe && geoLength(lineString) > radians;
 
     return (
       <g
         className="rsm-annotation"
-        style={isHidden ? {...style, ...hiddenStyle} : style}
-        transform={ `translate(
+        style={isHidden ? { ...style, ...hiddenStyle } : style}
+        transform={`translate(
           ${translation[0] + dx / zoom}
           ${translation[1] + dy / zoom}
         )`}
-        textAnchor={ createTextAnchor(dx) }
+        textAnchor={createTextAnchor(dx)}
       >
-        { children }
+        {children}
         <path
-          d={ connectorPath }
-          stroke={ stroke }
-          strokeWidth={ strokeWidth }
+          d={connectorPath}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
           fill="none"
-          markerEnd={ markerEnd }
+          markerEnd={markerEnd}
         />
       </g>
-    )
+    );
   }
 }
 
 Annotation.defaultProps = {
   curve: 0,
-  markerEnd: 'none',
-  componentIdentifier: 'Annotation',
-  stroke: '#000000',
+  markerEnd: "none",
+  componentIdentifier: "Annotation",
+  stroke: "#000000",
   strokeWidth: 1,
   zoom: 1
-}
+};
 
-export default Annotation
+export default Annotation;

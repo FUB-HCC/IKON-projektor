@@ -1,44 +1,44 @@
-import * as actionTypes from '../actions/actionTypes'
+import * as actionTypes from "../actions/actionTypes";
 import {
   createNewStateFromUrlData,
   fieldsStringToInt,
   topicToField,
   categories
-} from '../utility'
-import {parse as queryStringParse} from 'query-string'
+} from "../utility";
+import { parse as queryStringParse } from "query-string";
 
 const initialState = {
   filters: {
     forschungsgebiet: {
-      name: 'Forschungsgebiet',
-      filterKey: 'forschungsbereichstr',
-      type: 'a',
-      uniqueVals: ['1','2','3','4'],
-      value: ['1','2','3','4']
+      name: "Forschungsgebiet",
+      filterKey: "forschungsbereichstr",
+      type: "a",
+      uniqueVals: ["1", "2", "3", "4"],
+      value: ["1", "2", "3", "4"]
     },
     hauptthema: {
-      name: 'Hauptthema',
-      filterKey: 'hauptthema',
-      type: 'a',
+      name: "Hauptthema",
+      filterKey: "hauptthema",
+      type: "a",
       uniqueVals: [],
       value: []
     },
     geldgeber: {
-      name: 'Geldgeber',
-      filterKey: 'geldgeber',
-      type: 'a',
+      name: "Geldgeber",
+      filterKey: "geldgeber",
+      type: "a",
       uniqueVals: [],
       value: []
     }
   },
-  graph: '2',
+  graph: "2",
   projects: [],
   filteredProjects: [],
   institutions: [],
   categories: categories,
   clusterData: undefined,
   selectedProject: undefined
-}
+};
 
 // Keep the reducer switch lean by outsourcing the actual code below
 const reducer = (state = initialState, action) => {
@@ -48,105 +48,113 @@ const reducer = (state = initialState, action) => {
         ...state,
         graph: action.value,
         filteredData: applyFilters(state.projects, state.filters)
-      }
+      };
 
     case actionTypes.FILTER_CHANGE:
-      return changeFilter(state, action)
+      return changeFilter(state, action);
 
     case actionTypes.TOGGLE_FILTERS:
-      return toggleFilters(state, action)
+      return toggleFilters(state, action);
 
     case actionTypes.ACTIVATE_POPOVER:
-      return activatePopover(state, action)
+      return activatePopover(state, action);
 
     case actionTypes.DEACTIVATE_POPOVER:
-      return deactivatePopover(state)
+      return deactivatePopover(state);
 
     case actionTypes.GET_FILTERS_FROM_URL:
-      return urlUpdatesFilters(state)
+      return urlUpdatesFilters(state);
 
     case actionTypes.UPDATE_CLUSTER_DATA:
-      return updateClusterData(state, action)
+      return updateClusterData(state, action);
 
     case actionTypes.UPDATE_INSTITUTIONS_DATA:
-      return updateInstitutionsData(state, action)
+      return updateInstitutionsData(state, action);
 
     case actionTypes.UPDATE_PROJECTS_DATA:
-      return updateProjectsData(state, action)
+      return updateProjectsData(state, action);
 
     default:
-      return state
+      return state;
   }
-}
+};
 
 const applyFilters = (data, filter) => {
-  let filteredData = data
+  let filteredData = data;
   Object.values(filter).forEach(f => {
-    let newFilteredData = {}
+    let newFilteredData = {};
     filteredData = Object.keys(filteredData).forEach(d => {
-      if (f.type === 'a') {
-        if (f.value.some(value => value === filteredData[d][f.filterKey])) newFilteredData[d] = filteredData[d]
+      if (f.type === "a") {
+        if (f.value.some(value => value === filteredData[d][f.filterKey]))
+          newFilteredData[d] = filteredData[d];
       } else {
-        if (filteredData[d][f.filterKey].includes(f.value)) newFilteredData[d] = filteredData[d]
+        if (filteredData[d][f.filterKey].includes(f.value))
+          newFilteredData[d] = filteredData[d];
       }
-    })
-    console.log(filteredData)
-    filteredData = newFilteredData
-  })
-  return Object.values(filteredData)
-}
+    });
+    console.log(filteredData);
+    filteredData = newFilteredData;
+  });
+  return Object.values(filteredData);
+};
 
 const compare = (a, b) => {
-  if (topicToField(a) < topicToField(b)) return -1
-  else return 1
-}
+  if (topicToField(a) < topicToField(b)) return -1;
+  else return 1;
+};
 
-const updateClusterData = (state, action) => (Object.assign({}, state, {
-  clusterData: action.value
-}));
+const updateClusterData = (state, action) =>
+  Object.assign({}, state, {
+    clusterData: action.value
+  });
 
-const updateInstitutionsData = (state, action) => (Object.assign({}, state, {
-  institutions: action.value
-}));
+const updateInstitutionsData = (state, action) =>
+  Object.assign({}, state, {
+    institutions: action.value
+  });
 
 const updateProjectsData = (state, action) => {
-  const projectData = action.value
+  const projectData = action.value;
   const projects = Object.values(projectData).map(project => {
-    project.hauptthema = project.review_board ? project.review_board : 'Unbekannt'
-    project.geldgeber = project.sponsor
+    project.hauptthema = project.review_board
+      ? project.review_board
+      : "Unbekannt";
+    project.geldgeber = project.sponsor;
     if (project.research_area) {
       return {
         ...project,
-        forschungsbereich: project.research_area.split(' (')[0],
-        forschungsbereichstr: project.research_area.split(' (')[0], // TODO please change API so it does not contain "(# Mitglieder)"
-        forschungsbereichNumber: fieldsStringToInt(project.research_area.split(' (')[0])
-      }
+        forschungsbereich: project.research_area.split(" (")[0],
+        forschungsbereichstr: project.research_area.split(" (")[0], // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereichNumber: fieldsStringToInt(
+          project.research_area.split(" (")[0]
+        )
+      };
     } else {
       return {
         ...project,
-        forschungsbereich: 'Unbekannt',
-        forschungsbereichstr: 'Unbekannt', // TODO please change API so it does not contain "(# Mitglieder)"
-        forschungsbereichNumber: fieldsStringToInt('Unbekannt')
-      }
+        forschungsbereich: "Unbekannt",
+        forschungsbereichstr: "Unbekannt", // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereichNumber: fieldsStringToInt("Unbekannt")
+      };
     }
-  })
+  });
 
-  const uniqueFields = []
-  const uniqueTopics = []
-  const uniqueSponsors = []
+  const uniqueFields = [];
+  const uniqueTopics = [];
+  const uniqueSponsors = [];
 
   Object.values(projects).forEach(project => {
     Object.keys(project).forEach(property => {
-      const value = project[property]
-      if (property === 'forschungsbereichstr') {
-        if (!uniqueFields.some(e => e === value)) uniqueFields.push(value)
-      } else if (property === 'hauptthema') {
-        if (!uniqueTopics.some(e => e === value)) uniqueTopics.push(value)
-      } else if (property === 'geldgeber') {
-        if (!uniqueSponsors.some(e => e === value)) uniqueSponsors.push(value)
+      const value = project[property];
+      if (property === "forschungsbereichstr") {
+        if (!uniqueFields.some(e => e === value)) uniqueFields.push(value);
+      } else if (property === "hauptthema") {
+        if (!uniqueTopics.some(e => e === value)) uniqueTopics.push(value);
+      } else if (property === "geldgeber") {
+        if (!uniqueSponsors.some(e => e === value)) uniqueSponsors.push(value);
       }
-    })
-  })
+    });
+  });
 
   const newFilters = {
     ...state.filters,
@@ -165,30 +173,32 @@ const updateProjectsData = (state, action) => {
       uniqueVals: uniqueSponsors.sort(compare),
       value: uniqueSponsors
     }
-  }
+  };
 
   return Object.assign({}, state, {
     projects: projects,
     filters: newFilters,
     filteredProjects: applyFilters(projects, newFilters)
-  })
-}
+  });
+};
 
 const changeFilter = (state, action) => {
-  const newFilter = state.filters
+  const newFilter = state.filters;
   if (state.filters[action.id].value.some(e => e === action.value)) {
-    newFilter[action.id].value = state.filters[action.id].value.filter(key => key !== action.value)
+    newFilter[action.id].value = state.filters[action.id].value.filter(
+      key => key !== action.value
+    );
   } else {
-    newFilter[action.id].value.push(action.value)
+    newFilter[action.id].value.push(action.value);
   }
-  return  {
+  return {
     ...state,
     filters: newFilter,
     filteredProjects: applyFilters(state.projects, newFilter)
-  }
-}
+  };
+};
 
-const toggleFilters = (state, action) => state
+const toggleFilters = (state, action) => state;
 //   const newFilter = state.filter.map(fil => {
 //     if (fil.key === action.key) fil.value = action.filters
 //     return fil
@@ -203,38 +213,38 @@ const toggleFilters = (state, action) => state
 //   return newState
 // }
 
-const activatePopover = (state, action) => {  
-  let selectedProjectId = null
+const activatePopover = (state, action) => {
+  let selectedProjectId = null;
   state.projects.forEach(project => {
     if (project.id === action.element.project.id) {
-      selectedProjectId = project.id
+      selectedProjectId = project.id;
     }
-  })
+  });
   return {
     ...state,
     selectedProject: selectedProjectId
-  }
-}
+  };
+};
 
-const deactivatePopover = (state) => {
+const deactivatePopover = state => {
   const newState = {
     ...state,
     selectedProject: undefined
-  }
-  return newState
-}
+  };
+  return newState;
+};
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
-const urlUpdatesFilters = (state) => {
-  const urlData = queryStringParse(window.location.search)
-  const dataFromUrl = createNewStateFromUrlData(state, urlData)
+const urlUpdatesFilters = state => {
+  const urlData = queryStringParse(window.location.search);
+  const dataFromUrl = createNewStateFromUrlData(state, urlData);
   return {
     ...state,
     filter: dataFromUrl.filter,
     graph: dataFromUrl.graph,
     filteredProjects: applyFilters(state.projects, dataFromUrl.filter),
     selectedProject: dataFromUrl.selectedProject
-  }
-}
+  };
+};
 
-export default reducer
+export default reducer;

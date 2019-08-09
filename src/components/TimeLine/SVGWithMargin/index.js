@@ -1,6 +1,6 @@
-import React from 'react'
-import getContentContainerStyle from './getContentContainerStyle'
-import getSVGDimensions from './getSVGDimensions'
+import React from "react";
+import getContentContainerStyle from "./getContentContainerStyle";
+import getSVGDimensions from "./getSVGDimensions";
 
 /* type Props = {
     children: React$Element | React$Element[],
@@ -60,4 +60,4 @@ export default ({
       {children}
     </g>
   </svg>
-)
+);

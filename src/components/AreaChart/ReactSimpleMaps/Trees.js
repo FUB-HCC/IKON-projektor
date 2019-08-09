@@ -1,23 +1,15 @@
 // import React, { Component } from 'react'
-import React from 'react'
-import { MapGroup } from 'react-simple-maps'
+import React from "react";
+import { MapGroup } from "react-simple-maps";
 
-const Trees = ({
-  groupName,
-  itemName,
-  componentIdentifier,
-  ...restProps
-}) =>
-  <MapGroup
-    groupName={groupName}
-    itemName={itemName}
-    {...restProps}
-  />
+const Trees = ({ groupName, itemName, componentIdentifier, ...restProps }) => (
+  <MapGroup groupName={groupName} itemName={itemName} {...restProps} />
+);
 
 Trees.defaultProps = {
-  componentIdentifier: 'Trees',
-  groupName: 'trees',
-  itemName: 'tree'
-}
+  componentIdentifier: "Trees",
+  groupName: "trees",
+  itemName: "tree"
+};
 
-export default Trees
+export default Trees;

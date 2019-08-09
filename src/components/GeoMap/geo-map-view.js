@@ -1,11 +1,11 @@
-import React from 'react';
-import style from './geo-map-view.module.css';
-import { ReactComponent as Africa } from '../../assets/GeoMap/continents/africa.svg';
-import { ReactComponent as Europe } from '../../assets/GeoMap/continents/europe.svg';
-import { ReactComponent as NorthAmerica } from '../../assets/GeoMap/continents/north-america.svg';
-import { ReactComponent as SouthAmerica } from '../../assets/GeoMap/continents/south-america.svg';
-import { ReactComponent as Asia } from '../../assets/GeoMap/continents/asia.svg';
-import { ReactComponent as Australia } from '../../assets/GeoMap/continents/australia.svg';
+import React from "react";
+import style from "./geo-map-view.module.css";
+import { ReactComponent as Africa } from "../../assets/GeoMap/continents/africa.svg";
+import { ReactComponent as Europe } from "../../assets/GeoMap/continents/europe.svg";
+import { ReactComponent as NorthAmerica } from "../../assets/GeoMap/continents/north-america.svg";
+import { ReactComponent as SouthAmerica } from "../../assets/GeoMap/continents/south-america.svg";
+import { ReactComponent as Asia } from "../../assets/GeoMap/continents/asia.svg";
+import { ReactComponent as Australia } from "../../assets/GeoMap/continents/australia.svg";
 
 const getInstitutionFromId = (institutionsList, id) =>
   institutionsList.find(institution => institution.id === id);
@@ -32,7 +32,7 @@ const getContinentOfInstitution = (continentList, institution) => {
       con.latMax > institution.lat
   );
   if (candidates.length === 0) {
-    return '';
+    return "";
   }
   if (candidates.length > 1) {
     disambiguateContinents(candidates, institution);
@@ -75,7 +75,7 @@ const GeoMapView = props => {
   const institution = id => getInstitutionFromId(institutions, id);
   const continents = [
     {
-      name: 'Europa',
+      name: "Europa",
       svg: <Europe />,
       xOffset: 97.8,
       yOffset: 48.4,
@@ -88,7 +88,7 @@ const GeoMapView = props => {
       institutionCount: 0
     },
     {
-      name: 'Nordamerika',
+      name: "Nordamerika",
       svg: <NorthAmerica />,
       xOffset: 61.4,
       yOffset: 53.1,
@@ -101,7 +101,7 @@ const GeoMapView = props => {
       institutionCount: 0
     },
     {
-      name: 'Südamerika',
+      name: "Südamerika",
       svg: <SouthAmerica />,
       xOffset: 97.8,
       yOffset: 96,
@@ -114,7 +114,7 @@ const GeoMapView = props => {
       institutionCount: 0
     },
     {
-      name: 'Asien',
+      name: "Asien",
       svg: <Asia />,
       xOffset: 63.1,
       yOffset: 55.4,
@@ -127,7 +127,7 @@ const GeoMapView = props => {
       institutionCount: 0
     },
     {
-      name: 'Afrika',
+      name: "Afrika",
       svg: <Africa />,
       xOffset: 75.8,
       yOffset: 61.2,
@@ -140,7 +140,7 @@ const GeoMapView = props => {
       institutionCount: 0
     },
     {
-      name: 'Australien',
+      name: "Australien",
       svg: <Australia />,
       xOffset: 97.8,
       yOffset: 96,
@@ -244,7 +244,7 @@ const GeoMapView = props => {
               key={c.name}
               style={{ left: c.anchorPoint }}
             >
-              {c.name + ' '}({instititutionsOnContinent.length})
+              {c.name + " "}({instititutionsOnContinent.length})
             </div>
           );
         })}
@@ -256,10 +256,10 @@ const GeoMapView = props => {
           ).filter(ins => ins.continent === c.name);
           return (
             <div className={style.continentWrapper} key={c.name}>
-              <svg width={width / 6} viewBox={'0 0 500 500'}>
-                <g fill={'white'}>{c.svg}</g>
+              <svg width={width / 6} viewBox={"0 0 500 500"}>
+                <g fill={"white"}>{c.svg}</g>
                 <g
-                  fill={'red'}
+                  fill={"red"}
                   transform={`translate(${c.xOffset}, ${c.yOffset})`}
                 >
                   {instititutionsOnContinent.map(ins => (

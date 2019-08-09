@@ -1,25 +1,19 @@
-
 // import React, { Component } from 'react'
-import React from 'react'
+import React from "react";
 
-import MapGroup from './MapGroup'
+import MapGroup from "./MapGroup";
 
 const Markers = ({
   groupName,
   itemName,
   componentIdentifier,
   ...restProps
-}) =>
-  <MapGroup
-    groupName={groupName}
-    itemName={itemName}
-    {...restProps}
-  />
+}) => <MapGroup groupName={groupName} itemName={itemName} {...restProps} />;
 
 Markers.defaultProps = {
-  componentIdentifier: 'Markers',
-  groupName: 'markers',
-  itemName: 'marker'
-}
+  componentIdentifier: "Markers",
+  groupName: "markers",
+  itemName: "marker"
+};
 
-export default Markers
+export default Markers;

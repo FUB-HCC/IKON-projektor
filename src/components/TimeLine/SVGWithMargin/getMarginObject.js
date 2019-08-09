@@ -1,19 +1,19 @@
-function getMarginObjectForNumber (number) {
+function getMarginObjectForNumber(number) {
   return {
     top: number,
     right: number,
     bottom: number,
     left: number
-  }
+  };
 }
 
-export default function getMarginObject (margin) {
+export default function getMarginObject(margin) {
   if (!margin) {
-    return getMarginObjectForNumber(0)
+    return getMarginObjectForNumber(0);
   }
 
-  if (typeof margin === 'number') {
-    return getMarginObjectForNumber(margin)
+  if (typeof margin === "number") {
+    return getMarginObjectForNumber(margin);
   }
 
   const {
@@ -24,12 +24,12 @@ export default function getMarginObject (margin) {
 
     vertical,
     horizontal
-  } = margin
+  } = margin;
 
   return {
     top: top || vertical || 0,
     right: right || horizontal || 0,
     bottom: bottom || vertical || 0,
     left: left || horizontal || 0
-  }
+  };
 }

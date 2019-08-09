@@ -1,38 +1,29 @@
+import React, { Component } from "react";
+import { geoPath, geoGraticule } from "d3-geo";
 
-import React, { Component } from 'react'
-import {
-  geoPath,
-  geoGraticule
-} from 'd3-geo'
-
-import { roundPath } from './utils'
+import { roundPath } from "./utils";
 
 const computeGraticule = (projection, step) =>
-  geoPath().projection(projection)(geoGraticule().step(step)())
+  geoPath().projection(projection)(geoGraticule().step(step)());
 
-const computeOutline = (projection) =>
-  geoPath().projection(projection)(geoGraticule().outline())
+const computeOutline = projection =>
+  geoPath().projection(projection)(geoGraticule().outline());
 
 class Graticule extends Component {
-  constructor () {
-    super()
+  constructor() {
+    super();
     this.state = {
       renderGraticule: false,
-      graticulePath: '',
-      outlinePath: ''
-    }
-    this.renderGraticule = this.renderGraticule.bind(this)
+      graticulePath: "",
+      outlinePath: ""
+    };
+    this.renderGraticule = this.renderGraticule.bind(this);
   }
-  componentDidMount () {
-    this.renderGraticule()
+  componentDidMount() {
+    this.renderGraticule();
   }
-  renderGraticule () {
-    const {
-      step,
-      projection,
-      round,
-      precision
-    } = this.props
+  renderGraticule() {
+    const { step, projection, round, precision } = this.props;
 
     this.setState({
       renderGraticule: true,
@@ -42,18 +33,16 @@ class Graticule extends Component {
       outlinePath: round
         ? roundPath(computeOutline(projection), precision)
         : computeOutline(projection)
-    })
+    });
   }
-  componentWillReceiveProps (nextProps) {
-    const {
-      step,
-      projection,
-      round,
-      precision,
-      globe
-    } = this.props
+  componentWillReceiveProps(nextProps) {
+    const { step, projection, round, precision, globe } = this.props;
 
-    if (nextProps.round !== round || nextProps.precision !== precision || globe) {
+    if (
+      nextProps.round !== round ||
+      nextProps.precision !== precision ||
+      globe
+    ) {
       this.setState({
         graticulePath: nextProps.round
           ? roundPath(computeGraticule(projection, step), precision)
@@ -61,57 +50,57 @@ class Graticule extends Component {
         outlinePath: nextProps.round
           ? roundPath(computeOutline(projection), precision)
           : computeOutline(projection)
-      })
+      });
     }
   }
-  shouldComponentUpdate (nextProps) {
-    return nextProps.disableOptimization
+  shouldComponentUpdate(nextProps) {
+    return nextProps.disableOptimization;
   }
-  render () {
+  render() {
     const {
       // zoom,
       style,
       outline,
       fill,
       stroke
-    } = this.props
+    } = this.props;
 
-    return this.state.renderGraticule && (
-      <g className="rsm-graticule">
-        <path
-          fill={fill}
-          stroke={stroke}
-          d={this.state.graticulePath}
-          style={style}
-        />
-        {
-          outline && (
+    return (
+      this.state.renderGraticule && (
+        <g className="rsm-graticule">
+          <path
+            fill={fill}
+            stroke={stroke}
+            d={this.state.graticulePath}
+            style={style}
+          />
+          {outline && (
             <path
               fill={fill}
               stroke={stroke}
               d={this.state.outlinePath}
               style={style}
             />
-          )
-        }
-      </g>
-    )
+          )}
+        </g>
+      )
+    );
   }
 }
 
 Graticule.defaultProps = {
-  componentIdentifier: 'Graticule',
+  componentIdentifier: "Graticule",
   disableOptimization: true,
   globe: false,
   round: true,
   precision: 0.1,
   step: [10, 10],
   outline: true,
-  stroke: '#DDDDDD',
-  fill: 'transparent',
+  stroke: "#DDDDDD",
+  fill: "transparent",
   style: {
-    pointerEvents: 'none'
+    pointerEvents: "none"
   }
-}
+};
 
-export default Graticule
+export default Graticule;

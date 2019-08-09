@@ -1,7 +1,7 @@
-import React, {Component} from 'react'
-import {get} from 'axios'
-import {feature} from 'topojson-client'
-import * as parse from 'csv-parse/lib/es5'
+import React, { Component } from "react";
+import { get } from "axios";
+import { feature } from "topojson-client";
+import * as parse from "csv-parse/lib/es5";
 import {
   ComposableMap,
   ZoomableGroup,
@@ -11,21 +11,24 @@ import {
   Markers,
   Lines,
   Line
-} from './ReactSimpleMaps'
-import {getCenterOfBounds} from 'geolib'
-import {Motion, spring} from 'react-motion'
-import {getResearchAreasForInstitutions, getAllInstitutions} from './areaUtility'
-import classes from './area-chart-view.module.css'
-import Hammer from 'react-hammerjs'
-import HoverPopover from '../HoverPopover/HoverPopover'
-import Modal from '../Modal/Modal'
+} from "./ReactSimpleMaps";
+import { getCenterOfBounds } from "geolib";
+import { Motion, spring } from "react-motion";
+import {
+  getResearchAreasForInstitutions,
+  getAllInstitutions
+} from "./areaUtility";
+import classes from "./area-chart-view.module.css";
+import Hammer from "react-hammerjs";
+import HoverPopover from "../HoverPopover/HoverPopover";
+import Modal from "../Modal/Modal";
 
-const RESEARCH_AREA_STR = 'Research Areas'
-const INSTITUTIONS_STR = 'Institutions'
+const RESEARCH_AREA_STR = "Research Areas";
+const INSTITUTIONS_STR = "Institutions";
 
 class AreaChart extends Component {
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       zoom: 1,
       zoomOld: 1,
@@ -50,64 +53,79 @@ class AreaChart extends Component {
       allResearchAreas: [],
       selectedInstitutions: [],
       markerCooperations: null
-    }
-    this.loadPaths = this.loadPaths.bind(this)
-    this.handleZoom = this.handleZoom.bind(this)
-    this.handleCountryClick = this.handleCountryClick.bind(this)
-    this.handleInstitutionClick = this.handleInstitutionClick.bind(this)
-    this.handleCooperationLineClick = this.handleCooperationLineClick.bind(this)
-    this.handlerSrollMap = this.handlerSrollMap.bind(this)
-    this.buildCurves = this.buildCurves.bind(this)
-    this.handleMoveEnd = this.handleMoveEnd.bind(this)
-    this.handleLineClick = this.handleLineClick.bind(this)
-    this.renderProjectsLines = this.renderProjectsLines.bind(this)
-    this.handleProjectHoverIn = this.handleProjectHoverIn.bind(this)
-    this.handleProjectHoverOut = this.handleProjectHoverOut.bind(this)
+    };
+    this.loadPaths = this.loadPaths.bind(this);
+    this.handleZoom = this.handleZoom.bind(this);
+    this.handleCountryClick = this.handleCountryClick.bind(this);
+    this.handleInstitutionClick = this.handleInstitutionClick.bind(this);
+    this.handleCooperationLineClick = this.handleCooperationLineClick.bind(
+      this
+    );
+    this.handlerSrollMap = this.handlerSrollMap.bind(this);
+    this.buildCurves = this.buildCurves.bind(this);
+    this.handleMoveEnd = this.handleMoveEnd.bind(this);
+    this.handleLineClick = this.handleLineClick.bind(this);
+    this.renderProjectsLines = this.renderProjectsLines.bind(this);
+    this.handleProjectHoverIn = this.handleProjectHoverIn.bind(this);
+    this.handleProjectHoverOut = this.handleProjectHoverOut.bind(this);
 
-    this.renderCooperatingProjectsPopover = this.renderCooperatingProjectsPopover.bind(this)
+    this.renderCooperatingProjectsPopover = this.renderCooperatingProjectsPopover.bind(
+      this
+    );
 
     // The hover popover when hovering research areas / institutions
-    this.renderProjectsHover = this.renderProjectsHover.bind(this)
-    this.handleCountryMouseEnter = this.handleCountryMouseEnter.bind(this)
-    this.handleCountryMouseLeave = this.handleCountryMouseLeave.bind(this)
-    this.handleCountryMouseMove = this.handleCountryMouseMove.bind(this)
-    this.handleInstitutionMouseEnter = this.handleInstitutionMouseEnter.bind(this)
-    this.handleInstitutionMouseLeave = this.handleInstitutionMouseLeave.bind(this)
-    this.handleInstitutionMouseMove = this.handleInstitutionMouseMove.bind(this)
+    this.renderProjectsHover = this.renderProjectsHover.bind(this);
+    this.handleCountryMouseEnter = this.handleCountryMouseEnter.bind(this);
+    this.handleCountryMouseLeave = this.handleCountryMouseLeave.bind(this);
+    this.handleCountryMouseMove = this.handleCountryMouseMove.bind(this);
+    this.handleInstitutionMouseEnter = this.handleInstitutionMouseEnter.bind(
+      this
+    );
+    this.handleInstitutionMouseLeave = this.handleInstitutionMouseLeave.bind(
+      this
+    );
+    this.handleInstitutionMouseMove = this.handleInstitutionMouseMove.bind(
+      this
+    );
 
     // touch zoom handler:
-    this.handlePinch = this.handlePinch.bind(this)
-    this.handlePinchEnd = this.handlePinchEnd.bind(this)
-    this.handlePinchStart = this.handlePinchStart.bind(this)
-    this.changeDimension = this.changeDimension.bind(this)
+    this.handlePinch = this.handlePinch.bind(this);
+    this.handlePinchEnd = this.handlePinchEnd.bind(this);
+    this.handlePinchStart = this.handlePinchStart.bind(this);
+    this.changeDimension = this.changeDimension.bind(this);
 
     // Select Institution dropdown
-    this.handleInstitutionSelectChange = this.handleInstitutionSelectChange.bind(this)
+    this.handleInstitutionSelectChange = this.handleInstitutionSelectChange.bind(
+      this
+    );
   }
 
-  updateData (projects, institutions, width, height) {
-    console.log(projects, institutions)
+  updateData(projects, institutions, width, height) {
+    console.log(projects, institutions);
     if (institutions.length > 0 && projects.length > 0) {
       if (this.state.selectedDimension === INSTITUTIONS_STR) {
-        let allInstitutions = getAllInstitutions(institutions, projects)
-        let shownInstitutions = allInstitutions
+        let allInstitutions = getAllInstitutions(institutions, projects);
+        let shownInstitutions = allInstitutions;
         this.setState({
           allInstitutions: allInstitutions,
           institutions: shownInstitutions,
           projects: projects,
           width: width * 0.6,
           height: height * 0.6
-        })
+        });
       } else if (this.state.selectedDimension === RESEARCH_AREA_STR) {
-        let allInstitutions = getAllInstitutions(institutions, projects)
-        let shownInstitutions = this.state.institutions
-        let selectedInstitutions = this.state.selectedInstitutions
+        let allInstitutions = getAllInstitutions(institutions, projects);
+        let shownInstitutions = this.state.institutions;
+        let selectedInstitutions = this.state.selectedInstitutions;
         if (this.state.selectedInstitutions.length === 0) {
-          selectedInstitutions = [allInstitutions[0].id]
-          shownInstitutions = [allInstitutions[0]]
+          selectedInstitutions = [allInstitutions[0].id];
+          shownInstitutions = [allInstitutions[0]];
         }
 
-        let allResearchAreas = getResearchAreasForInstitutions(shownInstitutions, projects)
+        let allResearchAreas = getResearchAreasForInstitutions(
+          shownInstitutions,
+          projects
+        );
 
         this.setState({
           allResearchAreas: allResearchAreas,
@@ -117,7 +135,7 @@ class AreaChart extends Component {
           projects: projects,
           width: width * 0.6,
           height: height * 0.6
-        })
+        });
       }
     } else {
       this.setState({
@@ -132,74 +150,94 @@ class AreaChart extends Component {
     }
   }
 
-  componentDidMount () {
-    this.loadPaths()
-    this.zoomableGroup.zoomableGroupNode.addEventListener('wheel', this.handlerSrollMap)
+  componentDidMount() {
+    this.loadPaths();
+    this.zoomableGroup.zoomableGroupNode.addEventListener(
+      "wheel",
+      this.handlerSrollMap
+    );
   }
 
-  changeDimension () {
+  changeDimension() {
     if (this.state.selectedDimension === RESEARCH_AREA_STR) {
-      let allResearchRegions = []
-      let allInstitutions = this.state.allInstitutions
+      let allResearchRegions = [];
+      let allInstitutions = this.state.allInstitutions;
       this.setState({
         projectCurves: [],
         institutions: allInstitutions,
         allResearchAreas: allResearchRegions,
-        selectedDimension: (this.state.selectedDimension === RESEARCH_AREA_STR ? INSTITUTIONS_STR : RESEARCH_AREA_STR)
-      })
-    } else if (this.state.selectedDimension === INSTITUTIONS_STR) { // change to area dimension
-      let selectedInstitutions = []
+        selectedDimension:
+          this.state.selectedDimension === RESEARCH_AREA_STR
+            ? INSTITUTIONS_STR
+            : RESEARCH_AREA_STR
+      });
+    } else if (this.state.selectedDimension === INSTITUTIONS_STR) {
+      // change to area dimension
+      let selectedInstitutions = [];
 
       this.state.allInstitutions.forEach(institution => {
         this.state.selectedInstitutions.forEach(selectedInstitutionID => {
-          if (institution.id === Number.parseInt(selectedInstitutionID)) selectedInstitutions.push(institution)
-        })
-      })
+          if (institution.id === Number.parseInt(selectedInstitutionID))
+            selectedInstitutions.push(institution);
+        });
+      });
 
-      let researchRegions = getResearchAreasForInstitutions(selectedInstitutions, this.state.projects)
+      let researchRegions = getResearchAreasForInstitutions(
+        selectedInstitutions,
+        this.state.projects
+      );
 
       this.setState({
         projectCurves: [],
         institutions: selectedInstitutions,
         allResearchAreas: researchRegions,
-        selectedDimension: (this.state.selectedDimension === RESEARCH_AREA_STR ? INSTITUTIONS_STR : RESEARCH_AREA_STR)
-      })
+        selectedDimension:
+          this.state.selectedDimension === RESEARCH_AREA_STR
+            ? INSTITUTIONS_STR
+            : RESEARCH_AREA_STR
+      });
     }
   }
 
-  loadPaths () {
-    get('./topo/world-110m-simplyfied.json').then(res => {
-      let worldTopo = res
-      if (res.status !== 200) return
-      const world = worldTopo.data
+  loadPaths() {
+    get("./topo/world-110m-simplyfied.json").then(res => {
+      let worldTopo = res;
+      if (res.status !== 200) return;
+      const world = worldTopo.data;
       // Transform your paths with topojson however you want...
-      const countries = feature(world, world.objects[Object.keys(world.objects)[0]]).features
-      this.setState({geographyPaths: countries})
-      this.zoomableGroup.zoomableGroupNode.addEventListener('wheel', this.handlerSrollMap)
-    })
+      const countries = feature(
+        world,
+        world.objects[Object.keys(world.objects)[0]]
+      ).features;
+      this.setState({ geographyPaths: countries });
+      this.zoomableGroup.zoomableGroupNode.addEventListener(
+        "wheel",
+        this.handlerSrollMap
+      );
+    });
 
     // Data from here: https://github.com/curran/data/tree/gh-pages/geonames
-    get('./topo/cities500000.csv').then(res => {
-      parse(res.data, {columns: true}, (err, cities) => {
+    get("./topo/cities500000.csv").then(res => {
+      parse(res.data, { columns: true }, (err, cities) => {
         if (err) {
-          console.error(err)
+          console.error(err);
         } else {
-          let newCities = []
+          let newCities = [];
           cities.forEach(city => {
-            city.coordinates = [city.longitude, city.latitude]
-            newCities.push(city)
-          })
-          this.setState({cities: newCities})
+            city.coordinates = [city.longitude, city.latitude];
+            newCities.push(city);
+          });
+          this.setState({ cities: newCities });
         }
-      })
-    })
+      });
+    });
 
-    let promises = []
+    let promises = [];
 
     // TODO https://www.react-simple-maps.io/country-map-with-admin-units To learn how to convert shapefiles into
     // TODO topojson that can be used with react-simple-maps read How to convert and prepare TopoJSON files
     // TODO for interactive mapping with d3 on medium.
-    promises.push(get('./topo/countries/germany/germany-states.json'))
+    promises.push(get("./topo/countries/germany/germany-states.json"));
     /* promises.push(get('./topo/countries/algeria/algeria-provinces.json'))
                                                 promises.push(get('./topo/countries/argentina/argentina-provinces.json'))
                                                 promises.push(get('./topo/countries/azerbaijan/azerbaijan-regions.json'))
@@ -236,39 +274,45 @@ class AreaChart extends Component {
                                                 promises.push(get('./topo/countries/united-states/lower-quality-20m/20m-US-congressional-districts-2015.json')) */
 
     Promise.all(promises).then(res => {
-      if (res[0].status !== 200) return
-      const regionsPaths = []
+      if (res[0].status !== 200) return;
+      const regionsPaths = [];
       for (let result of res) {
-        let regionsTopo = result
-        let region = regionsTopo.data
+        let regionsTopo = result;
+        let region = regionsTopo.data;
         // Transform your paths with topojson however you want...
-        let regionPath = feature(region, region.objects[Object.keys(region.objects)[0]]).features
+        let regionPath = feature(
+          region,
+          region.objects[Object.keys(region.objects)[0]]
+        ).features;
         for (let path of regionPath) {
-          regionsPaths.push(path)
+          regionsPaths.push(path);
         }
       }
 
-      this.setState({regionsPaths: regionsPaths})
-    })
+      this.setState({ regionsPaths: regionsPaths });
+    });
   }
 
-  handleCountryClick (country) {
+  handleCountryClick(country) {
     if (this.state.selectedDimension === RESEARCH_AREA_STR) {
       this.setState({
         projectCurves: []
-      })
+      });
 
-      let researchArea = null
-      let countryCoordinates = [Number(this.calculateGeometricCenter(country)[0]), Number(this.calculateGeometricCenter(country)[1])]
+      let researchArea = null;
+      let countryCoordinates = [
+        Number(this.calculateGeometricCenter(country)[0]),
+        Number(this.calculateGeometricCenter(country)[1])
+      ];
       for (let area of this.state.allResearchAreas) {
         if (area.forschungsregion === country.properties.ISO_A2) {
-          researchArea = area
-          break
+          researchArea = area;
+          break;
         }
       }
 
       if (researchArea) {
-        let newProjectCurves = []
+        let newProjectCurves = [];
         for (let project of researchArea.projects) {
           for (let institution of this.state.institutions) {
             if (institution.id === project.institution_id) {
@@ -278,21 +322,23 @@ class AreaChart extends Component {
                 start: countryCoordinates,
                 end: institution.coordinates,
                 controlPoint: undefined
-              }
-              newProjectCurves.push(projectLine)
+              };
+              newProjectCurves.push(projectLine);
             } else {
-              project.cooperating_institutions.forEach(projectCooperatingInstitutionId => {
-                if (projectCooperatingInstitutionId === institution.id) {
-                  let projectLine = {
-                    project: project,
-                    institutionId: institution.id,
-                    start: countryCoordinates,
-                    end: institution.coordinates,
-                    controlPoint: undefined
+              project.cooperating_institutions.forEach(
+                projectCooperatingInstitutionId => {
+                  if (projectCooperatingInstitutionId === institution.id) {
+                    let projectLine = {
+                      project: project,
+                      institutionId: institution.id,
+                      start: countryCoordinates,
+                      end: institution.coordinates,
+                      controlPoint: undefined
+                    };
+                    newProjectCurves.push(projectLine);
                   }
-                  newProjectCurves.push(projectLine)
                 }
-              })
+              );
             }
           }
         }
@@ -302,439 +348,560 @@ class AreaChart extends Component {
           center: countryCoordinates,
           projectCurves: newProjectCurves,
           zoomOld: 1
-        })
+        });
       }
     }
   }
 
-  handleLineClick (coordinates, mapsComponent, e) {
-    this.props.onProjectClick({project: this.state.selectedProject}, 2)
+  handleLineClick(coordinates, mapsComponent, e) {
+    this.props.onProjectClick({ project: this.state.selectedProject }, 2);
   }
 
-  handleProjectHoverIn (project) {
-    this.setState({hoveredProject: project})
+  handleProjectHoverIn(project) {
+    this.setState({ hoveredProject: project });
   }
 
-  handleProjectHoverOut (project) {
-    this.setState({hoveredProject: undefined})
+  handleProjectHoverOut(project) {
+    this.setState({ hoveredProject: undefined });
   }
 
-  handleInstitutionClick (marker) {
+  handleInstitutionClick(marker) {
     if (this.state.selectedDimension === INSTITUTIONS_STR) {
-      let cooperationPartners = []
+      let cooperationPartners = [];
 
       // TODO start of curves is always from current institution
       for (let i in this.state.projects) {
-        let project = this.state.projects[i]
-        let cooperationPartnersInProject = [project.institution_id]
+        let project = this.state.projects[i];
+        let cooperationPartnersInProject = [project.institution_id];
         project.cooperating_institutions.forEach(cooperatingInstitutionId => {
-          cooperationPartnersInProject.push(cooperatingInstitutionId)
-        })
-        let index = cooperationPartnersInProject.indexOf(marker.id)
+          cooperationPartnersInProject.push(cooperatingInstitutionId);
+        });
+        let index = cooperationPartnersInProject.indexOf(marker.id);
         if (index > -1) {
-          cooperationPartnersInProject.splice(index, 1)
+          cooperationPartnersInProject.splice(index, 1);
           cooperationPartnersInProject.forEach(partnerId => {
-            let cooperationPartnerIndex = -1
+            let cooperationPartnerIndex = -1;
             for (let j in cooperationPartners) {
-              if (cooperationPartners[j].partnerId === partnerId) cooperationPartnerIndex = j
+              if (cooperationPartners[j].partnerId === partnerId)
+                cooperationPartnerIndex = j;
             }
             if (cooperationPartnerIndex > -1) {
-              cooperationPartners[cooperationPartnerIndex].cooperatingProjects.push(project)
+              cooperationPartners[
+                cooperationPartnerIndex
+              ].cooperatingProjects.push(project);
             } else {
               // TODO find institution object and put it in
-              let correspondingInstitution = null
+              let correspondingInstitution = null;
               this.state.allInstitutions.forEach(institution => {
-                if (institution.id === partnerId) correspondingInstitution = institution
-              })
+                if (institution.id === partnerId)
+                  correspondingInstitution = institution;
+              });
               cooperationPartners.push({
                 partnerId: partnerId,
                 institution: correspondingInstitution,
                 cooperatingProjects: [project]
-              })
+              });
             }
-          })
+          });
         }
       }
 
       let cooperations = {
         institution: marker,
         cooperationPartners
-      }
-      this.setState({markerCooperations: cooperations})
+      };
+      this.setState({ markerCooperations: cooperations });
     }
   }
 
-  handlerSrollMap (scrollEvent) {
+  handlerSrollMap(scrollEvent) {
     if (scrollEvent.deltaY < 0) {
-      if (this.state.zoom < 8) this.handleZoom(1.25)
+      if (this.state.zoom < 8) this.handleZoom(1.25);
     } else {
-      if (this.state.zoom > 0.75) this.handleZoom(1 / 1.25)
+      if (this.state.zoom > 0.75) this.handleZoom(1 / 1.25);
     }
   }
 
-  handleZoom (factor) {
+  handleZoom(factor) {
     this.setState({
       zoom: this.state.zoom * factor
-    })
+    });
     setTimeout(() => {
       this.setState({
         zoomOld: this.state.zoom
-      })
-    }, 1000)
+      });
+    }, 1000);
   }
 
-  handlePinch (event) {
-    let scale = ((event.scale))
-    if (Math.abs(this.state.zoom - (this.state.zoomOld * scale)) > 0.01) {
-      this.setState({zoom: this.state.zoomOld * scale})
+  handlePinch(event) {
+    let scale = event.scale;
+    if (Math.abs(this.state.zoom - this.state.zoomOld * scale) > 0.01) {
+      this.setState({ zoom: this.state.zoomOld * scale });
     }
   }
 
-  handlePinchEnd (event) {
-    this.setState({zoom: this.state.zoomOld * event.scale, zoomOld: this.state.zoomOld * event.scale})
+  handlePinchEnd(event) {
+    this.setState({
+      zoom: this.state.zoomOld * event.scale,
+      zoomOld: this.state.zoomOld * event.scale
+    });
   }
 
-  handlePinchStart (event) {
-    this.setState({zoomOld: this.state.zoom})
+  handlePinchStart(event) {
+    this.setState({ zoomOld: this.state.zoom });
   }
 
-  handleMoveStart (currentCenter) {
+  handleMoveStart(currentCenter) {}
+
+  handleMoveEnd(newCenter) {
+    this.setState({ center: [newCenter[0], newCenter[1]] });
+    console.log("New center: ", newCenter);
   }
 
-  handleMoveEnd (newCenter) {
-    this.setState({center: [newCenter[0], newCenter[1]]})
-    console.log('New center: ', newCenter)
-  }
-
-  calculateGeometricCenter (geographyPath) {
-    let allCoordinateArray = [...geographyPath.geometry.coordinates]
-    let depth = 0
-    if (allCoordinateArray[0] instanceof Array) depth = 1
-    if (allCoordinateArray[0] && allCoordinateArray[0][0] instanceof Array) depth = 2
-    if (allCoordinateArray[0] && allCoordinateArray[0][0] && allCoordinateArray[0][0][0] instanceof Array) depth = 3
-    if (allCoordinateArray[0] && allCoordinateArray[0][0] && allCoordinateArray[0][0][0] && allCoordinateArray[0][0][0][0] instanceof Array) depth = 4
-    depth--
-    let i = 0
+  calculateGeometricCenter(geographyPath) {
+    let allCoordinateArray = [...geographyPath.geometry.coordinates];
+    let depth = 0;
+    if (allCoordinateArray[0] instanceof Array) depth = 1;
+    if (allCoordinateArray[0] && allCoordinateArray[0][0] instanceof Array)
+      depth = 2;
+    if (
+      allCoordinateArray[0] &&
+      allCoordinateArray[0][0] &&
+      allCoordinateArray[0][0][0] instanceof Array
+    )
+      depth = 3;
+    if (
+      allCoordinateArray[0] &&
+      allCoordinateArray[0][0] &&
+      allCoordinateArray[0][0][0] &&
+      allCoordinateArray[0][0][0][0] instanceof Array
+    )
+      depth = 4;
+    depth--;
+    let i = 0;
     while (i < depth) {
-      allCoordinateArray = [].concat(...allCoordinateArray)
-      i++
+      allCoordinateArray = [].concat(...allCoordinateArray);
+      i++;
     }
-    let processedArray = []
+    let processedArray = [];
     allCoordinateArray.forEach(value => {
-      processedArray.push({latitude: value[1], longitude: value[0]})
-    })
+      processedArray.push({ latitude: value[1], longitude: value[0] });
+    });
 
     // Start: Workaround for some countries
-    if (geographyPath.properties.ISO_A2 === 'RU') {
-      processedArray = [{latitude: 61.068917, longitude: -266.885585}]
-    } else if (geographyPath.properties.ISO_A2 === 'US') {
-      processedArray = [{latitude: 38.659778, longitude: -99.414548}]
+    if (geographyPath.properties.ISO_A2 === "RU") {
+      processedArray = [{ latitude: 61.068917, longitude: -266.885585 }];
+    } else if (geographyPath.properties.ISO_A2 === "US") {
+      processedArray = [{ latitude: 38.659778, longitude: -99.414548 }];
     }
     // End: Workaround
 
-    let center = getCenterOfBounds(processedArray)
-    return [center.longitude, center.latitude]
+    let center = getCenterOfBounds(processedArray);
+    return [center.longitude, center.latitude];
   }
 
-  buildCurves (start, end, line) {
-    let controlPoint = this.calculateControlPoint(start, end, line.index)
+  buildCurves(start, end, line) {
+    let controlPoint = this.calculateControlPoint(start, end, line.index);
 
-    let newProjectCurves = []
-    let changed = false
+    let newProjectCurves = [];
+    let changed = false;
     for (let projectCurve of this.state.projectCurves) {
-      if (!projectCurve.controlPoint && projectCurve.institutionId === line.projectCurve.institutionId && projectCurve.project.id === line.projectCurve.project.id) {
-        let x = Math.pow(1 - 0.5, 2) * start[0] + 2 * (1 - 0.5) * 0.5 * controlPoint[0] + Math.pow(0.5, 2) * end[0]
-        let y = Math.pow(1 - 0.5, 2) * start[1] + 2 * (1 - 0.5) * 0.5 * controlPoint[1] + Math.pow(0.5, 2) * end[1]
-        projectCurve.controlPoint = [x, y]
-        projectCurve = Object.assign({controlPoint: [x, y]}, projectCurve)
-        changed = true
+      if (
+        !projectCurve.controlPoint &&
+        projectCurve.institutionId === line.projectCurve.institutionId &&
+        projectCurve.project.id === line.projectCurve.project.id
+      ) {
+        let x =
+          Math.pow(1 - 0.5, 2) * start[0] +
+          2 * (1 - 0.5) * 0.5 * controlPoint[0] +
+          Math.pow(0.5, 2) * end[0];
+        let y =
+          Math.pow(1 - 0.5, 2) * start[1] +
+          2 * (1 - 0.5) * 0.5 * controlPoint[1] +
+          Math.pow(0.5, 2) * end[1];
+        projectCurve.controlPoint = [x, y];
+        projectCurve = Object.assign({ controlPoint: [x, y] }, projectCurve);
+        changed = true;
       }
-      newProjectCurves.push(projectCurve)
+      newProjectCurves.push(projectCurve);
     }
-    setTimeout(() => { // TODO: a state change should not be done in a render method
-      if (changed) this.setState({projectCurves: newProjectCurves})
-    }, 1)
+    setTimeout(() => {
+      // TODO: a state change should not be done in a render method
+      if (changed) this.setState({ projectCurves: newProjectCurves });
+    }, 1);
 
-    return `M ${start.join(' ')} Q ${controlPoint.join(' ')}, ${end.join(' ')}`
+    return `M ${start.join(" ")} Q ${controlPoint.join(" ")}, ${end.join(" ")}`;
   }
 
-  calculateControlPoint (start, end, index) {
-    const m = (start[1] - end[1]) / (start[0] - end[0])
-    const mOrtho = -(1 / m)
-    const midpoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2]
-    const b = midpoint[1] - (mOrtho * midpoint[0])
+  calculateControlPoint(start, end, index) {
+    const m = (start[1] - end[1]) / (start[0] - end[0]);
+    const mOrtho = -(1 / m);
+    const midpoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
+    const b = midpoint[1] - mOrtho * midpoint[0];
 
-    const offset = (index % 2 === 0 ? 1 : -1)
-    let xControl = midpoint[0] + offset * 1.5
-    let yControl = mOrtho * xControl + b
-    let controlPoint = [xControl, yControl]
-    let distance = Math.sqrt(Math.pow(controlPoint[0] - midpoint[0], 2) + Math.pow(controlPoint[1] - midpoint[1], 2))
+    const offset = index % 2 === 0 ? 1 : -1;
+    let xControl = midpoint[0] + offset * 1.5;
+    let yControl = mOrtho * xControl + b;
+    let controlPoint = [xControl, yControl];
+    let distance = Math.sqrt(
+      Math.pow(controlPoint[0] - midpoint[0], 2) +
+        Math.pow(controlPoint[1] - midpoint[1], 2)
+    );
     // TODO this is not efficient: check if it leads to performance problems
-    let iteration = 0
+    let iteration = 0;
     while (distance < 18 * index) {
-      xControl = midpoint[0] + offset * iteration
-      iteration++
-      yControl = mOrtho * xControl + b
-      controlPoint = [xControl, yControl]
-      distance = Math.sqrt(Math.pow(controlPoint[0] - midpoint[0], 2) + Math.pow(controlPoint[1] - midpoint[1], 2))
+      xControl = midpoint[0] + offset * iteration;
+      iteration++;
+      yControl = mOrtho * xControl + b;
+      controlPoint = [xControl, yControl];
+      distance = Math.sqrt(
+        Math.pow(controlPoint[0] - midpoint[0], 2) +
+          Math.pow(controlPoint[1] - midpoint[1], 2)
+      );
     }
-    return controlPoint
+    return controlPoint;
   }
 
-  renderProjectsLines (projectCurve, i) {
-    let strokeWidth = 2 / Math.pow(this.state.zoom, 1 / 4)
-    let color = 'rgba(78, 0, 80, 0.72)'
+  renderProjectsLines(projectCurve, i) {
+    let strokeWidth = 2 / Math.pow(this.state.zoom, 1 / 4);
+    let color = "rgba(78, 0, 80, 0.72)";
     if (this.state.hoveredProject === projectCurve.project) {
-      color = '#4b9123'
+      color = "#4b9123";
     }
 
-    return <Line
-      key={`project-line-${i}`}
-      onClick={(line, coordinates, e) => {
-        this.setState({selectedProject: projectCurve.project}, () => {
-          this.handleLineClick(coordinates, line, e)
-        })
-      }}
-      onMouseEnter={(line, event) => {
-        this.handleProjectHoverIn(projectCurve.project)
-      }}
-      onMouseLeave={(line, event) => {
-        this.handleProjectHoverOut(projectCurve.project)
-      }}
-      line={{
-        coordinates: {
-          start: projectCurve.start,
-          end: projectCurve.end
-        },
-        projectCurve: projectCurve,
-        index: i
-      }}
-      buildPath={this.buildCurves}
-      preserveMarkerAspect={false}
-      style={{
-        default: {
-          fill: 'rgba(255, 255, 255, 0)',
-          stroke: color,
-          strokeWidth: strokeWidth,
-          cursor: 'pointer',
-          pointerEvents: 'stroke'
-        },
-        hover: {
-          fill: 'rgba(255, 255, 255, 0)',
-          stroke: '#4b9123',
-          strokeWidth: strokeWidth,
-          cursor: 'pointer',
-          pointerEvents: 'stroke'
-        },
-        pressed: {
-          fill: 'rgba(255, 255, 255, 0)',
-          stroke: '#4b9123',
-          strokeWidth: strokeWidth,
-          cursor: 'pointer',
-          pointerEvents: 'stroke'
-        }
-      }}
-    />
+    return (
+      <Line
+        key={`project-line-${i}`}
+        onClick={(line, coordinates, e) => {
+          this.setState({ selectedProject: projectCurve.project }, () => {
+            this.handleLineClick(coordinates, line, e);
+          });
+        }}
+        onMouseEnter={(line, event) => {
+          this.handleProjectHoverIn(projectCurve.project);
+        }}
+        onMouseLeave={(line, event) => {
+          this.handleProjectHoverOut(projectCurve.project);
+        }}
+        line={{
+          coordinates: {
+            start: projectCurve.start,
+            end: projectCurve.end
+          },
+          projectCurve: projectCurve,
+          index: i
+        }}
+        buildPath={this.buildCurves}
+        preserveMarkerAspect={false}
+        style={{
+          default: {
+            fill: "rgba(255, 255, 255, 0)",
+            stroke: color,
+            strokeWidth: strokeWidth,
+            cursor: "pointer",
+            pointerEvents: "stroke"
+          },
+          hover: {
+            fill: "rgba(255, 255, 255, 0)",
+            stroke: "#4b9123",
+            strokeWidth: strokeWidth,
+            cursor: "pointer",
+            pointerEvents: "stroke"
+          },
+          pressed: {
+            fill: "rgba(255, 255, 255, 0)",
+            stroke: "#4b9123",
+            strokeWidth: strokeWidth,
+            cursor: "pointer",
+            pointerEvents: "stroke"
+          }
+        }}
+      />
+    );
   }
 
-  handleCooperationLineClick (coopLine) {
-    let cooperatingProjects = coopLine.partner.cooperatingProjects
-    this.setState({projectsPopoverHidden: false, cooperatingProjects: cooperatingProjects})
+  handleCooperationLineClick(coopLine) {
+    let cooperatingProjects = coopLine.partner.cooperatingProjects;
+    this.setState({
+      projectsPopoverHidden: false,
+      cooperatingProjects: cooperatingProjects
+    });
   }
 
-  renderCooperatingProjectsPopover () {
-    let cooperatingProjects = this.state.cooperatingProjects
+  renderCooperatingProjectsPopover() {
+    let cooperatingProjects = this.state.cooperatingProjects;
 
-    return !this.state.projectsPopoverHidden && <Modal headline={'Cooperating Projects'} onCloseClick={() => {
-      this.setState({projectsPopoverHidden: true})
-    }} hidden={this.state.projectsPopoverHidden} width={this.state.width * 0.56} height={this.state.height * 0.75}>
-      <ol className={classes.projects_list} style={{
-        height: (this.state.height * 0.65) + 'px'
-      }}>
-        {cooperatingProjects.map((project, i) => {
-          return <li onClick={event => {
-            this.setState({projectsPopoverHidden: true})
-            this.props.onProjectClick({project: project}, 2)
-          }} key={`project-list-link-${project.id}-${i}`}
-          className={classes.projects_list_item}>{`${project.title} (${project.id})`}</li>
-        })}
-      </ol>
-    </Modal>
+    return (
+      !this.state.projectsPopoverHidden && (
+        <Modal
+          headline={"Cooperating Projects"}
+          onCloseClick={() => {
+            this.setState({ projectsPopoverHidden: true });
+          }}
+          hidden={this.state.projectsPopoverHidden}
+          width={this.state.width * 0.56}
+          height={this.state.height * 0.75}
+        >
+          <ol
+            className={classes.projects_list}
+            style={{
+              height: this.state.height * 0.65 + "px"
+            }}
+          >
+            {cooperatingProjects.map((project, i) => {
+              return (
+                <li
+                  onClick={event => {
+                    this.setState({ projectsPopoverHidden: true });
+                    this.props.onProjectClick({ project: project }, 2);
+                  }}
+                  key={`project-list-link-${project.id}-${i}`}
+                  className={classes.projects_list_item}
+                >{`${project.title} (${project.id})`}</li>
+              );
+            })}
+          </ol>
+        </Modal>
+      )
+    );
   }
 
-  handleCountryMouseEnter (geography, evt) {
-    this.setState({hoveredGeometry: geography})
+  handleCountryMouseEnter(geography, evt) {
+    this.setState({ hoveredGeometry: geography });
   }
 
-  handleCountryMouseMove (geography, evt) {
-    this.setState({hoveredGeometry: geography, mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]})
+  handleCountryMouseMove(geography, evt) {
+    this.setState({
+      hoveredGeometry: geography,
+      mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
+    });
   }
 
-  handleCountryMouseLeave (geography, evt) {
-    this.setState({hoveredGeometry: undefined})
+  handleCountryMouseLeave(geography, evt) {
+    this.setState({ hoveredGeometry: undefined });
   }
 
-  handleInstitutionMouseEnter (institution, evt) {
-    this.setState({hoveredInstitution: institution})
+  handleInstitutionMouseEnter(institution, evt) {
+    this.setState({ hoveredInstitution: institution });
   }
 
-  handleInstitutionMouseMove (institution, evt) {
+  handleInstitutionMouseMove(institution, evt) {
     this.setState({
       hoveredInstitution: institution,
       mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
-    })
+    });
   }
 
-  handleInstitutionMouseLeave (institution, evt) {
-    this.setState({hoveredInstitution: undefined})
+  handleInstitutionMouseLeave(institution, evt) {
+    this.setState({ hoveredInstitution: undefined });
   }
 
-  renderProjectsHover () {
+  renderProjectsHover() {
     if (this.state.selectedDimension === RESEARCH_AREA_STR) {
-      let hoveredGeometry = this.state.hoveredGeometry
-      let researchArea = null
+      let hoveredGeometry = this.state.hoveredGeometry;
+      let researchArea = null;
       this.state.allResearchAreas.forEach(iterateResearchArea => {
-        if (this.state.mouseLocation && hoveredGeometry && iterateResearchArea.forschungsregion === hoveredGeometry.properties.ISO_A2) {
-          researchArea = iterateResearchArea
+        if (
+          this.state.mouseLocation &&
+          hoveredGeometry &&
+          iterateResearchArea.forschungsregion ===
+            hoveredGeometry.properties.ISO_A2
+        ) {
+          researchArea = iterateResearchArea;
         }
-      })
+      });
 
-      return researchArea && <HoverPopover locationX={this.state.mouseLocation[0]}
-        locationY={this.state.mouseLocation[1]}>
-        <h2 className={classes.projects_headline}>Area: {hoveredGeometry.properties.NAME}</h2>
-        <p className={classes.projects_list}>
-                    Number of projects in this research area: {researchArea.projects.length} <br/>
-                    Anzahl Themen:
-                    Das prominenteste Thema:
-                    Top Institution/ Partner:
-        </p>
-      </HoverPopover>
+      return (
+        researchArea && (
+          <HoverPopover
+            locationX={this.state.mouseLocation[0]}
+            locationY={this.state.mouseLocation[1]}
+          >
+            <h2 className={classes.projects_headline}>
+              Area: {hoveredGeometry.properties.NAME}
+            </h2>
+            <p className={classes.projects_list}>
+              Number of projects in this research area:{" "}
+              {researchArea.projects.length} <br />
+              Anzahl Themen: Das prominenteste Thema: Top Institution/ Partner:
+            </p>
+          </HoverPopover>
+        )
+      );
     } else if (this.state.selectedDimension === INSTITUTIONS_STR) {
-      let hoveredInstitution = this.state.hoveredInstitution
+      let hoveredInstitution = this.state.hoveredInstitution;
 
-      return (hoveredInstitution && this.state.mouseLocation) &&
-                <HoverPopover locationX={this.state.mouseLocation[0]}
-                  locationY={this.state.mouseLocation[1]}>
-                  <h2 className={classes.projects_headline}>Institution: {hoveredInstitution.name}</h2>
-                  <p className={classes.projects_list}>
-                        Number of involved projects: {hoveredInstitution.projects.length} <br/>
-                        Anzahl Themen:
-                        Das prominenteste Thema:
-                        Top Research area / Partner:
-                  </p>
-                </HoverPopover>
+      return (
+        hoveredInstitution &&
+        this.state.mouseLocation && (
+          <HoverPopover
+            locationX={this.state.mouseLocation[0]}
+            locationY={this.state.mouseLocation[1]}
+          >
+            <h2 className={classes.projects_headline}>
+              Institution: {hoveredInstitution.name}
+            </h2>
+            <p className={classes.projects_list}>
+              Number of involved projects: {hoveredInstitution.projects.length}{" "}
+              <br />
+              Anzahl Themen: Das prominenteste Thema: Top Research area /
+              Partner:
+            </p>
+          </HoverPopover>
+        )
+      );
     }
   }
 
-  handleInstitutionSelectChange (event) {
-    let options = event.target.options
-    let value = []
-    let selectedInstitutions = []
+  handleInstitutionSelectChange(event) {
+    let options = event.target.options;
+    let value = [];
+    let selectedInstitutions = [];
     for (let i = 0, l = options.length; i < l; i++) {
       if (options[i].selected) {
-        value.push(options[i].value)
+        value.push(options[i].value);
         this.state.allInstitutions.forEach(institution => {
-          if (institution.id === Number.parseInt(options[i].value)) selectedInstitutions.push(institution)
-        })
+          if (institution.id === Number.parseInt(options[i].value))
+            selectedInstitutions.push(institution);
+        });
       }
     }
 
-    let researchAreas = getResearchAreasForInstitutions(selectedInstitutions, this.state.projects)
+    let researchAreas = getResearchAreasForInstitutions(
+      selectedInstitutions,
+      this.state.projects
+    );
 
     this.setState({
       selectedInstitutions: value,
       institutions: selectedInstitutions,
       allResearchAreas: researchAreas,
       projectCurves: []
-    })
-    console.log('Selected institutions: ', selectedInstitutions)
+    });
+    console.log("Selected institutions: ", selectedInstitutions);
   }
 
-  renderCooperationLines (markerCooperations) {
-    let color = 'rgba(78, 0, 80, 0.72)'
-    let strokeWidth = '3px'
+  renderCooperationLines(markerCooperations) {
+    let color = "rgba(78, 0, 80, 0.72)";
+    let strokeWidth = "3px";
     if (markerCooperations) {
-      return <Lines>
-        {
-          markerCooperations.cooperationPartners.map((partner, i) => <Line
-            key={`cooperation-line-${markerCooperations.institution.id}-${partner.partnerId}`}
-            line={{
-              coordinates: {
-                start: markerCooperations.institution.coordinates,
-                end: partner.institution.coordinates
-              },
-              institution: markerCooperations.institution,
-              partner: partner,
-              projectCurve: markerCooperations
-            }}
-            onClick={this.handleCooperationLineClick}
-            preserveMarkerAspect={false}
-            style={{
-              default: {
-                fill: 'rgba(255, 255, 255, 0)',
-                stroke: color,
-                strokeWidth: strokeWidth,
-                cursor: 'pointer',
-                pointerEvents: 'stroke'
-              },
-              hover: {
-                fill: 'rgba(255, 255, 255, 0)',
-                stroke: '#4b9123',
-                strokeWidth: strokeWidth,
-                cursor: 'pointer',
-                pointerEvents: 'stroke'
-              },
-              pressed: {
-                fill: 'rgba(255, 255, 255, 0)',
-                stroke: '#4b9123',
-                strokeWidth: strokeWidth,
-                cursor: 'pointer',
-                pointerEvents: 'stroke'
-              }
-            }}
-          />)}
-      </Lines>
+      return (
+        <Lines>
+          {markerCooperations.cooperationPartners.map((partner, i) => (
+            <Line
+              key={`cooperation-line-${markerCooperations.institution.id}-${partner.partnerId}`}
+              line={{
+                coordinates: {
+                  start: markerCooperations.institution.coordinates,
+                  end: partner.institution.coordinates
+                },
+                institution: markerCooperations.institution,
+                partner: partner,
+                projectCurve: markerCooperations
+              }}
+              onClick={this.handleCooperationLineClick}
+              preserveMarkerAspect={false}
+              style={{
+                default: {
+                  fill: "rgba(255, 255, 255, 0)",
+                  stroke: color,
+                  strokeWidth: strokeWidth,
+                  cursor: "pointer",
+                  pointerEvents: "stroke"
+                },
+                hover: {
+                  fill: "rgba(255, 255, 255, 0)",
+                  stroke: "#4b9123",
+                  strokeWidth: strokeWidth,
+                  cursor: "pointer",
+                  pointerEvents: "stroke"
+                },
+                pressed: {
+                  fill: "rgba(255, 255, 255, 0)",
+                  stroke: "#4b9123",
+                  strokeWidth: strokeWidth,
+                  cursor: "pointer",
+                  pointerEvents: "stroke"
+                }
+              }}
+            />
+          ))}
+        </Lines>
+      );
     }
   }
 
-  render () {
-    const selectedDimension = this.state.selectedDimension
+  render() {
+    const selectedDimension = this.state.selectedDimension;
     return (
-      <Hammer onPinch={this.handlePinch} onPinchEnd={this.handlePinchEnd} onPinchStart={this.handlePinchStart}
+      <Hammer
+        onPinch={this.handlePinch}
+        onPinchEnd={this.handlePinchEnd}
+        onPinchStart={this.handlePinchStart}
         options={{
           recognizers: {
-            pinch: {enable: true, pointers: 2, threshold: 0.005}
+            pinch: { enable: true, pointers: 2, threshold: 0.005 }
           }
-        }}>
+        }}
+      >
+        <div
+          style={{
+            width: this.state.width,
+            height: this.state.height,
+            // maxWidth: 980,
+            margin: "0 auto",
+            fontFamily: "Roboto, sans-serif"
+          }}
+        >
+          <div
+            style={{ position: "absolute", marginTop: this.state.height - 275 }}
+          >
+            <button
+              style={{ marginLeft: "0.5em" }}
+              className={[classes.zoombutton, classes.in].join(" ")}
+              onClick={() => this.handleZoom(1.25)}
+            >
+              {"+"}
+            </button>
+            <button
+              style={{ marginLeft: "0.5em" }}
+              className={[classes.zoombutton, classes.out].join(" ")}
+              onClick={() => this.handleZoom(1 / 1.25)}
+            >
+              {"-"}
+            </button>
 
-        <div style={{
-          width: this.state.width,
-          height: this.state.height,
-          // maxWidth: 980,
-          margin: '0 auto',
-          fontFamily: 'Roboto, sans-serif'
-        }}>
-
-          <div style={{position: 'absolute', marginTop: this.state.height - 275}}>
-            <button style={{marginLeft: '0.5em'}} className={[classes.zoombutton, classes.in].join(' ')}
-              onClick={() => this.handleZoom(1.25)}>{'+'}</button>
-            <button style={{marginLeft: '0.5em'}} className={[classes.zoombutton, classes.out].join(' ')}
-              onClick={() => this.handleZoom(1 / 1.25)}>{'-'}</button>
-
-            <div style={{position: 'absolute', marginTop: '6.5em'}}>
-              <input className={[classes.tgl, classes['tgl-light']].join(' ')} id="cb1" type="checkbox"
-                onClick={this.changeDimension}/>
-              <label className={classes['tgl-btn']} htmlFor="cb1"></label>
+            <div style={{ position: "absolute", marginTop: "6.5em" }}>
+              <input
+                className={[classes.tgl, classes["tgl-light"]].join(" ")}
+                id="cb1"
+                type="checkbox"
+                onClick={this.changeDimension}
+              />
+              <label className={classes["tgl-btn"]} htmlFor="cb1"></label>
               <h4>{this.state.selectedDimension}</h4>
             </div>
-            {selectedDimension === RESEARCH_AREA_STR &&
-                        <select style={{maxWidth: '12em', position: 'absolute', marginTop: '14em'}} multiple={true}
-                          value={this.state.selectedInstitutions} onChange={this.handleInstitutionSelectChange}>
-                          {this.state.allInstitutions.map((institution) => <option
-                            key={`select-institution-${institution.id}`}
-                            value={institution.id}>{institution.name}</option>)}
-                        </select>
-            }
+            {selectedDimension === RESEARCH_AREA_STR && (
+              <select
+                style={{
+                  maxWidth: "12em",
+                  position: "absolute",
+                  marginTop: "14em"
+                }}
+                multiple={true}
+                value={this.state.selectedInstitutions}
+                onChange={this.handleInstitutionSelectChange}
+              >
+                {this.state.allInstitutions.map(institution => (
+                  <option
+                    key={`select-institution-${institution.id}`}
+                    value={institution.id}
+                  >
+                    {institution.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           <Motion
@@ -744,7 +911,7 @@ class AreaChart extends Component {
               y: 20
             }}
             style={{
-              zoom: spring(this.state.zoom, {stiffness: 170, damping: 26}),
+              zoom: spring(this.state.zoom, { stiffness: 170, damping: 26 }),
               // zoom: this.state.zoom,
               // x: spring(this.state.center[0], {stiffness: 210, damping: 20}),
               // y: spring(this.state.center[1], {stiffness: 210, damping: 20})
@@ -752,7 +919,7 @@ class AreaChart extends Component {
               y: this.state.center[1]
             }}
           >
-            {({zoom, x, y}) => (
+            {({ zoom, x, y }) => (
               <ComposableMap
                 projectionConfig={{
                   scale: 205,
@@ -761,8 +928,8 @@ class AreaChart extends Component {
                 width={this.state.width}
                 height={this.state.height}
                 style={{
-                  width: '100%',
-                  height: 'auto'
+                  width: "100%",
+                  height: "auto"
                 }}
               >
                 <ZoomableGroup
@@ -770,81 +937,94 @@ class AreaChart extends Component {
                   onMoveEnd={this.handleMoveEnd}
                   onwheel={this.handlerSrollMap}
                   disablePanning={false}
-                  ref={(node) => {
-                    this.zoomableGroup = node
+                  ref={node => {
+                    this.zoomableGroup = node;
                   }}
                   center={[x, y]}
-                  zoom={zoom}>
-                  <Geographies geography={this.state.geographyPaths} disableOptimization>
+                  zoom={zoom}
+                >
+                  <Geographies
+                    geography={this.state.geographyPaths}
+                    disableOptimization
+                  >
                     {(geographies, projection) =>
                       geographies.map((geography, i) => {
-                        let fillColor = '#ECEFF1'
-                        let fillColorHover = fillColor
-                        let isResearchArea = false
+                        let fillColor = "#ECEFF1";
+                        let fillColorHover = fillColor;
+                        let isResearchArea = false;
                         for (let area of this.state.allResearchAreas) {
-                          if (area.forschungsregion === geography.properties.ISO_A2) {
-                            isResearchArea = true
-                            fillColor = '#7ba3b3'
-                            fillColorHover = '#698d9b'
-                            break
+                          if (
+                            area.forschungsregion ===
+                            geography.properties.ISO_A2
+                          ) {
+                            isResearchArea = true;
+                            fillColor = "#7ba3b3";
+                            fillColorHover = "#698d9b";
+                            break;
                           }
                         }
 
-                        return <Geography
-                          key={`${geography.properties.ISO_A2}-${i}`}
-                          cacheId={`path-${geography.properties.ISO_A2}-${i}`}
-                          onClick={this.handleCountryClick}
-                          onMouseEnter={(geography, event) => {
-                            if (isResearchArea) {
-                              this.handleCountryMouseEnter(geography, event)
-                            }
-                          }}
-                          onMouseMove={(geography, event) => {
-                            if (isResearchArea) {
-                              this.handleCountryMouseMove(geography, event)
-                            }
-                          }}
-                          onMouseLeave={(geography, event) => {
-                            if (isResearchArea) {
-                              this.handleCountryMouseLeave(geography, event)
-                            }
-                          }}
-                          round
-                          geography={geography}
-                          projection={projection}
-                          style={{
-                            default: {
-                              fill: fillColor,
-                              stroke: '#607D8B',
-                              strokeWidth: 0.75,
-                              outline: 'none',
-                              cursor: (isResearchArea ? 'pointer' : 'default'),
-                              pointerEvents: 'fill'
-                            },
-                            hover: {
-                              fill: fillColorHover,
-                              stroke: '#607D8B',
-                              strokeWidth: 0.75,
-                              outline: 'none',
-                              cursor: (isResearchArea ? 'pointer' : 'default'),
-                              pointerEvents: 'fill'
-                            },
-                            pressed: {
-                              fill: fillColorHover,
-                              stroke: '#607D8B',
-                              strokeWidth: 0.75,
-                              outline: 'none',
-                              cursor: (isResearchArea ? 'pointer' : 'default'),
-                              pointerEvents: 'fill'
-                            }
-                          }}
-                        />
-                      }
-                      )}
+                        return (
+                          <Geography
+                            key={`${geography.properties.ISO_A2}-${i}`}
+                            cacheId={`path-${geography.properties.ISO_A2}-${i}`}
+                            onClick={this.handleCountryClick}
+                            onMouseEnter={(geography, event) => {
+                              if (isResearchArea) {
+                                this.handleCountryMouseEnter(geography, event);
+                              }
+                            }}
+                            onMouseMove={(geography, event) => {
+                              if (isResearchArea) {
+                                this.handleCountryMouseMove(geography, event);
+                              }
+                            }}
+                            onMouseLeave={(geography, event) => {
+                              if (isResearchArea) {
+                                this.handleCountryMouseLeave(geography, event);
+                              }
+                            }}
+                            round
+                            geography={geography}
+                            projection={projection}
+                            style={{
+                              default: {
+                                fill: fillColor,
+                                stroke: "#607D8B",
+                                strokeWidth: 0.75,
+                                outline: "none",
+                                cursor: isResearchArea ? "pointer" : "default",
+                                pointerEvents: "fill"
+                              },
+                              hover: {
+                                fill: fillColorHover,
+                                stroke: "#607D8B",
+                                strokeWidth: 0.75,
+                                outline: "none",
+                                cursor: isResearchArea ? "pointer" : "default",
+                                pointerEvents: "fill"
+                              },
+                              pressed: {
+                                fill: fillColorHover,
+                                stroke: "#607D8B",
+                                strokeWidth: 0.75,
+                                outline: "none",
+                                cursor: isResearchArea ? "pointer" : "default",
+                                pointerEvents: "fill"
+                              }
+                            }}
+                          />
+                        );
+                      })
+                    }
                   </Geographies>
-                  <Geographies key={'test'} geography={this.state.regionsPaths} disableOptimization>
+                  <Geographies
+                    key={"test"}
+                    geography={this.state.regionsPaths}
+                    disableOptimization
+                  >
                     {(geographies, projection) =>
-                      geographies.map((geography, i) =>
+                      geographies.map((geography, i) => (
                         <Geography
                           key={`region-${geography.properties.ADM0_A3}-${i}`}
                           cacheId={`region-path-${geography.properties.ADM0_A3}-${i}`}
@@ -853,160 +1033,184 @@ class AreaChart extends Component {
                           projection={projection}
                           style={{
                             default: {
-                              fill: '#ECEFF1',
-                              stroke: '#607D8B',
+                              fill: "#ECEFF1",
+                              stroke: "#607D8B",
                               strokeWidth: 0.2,
-                              outline: 'none'
+                              outline: "none"
                             },
                             hover: {
-                              fill: '#ECEFF1',
-                              stroke: '#607D8B',
+                              fill: "#ECEFF1",
+                              stroke: "#607D8B",
                               strokeWidth: 0.2,
-                              outline: 'none'
+                              outline: "none"
                             },
                             pressed: {
-                              fill: '#ECEFF1',
-                              stroke: '#607D8B',
+                              fill: "#ECEFF1",
+                              stroke: "#607D8B",
                               strokeWidth: 0.2,
-                              outline: 'none'}
+                              outline: "none"
+                            }
                           }}
                         />
-                      )}
+                      ))
+                    }
                   </Geographies>
                   <Markers>
-                    {
-                      this.state.cities.map((city, i) => {
-                        if (city.population < 5000000 / this.state.zoomOld || this.state.zoomOld < 2.5 || Math.abs(this.state.center[0] - city.coordinates[0]) > 60 || Math.abs(this.state.center[1] - city.coordinates[1]) > 45) return null
-                        // console.log(city.coordinates)
-                        // console.log(this.state.center)
-                        let radius = 1
-                        if (city.population > 500000) radius = 2
-                        if (city.population > 1000000) radius = 3.25
-                        if (city.population > 2500000) radius = 4
-                        if (city.population > 5000000) radius = 5
-                        if (city.population > 7500000) radius = 6
-                        if (city.population > 10000000) radius = 7
-                        return <Marker
+                    {this.state.cities.map((city, i) => {
+                      if (
+                        city.population < 5000000 / this.state.zoomOld ||
+                        this.state.zoomOld < 2.5 ||
+                        Math.abs(this.state.center[0] - city.coordinates[0]) >
+                          60 ||
+                        Math.abs(this.state.center[1] - city.coordinates[1]) >
+                          45
+                      )
+                        return null;
+                      // console.log(city.coordinates)
+                      // console.log(this.state.center)
+                      let radius = 1;
+                      if (city.population > 500000) radius = 2;
+                      if (city.population > 1000000) radius = 3.25;
+                      if (city.population > 2500000) radius = 4;
+                      if (city.population > 5000000) radius = 5;
+                      if (city.population > 7500000) radius = 6;
+                      if (city.population > 10000000) radius = 7;
+                      return (
+                        <Marker
                           key={`city-marker-${i}`}
                           marker={city}
-                          onClick={(e) => {
-                            console.log(e)
+                          onClick={e => {
+                            console.log(e);
                           }}
                           style={{
                             default: {
-                              fill: '#505050',
-                              stroke: '#242424'
+                              fill: "#505050",
+                              stroke: "#242424"
                             },
                             hover: {
-                              fill: '#505050',
-                              stroke: '#242424'
+                              fill: "#505050",
+                              stroke: "#242424"
                             },
                             pressed: {
-                              fill: '#505050',
-                              stroke: '#242424'
+                              fill: "#505050",
+                              stroke: "#242424"
                             }
-                          }}>
-                          <circle cx={0} cy={0}
-                            r={(1 + (0.25 * (this.state.zoom - 1))) * radius}/>
+                          }}
+                        >
+                          <circle
+                            cx={0}
+                            cy={0}
+                            r={(1 + 0.25 * (this.state.zoom - 1)) * radius}
+                          />
                         </Marker>
-                      }
-                      )}
+                      );
+                    })}
                   </Markers>
 
                   <Lines>
-                    {
-                      this.state.projectCurves.map((projectCurve, i) => {
-                        return this.renderProjectsLines(projectCurve, i)
-                      })
-                    }
+                    {this.state.projectCurves.map((projectCurve, i) => {
+                      return this.renderProjectsLines(projectCurve, i);
+                    })}
                   </Lines>
 
                   {this.renderCooperationLines(this.state.markerCooperations)}
 
                   <Markers>
-                    {
-                      this.state.projectCurves.forEach((projectCurve, i) => {
-                        let markerFillColor = '#cc3540'
-                        if (this.state.hoveredProject === projectCurve.project) {
-                          markerFillColor = '#4b9123'
-                        }
-                        if (projectCurve.controlPoint) {
-                          let projectMarker = {
-                            coordinates: projectCurve.controlPoint,
-                            projectCurve: projectCurve
-                          }
-                          return <Marker
+                    {this.state.projectCurves.forEach((projectCurve, i) => {
+                      let markerFillColor = "#cc3540";
+                      if (this.state.hoveredProject === projectCurve.project) {
+                        markerFillColor = "#4b9123";
+                      }
+                      if (projectCurve.controlPoint) {
+                        let projectMarker = {
+                          coordinates: projectCurve.controlPoint,
+                          projectCurve: projectCurve
+                        };
+                        return (
+                          <Marker
                             key={`controlPoint-marker-${i}`}
                             marker={projectMarker}
                             onClick={(marker, coordinates, e) => {
-                              this.setState({selectedProject: projectCurve.project}, () => {
-                                this.handleLineClick(coordinates, marker, e)
-                              })
+                              this.setState(
+                                { selectedProject: projectCurve.project },
+                                () => {
+                                  this.handleLineClick(coordinates, marker, e);
+                                }
+                              );
                             }}
                             onMouseEnter={(marker, event) => {
-                              this.handleProjectHoverIn(projectCurve.project)
+                              this.handleProjectHoverIn(projectCurve.project);
                             }}
                             onMouseLeave={(marker, event) => {
-                              this.handleProjectHoverOut(projectCurve.project)
+                              this.handleProjectHoverOut(projectCurve.project);
                             }}
                             preventTranslation={true}
                             preserveMarkerAspect={false}
                             style={{
                               default: {
                                 fill: markerFillColor,
-                                stroke: '#FFFFFF',
-                                cursor: 'pointer'
+                                stroke: "#FFFFFF",
+                                cursor: "pointer"
                               },
                               hover: {
-                                fill: '#4b9123',
-                                stroke: '#2e2e2e',
-                                cursor: 'pointer'
+                                fill: "#4b9123",
+                                stroke: "#2e2e2e",
+                                cursor: "pointer"
                               },
                               pressed: {
-                                fill: '#918c45',
-                                stroke: '#2e2e2e'
+                                fill: "#918c45",
+                                stroke: "#2e2e2e"
                               }
-                            }}>
-                            <circle cx={0} cy={0}
-                              r={7}/>
+                            }}
+                          >
+                            <circle cx={0} cy={0} r={7} />
                           </Marker>
-                        }
+                        );
                       }
-                      )}
+                    })}
                   </Markers>
 
                   <Markers>
-                    {
-                      this.state.institutions.map((institution, i) => {
-                        let markerFillColor = 'rgba(255,87,34,0.8)'
-                        if (this.state.selectedMarker && this.state.selectedMarker.name === institution.name) markerFillColor = '#4b9123'
-                        let hoverFillColor = '#4b9123'
-                        let hoverStrokeColor = '#2e2e2e'
-                        let cursor = 'pointer'
-                        if (this.state.selectedDimension === RESEARCH_AREA_STR) {
-                          hoverFillColor = markerFillColor
-                          hoverStrokeColor = '#FFFFFF'
-                          cursor = 'default'
-                        }
-                        return <Marker
+                    {this.state.institutions.map((institution, i) => {
+                      let markerFillColor = "rgba(255,87,34,0.8)";
+                      if (
+                        this.state.selectedMarker &&
+                        this.state.selectedMarker.name === institution.name
+                      )
+                        markerFillColor = "#4b9123";
+                      let hoverFillColor = "#4b9123";
+                      let hoverStrokeColor = "#2e2e2e";
+                      let cursor = "pointer";
+                      if (this.state.selectedDimension === RESEARCH_AREA_STR) {
+                        hoverFillColor = markerFillColor;
+                        hoverStrokeColor = "#FFFFFF";
+                        cursor = "default";
+                      }
+                      return (
+                        <Marker
                           key={`institution-marker-${i}`}
                           marker={institution}
                           onMouseEnter={(geography, event) => {
-                            this.handleInstitutionMouseEnter(institution, event)
+                            this.handleInstitutionMouseEnter(
+                              institution,
+                              event
+                            );
                           }}
                           onMouseMove={(geography, event) => {
-                            this.handleInstitutionMouseMove(institution, event)
+                            this.handleInstitutionMouseMove(institution, event);
                           }}
                           onMouseLeave={(geography, event) => {
-                            this.handleInstitutionMouseLeave(institution, event)
+                            this.handleInstitutionMouseLeave(
+                              institution,
+                              event
+                            );
                           }}
-
                           onClick={this.handleInstitutionClick}
                           preserveMarkerAspect={true}
                           style={{
                             default: {
                               fill: markerFillColor,
-                              stroke: '#FFFFFF',
+                              stroke: "#FFFFFF",
                               cursor: cursor
                             },
                             hover: {
@@ -1015,15 +1219,15 @@ class AreaChart extends Component {
                               cursor: cursor
                             },
                             pressed: {
-                              fill: '#918c45',
-                              stroke: '#2e2e2e'
+                              fill: "#918c45",
+                              stroke: "#2e2e2e"
                             }
-                          }}>
-                          <circle cx={0} cy={0}
-                            r={8}/>
+                          }}
+                        >
+                          <circle cx={0} cy={0} r={8} />
                         </Marker>
-                      }
-                      )}
+                      );
+                    })}
                   </Markers>
                 </ZoomableGroup>
               </ComposableMap>
@@ -1035,7 +1239,7 @@ class AreaChart extends Component {
           {this.renderProjectsHover()}
         </div>
       </Hammer>
-    )
+    );
   }
 }
 
@@ -1067,4 +1271,4 @@ class AreaChart extends Component {
 // passed to it; instead, it returns a new, connected component class for you to use.
 // export default connect(mapStateToProps, mapDispatchToProps)(AreaChart)
 /** export default connect(mapStateToProps, mapDispatchToProps)(AreaChart) */
-export default AreaChart
+export default AreaChart;
