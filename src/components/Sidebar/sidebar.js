@@ -4,6 +4,40 @@ import { connect } from "react-redux";
 import * as actions from "../../store/actions/actions";
 import SidebarFilterElements from "./sidebar-filter-elements";
 
+const getNewFilters = filters => {
+  return [
+    {
+      name: filters.forschungsgebiet.name,
+      filterKey: filters.forschungsgebiet.filterKey,
+      type: filters.forschungsgebiet.type,
+      subGroup: [
+        {
+          name: filters.forschungsgebiet.uniqueVals[0],
+          values: filters.hauptthema.uniqueVals.slice(0, 4)
+        },
+        {
+          name: filters.forschungsgebiet.uniqueVals[1],
+          values: filters.hauptthema.uniqueVals.slice(4, 7)
+        },
+        {
+          name: filters.forschungsgebiet.uniqueVals[2],
+          values: filters.hauptthema.uniqueVals.slice(7, 9)
+        },
+        {
+          name: filters.forschungsgebiet.uniqueVals[3],
+          values: filters.hauptthema.uniqueVals.slice(9, 10)
+        }
+      ]
+    },
+    {
+      name: filters.geldgeber.name,
+      filterKey: filters.geldgeber.filterKey,
+      type: filters.geldgeber.type,
+      values: filters.geldgeber.uniqueVals
+    }
+  ];
+};
+
 class Sidebar extends Component {
   constructor(props) {
     super(props);
@@ -11,44 +45,9 @@ class Sidebar extends Component {
     expFilters.fill(true);
     this.state = {
       expandedFilters: expFilters,
-      value: "",
-      filters: this.getNewFilters(props.filters)
+      value: ""
     };
     this.handleInputChange = this.handleInputChange.bind(this);
-  }
-
-  getNewFilters(filters) {
-    return [
-      {
-        name: filters.forschungsgebiet.name,
-        filterKey: filters.forschungsgebiet.filterKey,
-        type: filters.forschungsgebiet.type,
-        subGroup: [
-          {
-            name: filters.forschungsgebiet.uniqueVals[0],
-            values: filters.hauptthema.uniqueVals.slice(0, 4)
-          },
-          {
-            name: filters.forschungsgebiet.uniqueVals[1],
-            values: filters.hauptthema.uniqueVals.slice(4, 7)
-          },
-          {
-            name: filters.forschungsgebiet.uniqueVals[2],
-            values: filters.hauptthema.uniqueVals.slice(7, 9)
-          },
-          {
-            name: filters.forschungsgebiet.uniqueVals[3],
-            values: filters.hauptthema.uniqueVals.slice(9, 10)
-          }
-        ]
-      },
-      {
-        name: filters.geldgeber.name,
-        filterKey: filters.geldgeber.filterKey,
-        type: filters.geldgeber.type,
-        values: filters.geldgeber.uniqueVals
-      }
-    ];
   }
 
   handleInputChange(event) {
@@ -57,7 +56,7 @@ class Sidebar extends Component {
   render() {
     const filterElements = (
       <SidebarFilterElements
-        filters={this.state.filters}
+        filters={this.props.filters}
         change={this.props.filterChangeHandler}
       />
     );
@@ -72,15 +71,13 @@ class Sidebar extends Component {
 const mapDispatchToProps = dispatch => {
   return {
     filterChangeHandler: (filterId, value, form) =>
-      dispatch(actions.filterChange(filterId, value, form)),
-    toggleAllFilters: (key, filters) =>
-      dispatch(actions.toggleAllFilters(key, filters))
+      dispatch(actions.filterChange(filterId, value, form))
   };
 };
 
 const mapStateToProps = state => {
   return {
-    filters: state.main.filters
+    filters: getNewFilters(state.main.filters)
   };
 };
 

@@ -3,7 +3,8 @@ import {
   createNewStateFromUrlData,
   fieldsStringToInt,
   topicToField,
-  categories
+  categories,
+  fieldsIntToString
 } from "../utility";
 import { parse as queryStringParse } from "query-string";
 
@@ -53,8 +54,8 @@ const reducer = (state = initialState, action) => {
     case actionTypes.FILTER_CHANGE:
       return changeFilter(state, action);
 
-    case actionTypes.TOGGLE_FILTERS:
-      return toggleFilters(state, action);
+    case actionTypes.SWITCH_ALL_FILTERS_OF_FIELD:
+      return toggleAllFiltersOfField(state, action);
 
     case actionTypes.ACTIVATE_POPOVER:
       return activatePopover(state, action);
@@ -92,7 +93,6 @@ const applyFilters = (data, filter) => {
           newFilteredData[d] = filteredData[d];
       }
     });
-    console.log(filteredData);
     filteredData = newFilteredData;
   });
   return Object.values(filteredData);
@@ -191,6 +191,12 @@ const changeFilter = (state, action) => {
   } else {
     newFilter[action.id].value.push(action.value);
   }
+  if (action.id === "forschungsgebiet") {
+    newFilter.hauptthema.value = toggleAllFiltersOfField(
+      newFilter,
+      action.value
+    );
+  }
   return {
     ...state,
     filters: newFilter,
@@ -198,20 +204,18 @@ const changeFilter = (state, action) => {
   };
 };
 
-const toggleFilters = (state, action) => state;
-//   const newFilter = state.filter.map(fil => {
-//     if (fil.key === action.key) fil.value = action.filters
-//     return fil
-//   })
-//   const newFilteredData = applyFilters(state.data, newFilter)
-//   const newState = {
-//     ...state,
-//     filter: newFilter,
-//     filteredData: newFilteredData
-//   }
-//   updateUrl(newState)
-//   return newState
-// }
+const toggleAllFiltersOfField = (filters, fieldValue, isSwitchedOn) => {
+  const subjectsOfField = filters.hauptthema.uniqueVals.filter(
+    val => fieldsIntToString(topicToField(val)) === fieldValue
+  );
+  let newValue = filters.hauptthema.value.filter(
+    val => !subjectsOfField.includes(val)
+  );
+  if (filters.forschungsgebiet.value.includes(fieldValue)) {
+    newValue = newValue.concat(subjectsOfField);
+  }
+  return newValue;
+};
 
 const activatePopover = (state, action) => {
   let selectedProjectId = null;

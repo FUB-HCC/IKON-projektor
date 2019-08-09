@@ -65,10 +65,10 @@ const edgesFromClique = clique => {
 //EXPECTS: institutions, projects, width, height, onProjectClickHandler
 const GeoMapView = props => {
   const { projects, height } = props;
-  let institutions = props.institutions;
-  if (projects.length === 0 || institutions.length === 0) {
+  if (isNaN(height)) {
     return <div />;
   }
+  let institutions = props.institutions;
   institutions = institutions.map(ins => Object.assign(ins));
   institutions = institutions.filter(ins => ins.lon && ins.lat);
   const width = props.width ? props.width : 1000;

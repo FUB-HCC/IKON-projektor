@@ -18,11 +18,11 @@ export const filterChange = (filterId, value) => {
   };
 };
 
-export const toggleAllFilters = (key, filters) => {
+export const switchAllFiltersOfField = (key, switchOn) => {
   return {
-    type: actionTypes.TOGGLE_FILTERS,
-    key: key,
-    filters: filters
+    type: actionTypes.SWITCH_ALL_FILTERS_OF_FIELD,
+    field: key,
+    switchOn: switchOn
   };
 };
 
