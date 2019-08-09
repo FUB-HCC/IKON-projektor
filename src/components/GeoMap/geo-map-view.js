@@ -62,8 +62,6 @@ const GeoMapView = (props) => {
     c.anchorPoint = width/12 * (i * 2 + 1)
     c.centroidX = (c.longMax + c.longMin) / 2
     c.centroidY = (c.latMax + c.latMin) / 2
-    c.latMaxToEquator = Math.asinh(Math.tan(c.latMax * (Math.PI/180)))
-    console.log(c.equator)
   })
   const continent = inst => getContinentOfInstitution(continents, inst)
 
@@ -131,7 +129,6 @@ const GeoMapView = (props) => {
       <div className={style.mapsWrapper}>
         {continents.map((c) => {
           const instititutionsOnContinent = Object.values(institutionsInProjects).filter(ins => ins.continent === c.name)
-          console.log(instititutionsOnContinent)
           return (
             <div className={style.continentWrapper} key={c.name}>
               <svg width={width / 6} viewBox={'0 0 500 500'}>
