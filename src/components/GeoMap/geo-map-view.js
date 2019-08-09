@@ -49,14 +49,13 @@ const GeoMapView = (props) => {
   institutions = institutions.filter(ins => ins.lon && ins.lat)
   const width = props.width ? props.width : 1000
   const institution = id => getInstitutionFromId(institutions, id)
-
   const continents = [
-    { name:'Europa', svg: <Europe/>, longMin: -10.4608, longMax: 47.822, latMin: 34.8088, latMax: 71.113, institutionCount:0 },
-    { name:'Nordamerika', svg: <NorthAmerica/> , longMin: -168.1311, longMax: -12.155, latMin: 25.1155, latMax: 83.5702, institutionCount:0  },
-    { name:'Südamerika', svg: <SouthAmerica/>, longMin: -81.2897, longMax: -26.2463, latMin: -59.473, latMax: 12.6286, institutionCount:0  },
-    { name:'Asien', svg: <Asia/>, longMin: -9.12, longMax: 180, latMin: -67.6, latMax: 81.852, institutionCount:0  },
-    { name: 'Afrika', svg: <Africa/>, longMin: -17.537, longMax: 51.412, latMin: -34.822, latMax: 37.34, institutionCount:0  },
-    { name:'Australien', svg: <Australia/>, longMin: 112.9511, longMax: 159.1019, latMin: -54.749, latMax: -10.0516, institutionCount:0  }
+    { name:'Europa', svg: <Europe/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeigth: 384 , longMin: -10.4608, longMax: 47.822, latMin: 34.8088, latMax: 71.113, institutionCount:0 },
+    { name:'Nordamerika', svg: <NorthAmerica/>, xOffset: 61.4, yOffset: 53.1, mapWidth:378, mapHeigth: 400  , longMin: -168.1311, longMax: -12.155, latMin: 25.1155, latMax: 83.5702, institutionCount:0  },
+    { name:'Südamerika', svg: <SouthAmerica/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeigth: 384 , longMin: -81.2897, longMax: -26.2463, latMin: -59.473, latMax: 12.6286, institutionCount:0  },
+    { name:'Asien', svg: <Asia/>, xOffset: 63.1, yOffset: 55.4, mapWidth:383, mapHeigth: 387 , longMin: -9.12, longMax: 180, latMin: -67.6, latMax: 81.852, institutionCount:0  },
+    { name: 'Afrika', svg: <Africa/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeigth: 384 , longMin: -17.537, longMax: 51.412, latMin: -34.822, latMax: 37.34, institutionCount:0  },
+    { name:'Australien', svg: <Australia/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeigth: 384 , longMin: 112.9511, longMax: 159.1019, latMin: -54.749, latMax: -10.0516, institutionCount:0  }
   ]
   continents.forEach((c,i) => {
     c.anchorPoint = width/12 * (i * 2 + 1)
@@ -129,18 +128,19 @@ const GeoMapView = (props) => {
       <div className={style.mapsWrapper}>
         {continents.map((c) => {
           const instititutionsOnContinent = Object.values(institutionsInProjects).filter(ins => ins.continent === c.name)
+          console.log(instititutionsOnContinent)
           return (
             <div className={style.continentWrapper} key={c.name}>
-              <svg width={width / 6} viewBox={'0 0 292 384'}>
+              <svg width={width / 6} viewBox={'0 0 500 500'}>
                 <g fill={'white'}>
                   {c.svg}
                 </g>
                 <svg>
-                  <g fill={'red'}>
+                  <g fill={'red'} transform={`translate(${c.xOffset}, ${c.yOffset})`}>
                     {instititutionsOnContinent.map(ins => ((
                       <circle
-                        cx={mapLongToWidth(292, c, ins.lon)}
-                        cy={384 - mapLatToHeight(384, c, ins.lat)}
+                        cx={mapLongToWidth(c.mapWidth, c, ins.lon)}
+                        cy={c.mapHeigth - mapLatToHeight(c.mapHeigth, c, ins.lat)}
                         r={5}
                         key={ins.name + ins.id}
                       />
