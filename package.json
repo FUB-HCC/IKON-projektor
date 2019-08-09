@@ -30,6 +30,12 @@
     "topojson-client": "^3.0.0",
     "typescript": "^3.5.2"
   },
+  "lint-staged": {
+       "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --single-quote --write",
+       "git add"
+     ]
+   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
