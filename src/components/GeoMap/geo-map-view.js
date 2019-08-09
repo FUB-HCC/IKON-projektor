@@ -28,7 +28,8 @@ const getContinentOfInstitution = (continentList, institution) => {
 }
 
 const mapLongToWidth = (width, continent, long) => (-continent.longMin + long) * width / (continent.longMax - continent.longMin)
-const mapLatToHeight = (height, continent, lat) => (-continent.latMin + lat) * height / (continent.latMax - continent.latMin)
+const distanceToEquator = (lat) => Math.asinh(Math.tan(lat * (Math.PI/180)))
+const mapLatToHeight = (height, continent, lat) => (distanceToEquator(lat) - distanceToEquator(continent.latMin)) * height/Math.abs(distanceToEquator(continent.latMax) - distanceToEquator(continent.latMin))
 
 const edgesFromClique = (clique) => {
   let pairs = []
@@ -50,17 +51,19 @@ const GeoMapView = (props) => {
   const width = props.width ? props.width : 1000
   const institution = id => getInstitutionFromId(institutions, id)
   const continents = [
-    { name:'Europa', svg: <Europe/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeigth: 384 , longMin: -10.4608, longMax: 47.822, latMin: 34.8088, latMax: 71.113, institutionCount:0 },
-    { name:'Nordamerika', svg: <NorthAmerica/>, xOffset: 61.4, yOffset: 53.1, mapWidth:378, mapHeigth: 400  , longMin: -168.1311, longMax: -12.155, latMin: 25.1155, latMax: 83.5702, institutionCount:0  },
-    { name:'Südamerika', svg: <SouthAmerica/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeigth: 384 , longMin: -81.2897, longMax: -26.2463, latMin: -59.473, latMax: 12.6286, institutionCount:0  },
-    { name:'Asien', svg: <Asia/>, xOffset: 63.1, yOffset: 55.4, mapWidth:383, mapHeigth: 387 , longMin: -9.12, longMax: 180, latMin: -67.6, latMax: 81.852, institutionCount:0  },
-    { name: 'Afrika', svg: <Africa/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeigth: 384 , longMin: -17.537, longMax: 51.412, latMin: -34.822, latMax: 37.34, institutionCount:0  },
-    { name:'Australien', svg: <Australia/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeigth: 384 , longMin: 112.9511, longMax: 159.1019, latMin: -54.749, latMax: -10.0516, institutionCount:0  }
+    { name:'Europa', svg: <Europe/>, xOffset: 97.8, yOffset: 48.4, mapWidth:292, mapHeight: 384 , longMin: -10.6, longMax: 40.166, latMin: 34.8888, latMax: 71.27, institutionCount:0 },
+    { name:'Nordamerika', svg: <NorthAmerica/>, xOffset: 61.4, yOffset: 53.1, mapWidth:378, mapHeight: 384, longMin: -168.1311, longMax: -11.39, latMin: 7.322, latMax: 83.5702, institutionCount:0  },
+    { name:'Südamerika', svg: <SouthAmerica/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeight: 384 , longMin: -81.2897, longMax: -26.2463, latMin: -59.473, latMax: 12.6286, institutionCount:0  },
+    { name:'Asien', svg: <Asia/>, xOffset: 63.1, yOffset: 55.4, mapWidth:383, mapHeight: 387 , longMin: 20.01, longMax: 189.82, latMin: -22.147, latMax: 81.328, institutionCount:0  },
+    { name: 'Afrika', svg: <Africa/>, xOffset: 75.8, yOffset: 61.2, mapWidth:348, mapHeight: 394 , longMin: -17.537, longMax: 51.412, latMin: -34.822, latMax: 37.34, institutionCount:0  },
+    { name:'Australien', svg: <Australia/>, xOffset: 97.8, yOffset: 96, mapWidth:330, mapHeight: 384 , longMin: 112.9511, longMax: 159.1019, latMin: -54.749, latMax: -10.0516, institutionCount:0  }
   ]
   continents.forEach((c,i) => {
     c.anchorPoint = width/12 * (i * 2 + 1)
     c.centroidX = (c.longMax + c.longMin) / 2
     c.centroidY = (c.latMax + c.latMin) / 2
+    c.latMaxToEquator = Math.asinh(Math.tan(c.latMax * (Math.PI/180)))
+    console.log(c.equator)
   })
   const continent = inst => getContinentOfInstitution(continents, inst)
 
@@ -135,18 +138,16 @@ const GeoMapView = (props) => {
                 <g fill={'white'}>
                   {c.svg}
                 </g>
-                <svg>
                   <g fill={'red'} transform={`translate(${c.xOffset}, ${c.yOffset})`}>
                     {instititutionsOnContinent.map(ins => ((
                       <circle
                         cx={mapLongToWidth(c.mapWidth, c, ins.lon)}
-                        cy={c.mapHeigth - mapLatToHeight(c.mapHeigth, c, ins.lat)}
+                        cy={c.mapHeight- mapLatToHeight(c.mapHeight, c, ins.lat)}
                         r={5}
                         key={ins.name + ins.id}
                       />
                     )))}
                   </g>
-                </svg>
               </svg>
             </div>
           )
