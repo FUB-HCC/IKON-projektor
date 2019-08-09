@@ -15,7 +15,6 @@ import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
 import Modal from "../Modal/Modal";
 import DetailModal from "../Modal/DetailModal";
-import classes from "../AreaChart/area-chart-view.module.css";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
 
@@ -134,7 +133,7 @@ class TimeLineView extends Component {
           year={year}
           counter={counter}
           headline={title}
-          className={classes.projectModal}
+          className={styles.projectModal}
           onCloseClick={() => {
             this.setState({ projectsPopoverHidden: true });
           }}
@@ -143,7 +142,7 @@ class TimeLineView extends Component {
           height={this.state.height * 0.75}
         >
           <ol
-            className={classes.projects_list}
+            className={styles.projects_list}
             style={
               {
                 // height: (this.state.height * 0.65) + 'px'
@@ -158,7 +157,7 @@ class TimeLineView extends Component {
                     this.onProjectClick({ project: project }, 2);
                   }}
                   key={`project-list-link-${project.id}-${i}`}
-                  className={classes.projects_list_item}
+                  className={styles.projects_list_item}
                 >{`${project.title} (${project.id})`}</li>
               );
             })}
@@ -179,7 +178,7 @@ class TimeLineView extends Component {
           locationY={this.state.mouseLocation[1]}
         >
           <p
-            className={classes.popFixer}
+            className={styles.popFixer}
             style={{
               position: "absolute",
               backgroundColor: "#333",

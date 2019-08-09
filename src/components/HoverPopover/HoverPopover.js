@@ -1,5 +1,4 @@
 import React from "react";
-import classes from "../AreaChart/area-chart-view.module.css";
 
 const HoverPopover = props => {
   let { locationX, locationY, width, height } = props;
@@ -12,7 +11,6 @@ const HoverPopover = props => {
 
   return (
     <div
-      className={classes.popover_body}
       style={{
         width: width, // TODO dynamically style width
         height: height, // TODO dynamically style height
