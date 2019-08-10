@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 
 import classes from "../redesigned.module.css";
-import { getFieldColor, getTopicColor } from "../../store/utility";
+import { getFieldColor, getTopicColor } from "../../util/utility";
 
 const SidebarFilterElements = props => {
   const filters = props.filters;

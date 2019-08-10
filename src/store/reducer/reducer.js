@@ -5,7 +5,7 @@ import {
   topicToField,
   categories,
   fieldsIntToString
-} from "../utility";
+} from "../../util/utility";
 import { parse as queryStringParse } from "query-string";
 
 const initialState = {
@@ -53,9 +53,6 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.FILTER_CHANGE:
       return changeFilter(state, action);
-
-    case actionTypes.SWITCH_ALL_FILTERS_OF_FIELD:
-      return toggleAllFiltersOfField(state, action);
 
     case actionTypes.ACTIVATE_POPOVER:
       return activatePopover(state, action);
@@ -204,7 +201,7 @@ const changeFilter = (state, action) => {
   };
 };
 
-const toggleAllFiltersOfField = (filters, fieldValue, isSwitchedOn) => {
+const toggleAllFiltersOfField = (filters, fieldValue) => {
   const subjectsOfField = filters.hauptthema.uniqueVals.filter(
     val => fieldsIntToString(topicToField(val)) === fieldValue
   );

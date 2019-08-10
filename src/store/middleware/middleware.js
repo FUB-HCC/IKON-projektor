@@ -4,7 +4,7 @@ import {
   fieldsStringToInt,
   sponsorStringToInt,
   topicStringToInt
-} from "../utility";
+} from "../../util/utility";
 
 export const updateUrl = store => next => action => {
   const result = next(action);

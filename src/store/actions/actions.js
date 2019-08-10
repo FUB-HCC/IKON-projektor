@@ -18,14 +18,6 @@ export const filterChange = (filterId, value) => {
   };
 };
 
-export const switchAllFiltersOfField = (key, switchOn) => {
-  return {
-    type: actionTypes.SWITCH_ALL_FILTERS_OF_FIELD,
-    field: key,
-    switchOn: switchOn
-  };
-};
-
 export const activatePopover = (datapoint, vis) => {
   return {
     type: actionTypes.ACTIVATE_POPOVER,

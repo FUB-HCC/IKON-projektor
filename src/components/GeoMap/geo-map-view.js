@@ -210,20 +210,22 @@ const GeoMapView = props => {
     }
   });
 
+  const arcHeight = height * 0.65;
   return (
     <div
       className={style.geoViewWrapper}
       style={{ width: width, height: height }}
     >
       <div className={style.arcWrapper}>
-        <svg width={width} height={height * 0.5}>
+        <svg width={width} height={arcHeight}>
           {Object.values(continentConnections).map(con => (
             <path
-              d={`M${con.end},${height * 0.5} C${con.end},${height * 0.5 -
-                Math.abs(con.end - con.start) * 0.666} ${con.start},${height *
-                0.5 -
-                Math.abs(con.end - con.start) * 0.666} ${con.start},${height *
-                0.5}`}
+              d={`M${con.end},${arcHeight} C${con.end},${arcHeight -
+                Math.abs(con.end - con.start) * 0.666} ${
+                con.start
+              },${arcHeight - Math.abs(con.end - con.start) * 0.666} ${
+                con.start
+              },${arcHeight}`}
               stroke="white"
               strokeWidth={con.weight}
               fill="none"

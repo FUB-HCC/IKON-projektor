@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getFieldColor } from "../../store/utility";
+import { getFieldColor } from "../../util/utility";
 import TimeLineView from "./time-line-view";
 
 class TimeLine extends React.Component {

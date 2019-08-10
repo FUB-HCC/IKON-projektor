@@ -5,7 +5,7 @@ import Discoveries from "./pages/Discoveries/discoveries";
 import Projects from "./pages/Projects/projects";
 import { default as NavigationSubpages } from "./components/NavigationSubpages/navigation-subpages";
 import Footer from "./components/Footer/Footer";
-import Sidebar from "./components/Sidebar/sidebar";
+import Sidebar from "./components/SideBarNew/sidebar";
 import { ConnectedRouter } from "connected-react-router";
 import { Route, Redirect, Switch } from "react-router";
 import { history } from "./index";
