@@ -1,7 +1,6 @@
 import React from "react";
 import style from "./sidebar.module.css";
-import { getFieldColor, getTopicColor } from "../../util/utility";
-import classes from "../redesigned.module.css";
+import { getFieldColor } from "../../util/utility";
 
 const FilterSet = props => {
   return (
@@ -13,6 +12,7 @@ const FilterSet = props => {
         <div
           className={style.subsetWrapper}
           style={{ color: getFieldColor(subset.name) }}
+          key={subset.name}
         >
           <div className={style.subsetHeader}>
             <CheckBox
