@@ -28,7 +28,8 @@ class TimeLine extends Component {
     this.state = {
       dataSplitYears: [],
       forschungsbereiche: [],
-      height: props.height * 0.5,
+      // height: props.height * 0.5,
+      height: props.height * 0.1,
       width: props.width * 0.6,
       margin: props.margin,
       firstUpdate: true,
@@ -80,7 +81,8 @@ class TimeLine extends Component {
 
   updateTimeGraph (data, height, width, margin) {
     if (!this.state.firstUpdate) { // workaround for first time scaling
-      this.setState({height: height * 0.5, width: width * 0.6, margin: margin})
+      // this.setState({height: height * 0.5, width: width * 0.6, margin: margin})
+      this.setState({height: height * 0.1, width: width * 0.6, margin: margin})
     }
 
     let forschungsbereiche = this.state.forschungsbereiche

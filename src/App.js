@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import GraphView from './containers/GraphView/GraphView'
 // import AreaChart from './containers/GraphView/AreaChart'
 import GraphViewPetri from './containers/GraphView/GraphViewPetri'
-// import GraphViewTimeLine from './containers/GraphView/GraphViewTimeLine'
+import GraphViewTimeLine from './containers/GraphView/GraphViewTimeLine'
 import About from './containers/About/About'
 import Discoveries from './containers/Discoveries/Discoveries'
 import Projects from './containers/Projects/Projects'
 import { default as NavigationSubpages } from './components/NavigationSubpages/NavigationSubpages'
-import Footer from './components/Footer/Footer'
+// import Footer from './components/Footer/Footer'
 import Sidebar from './components/Sidebar/Sidebar'
 import { ConnectedRouter } from 'react-router-redux'
 import { Route, Redirect, Switch } from 'react-router'
@@ -39,19 +39,19 @@ class App extends Component {
                 <Route path='/about' component={About} />
               </Switch>
             </div>
-            {/* <div className={classes.BackGradientTimeLine}>
+            <div className={classes.BackGradientTimeLine}>
               <Switch>
                 <Route path='/projects' component={Projects} />
                 <Route path='/explore' component={GraphViewTimeLine}/>
                 <Route path='/discoveries' component={Discoveries} />
                 <Route path='/about' component={About} />
               </Switch>
-            </div> */}
+            </div>
             <div className={classes.sidebar}>
               <Sidebar />
             </div>
           </div>
-          <Footer />
+          {/* <Footer /> */}
         </React.Fragment>
       </ConnectedRouter>
     )

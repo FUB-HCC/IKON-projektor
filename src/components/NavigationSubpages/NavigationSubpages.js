@@ -9,7 +9,8 @@ class NavigationSubpages extends Component {
     super(props)
     this.changeGraphHandler = this.changeGraphHandler.bind(this)
     this.state = {
-      active: 'WISSEN'
+      // active: 'WISSEN'
+      active: 'RAUM'
     }
   }  
 

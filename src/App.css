@@ -1,8 +1,8 @@
 .BackGradient {
     /* width 75vw */
-    width: 37vw;
+    width: 30vw;
     /* hight -30vh for timeline */
-    height: 67vh;
+    height: 60vh;
     /* background: linear-gradient(60deg, #76738B, #855E5F, #76738B, #646E3F, #76738B, #5F6648, #76738B, #54555E); /*background: linear-gradient(60deg, #434058, #522B2C, #434058, #313B0C, #434058, #2C3315, #434058, #21222B); */
     background: #0e0e0e;
     background-size: 800% 800%;
@@ -18,9 +18,9 @@
 }
 .BackGradientRight {
     /* width 75vw */
-    width: 37vw;
+    width: 69vw;
     /* hight -30vh for timeline */
-    height: 67vh;
+    height: 60vh;
     /* background: linear-gradient(60deg, #76738B, #855E5F, #76738B, #646E3F, #76738B, #5F6648, #76738B, #54555E); /*background: linear-gradient(60deg, #434058, #522B2C, #434058, #313B0C, #434058, #2C3315, #434058, #21222B); */
     background: #0e0e0e;
     background-size: 800% 800%;
@@ -32,13 +32,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    float: left;
+    float: right;
 }
 .BackGradientTimeLine {
     /* width 75vw */
-    width: 74vw;
+    width: 100%;
     /* hight -30vh for timeline */
-    height: 30vh;
+    height: 20vh;
     /* background: linear-gradient(60deg, #76738B, #855E5F, #76738B, #646E3F, #76738B, #5F6648, #76738B, #54555E); /*background: linear-gradient(60deg, #434058, #522B2C, #434058, #313B0C, #434058, #2C3315, #434058, #21222B); */
     background: #0e0e0e;
     background-size: 800% 800%;
@@ -51,13 +51,15 @@
     justify-content: center;
     align-items: center;
     float: left;
+    margin-top: 1vh;
 }
 .sidebar{
-    width: 25vw;
+    width: 100%;
     background: #0e0e0e;
-    height: 89vh;
+    height: 15vh;
     overflow-y: scroll;
     float: left;
+    margin-top: 1vh;
 }
 .bodyWrap{
     display: block;
