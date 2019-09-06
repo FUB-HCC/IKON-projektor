@@ -1,0 +1,435 @@
+/* /////////////////// HTML Elemente ///////////////// */
+html {
+  scroll-behavior: smooth;
+  /*margin: 2px;*/
+  /*position: relative;*/
+  min-height: 100%;
+}
+
+@font-face {
+  font-family: "NexusSans";
+  src: url("/font/NexusSansPro.otf");
+}/* https://stackoverflow.com/questions/38086083/to-use-local-font-in-html-using-font-face */
+
+/* blau: #036, grün: #9C0, grau: #5F5F5F, hellgrau: #CCD6E0, hellblau: #06C */
+
+body {
+  font-family: Arial, "Open Sans", Helvetica, sans-serif;
+  font-size: 12px;
+  margin: 0;
+  width: 100%;
+  color: rgb(34, 34, 34);
+}
+
+header {
+  padding: 0;/*top-right-bottom-left*/
+  /*position: relative;*/
+}
+
+div#logoDiv {
+  padding: 12px 20px 12px 12px;/*top-right-bottom-left*/
+  /*position: relative;*/
+  clear: both;
+}
+
+div#menueBar {
+  clear: both;
+  background-color: rgb(221, 221, 221);
+  height: 25px;
+}
+
+div#greenBar {
+  box-sizing: border-box;
+  background-color: rgb(107, 158, 31);/* CD: #9C0 */
+  margin: 0;
+  padding: 8px 12px 5px 12px;/*top-right-bottom-left*/
+  width: 100%;
+  height: 46px;
+  background-attachment: scroll;
+  background-clip: border-box;
+}
+
+footer {/* https://stackoverflow.com/questions/3443606/make-footer-stick-to-bottom-of-page-correctly */
+  background-color: rgb(69, 69, 69);
+  color: white;
+  font-size: 14px;
+  line-height: 21px;
+  padding: 9px 12px 9px 12px;/*top-right-bottom-left*/
+  background-attachment: scroll;
+  background-clip: border-box;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: calc(100%-24px);
+  overflow: hidden;
+}
+
+div#layout {
+  max-width: 1400px;
+  min-width: 320px;
+  width: calc(100%-80px);
+  /*max-width: 800px;
+  margin: auto;*/
+  text-align: center;
+  padding: 36px 40px 12px 40px;/*top-right-bottom-left*/
+  min-height: 400px;
+}
+
+h1, h2 {
+  font-weight: 400;
+  margin-bottom: 9px;
+  font-family: "NexusSans", Arial, "Open Sans", Helvetica, sans-serif;
+  color: rgb(34, 34, 34);/*CD: color: #036;*/
+}
+
+h1 {
+  font-size: 25px; /*Web: 25px, CD: 30pt=40px;*/
+  line-height: 32px;
+}
+
+h2 {
+  font-size: 21px;/*Web: 21px*/
+  line-height: 27px;
+}
+
+/*h2:first-child {/* https://stackoverflow.com/questions/10182039/removing-top-margin-from-first-element-using-modern-css
+  line-height: 1px;
+  font-weight: 1;
+}*/
+
+h1.greenBar {
+  font-size: 25px;
+  font-family: "NexusSans", Arial, "Open Sans", Helvetica, sans-serif;
+  font-weight: 400;
+  color: rgb(34, 34, 34);
+  line-height: 5px;
+}
+
+text.h2 {
+  font-size: 21px;
+  font-family: "NexusSans", Arial, "Open Sans", Helvetica, sans-serif;
+  font-weight: 400;
+  margin: 0;
+  color: rgb(34, 34, 34);
+}
+
+a {
+  font-size: 16px;/*Web: 14px, CD: 19pt=25px;*/
+  color: rgb(0,102,204);/*#06C;*/
+  text-decoration-line: none;
+}
+
+a.menueList {
+  color: rgb(102, 102, 102);/* ausgewaehlt: rgb(34, 34, 34) */
+  font-size: 14px;
+  margin-right: 12px;
+  float: left;
+}
+
+.menueList:hover  .dropdown-content {
+  display: block;
+}
+
+p {
+  font-size: 16px;/*Web: 14px, CD: 18pt=24px;*/
+  /*text-align: justify;*/
+  line-height: 21px;
+  margin-bottom: 9px;
+  hyphens: auto;
+  color: rgb(34, 34, 34);
+}
+
+.arrow {/* ❭ ❬ */
+  color: rgb(107, 158, 31);/* blau: rgb(0,102,204) */
+  font-size: 10px;
+  /*display: inline-block; https://stackoverflow.com/questions/24961795/how-can-i-use-css3-transform-on-a-span */
+  -ms-transform: scaleX(2);
+  -webkit-transform: scaleX(2);
+  transform: scaleX(2);
+  font-weight: bold;/* does not work */
+  float: left;
+}
+
+ul, ol {
+  margin: 0 0 9px 20px;/*top-right-bottom-left*/
+  padding-left: 0px;
+  color: rgb(34, 34, 34);
+}
+
+nav ul {/*ul.menueList {*/
+  box-sizing: border-box;
+  color: rgb(34, 34, 34);
+  display: block;
+  float: left;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+li {
+  font-size: 16px;/*Web: 14px, CD: 18pt=24px;*/
+  line-height: 21px;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 9px;/*manchmal*/
+  hyphens: auto;
+  color: rgb(34, 34, 34);
+}
+
+nav li{ /*li.menueList {*/
+  border-bottom-style: none;
+  border-bottom-width: 0px;
+  box-sizing: border-box;
+  float: left;
+  display: inline-block;
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+  position: static;
+  white-space: nowrap;
+  padding: 2px 5px 2px 5px;/*top-right-bottom-left*/
+  margin: 0;
+  display: inline-block;
+}
+
+nav li .dropdown-content {
+  top: 25px;
+  left: -5px;
+}
+
+p.foot {
+  font-size: 14px;/*Web: 14px, CD: 10pt=13px*/
+  /*color: #5F5F5F;*/
+  color: rgb(153, 153, 153);
+  margin: 0;
+  hyphens: auto;
+  float: left;
+}
+
+form {
+  margin-top: 2ex;
+  /*display: inline;
+  margin:auto; https://d-graff.de/demos/selfhtml/jeena_test.html*/
+}
+
+button {
+  /*color: white;
+  background-color: #666;*/
+  padding: 0;
+  margin: 0 0.5px 1.5px 0;/*top-right-bottom-left*/
+  font-size: 12px;
+  line-height: 1.5ex;
+}
+
+.dropdowndiv {
+  position: relative;
+  display: inline-block;
+  float: left;
+}
+
+.dropbtn {
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  box-shadow: 0px 3px 3px 0px rgba(0,0,0,0.2);
+  padding: 0;
+  z-index: 1;
+  background-color: rgb(69,69,69);
+}
+
+.dropdown-content p, .dropdown-content a {
+  font-size: 12px;
+  padding: 0.5ex 1.5ex;
+  margin: 0;
+  line-height: 3ex;
+  text-decoration: none;
+  display: block;
+  color: white;
+  cursor: pointer;
+}
+
+.dropdown-content p:hover, .dropdown-content a:hover {
+  background-color: rgb(107, 158, 31);/* grün */
+}
+.dropdown-content p:active, .dropdown-content a:active {
+  background-color: rgb(0,51,102);/* blau*/
+}
+
+.dropdowndiv:hover .dropdown-content {
+  display: block;
+  /*width: 20em;*/
+}
+
+/*.dropdowndiv:visited .dropdown-content {
+  display: none;
+} löst nicht die onClick Funktion aus, wenn es nicht mehr angezeigt wird */
+
+input {
+  /*color: white;
+  background-color: #666;*/
+  padding: 0.5ex;
+  margin:auto;
+  /*margin-right: 0.4em;*/
+}
+
+input.radio {
+  display: block;
+}
+
+figure {
+  margin: 0;
+  padding: 10px 0 10px 0;/*top-right-bottom-left*/
+}
+
+figcaption {/* Website */
+  border-bottom-color: rgb(204, 204, 204);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  box-sizing: border-box;
+  color: rgb(102, 102, 102);
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  margin: 0;
+  padding: 6px 0 6px 0;/*top-right-bottom-left*/
+}
+
+iframe {
+  border: none;
+}
+
+iframe.scale {
+  -ms-zoom: 0.5;
+  -moz-transform: scale(0.5);
+  -moz-transform-origin: 0 0;
+  -o-transform: scale(0.5);
+  -o-transform-origin: 0 0;
+  -webkit-transform: scale(0.5);
+  -webkit-transform-origin: 0 0;
+}/* https://stackoverflow.com/questions/166160/how-can-i-scale-the-content-of-an-iframe */
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 0px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}/* https://www.w3schools.com/html/tryit.asp?filename=tryhtml_table_intro */
+
+/*td:nth-child(1) {/* https://www.w3schools.com/cssref/sel_nth-child.asp 
+  text-align: right;
+}*/
+
+#transDurationIn {
+  width: 100px;
+  position: relative;
+  top: 1ex;
+  margin: 0 4px;/*top-right-bottom-left*/
+  padding: 0;
+}
+
+#transDurationOut {
+  position: relative;
+  top: -2.6ex;
+  right: 110px;
+  width: 3em;
+  height: 1em;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* /////////////////// SVG Elemente ///////////////// */
+svg {
+  background-color: #fff; 
+  border: 1px solid #999;
+  float: none;
+  margin: 0 0 5px 0;/*top-right-bottom-left*/
+}
+
+svg.small {
+  height: 25px;
+  width: calc(100% - 3em);
+  float: right;
+  margin-bottom: -10px;
+  margin-left: 10px;
+}
+
+/*
+path {
+  fill: #993;
+  stroke: #993;
+  stroke-width: 29px;
+  opacity: 0.3;
+  paint-order: stroke markers fill;
+  stroke-linejoin: round;
+}*/
+
+circle {
+  fill: yellow;
+  stroke: orange;
+  stroke-width: 1.5px;
+}
+
+.myTooltip {
+  line-height: 1;
+  display: inline-block;
+  padding: 6px;
+  width: 200px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+  /*text-align-last: center;*/
+  position: absolute;
+}
+
+.myTooltip .tooltiptext::after {
+  font-size: 16px;
+  position: absolute;
+  top: calc(100% - 9px);
+  left: -1px;
+  margin-left: -5px;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25E3";/* \25BC */
+  text-align: center;
+}
+
+.d3-tip {
+  line-height: 1;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: left;
+}
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 12px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+/* Style northward tooltips specifically */
+.d3-tip.n:after {
+  margin: -2px 0 0 0;
+  top: 100%;
+  left: 0;
+}
