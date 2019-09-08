@@ -4,26 +4,15 @@ const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
 modifyHeader(me);
 
 //////////////// Content //////////////////
-linkeSpalte.append("h2").text("Die Hülle");
+linkeSpalte.append("h2").text("Problem und Lösung");
 
 var auflistung = linkeSpalte.append("ul");
 auflistung.append("li")
-  .text("Berechnung einer konvexen Hülle mittels d3.polygonHull()");
+  .text("Anfangspunkt: Zielpfad anpassen");
 auflistung.append("li")
-  .text("Darstellung durch einen Pfad als String der Form: ")
-  .append("span")
-  .style("color", "red")
-  .text("M 0 0 L 10 0 L 5 10 Z");
-
-linkeSpalte.append("h2").text("Interpolation des Pfades");
-
-auflistung = linkeSpalte.append("ul");
-auflistung.append("li")
-  .text("Der Anfangspunkt muss übereinstimmen.");
-auflistung.append("li")
-  .text("Die Knotenzahl muss übereinstimmen.");
-auflistung.append("li")
-  .text("Die Reihenfolge sollte übereinstimmen.");
+  .text("Knotenzahl: Knoten auffüllen");
+// auflistung.append("li")
+//   .text("Reihenfolge: Keine Lösung");
 
 
 //////////////// Datasets ////////////////
@@ -74,21 +63,6 @@ var datasetAnfang = {
 };
   fillDataset(datasetAnfang.vorher);
   fillDataset(datasetAnfang.nachher);
-
-var datasetReihenfolge = {
-  vorher: [
-    {id: 1, x: 2, y: 2, cl: 1},
-    {id: 2, x: 0, y: 2, cl: 1},
-    {id: 3, x: 1, y: 0, cl: 1}
-  ],
-  nachher: [
-    {id: 1, x: 2, y: 0, cl: 1},
-    {id: 2, x: 0, y: 0, cl: 1},
-    {id: 3, x: 1, y: 1.5, cl: 1}
-  ]
-};
-  fillDataset(datasetReihenfolge.vorher);
-  fillDataset(datasetReihenfolge.nachher);
   
 var datasetKnotenzahl = {
   vorher: [
@@ -105,6 +79,21 @@ var datasetKnotenzahl = {
 };
   fillDataset(datasetKnotenzahl.vorher);
   fillDataset(datasetKnotenzahl.nachher);
+  
+// var datasetReihenfolge = {
+//   vorher: [
+//     {id: 1, x: 2, y: 2, cl: 1},
+//     {id: 2, x: 0, y: 2, cl: 1},
+//     {id: 3, x: 1, y: 0, cl: 1}
+//   ],
+//   nachher: [
+//     {id: 1, x: 2, y: 0, cl: 1},
+//     {id: 2, x: 0, y: 0, cl: 1},
+//     {id: 3, x: 1, y: 1.5, cl: 1}
+//   ]
+// };
+//   fillDataset(datasetReihenfolge.vorher);
+//   fillDataset(datasetReihenfolge.nachher);
 
 function fillDataset(d) {
   for (var i in d) {
@@ -132,16 +121,16 @@ showPolygonzug = true;
 transDuration = 2000;
 oldDatas = datasetAnfang.vorher.sort((a,b) => a.id - b.id);
 newDatas = datasetAnfang.nachher.sort((a,b) => a.id - b.id);
-var oldNests = new SimpleNest(oldDatas);
-var newNests = new SimpleNest(newDatas);
+var oldNests = new Nest(oldDatas);
+var newNests = new Nest(newDatas);
 //console.log('old:',oldNests.nest.map(c => c.polygons[0].vertices.sort((a,b) => a.id-b.id)), 'new:',newNests.nest.map(c => c.polygons[0].vertices.sort((a,b) => a.id-b.id)));
 var scale = new Scale();
   scale.setDomain(oldDatas);
 
 const dropDownSelections = [
   {text: "Anfangspunkt", value: "anfangspunkt"},
-  {text: "Knotenzahl", value: "knotenzahl"},
-  {text: "Reihenfolge", value: "reihenfolge"}
+  {text: "Knotenzahl", value: "knotenzahl"}
+  //{text: "Reihenfolge", value: "reihenfolge"}
 ];
 //problemHullTrait = "linear";
 var dropDownText = dropDownSelections.filter(d => d.value == problemHullTrait)[0].text;
@@ -155,19 +144,19 @@ new DropdownList(rechteSpalte, dropDownSelections, dropDownText,
       oldDatas = datasetAnfang.vorher.sort((a,b) => a.id - b.id);
       newDatas = datasetAnfang.nachher.sort((a,b) => a.id - b.id);
     }
-    else if (problemHullTrait == "reihenfolge") {
-      oldDatas = datasetReihenfolge.vorher;
-      newDatas = datasetReihenfolge.nachher;
-    }
+//     else if (problemHullTrait == "reihenfolge") {
+//       oldDatas = datasetReihenfolge.vorher;
+//       newDatas = datasetReihenfolge.nachher;
+//     }
     else {// knotenzahl
       oldDatas = datasetKnotenzahl.vorher;
       newDatas = datasetKnotenzahl.nachher;
     }
     // in jedem Fall
-    oldNests = new SimpleNest(oldDatas);
-    newNests = new SimpleNest(newDatas);
+    oldNests = new Nest(oldDatas);
+    newNests = new Nest(newDatas);
     //scale.setDomain(oldDatas);
-    goToAusgangszustandSimpel(svg, tooltipNodeUniform, oldDatas, newDatas, tooltipClusterUniform, oldNests, newNests, scale);
+    goToAusgangszustand(svg, tooltipNodeUniform, oldDatas, newDatas, tooltipClusterUniform, oldNests, newNests, scale);
     playBtn.value = "play";
     playBtn.btn.text("▶");
   }
@@ -187,13 +176,11 @@ function togglePlayBtn(btn) {
 var playBtn = new Button(rechteSpalte, "▶", function(){});
   playBtn.btn.on("click", function(){
     if (playBtn.value == "play")
-      simpleTransition(svg, tooltipNodeUniform, oldDatas, newDatas, tooltipClusterUniform, oldNests, newNests, scale);
+      startTransition(svg, tooltipNodeUniform, oldDatas, newDatas, tooltipClusterUniform, oldNests, newNests, scale);
     else
-      simpleTransition(svg, tooltipNodeUniform, newDatas, oldDatas, tooltipClusterUniform, newNests, oldNests, scale);
+      startTransition(svg, tooltipNodeUniform, newDatas, oldDatas, tooltipClusterUniform, newNests, oldNests, scale);
     togglePlayBtn(playBtn);
   });
-  // d3.selectAll("g.hulls").select("path.existent")._groups[0][0]
-  // d3.selectAll("g.polygonzug").select("path.existent")._groups[0][0]
 
 rechteSpalte.append("br");
 var svg = (new SVG(rechteSpalte)).svg;

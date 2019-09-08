@@ -5,6 +5,7 @@ const menue = [
   {url: "vorUndNachteile", name: "Vor- und Nachteile"},
   {url: "designentscheidungen", name: "Designentscheidungen"},
   {url: "problemstellung", name: "Problemstellung"},
+  {url: "evaluation", name: "Evaluation"},
   {url: "final", name: "Prototyp"}
 ];
 
@@ -17,8 +18,11 @@ const seiten = [
   {url: "designKnoten", name: "Knotentransition", menue: menue[4]},
   {url: "designHuellen", name: "Hüllentransition", menue: menue[4]},
   {url: "designStaging", name: "Choreographie", menue: menue[4]},
-  {url: "problemstellung", name: "Problemstellung bei der Hülleninterpolation", menue: menue[5]},
-  {url: "final", name: "Prototyp – Projekte in Clustern", menue: menue[6]}
+  {url: "problemstellung", name: "Hülleninterpolation", menue: menue[5]},
+  {url: "loesungsansatz", name: "Lösungsansatz", menue: menue[5]},
+  {url: "limitierung", name: "Limitierung", menue: menue[5]},
+  {url: "evaluation", name: "Evaluation", menue: menue[6]},
+  {url: "final", name: "Prototyp – Projekte in Clustern", menue: menue[7]}
 ];
 
 function pagenumber(siteUrl){

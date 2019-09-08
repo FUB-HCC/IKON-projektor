@@ -620,6 +620,23 @@ class Polygon {
     }
   }
   
+  calculateSimpleHull() {
+     if (this.getLength() == 0)
+      throw new Error("Es existiert kein Knoten, weswegen keine Hülle berechnet werden kann.");
+    else if (this.getLength() == 1) {
+      // kopiert den Punkt mit leichtem Versatz, weil mind. 2 Punkte für eine Hülle notwendig sind
+      var knoten = this.vertices[0].copy();
+      knoten.moveBy(new Position(verschiebung, verschiebung));
+      return new Polygon([this.vertices[0], knoten]);
+    }
+    else { // mind. 2 Knoten
+      var hull = (this.getLength() < 3)? this.vertices : d3.polygonHull(this.vertices.map(function(d){
+        return d.morphToArray();
+      })).map(function(d){return Knoten.morphBack(d);});
+      return new Polygon(hull);
+    }
+  }
+  
   /**
   * @class Polygon
   * @param {Object} scale - scaleLinear()
@@ -823,6 +840,12 @@ class Cluster {
     }); // [Hulls]
   }
   
+  getSimpleHullVertices(){
+    return this.mapToPolygons(function(p){
+      return p.calculateSimpleHull();
+    }); // [Hulls]
+  }
+  
   /**
   * @class Cluster
   * @return {Integer} gibt die Gesamtknotenzahl des Cluster aus
@@ -852,9 +875,20 @@ class Cluster {
       .join(" ");
   }
   
-  makePolygonzug2Path(scale){
-    console.log(this.reduceToOnePolygon().makeHull2Path(scale));
-    return this.reduceToOnePolygon().makeHull2Path(scale);
+  
+  makeSimpleHulls2Path(scale){
+    return this.getSimpleHullVertices()
+      //.sort(function(a,b){return a.id - b.id})
+      .map(function(hull){return hull.makeHull2Path(scale)})
+      .join(" ");
+  }
+  
+  makeSimplePolygonzug2Path(scale){
+    //return this.reduceToOnePolygon().makeHull2Path(scale);
+    // NEU
+    var pfad = this.reduceToOnePolygon().vertices
+      .sort((a,b) => a.id - b.id);
+    return new Polygon(pfad).makeHull2Path(scale);
   }
   
   /**
@@ -1172,126 +1206,10 @@ class Nest {// [Cluster_1,... , Cluster_n]
     return {old: oldNests, new: newNests};
   }// Ende der Funktion createTransitionNests
   
-} // Ende: Klasse Nest
-
-
-
-
-class SimpleNest {// [Cluster_1,... , Cluster_n]
-  /**
-  * @class Nest
-  * @param {Polygon} dataset
-  */
-  constructor(dataset){
-    this.nest = d3.nest()
-      // http://bl.ocks.org/donaldh/2920551
-      // https://github.com/d3/d3-collection#nests
-      .key(knoten => knoten.clusterNo)
-      .entries(dataset)
-      .map(kv => new Cluster(+kv.key, [new Polygon(kv.values)]));// d = {key: "1", values: [P_1,...,P_n]}, k_i € Polygon
-  }
   
-  /**
-  * @class Nest
-  * @return {Integer} gibt die Anzahl der Cluster aus
-  */
-  getLength(){
-    return this.nest.length;
-  }
   
-  /**
-  * @class Nest
-  * @param {Function} fkt
-  * @return {Object} wendet eine FUnktion auf alle Cluster an
-  */
-  mapToCluster(fkt){
-    return this.nest.map(fkt);
-  }
   
-  /**
-  * @class Nest
-  * @return {Nest} kopiert das Nest
-  */
-  copy() {// kopiert this.nest = [C1, C2, ...]
-    var n = new Nest([]);
-    n.nest = this.mapToCluster(function(c){
-      return c.copy();
-    });
-    return n;
-  }
-  
-  /**
-  * @class Nest
-  * @param {Integer} clusterNo
-  * @return {Cluster} vereinigt alle Cluster zu einem
-  */
-  flatNestToCluster(clusterNo){
-    var vertices = [];
-    this.nest.forEach(function(c){
-      vertices = vertices.concat(c.reduceToOnePolygon().vertices);
-    });
-    return new Cluster(clusterNo, [new Polygon(vertices)]);
-  }
-  
-  /**
-  * @class Nest
-  * @param {Scale} scale
-  * @return {String} wandelt alle Clusterpolygone in Hüllenstrings um
-  */
-  makeHull2Path(scale){
-    var string = "";
-    this.nest.forEach(function(cl){
-      var path = cl.getHullVertices().map(function(hull){
-        return hull.sort(function(a,b){
-          console.log(a,b);
-          return a.id - b.id;
-        });
-      })
-      string = path.map(hull => hull.makeHull2Path(scale))
-        .join(" ");
-    });
-    return string;
-  }
-  
-  /**
-  * @class Nest
-  * @param {Knoten} v
-  * @return {String} findet die Position eines Knotens im 1. Polygon eines Clusters. Gibt Clusterindex und Polygonindex aus
-  */
-  positionOfNodeInFirstPolys(v){
-    var idx;
-    for (var i=0; i < this.nest.length; i++) {
-      idx = this.nest[i].positionOfNodeInFirstPoly(v)
-      if (idx >= 0)
-        return {nestIdx: i, polyIdx: idx};
-    }
-    return null;
-  }
-  
-  /**
-  * @class Nest
-  * @param {Knoten} node
-  * @return {Bool} prüft, ob ein Knoten im Nest enthalten ist
-  */
-  contains(node) {
-    return this.nest.some(function(c){return c.contains(node);});
-  }
-  
-  /**
-  * @class Nest
-  * @param {Integer} id
-  * @return {Integer} gibt den Index des Clusters mit der ID id aus
-  */
-  findClusterOfID(id){// res in [-1, nest.length)
-    return this.nest.findIndex(function(c){return c.id == id});
-  }
-  
-  /**
-  * @class Nest
-  * @param {Nest} newNests
-  * @return {String} passt oldNests und newNests aneinander an, um eine schöne Stringinterpolation zu erreichen
-  */
-  createTransitionNests(newNests){
+  createTransPolyNests(newNests){
     // erstellt Kopien der Nester, um darin arbeiten zu können
     var oldNests = this.copy();
     var newNests = newNests.copy();
@@ -1337,20 +1255,6 @@ class SimpleNest {// [Cluster_1,... , Cluster_n]
       }// Ende: Durchlauf des 1. Polygons von newNests
     }// Ende: Durchlauf newNests
     
-    // Macht aus Clustern in oldNests, die nicht in newNests ex. Hüllenpolygone
-    for (var iOld in oldNests.nest) {
-      cluOld = oldNests.nest[iOld];
-      if (newNests.findClusterOfID(cluOld.id) == -1) {
-        // cluOld ex. nicht in newNests
-        anzPoly = cluOld.polygons.length;
-        for (var i = 0; i < anzPoly; i++){
-          // macht eine Hülle daraus
-          polyOld = cluOld.polygons[i].calculateHull();
-          cluOld.polygons[i] = polyOld;
-        }
-      }
-    }
-    
     // gleicht Anzahl der Polygone eines jeden Clusters (vorher/nachher) aus
     for (var iNew in newNests.nest) {// durchläuft newNests
       cluNew = newNests.nest[iNew];
@@ -1372,14 +1276,131 @@ class SimpleNest {// [Cluster_1,... , Cluster_n]
       anzPoly = cluOld.polygons.length;
       for (var i = 0; i < anzPoly; i++) {
         // passt Polygone an
-        polyOld = cluOld.polygons[i].calculateHull();
-        polyNew = cluNew.polygons[i].calculateHull();
+        polyOld = cluOld.polygons[i];
+        polyNew = cluNew.polygons[i];
         huellen = polyOld.huellenAbgleichen(polyNew);
         cluOld.polygons[i] = huellen[0];
         cluNew.polygons[i] = huellen[1];
       }
     }
     return {old: oldNests, new: newNests};
-  }// Ende der Funktion createTransitionNests
+  }// Ende der Funktion createTransPolyNests
   
+} // Ende: Klasse Nest
+
+
+
+
+class SimpleNest {// [Cluster_1,... , Cluster_n]
+  /**
+  * @class SimpleNest
+  * @param {Polygon} dataset
+  */
+  constructor(dataset){
+    this.nest = d3.nest()
+      // http://bl.ocks.org/donaldh/2920551
+      // https://github.com/d3/d3-collection#nests
+      .key(knoten => knoten.clusterNo)
+      .entries(dataset)
+      .map(kv => new Cluster(+kv.key, [new Polygon(kv.values)]));// d = {key: "1", values: [P_1,...,P_n]}, k_i € Polygon
+  }
+  
+  /**
+  * @class SimpleNest
+  * @return {Integer} gibt die Anzahl der Cluster aus
+  */
+  getLength(){
+    return this.nest.length;
+  }
+  
+  /**
+  * @class SimpleNest
+  * @param {Function} fkt
+  * @return {Object} wendet eine FUnktion auf alle Cluster an
+  */
+  mapToCluster(fkt){
+    return this.nest.map(fkt);
+  }
+  
+  /**
+  * @class SimpleNest
+  * @return {Nest} kopiert das Nest
+  */
+  copy() {// kopiert this.nest = [C1, C2, ...]
+    var n = new SimpleNest([]);
+    n.nest = this.mapToCluster(function(c){
+      return c.copy();
+    });
+    return n;
+  }
+  
+  /**
+  * @class SimpleNest
+  * @param {Integer} clusterNo
+  * @return {Cluster} vereinigt alle Cluster zu einem
+  */
+  flatNestToCluster(clusterNo){
+    var vertices = [];
+    this.nest.forEach(function(c){
+      vertices = vertices.concat(c.reduceToOnePolygon().vertices);
+    });
+    return new Cluster(clusterNo, [new Polygon(vertices)]);
+  }
+  
+  /**
+  * @class SimpleNest
+  * @param {Scale} scale
+  * @return {String} wandelt alle Clusterpolygone in Hüllenstrings um
+  */
+  /*
+  makeSimpleHull2Path(scale){
+    var string = "";
+    this.nest.forEach(function(cl){
+      var path = cl.getSimpleHullVertices().map(hull => hull.makeHull2Path(scale));
+      string = string + path.join(" ");
+    });
+    return string;
+  }
+  
+  makeSimplePolygonzug2Path(scale){
+    var string = "";
+    this.nest.forEach(function(cl){
+      var path = cl.polygons.map(poly => poly.makeHull2Path(scale));
+      string = string + path.join(" ");
+    });
+    return string;
+  }*/
+  
+  /**
+  * @class SimpleNest
+  * @param {Knoten} v
+  * @return {String} findet die Position eines Knotens im 1. Polygon eines Clusters. Gibt Clusterindex und Polygonindex aus
+  */
+  positionOfNodeInFirstPolys(v){
+    var idx;
+    for (var i=0; i < this.nest.length; i++) {
+      idx = this.nest[i].positionOfNodeInFirstPoly(v)
+      if (idx >= 0)
+        return {nestIdx: i, polyIdx: idx};
+    }
+    return null;
+  }
+  
+  /**
+  * @class SimpleNest
+  * @param {Knoten} node
+  * @return {Bool} prüft, ob ein Knoten im Nest enthalten ist
+  */
+  contains(node) {
+    return this.nest.some(function(c){return c.contains(node);});
+  }
+  
+  /**
+  * @class SimpleNest
+  * @param {Integer} id
+  * @return {Integer} gibt den Index des Clusters mit der ID id aus
+  */
+  findClusterOfID(id){// res in [-1, nest.length)
+    return this.nest.findIndex(function(c){return c.id == id});
+  }
 } // Ende: Klasse SimpleNest

@@ -27,7 +27,7 @@ var animationsart = "uberblendung";
 const maxHullOpacity = 0.2, hullOffset = 29, hullColor = "#441", textSize = 12;
 var currHullOpacity = 0.2;
 var clusterzahl = 1;
-var problemHullTrait = "anfangspunkt"; // knotenzahl, reihenfolge
+var problemHullTrait = "anfangspunkt"; // knotenzahl, richtung
 var showHullText = true, showPolygonzug = false;
 
 /////// Knoten ///////
@@ -153,6 +153,22 @@ class DurationRegler {
   
   static parseSec(ms){
     return ((+ms)/1000).toString() + " s";
+  }
+  
+  setDuration(num) {
+    document.getElementById("transDurationIn").value = num;
+    document.getElementById("transDurationOut")
+      .value = DurationRegler.parseSec(num);
+    d3.select("#transDurationOut")
+      .style("left", function(){
+        var regler = document.getElementById("transDurationIn");
+        var barKoordinates = regler.getBoundingClientRect();
+        var scale = d3.scaleLinear()
+          .domain([+regler.min, +regler.max])
+          .range([barKoordinates.x +3, barKoordinates.x + barKoordinates.width -12]);
+        return (scale(num) -14) + "px";
+      });
+    transDuration = num;
   }
 }
 
@@ -386,6 +402,7 @@ function startTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, o
   ////// neu setzen, wenn Zeitspanne erweitert wurde
   newNests = new Nest(fDatas);
   var transTable = oldNests.createTransitionNests(newNests);
+  var transPolys = oldNests.createTransPolyNests(newNests);
   
   ////// Kreise
   var circles = svg.select("g.circs").selectAll("circle.existent")
@@ -410,7 +427,7 @@ function startTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, o
     });
     return ungleichheiten;
   }
-  esGibtAggregatOP = gibtEsAggregateOPs() || !(esGibtExit && esGibtEnter);// irgendeine Änderung gibt es ja schließlich
+  esGibtAggregatOP = gibtEsAggregateOPs() || !esGibtExit && !esGibtEnter;// irgendeine Änderung gibt es ja schließlich
   
   console.log('taktzahl',getTakteGes());
   console.log('exit',esGibtExit, 'delay', getDelayOfExit(), 'dur', getDurationOfExit());
@@ -424,27 +441,49 @@ function startTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, o
   
   deleteHulls(hullsOld, scale);// sollte es nicht geben
   hullsOld.attr("d", d => d.makeHulls2Path(scale));
-  //createHullsTransTabOld(hullsOld);
-    
+  
+  ///// Polygonzug
+  var polygonzugOld, polygonzugNeu;
+  if (showPolygonzug) {
+    polygonzugOld = svg.select("g.polygonzug")
+      .selectAll("path.existent")
+      .data(transPolys.old.nest, d => d.id);
+    deletePolygonzugTrans(polygonzugOld, scale);
+    polygonzugOld
+      .attr("d", cl => cl.makeSimplePolygonzug2Path(scale));
+  }   
   
   ///////// hier startet die Transition
   var hullsNew = svg.select("g.hulls")
     .selectAll("path.existent")
     .data(transTable.new.nest, d => d.id);
   
-  var hullsText = svg.select("g.beschriftung")
-    .selectAll("text.existent")
-    .data(newNests.nest, d => d.id);
-  
   deleteHullsTrans(hullsNew, scale);
-  if (showHullText)
+  
+  if (showHullText) {
+    var hullsText = svg.select("g.beschriftung")
+      .selectAll("text.existent")
+      .data(newNests.nest, d => d.id);
     deleteHullTextTrans(hullsText, scale);
+  }
+    
+  if (showPolygonzug) {
+    polygonzugNeu = svg.select("g.polygonzug")
+      .selectAll("path.existent")
+      .data(transPolys.new.nest, d => d.id);
+    deletePolygonzugTrans(polygonzugNeu, scale);
+  }
   
   ///////// Scaling
   scale.setDomain(fDatas);
   
   morphHullsTrans(hullsNew, scale);
   createHullsTransTabNew(hullsNew, tooltipCluster, scale);
+  
+  if (showPolygonzug) {
+    morphPolygonzugTrans(polygonzugNeu, scale);
+    createPolygonzugTrans(polygonzugNeu, scale);
+  }
   
   d3.transition()
     .delay(getDelayOfAggregate())
@@ -475,14 +514,11 @@ function startTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, o
 
 
 
-function simpleTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, oldNests, newNests, scale) {
-  newNests = new Nest(newDatas);
-  
+function simpleTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, oldNests, newNests, scale) {  
   ////// Daten
   var circles = svg.select("g.circs").selectAll("circle.existent")
     .data(newDatas, d => d.id);
-  var hulls = svg.select("g.hulls")
-    .selectAll("path.existent")
+  var hulls = svg.select("g.hulls").selectAll("path.existent")
     .data(newNests.nest, d => d.id);
   if (showCircText)
     var circText = svg.select("g.beschriftung")
@@ -500,13 +536,9 @@ function simpleTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, 
   ////// Prüft, welche Änderungen es gibt
   esGibtExit  = circles.exit()._groups[0]
     .map(c => c != undefined).some(b => b) || oldNests.nest.some(c => newNests.nest.filter(d => d.id == c.id).length == 0);
+  
   esGibtEnter = circles.enter()._groups[0]
     .map(c => c != undefined).some(b => b) || newNests.nest.some(c => oldNests.nest.filter(d => d.id == c.id).length == 0);
-    
-  console.log('taktzahl',getTakteGes());
-  console.log('exit',esGibtExit, 'delay', getDelayOfExit(), 'dur', getDurationOfExit());
-  console.log('agg',esGibtAggregatOP, 'delay', getDelayOfAggregate(), 'dur', getDurationOfAggregate());
-  console.log('enter',esGibtEnter, 'delay', getDelayOfEnter(), 'dur', getDurationOfEnter());
   
   function gibtEsAggregateOPs(){
     if (oldNests.nest.length != newNests.nest.length)
@@ -516,12 +548,17 @@ function simpleTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, 
       var d = newNests.nest[i];
       if (c.id != d.id)
         ungleichheiten = true;
-      if (c.makePolygonzug2Path(scale) != d.makePolygonzug2Path(scale))
+      if (c.makeSimplePolygonzug2Path(scale) != d.makeSimplePolygonzug2Path(scale))
         ungleichheiten = true;
     });
     return ungleichheiten;
   }
-  esGibtAggregatOP = gibtEsAggregateOPs() || !(esGibtExit && esGibtEnter);// irgendeine Änderung gibt es ja schließlich
+  esGibtAggregatOP = gibtEsAggregateOPs() || !esGibtExit && !esGibtEnter;// irgendeine Änderung gibt es ja schließlich
+    
+  console.log('taktzahl',getTakteGes());
+  console.log('exit',esGibtExit, 'delay', getDelayOfExit(), 'dur', getDurationOfExit());
+  console.log('agg',esGibtAggregatOP, 'delay', getDelayOfAggregate(), 'dur', getDurationOfAggregate());
+  console.log('enter',esGibtEnter, 'delay', getDelayOfEnter(), 'dur', getDurationOfEnter());
   
   //// Exit
   deleteCircsTrans(circles, scale);
@@ -536,7 +573,7 @@ function simpleTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, 
   ///////// Scaling + Update
   scale.setDomain(newDatas);
   moveCircsTrans(circles, scale);
-  morphHullsSimpleTrans(hulls, scale);
+  morphSimpleHullsTrans(hulls, scale);
   if (showHullText)
     moveHullTextTrans(hullsText, scale);
   if (showCircText)
@@ -546,7 +583,7 @@ function simpleTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, 
   
   //// Enter
   createCircsTrans(circles, tooltipNode, scale);
-  createHullsSimpleTrans(hulls, tooltipCluster, scale);
+  createSimpleHullsTrans(hulls, tooltipCluster, scale);
   if (showHullText)
     createHullTextTrans(hullsText, tooltipCluster, scale);
   if (showCircText)
@@ -603,13 +640,64 @@ function goToAusgangszustand(svg, tooltipNode, oldDatas, newDatas, tooltipCluste
     var polygonzug = svg.select("g.polygonzug")
       .selectAll("path.existent")
       .data(oldNests.nest, d => d.id);
-    deletePolygonzug(hulls, scale);
-    morphPolygonzug(hulls, scale);
-    createPolygonzug(hulls, scale);
+    deletePolygonzug(polygonzug, scale);
+    morphPolygonzug(polygonzug, scale);
+    createPolygonzug(polygonzug, scale);
   }
   
   oldClusters = newClusters;
   newClusters = tmp;
+}
+
+function goToAusgangszustandSimpel(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, oldNests, newNests, scale){
+  console.log('old:',oldNests.nest,'new:',newNests.nest);
+  var circles = svg.select("g.circs").selectAll("circle.existent")
+    .data(oldDatas, d => d.id);
+  var hulls = svg.select("g.hulls").selectAll("path.existent")
+    .data(oldNests.nest, d => d.id);
+  if (showCircText)
+    var circText = svg.select("g.beschriftung")
+      .selectAll("text.existent")
+      .data(oldDatas, d => d.id);
+  if (showHullText)
+    var hullText = svg.select("g.beschriftung")
+      .selectAll("text.existent")
+      .data(oldNests.nest, d => d.id);
+  if (showPolygonzug)
+    var polygonzug = svg.select("g.polygonzug")
+      .selectAll("path.existent")
+      .data(oldNests.nest, d => d.id);
+  
+  ///// Exit
+  deleteCircs(circles, scale);
+  deleteHulls(hulls, scale);
+  if (showHullText)
+    deleteHullText(hullText, scale);
+  if (showCircText)
+    deleteCircText(circText, scale);
+  if (showPolygonzug)
+    deletePolygonzug(polygonzug, scale);
+  
+  ///// scaling + Update
+  scale.setDomain(oldDatas);
+  moveCircs(circles, scale);
+  morphSimpleHulls(hulls, scale);
+  if (showHullText)
+    moveHullText(hullText, scale);
+  if (showCircText)
+    moveCircText(circText, scale);
+  if (showPolygonzug)
+    morphPolygonzug(polygonzug, scale);
+  
+  // Enter
+  createCircs(circles, tooltipNode, scale);
+  createSimpleHulls(hulls, tooltipCluster, scale);
+  if (showHullText)
+    createHullText(hullText, tooltipCluster, scale);
+  if (showCircText)
+    createCircText(circText, scale);
+  if (showPolygonzug)
+    createPolygonzug(polygonzug, scale);
 }
 
 function replay(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, oldNests, newNests, scale) {
@@ -749,6 +837,20 @@ function createHulls(selection, tooltip, scale){
     .on("mouseout", tooltip.hide);
 }
 
+function createSimpleHulls(selection, tooltip, scale){
+  selection.enter()
+    .append("path")
+    .attr("class", "existent")
+    .attr("d", c => c.makeSimpleHulls2Path(scale))
+    .attr('fill', hullColor)
+    .attr('stroke', hullColor)
+    .on("mouseover", tooltip.show)
+    .on("mouseout", tooltip.hide)
+    .style("stroke-linejoin", "round")
+    .style("stroke-width", hullOffset + "px")
+    .style('opacity', currHullOpacity);
+}
+
 function createHullsTransTabNew(selection, tooltip, scale){// sollte nicht vorkommen,
   // da oldNests angepasst wurden
   selection.enter()
@@ -770,11 +872,11 @@ function createHullsTransTabNew(selection, tooltip, scale){// sollte nicht vorko
     .attr("d", c => c.makeHulls2Path(scale));
 }
 
-function createHullsSimpleTrans(selection, tooltip, scale){
+function createSimpleHullsTrans(selection, tooltip, scale){
   selection.enter()
     .append("path")
     .attr("class", "existent")
-    .attr("d", c => c.makePolygons2Path(scale))
+    .attr("d", c => c.makeSimpleHulls2Path(scale))
     .attr('fill', hullColor)
     .attr('stroke', hullColor)
     .style("stroke-linejoin", "round")
@@ -787,7 +889,7 @@ function createHullsSimpleTrans(selection, tooltip, scale){
     .duration(getDurationOfEnter())
     .ease(d3.easeQuadOut)
     .style('opacity', currHullOpacity)
-    .attr("d", c => c.makePolygons2Path(scale));
+    .attr("d", c => c.makeSimpleHulls2Path(scale));
 }
 
 function deleteHullsTrans(selection, scale) {
@@ -813,16 +915,16 @@ function morphHullsTrans(selection, scale){
     .delay(getDelayOfAggregate())
     .duration(getDurationOfAggregate())
     .style('opacity', currHullOpacity)
-    .attr("d", d => d.makeHulls2Path(scale));// makeHulls2Path
+    .attr("d", d => d.makeHulls2Path(scale));
 }
 
-function morphHullsSimpleTrans(selection, scale){
+function morphSimpleHullsTrans(selection, scale){
   selection.transition()
     .ease(d3.easeQuadInOut)
     .delay(getDelayOfAggregate())
     .duration(getDurationOfAggregate())
     .style('opacity', currHullOpacity)
-    .attr("d", d => d.makePolygons2Path(scale));// makeHulls2Path
+    .attr("d", cl => cl.makeSimpleHulls2Path(scale));
 }
 
 function morphHulls(selection, scale){
@@ -830,10 +932,20 @@ function morphHulls(selection, scale){
     .attr("d", d => d.makePolygons2Path(scale));
 }
 
+function morphSimpleHulls(selection, scale){
+  selection.style('opacity', currHullOpacity)
+    .attr("d", d => d.makeSimpleHulls2Path(scale));
+}
+
 function showNewHulls(svg, newNests, scale){
   svg.select("g.hulls").selectAll("path.existent")
     .data(newNests.nest, d => d.id)
     .attr("d", d => d.makePolygons2Path(scale));
+  if (showPolygonzug) {
+    svg.select("g.polygonzug").selectAll("path.existent")
+      .data(newNests.nest, d => d.id)
+      .attr("d", d => d.makeSimplePolygonzug2Path(scale));
+  }
 }
 
 var tooltipCluster = d3.tip()
@@ -998,7 +1110,7 @@ function createPolygonzug(selection, scale){
   selection.enter()
     .append("path")
     .attr("class", "existent")// c={id, polygons}
-    .attr("d", c => c.makePolygonzug2Path(scale))
+    .attr("d", c => c.makeSimplePolygonzug2Path(scale))
     .attr('fill', "none")
     .attr('stroke', "black")
     .attr("stroke-width", "0.5px")
@@ -1009,7 +1121,7 @@ function createPolygonzugTrans(selection, scale){
   selection.enter()
     .append("path")
     .attr("class", "existent")
-    .attr("d", c => c.makePolygonzug2Path(scale))
+    .attr("d", c => c.makeSimplePolygonzug2Path(scale))
     .attr('fill', "none")
     .attr('stroke', "black")
     .attr("stroke-width", "0.5px")
@@ -1018,8 +1130,7 @@ function createPolygonzugTrans(selection, scale){
     .delay(getDelayOfEnter())
     .duration(getDurationOfEnter())
     .ease(d3.easeQuadOut)
-    .style('opacity', 1)
-    .attr("d", c => c.makePolygonzug2Path(scale));
+    .style('opacity', 1);
 }
 
 function deletePolygonzugTrans(selection, scale) {
@@ -1044,11 +1155,11 @@ function morphPolygonzugTrans(selection, scale){
     .ease(d3.easeQuadInOut)
     .delay(getDelayOfAggregate())
     .duration(getDurationOfAggregate())
-    .attr("d", d => d.makePolygonzug2Path(scale));
+    .attr("d", cl => cl.makeSimplePolygonzug2Path(scale));
 }
 
 function morphPolygonzug(selection, scale){
-  selection.attr("d", d => d.makePolygonzug2Path(scale));
+  selection.attr("d", cl => cl.makeSimplePolygonzug2Path(scale));
 }
 
 ////////////////////// Funktionen ////////////// 
