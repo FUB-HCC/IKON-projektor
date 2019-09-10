@@ -25,6 +25,7 @@ var zelleRechts = zeile.append("td")
 zelleLinks.append("p").text("Transitionsdauer:")
   .style("margin-top", 0);
 new DurationRegler(zelleLinks);
+zelleLinks.append("br");
 
 ////////// Darstellung //////////
 zelleLinks.append("p").text("Darstellung:");
@@ -50,6 +51,27 @@ selectDarst.on("change", function(){// aktualisiert Variable
     transDuration = document.getElementById("transDurationIn").value;
     parseJsonToKnoten("../datafiles/" + clusterResults[idx]);
   });
+
+////////// Färbung //////////
+zelleLinks.append("p").text("Projektfarbe:");
+var divSelectColor = zelleLinks.append("div")
+  .style("width", "100%")
+  .style("text-align", "left");
+var selectColor = divSelectColor.append("select");
+selectColor.append("option")
+  .attr("value", "cluster")
+  .attr("selected", true)
+  .text("Nach Cluster");
+selectColor.append("option")
+  .attr("value", "researchArea")
+  .text("Nach Forschungsgebiet");
+  
+selectColor.on("change", function(){// aktualisiert Variable 
+    projectColorBy = this.value;
+    transDuration = 1000;
+    console.log("Porjektfarbe nach " + this.value);
+    update();
+  });
   
 ////////// Hüllensichtbarkeit //////////
 zelleLinks.append("p").text("Hüllensichtbarkeit:");
@@ -72,85 +94,9 @@ selectOpacity.on("change", function(){// aktualisiert Variable
     update();
   });
   
-////////// Färbung //////////
-zelleLinks.append("p").text("Projektfarbe:");
-var divSelectColor = zelleLinks.append("div")
-  .style("width", "100%")
-  .style("text-align", "left");
-var selectColor = divSelectColor.append("select");
-selectColor.append("option")
-  .attr("value", "cluster")
-  .attr("selected", true)
-  .text("Nach Cluster");
-selectColor.append("option")
-  .attr("value", "researchArea")
-  .text("Nach Forschungsgebiet");
-  
-selectColor.on("change", function(){// aktualisiert Variable 
-    projectColorBy = this.value;
-    transDuration = 1000;
-    console.log("Porjektfarbe nach " + this.value);
-    update();
-  });
 
-  
-////////////////// Zeitspanne /////////////////////
-zelleLinks.append("p").text("Zeitspanne:");
-var divTimeSpan = zelleLinks.append("div")
-  .style("width", "100%")
-  .style("text-align", "left");
-  
-divTimeSpan.append("input")
-  .attr("type", "number")
-  .attr("value", yearSpan[0])
-  .attr("id", "yearVon")
-  .style("width", "3.5em")
-  .style("padding", "0px")
-  .style("display", "inline-block");
-  
-divTimeSpan.append("label")// bis
-  .attr("class", "yearText")
-  .append("text")
-  .style("margin-left", "3px")
-  .style("white-space", "nowrap")// https://stackoverflow.com/questions/7300760/prevent-line-break-of-span-element/32941430
-  .style("display", "inline-block")
-  // https://www.computerhope.com/issues/ch001709.htm
-  .text("–");// bis
-  
-divTimeSpan.append("input")
-  .attr("type", "number")
-  .attr("value", yearSpan[1])
-  .attr("id", "yearBis")
-  .style("width", "3.5em")
-  .style("padding", "0px")
-  .style("display", "inline-block");
-  
-divTimeSpan.append("button")
-  .attr("class", "button")
-  .attr("type", "button")// default: submit -> let's reload page
-  // https://stackoverflow.com/questions/7803814/prevent-refresh-of-page-when-button-inside-form-clicked
-  .text("OK")
-  .style("padding", "0px")
-  .on("contextmenu", function(d) {
-    d3.event.preventDefault();
-  })
-  .on("click", function(){
-    var value1 = document.getElementById("yearVon").value;
-    var value2 = document.getElementById("yearBis").value;
-    if (value1 < value2) {
-      currYearSpan[0] = value1;
-      currYearSpan[1] = value2;
-    }
-    else {
-      document.getElementById("yearVon").value = value2;
-      document.getElementById("yearBis").value = value1;
-      currYearSpan[0] = value2;
-      currYearSpan[1] = value1;
-    }
-    transDuration = document.getElementById("transDurationIn").value;
-    console.log('Zeitspanne: ',currYearSpan);
-    update();
-  });
+
+
 
 ///////////////// SVG ////////////////
 width = 400 - margin.left - margin.right;
@@ -231,7 +177,65 @@ divPerspective.append("button")// divAnimControl
     transDuration = document.getElementById("transDurationIn").value;
     replay(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, oldNests, newNests, scale);
   });
+
   
+////////////////// Zeitspanne /////////////////////
+zelleRechts.append("p").text("Zeitspanne:");
+var divTimeSpan = zelleRechts.append("div")
+  .style("width", "100%")
+  .style("text-align", "left");
+  
+divTimeSpan.append("input")
+  .attr("type", "number")
+  .attr("value", yearSpan[0])
+  .attr("id", "yearVon")
+  .style("width", "3.5em")
+  .style("padding", "0px")
+  .style("display", "inline-block");
+  
+divTimeSpan.append("label")// bis
+  .attr("class", "yearText")
+  .append("text")
+  .style("margin-left", "3px")
+  .style("white-space", "nowrap")// https://stackoverflow.com/questions/7300760/prevent-line-break-of-span-element/32941430
+  .style("display", "inline-block")
+  // https://www.computerhope.com/issues/ch001709.htm
+  .text("–");// bis
+  
+divTimeSpan.append("input")
+  .attr("type", "number")
+  .attr("value", yearSpan[1])
+  .attr("id", "yearBis")
+  .style("width", "3.5em")
+  .style("padding", "0px")
+  .style("display", "inline-block");
+  
+divTimeSpan.append("button")
+  .attr("class", "button")
+  .attr("type", "button")// default: submit -> let's reload page
+  // https://stackoverflow.com/questions/7803814/prevent-refresh-of-page-when-button-inside-form-clicked
+  .text("OK")
+  .style("padding", "0px")
+  .on("contextmenu", function(d) {
+    d3.event.preventDefault();
+  })
+  .on("click", function(){
+    var value1 = document.getElementById("yearVon").value;
+    var value2 = document.getElementById("yearBis").value;
+    if (value1 < value2) {
+      currYearSpan[0] = value1;
+      currYearSpan[1] = value2;
+    }
+    else {
+      document.getElementById("yearVon").value = value2;
+      document.getElementById("yearBis").value = value1;
+      currYearSpan[0] = value2;
+      currYearSpan[1] = value1;
+    }
+    transDuration = document.getElementById("transDurationIn").value;
+    console.log('Zeitspanne: ',currYearSpan);
+    update();
+  });
 
 //////////////// ProjectIDs ////////////
 var subjectsByID = {};// {<id>: subjectName}

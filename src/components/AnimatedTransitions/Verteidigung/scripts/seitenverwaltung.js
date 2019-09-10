@@ -5,7 +5,7 @@ const menue = [
   {url: "vorUndNachteile", name: "Vor- und Nachteile"},
   {url: "designentscheidungen", name: "Designentscheidungen"},
   {url: "problemstellung", name: "Problemstellung"},
-  {url: "evaluation", name: "Evaluation"},
+  {url: "pilotstudie", name: "Evaluation"},
   {url: "final", name: "Prototyp"}
 ];
 
@@ -21,7 +21,9 @@ const seiten = [
   {url: "problemstellung", name: "Hülleninterpolation", menue: menue[5]},
   {url: "loesungsansatz", name: "Lösungsansatz", menue: menue[5]},
   {url: "limitierung", name: "Limitierung", menue: menue[5]},
-  {url: "evaluation", name: "Evaluation", menue: menue[6]},
+  {url: "pilotstudie", name: "Pilotstudie", menue: menue[6]},
+  {url: "pilotAufgaben", name: "Aufgaben", menue: menue[6]},
+  {url: "pilotErgebnisse", name: "Ergebnisse", menue: menue[6]},
   {url: "final", name: "Prototyp – Projekte in Clustern", menue: menue[7]}
 ];
 

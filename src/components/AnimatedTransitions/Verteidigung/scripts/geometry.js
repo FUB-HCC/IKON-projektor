@@ -1286,6 +1286,121 @@ class Nest {// [Cluster_1,... , Cluster_n]
     return {old: oldNests, new: newNests};
   }// Ende der Funktion createTransPolyNests
   
+  
+  createTransitionNestsOld(newNests){
+    // erstellt Kopien der Nester, um darin arbeiten zu können
+    var oldNests = this.copy();
+    var newNests = newNests.copy();
+    
+    // durchsucht oldNests nach jedem der Knoten in newNests
+    // und ordnet die Polygone den Clustern neu zu
+    var cluNew, fstPolNew, nNew, anzPoly, polyNew, huellen;
+    var cluOld, fstPolOld, nOld, iOld, iOldTarget, cluOldTarget, pOld, polyOld, istEnthalten;
+    // durchläuft newNests
+    for (var iNew in newNests.nest) {// durchläuft newNests
+      cluNew = newNests.nest[iNew];
+      fstPolNew = cluNew.polygons[0];
+      for (var jNew in fstPolNew.vertices) {// durchläuft das 1. Polygon
+        nNew = fstPolNew.vertices[jNew];
+        // iOld = {nestIdx: i, polyIdx: idx}
+        iOld = oldNests.positionOfNodeInFirstPolys(nNew);
+        if (iOld == null) {// Knoten ex. nicht in oldNests
+          iOldTarget = oldNests.findClusterOfID(nNew.clusterNo);
+          if (iOldTarget == -1) {// Cluster ex. nicht
+            cluOldTarget = new Cluster(nNew.clusterNo, [new Polygon([nNew])]);
+            oldNests.nest.push(cluOldTarget);
+          }
+          //else {} // Cluster existiert breits. Nichts zu tun
+        } // Ende IF Knoten ex. nicht in oldNests
+        else {// Knoten ex. bereits in oldNests
+          // iOld = {nestIdx, polyIdx}
+          cluOld = oldNests.nest[iOld.nestIdx];
+          fstPolOld = cluOld.polygons[0];
+          nOld = fstPolOld.vertices[iOld.polyIdx];
+          if (nOld.clusterNo != nNew.clusterNo) {// ungleiche clusterNo
+            iOldTarget = oldNests.findClusterOfID(nNew.clusterNo);
+            if (iOldTarget == -1) {// Cluster ex. nicht
+              cluOldTarget = new Cluster(nNew.clusterNo, []);
+              oldNests.nest.push(cluOldTarget);
+            }
+            else {// Cluster ex. bereits
+              cluOldTarget = oldNests.nest[iOldTarget];
+            }
+            /* ALT
+            else {// Cluster ex. breits
+              // muss Cluster der ID nNew.clusterNo kopieren
+              cluOldTarget = oldNests.nest[iOldTarget];
+              // ob bereits Polygon gleicher Clusterno ex.
+              pOld = cluOldTarget.polygonOfSameClusterNo(nNew);
+              // pOld = {poly, idx}
+              if (pOld == null) {// es ex. kein Cluster gleicher Nr.
+                cluOldTarget.polygons.push(fstPolOld.copy());
+              }
+              // else {} es ex. ein Cluster gleicher Nr. Nichts zu tun
+            }*/
+            /*      NEU      */
+            // Cluster ex. bereits oder ex. nun
+            istEnthalten = cluOldTarget.contains(nNew);
+            if (!istEnthalten) {// Knoten wurde noch nicht in sein neues Cluster eingefügt 
+              cluOldTarget.polygons.push(fstPolOld.copy());
+            }
+            // else {} Knoten bereits im neuen Cluster enthalten
+            /*    Ende NEU      */
+          }// Ende IF ungleiche ClusterNo
+          // else {} // gleiche clusterNo. Nichts zu tun
+        } // Ende: ELSE Knoten ex. in oldnests
+      }// Ende: Durchlauf des 1. Polygons von newNests
+    }// Ende: Durchlauf newNests
+    
+    // löscht Cluster in oldNests, wenn es diese in newNests nicht gibt und alle deren Knoten in NewNests ex. – interessant, wenn alle Knoten woanders übergehen
+    iOld = 0;
+    while (iOld < oldNests.nest.length) {// durchläuft oldNests
+      cluOld = oldNests.nest[iOld];
+      if (newNests.findClusterOfID(cluOld.id) == -1) {
+        // cluOld ex. nicht. Prüft, ob alle Knoten in newNests sind
+        var nodesStillEx = cluOld.polygons[0].vertices.every(function(node){
+          return newNests.contains(node);
+        });
+        if (nodesStillEx)
+          oldNests.nest.splice(iOld, 1);
+        else
+          iOld++;
+      }
+      else
+        iOld++;
+    }
+    
+    // gleicht Anzahl der Polygone eines jeden Clusters (vorher/nachher) aus
+    for (var iNew in newNests.nest) {// durchläuft newNests
+      cluNew = newNests.nest[iNew];
+      fstPolNew = cluNew.polygons[0];
+      iOld = oldNests.findClusterOfID(cluNew.id);
+      cluOld = oldNests.nest[iOld];
+      anzPoly = cluOld.polygons.length;
+      for (var i = 1; i < anzPoly; i++) {
+        // vervielfacht 1. Polygon in newNests
+        cluNew.polygons.push(fstPolNew.copy());
+      }
+    }
+    // erzeugt Hüllen aus den Polygonen und gleicht die Knotenzahl (vorher/nachher) ab.
+    for (var iNew in newNests.nest) {// durchläuft newNests
+      cluNew = newNests.nest[iNew];
+      fstPolNew = cluNew.polygons[0];
+      iOld = oldNests.findClusterOfID(cluNew.id);
+      cluOld = oldNests.nest[iOld];
+      anzPoly = cluOld.polygons.length;
+      for (var i = 0; i < anzPoly; i++) {
+        // passt Polygone an
+        polyOld = cluOld.polygons[i].calculateHull();
+        polyNew = cluNew.polygons[i].calculateHull();
+        huellen = polyOld.huellenAbgleichen(polyNew);
+        cluOld.polygons[i] = huellen[0];
+        cluNew.polygons[i] = huellen[1];
+      }
+    }
+    return {old: oldNests, new: newNests};
+  }// Ende der Funktion createTransitionNests
+  
 } // Ende: Klasse Nest
 
 

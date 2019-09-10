@@ -597,6 +597,124 @@ function simpleTransition(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, 
 
 
 
+function startTransitionOld(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, oldNests, newNests, scale) {
+  var fDatas = getFilteredData(newDatas);
+  ////// neu setzen, wenn Zeitspanne erweitert wurde
+  newNests = new Nest(fDatas);
+  var transTable = oldNests.createTransitionNestsOld(newNests);
+  var transPolys = oldNests.createTransPolyNests(newNests);
+  
+  ////// Kreise
+  var circles = svg.select("g.circs").selectAll("circle.existent")
+    .data(fDatas, d => d.id);
+    
+  ////// Prüft, welche Änderungen es gibt
+  esGibtExit  = circles.exit()._groups[0]
+    .map(c => c != undefined).some(b => b) || oldClusters.some(c => newClusters.filter(d => d.id == c.id).length == 0) || oldNests.nest.some(c => newNests.nest.filter(d => d.id == c.id).length == 0);
+  esGibtEnter = circles.enter()._groups[0]
+    .map(c => c != undefined).some(b => b) || newClusters.some(c => oldClusters.filter(d => d.id == c.id).length == 0) || newNests.nest.some(c => oldNests.nest.filter(d => d.id == c.id).length == 0);
+  
+  function gibtEsAggregateOPs(){
+    if (transTable.old.nest.length != transTable.new.nest.length)
+      return true;
+    var ungleichheiten = false;
+    transTable.old.nest.forEach(function(c,i){
+      var d = transTable.new.nest[i];
+      if (c.id != d.id)
+        ungleichheiten = true;
+      if (c.makeHulls2Path(scale) != d.makeHulls2Path(scale))
+        ungleichheiten = true;
+    });
+    return ungleichheiten;
+  }
+  esGibtAggregatOP = gibtEsAggregateOPs() || !esGibtExit && !esGibtEnter;// irgendeine Änderung gibt es ja schließlich
+  
+  console.log('taktzahl',getTakteGes());
+  console.log('exit',esGibtExit, 'delay', getDelayOfExit(), 'dur', getDurationOfExit());
+  console.log('agg',esGibtAggregatOP, 'delay', getDelayOfAggregate(), 'dur', getDurationOfAggregate());
+  console.log('enter',esGibtEnter, 'delay', getDelayOfEnter(), 'dur', getDurationOfEnter());
+  
+  ////// Hüllen 
+  var hullsOld = svg.select("g.hulls")
+    .selectAll("path.existent")
+    .data(transTable.old.nest, d => d.id);
+  
+  deleteHulls(hullsOld, scale);// sollte es nicht geben
+  hullsOld.attr("d", d => d.makeHulls2Path(scale));
+  
+  ///// Polygonzug
+  var polygonzugOld, polygonzugNeu;
+  if (showPolygonzug) {
+    polygonzugOld = svg.select("g.polygonzug")
+      .selectAll("path.existent")
+      .data(transPolys.old.nest, d => d.id);
+    deletePolygonzugTrans(polygonzugOld, scale);
+    polygonzugOld
+      .attr("d", cl => cl.makeSimplePolygonzug2Path(scale));
+  }   
+  
+  ///////// hier startet die Transition
+  var hullsNew = svg.select("g.hulls")
+    .selectAll("path.existent")
+    .data(transTable.new.nest, d => d.id);
+  
+  deleteHullsTrans(hullsNew, scale);
+  
+  if (showHullText) {
+    var hullsText = svg.select("g.beschriftung")
+      .selectAll("text.existent")
+      .data(newNests.nest, d => d.id);
+    deleteHullTextTrans(hullsText, scale);
+  }
+    
+  if (showPolygonzug) {
+    polygonzugNeu = svg.select("g.polygonzug")
+      .selectAll("path.existent")
+      .data(transPolys.new.nest, d => d.id);
+    deletePolygonzugTrans(polygonzugNeu, scale);
+  }
+  
+  ///////// Scaling
+  scale.setDomain(fDatas);
+  
+  morphHullsTrans(hullsNew, scale);
+  createHullsTransTabNew(hullsNew, tooltipCluster, scale);
+  
+  if (showPolygonzug) {
+    morphPolygonzugTrans(polygonzugNeu, scale);
+    createPolygonzugTrans(polygonzugNeu, scale);
+  }
+  
+  d3.transition()
+    .delay(getDelayOfAggregate())
+    .duration(getDurationOfAggregate())
+    .on("end", function(){showNewHulls(svg, newNests, scale);});
+  
+  if (showHullText) {
+    moveHullTextTrans(hullsText, scale);
+    createHullTextTrans(hullsText, tooltipCluster, scale);
+  }
+  
+  //////// Kreise
+  deleteCircsTrans(circles, scale);
+  moveCircsTrans(circles, scale);
+  createCircsTrans(circles, tooltipNode, scale);
+  
+  if (showCircText) {
+    var circText = svg.select("g.beschriftung")
+      .selectAll("text.existent")
+      .data(newDatas, d => d.id);
+    deleteCircTextTrans(circText, scale);
+    moveCircTextTrans(circText, scale);
+    createCircTextTrans(circText, scale);
+  }
+}
+
+
+
+
+
+
 function goToAusgangszustand(svg, tooltipNode, oldDatas, newDatas, tooltipCluster, oldNests, newNests, scale){
   var fDatas = getFilteredData(oldDatas);
   var tmp = newClusters;

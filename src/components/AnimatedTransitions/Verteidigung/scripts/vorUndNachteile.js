@@ -8,22 +8,20 @@ linkeSpalte.append("h2").text("Vorteile");
 
 var auflistung = linkeSpalte.append("ul");
 auflistung.append("li")
-  .text("Die Bewegung von Projekten kann verfolgt werden.");
+  .text("Verfolgen der Bewegung");
 auflistung.append("li")
-  .text("Clusteroperationen können besser erfasst und interpretiert werden.");
+  .text("Erfassen & Interpretation von Clusteroperationen");
+// auflistung.append("li")
+//   .text("Vermeiden des direkten Vergleichs vom Ausgangs- & Zielzustand");
 auflistung.append("li")
-  .text("Ein direkter Vergleich vom Ausgangs- und Zielzustand mittels umschalten kann vermieden werden.");
-auflistung.append("li")
-  .text("Die Änderung der Visualisierung wirkt lebendiger und somit ansprechender.");
+  .text("Änderung der Visualisierung lebendiger & ansprechender");
   
 linkeSpalte.append("h2").text("Nachteile");
 auflistung = linkeSpalte.append("ul");
 auflistung.append("li")
-  .text("Gibt es zu viele Änderungen, verschwinden die Vorteile.");
+  .text("Bei zu vielen Änderungen");
 auflistung.append("li")
-  .text("Ist die Transitionsdauer zu lang, langweilen sie die Betrachter.");
-auflistung.append("li")
-  .text("Ist die Transitionsdauer zu kurz, kann sie nicht nachvollzogen werden.");
+  .text("Zu kurze oder lange Transitionsdauer");
   
 ////////////// Trans. vs. Überblendung //////////
 const dropDownSelections = [

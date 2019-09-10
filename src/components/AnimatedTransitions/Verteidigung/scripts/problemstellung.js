@@ -1,29 +1,35 @@
+
 const me = document.URL.split("/").reverse()[0].slice(0,this.length-5);
   
 //////////////// Header //////////////////
 modifyHeader(me);
 
 //////////////// Content //////////////////
-linkeSpalte.append("h2").text("Die Hülle");
+linkeSpalte.append("h2").text("Erstellung der Hüllen");
 
 var auflistung = linkeSpalte.append("ul");
 auflistung.append("li")
-  .text("Berechnung einer konvexen Hülle mittels d3.polygonHull()");
+  .text("Berechnung einer konvexen Hülle mittels")
+  .append("span")
+  .style("font-weight", "600")
+  .text(" d3.polygonHull()");
 auflistung.append("li")
   .text("Darstellung durch einen Pfad als String der Form: ")
-  .append("span")
+  .append("p")
   .style("color", "red")
+  .style("line-height", "0px")
+  .style("margin-bottom", "30px")
   .text("M 0 0 L 10 0 L 5 10 Z");
 
 linkeSpalte.append("h2").text("Interpolation des Pfades");
 
 auflistung = linkeSpalte.append("ul");
 auflistung.append("li")
-  .text("Der Anfangspunkt muss übereinstimmen.");
+  .text("Anfangspunkt müssen,");
 auflistung.append("li")
-  .text("Die Knotenzahl muss übereinstimmen.");
+  .text("Knotenzahlen müssen und");
 auflistung.append("li")
-  .text("Die Reihenfolge sollte übereinstimmen.");
+  .text("Reihenfolgen sollten übereinstimmen.");
 
 
 //////////////// Datasets ////////////////

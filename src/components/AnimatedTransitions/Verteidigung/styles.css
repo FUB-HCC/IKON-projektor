@@ -54,7 +54,7 @@ footer {/* https://stackoverflow.com/questions/3443606/make-footer-stick-to-bott
   color: white;
   font-size: 14px;
   line-height: 21px;
-  padding: 9px 12px 9px 12px;/*top-right-bottom-left*/
+  padding: 7px 12px 7px 12px;/*top-right-bottom-left*/
   background-attachment: scroll;
   background-clip: border-box;
   position: absolute;

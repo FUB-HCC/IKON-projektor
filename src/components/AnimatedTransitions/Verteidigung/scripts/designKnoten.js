@@ -5,7 +5,7 @@ modifyHeader(me);
 
 //////////////// Datasets ////////////////
 var pos, id, gerade, clusterNo, researchArea, year, keywords, title, color, alpha;
-radius = 7;
+radius = 7, transDuration = 1000;
 
 var datasBewegung = {
   vorher: [

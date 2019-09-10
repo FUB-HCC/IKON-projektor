@@ -94,9 +94,9 @@ auflistung.append("li").text("Hybrid Transition");
 
 //////////////// SVG
 
-width = Math.min(document.getElementById("rechteSpalte")
-  .getBoundingClientRect().width, 350) - margin.left - margin.right,
-height = 250 - margin.top - margin.bottom;
+// width = Math.min(document.getElementById("rechteSpalte")
+//   .getBoundingClientRect().width, 350) - margin.left - margin.right,
+// height = 250 - margin.top - margin.bottom;
 transDuration = 3000;
 durationSpan = [0, 6000];
 

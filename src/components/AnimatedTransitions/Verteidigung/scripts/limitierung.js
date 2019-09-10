@@ -8,9 +8,9 @@ linkeSpalte.append("h2").text("Bisher ungelöste technische Probleme");
 
 var auflistung = linkeSpalte.append("ul");
 auflistung.append("li")
-  .text("Keine übereinstimmenden Knoten-IDs");
-auflistung.append("li")
   .text("Reihenfolge: Keine Lösung");
+auflistung.append("li")
+  .text("Hüllenknoten mit unterschiedlichen IDs");
   
   
 linkeSpalte.append("h2").text("Allgemeine Schwächen");
@@ -138,10 +138,10 @@ height = 300 - margin.top - margin.bottom;
 
 showCircText = true;
 showHullText = false;
-showPolygonzug = false;
-transDuration = 3000;
-oldDatas = datasetKnotenID.vorher;
-newDatas = datasetKnotenID.nachher;
+showPolygonzug = true;
+transDuration = 1750;
+oldDatas = datasetReihenfolge.vorher;
+newDatas = datasetReihenfolge.nachher;
 var oldNests = new Nest(oldDatas);
 var newNests = new Nest(newDatas);
 
@@ -149,11 +149,11 @@ var scale = new Scale();
   scale.setDomain(oldDatas);
 
 const dropDownSelections = [
-  {text: "Knoten-IDs", value: "knotenids"},
   {text: "Reihenfolge", value: "reihenfolge"},
+  {text: "Knoten-IDs", value: "knotenids"},
   {text: "allg. Schwächen", value: "verdeckung"}
 ];
-problemHullTrait = "knotenids";
+problemHullTrait = "reihenfolge";
 var dropDownText = dropDownSelections.filter(d => d.value == problemHullTrait)[0].text;
 
 // ort, liste, text, onclickFkt
@@ -169,7 +169,7 @@ new DropdownList(rechteSpalte, dropDownSelections, dropDownText,
     else if (problemHullTrait == "reihenfolge") {
       oldDatas = datasetReihenfolge.vorher;
       newDatas = datasetReihenfolge.nachher;
-      schieberegler.setDuration(3000);
+      schieberegler.setDuration(1750);
     }
     else if (problemHullTrait == "verdeckung") {
       oldDatas = datasetVerdeckung.vorher;
