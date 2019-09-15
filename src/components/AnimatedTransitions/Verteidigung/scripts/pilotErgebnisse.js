@@ -8,12 +8,14 @@ linkeSpalte.append("h2").text("Ergebnisse");
 var auflistung = linkeSpalte.append("ul");
 auflistung.append("li")
   .text("Anim. Transition wird bevorzugt.");
+var x = auflistung.append("li")
+  .text("Bevorzugte Transitionsdauer: 1.5 – 3s");
+  x.append("p").text("Durchschnitt: 2.1s").style("margin-bottom", 0);
+  x.append("p").text("Längere Dauer ⇏ bessere Resultate");
 auflistung.append("li")
-  .text("Bevorzugte Transitionsdauer: 1.5 – 3s. Durchschnitt: 2.1s");
+  .text("Steigende Komplexität ⇒ weniger präzise Deutung");
 auflistung.append("li")
-  .text("Steigende Komplexität führte zu weniger präzise Deutung.");
-auflistung.append("li")
-  .text("Hüllensichtbarkeit ist notwendig.");
+  .text("Hüllensichtbarkeit notwendig");
 auflistung.append("li")
   .text("Staging");
 auflistung.append("li")
@@ -94,7 +96,7 @@ function togglePlayBtn(btn) {
   }
 }
 
-
+rechteSpalte.append("text").text("Clusterwechsel: ").attr("class", "p");
 var playBtn = new Button(rechteSpalte, "▶", function(){});
   playBtn.btn.on("click", function(){
     if (playBtn.value == "play")

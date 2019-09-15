@@ -90,7 +90,7 @@ var auflistung = linkeSpalte.append("ul");
 auflistung.append("li").text("Lineare Transition");
 auflistung.append("li").text("Drei-Phasen-Transition: Collapse (Exit), Move (Update), Expanding (Enter)");
 auflistung.append("li").text("Staggered Transition: z.B. per Cluster");
-auflistung.append("li").text("Hybrid Transition");
+//auflistung.append("li").text("Hybrid Transition");
 
 //////////////// SVG
 

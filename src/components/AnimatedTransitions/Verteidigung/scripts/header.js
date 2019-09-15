@@ -75,7 +75,7 @@ function modifyHeader(site) {
     // Pfeil
     liste.append("p")
       .attr("class", "arrow")
-      .style("line-height", "0px")
+      //.style("line-height", "0px")
       .style("left", function(){
         return (this.parentElement.getBoundingClientRect().right -1) + "px";
       })

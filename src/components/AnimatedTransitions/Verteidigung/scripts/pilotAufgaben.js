@@ -5,7 +5,8 @@ modifyHeader(me);
 
 //////////////// Content //////////////////  
 linkeSpalte.append("h2").text("Simple Aufgaben");
-var auflistung = linkeSpalte.append("ul");
+linkeSpalte.append("p").text("Eine Knoten-OP & ggf. eine Hüllen-OP");
+/*var auflistung = linkeSpalte.append("ul");
 auflistung.append("li")
   .text("Knoten hinzufügen/entfernen");
 auflistung.append("li")
@@ -13,17 +14,17 @@ auflistung.append("li")
 auflistung.append("li")
   .text("Bewegung inkl. Verformung");
 auflistung.append("li")
-  .text("Clusterwechsel inkl. Hülleninteraktion");
+  .text("Clusterwechsel inkl. Hülleninteraktion");*/
   
 linkeSpalte.append("h2").text("Komplexe Aufgaben");
-linkeSpalte.append("p").text("Clusterwechsel & Bewegung:");
-auflistung = linkeSpalte.append("ul");
+linkeSpalte.append("p").text("Clusterwechsel & Bewegung (2 – 3 Hüllen-OPs & ggf. Skalierung)");
+/*auflistung = linkeSpalte.append("ul");
 auflistung.append("li")
   .text("Cluster hinzufügen/entfernen, Verformung & Skalierung");
 auflistung.append("li")
   .text("Cluster hinzufügen/entfernen, Hülleninteraktion, Verformung & ggf. Skalierung");
 auflistung.append("li")
-  .text("Hülleninteraktion, Verformung & Skalierung");
+  .text("Hülleninteraktion, Verformung & Skalierung");*/
 
 var fig = rechteSpalte.append("figure");
 var bildBeschreibung = "Mögliche Auswirkungen der Benutzerinteraktionen auf die Clusteroperationen. Quelle: Eigene Darstellung";

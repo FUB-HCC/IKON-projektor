@@ -26,10 +26,10 @@ linkeSpalte.append("p")
   .style("line-height", "0px")
   .style("margin-bottom", "30px");
   
-linkeSpalte.append("h2").text("Teilnehmerzahl");
+/*linkeSpalte.append("h2").text("Teilnehmerzahl");
 linkeSpalte.append("p")
   .text("sechs")
-  .style("line-height", "0px");
+  .style("line-height", "0px");*/
 
 var fig = rechteSpalte.append("figure");
 var bildBeschreibung = "Ansicht der Pilotstudie. Quelle: Eigene Darstellung";

@@ -60,7 +60,7 @@ function getCircOpacity(c){
         return projectOpacity;
     else {
       console.log("Forschungsgebiet des Kreises " ,c, " nicht gefunden");
-      return 0;
+      return 1;// 0
     }
   }
 }
@@ -1360,7 +1360,7 @@ function changeView(keypress) {
   if (keypress.key == "p"){// speichert das rechte SVG
     saveImage();
   }
-  else if (keypress.key == "Enter") {
+  else if (keypress.key == "d") {// "Enter"
     var zip = new JSZip();// https://jalara-studio.de/mit-javascript-eine-zip-datei-erstellen
     if ( JSZip.support.arraybuffer )
       console.log( "ArrayBuffer wird unterstützt." );

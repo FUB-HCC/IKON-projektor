@@ -12,3 +12,7 @@ var rechteSpalte = layout.append("div")
   .style("float", "right")
   .style("text-align", "left")
   .attr("id", "rechteSpalte");
+
+/* Quellen: 
+ * https://internetingishard.com/html-and-css/advanced-positioning/
+ */

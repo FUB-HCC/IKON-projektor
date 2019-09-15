@@ -1,30 +1,35 @@
 const menue = [
-  {url: "../index", name: "Start"},
-  {url: "toc", name: "Inhalt"},
-  {url: "aufgabenstellung", name: "Motivation"},
-  {url: "vorUndNachteile", name: "Vor- und Nachteile"},
-  {url: "designentscheidungen", name: "Designentscheidungen"},
-  {url: "problemstellung", name: "Problemstellung"},
-  {url: "pilotstudie", name: "Evaluation"},
-  {url: "final", name: "Prototyp"}
+  {url: "../index", name: "Start"},//0
+  //{url: "toc", name: "Inhalt"},
+  {url: "aufgabenstellung", name: "Aufgabenstellung"},// 1
+  {url: "animTrans", name: "Animierte Transition"},// 2 – Vor- und Nachteile
+  {url: "problemstellung", name: "Problemstellung"},// 3
+  {url: "pilotstudie", name: "Evaluation"},//4
+  {url: "final", name: "Prototyp"},//5
+  {url: "ausblick", name: "Ausblick"},//6
+  {url: "designentscheidungen", name: "Anhang"}//7
 ];
 
 const seiten = [
   {url: "../index", name: "Start", menue: menue[0]},
-  {url: "toc", name: "Inhalt", menue: menue[1]},
-  {url: "aufgabenstellung", name: "Aufgabenstellung", menue: menue[2]},
-  {url: "animTrans", name: "Animierte Transitionen", menue: menue[2]},
-  {url: "vorUndNachteile", name: "Vor- und Nachteile animierter Transition für Clusteroperationen", menue: menue[3]},
-  {url: "designKnoten", name: "Knotentransition", menue: menue[4]},
-  {url: "designHuellen", name: "Hüllentransition", menue: menue[4]},
-  {url: "designStaging", name: "Choreographie", menue: menue[4]},
-  {url: "problemstellung", name: "Hülleninterpolation", menue: menue[5]},
-  {url: "loesungsansatz", name: "Lösungsansatz", menue: menue[5]},
-  {url: "limitierung", name: "Limitierung", menue: menue[5]},
-  {url: "pilotstudie", name: "Pilotstudie", menue: menue[6]},
-  {url: "pilotAufgaben", name: "Aufgaben", menue: menue[6]},
-  {url: "pilotErgebnisse", name: "Ergebnisse", menue: menue[6]},
-  {url: "final", name: "Prototyp – Projekte in Clustern", menue: menue[7]}
+  //{url: "toc", name: "Inhalt", menue: menue[1]},
+  {url: "aufgabenstellung", name: "Aufgabenstellung", menue: menue[1]},
+  {url: "animTrans", name: "Definition & Anwendung", menue: menue[2]},
+  {url: "motivation", name: "Motivation", menue: menue[2]},
+  {url: "clusteroperationen", name: "Knoten- & Hüllenoperationen", menue: menue[2]},// Clusteroperationen
+  {url: "designempfehlungen", name: "Verwandte Literatur", menue: menue[2]},// Designempfehlungen
+  {url: "problemstellung", name: "Hülleninterpolation", menue: menue[3]},
+  {url: "loesungsansatz", name: "Lösungsansatz", menue: menue[3]},
+  {url: "limitierung", name: "Limitierung", menue: menue[3]},
+  {url: "pilotstudie", name: "Pilotstudie", menue: menue[4]},
+  {url: "pilotAufgaben", name: "Aufgaben", menue: menue[4]},
+  {url: "pilotErgebnisse", name: "Ergebnisse", menue: menue[4]},
+  {url: "final", name: "Prototyp – Projekte in Clustern", menue: menue[5]},
+  {url: "ausblick", name: "Ausblick", menue: menue[6]},
+  {url: "danke", name: "Vielen Dank für Ihre Aufmerksamkeit", menue: menue[6]},
+  {url: "designKnoten", name: "Designentscheidungen: Knotentransition", menue: menue[7]},
+  {url: "designHuellen", name: "Designentscheidungen: Hüllentransition", menue: menue[7]},
+  {url: "designStaging", name: "Designentscheidungen: Choreographie", menue: menue[7]}
 ];
 
 function pagenumber(siteUrl){
@@ -32,14 +37,17 @@ function pagenumber(siteUrl){
 }
 
 function pageCounter(siteUrl) {
-  return "Seite " + (pagenumber(siteUrl)) + " / " + (seiten.length-1);
+  if (pagenumber(siteUrl) <= seiten.length-4)
+    return "Seite " + (pagenumber(siteUrl)) + " / " + (seiten.length-4);
+  else
+    return "";
 }
 
 function nextPage(siteUrl) {
   if (pagenumber(siteUrl) > 0)
     return seiten[(pagenumber(siteUrl)+1) % seiten.length].url + ".html";
   else
-    return "pages/toc.html";
+    return "pages/aufgabenstellung.html";
 }
 
 function prevPage(siteUrl) {

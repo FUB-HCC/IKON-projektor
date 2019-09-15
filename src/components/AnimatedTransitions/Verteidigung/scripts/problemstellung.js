@@ -17,8 +17,6 @@ auflistung.append("li")
   .text("Darstellung durch einen Pfad als String der Form: ")
   .append("p")
   .style("color", "red")
-  .style("line-height", "0px")
-  .style("margin-bottom", "30px")
   .text("M 0 0 L 10 0 L 5 10 Z");
 
 linkeSpalte.append("h2").text("Interpolation des Pfades");
