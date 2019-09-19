@@ -1,0 +1,558 @@
+@import "../../node_modules/react-input-range/lib/css/index.css"; /* Sidebar.js  starts from here */
+.CheckBoxes{
+    
+}
+/* Sidebar.js  Ends from here */
+
+
+/* SidebarfilterElementNew.js Starts from here */
+.FilterElement {
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 2%;
+    border-bottom: white solid 1px;
+    width: 100%;
+    transition: height ease-out 0.5s;
+}
+
+.Body {
+    margin-top: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.FirstBlock{
+    width: 100%;
+}
+
+.UpperHead{
+    border-bottom: 1px solid #069172;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+.CheckContainer{
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.CheckContainer div{
+    overflow: hidden;
+    font-family: TradeGothicLTStd;
+}
+
+.CheckContainer div span{
+    overflow: hidden;
+    font-family: TradeGothicLTStd;
+    float: left;
+    height: 4vh !important;
+    width: 80%;
+}
+
+
+.CheckContainer .CheckBoxLabel{
+    float: right;
+}
+
+.groupMarginFix{
+    padding-left: 10px;
+}
+
+.Title {
+    /* display: flex; */
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 70px;
+    color: #069172;
+    font-size: 2vh;
+    font-weight: 100;
+}
+.subGroup {
+    /* display: flex; */
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 70px;
+    font-size: 1.8vh;
+    font-weight: 100;
+    margin-top: 10px;
+    font-family: TradeGothicLTStd;
+}
+
+.ButtonCollapsed {
+    height: 3vh;
+    width: 4vh;
+    transform: rotate(180deg);
+}
+.ButtonExpanded {
+    height: 3vh;
+    width: 4vh;
+}
+
+.Text{
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.Indicator {
+    display: flex;
+    margin-bottom: 1%;
+    margin-left: 20px;
+    background: #989aa1;
+    width: 3vh;
+    height: 3vh;
+    color: white;
+    border-radius: 50%;
+    line-height: 1.5vh;
+    justify-content: center;
+    font-size: 1.5vh;
+}
+.IndicatorDigit{
+    margin-top: 1vh;
+}
+
+.Filter {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    height: 80px;
+    color: white;
+}
+
+.Filter span {
+    max-width: 80%;
+    overflow-wrap: break-word;
+}
+
+.CheckBox {
+    display: none;
+}
+
+.CheckBoxLabel {
+    display: inline;
+    vertical-align: middle;
+    margin: 5px 5px;
+    cursor: pointer;
+}
+
+.CheckBoxLabel {
+    position: relative;
+    background: #50e3c2;
+    width: 19px;
+    height: 19px;
+    margin-top:1vh;
+}
+
+
+.CheckBoxLabel:before {
+    content: '';
+    border: 2px solid #50e3c2;
+    background: #000;
+    display: inline-block;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    padding: 0px;
+    margin-right: 5px;
+    text-align: center;
+    margin-top: -1px;
+}
+
+.CheckBox + .CheckBoxLabel:before {
+    border-radius: 0;
+}
+
+.CheckBox:checked + .CheckBoxLabel:before {
+    background: #50e3c2;
+    background-clip: content-box;
+}
+
+.CheckBoxLabel.yellow{
+    background: #A4782E;
+}
+.CheckBoxLabel.yellow::before{
+    border-color: #A4782E;
+}
+.CheckBox:checked + .CheckBoxLabel.yellow:before {
+    background: #A4782E;
+    background-clip: content-box;
+}
+.CheckBoxLabel.red{
+    background: #994A49;
+}
+.CheckBox:checked + .CheckBoxLabel.red:before {
+    background: #994A49;
+    background-clip: content-box;
+}
+.CheckBoxLabel.red::before{
+    border-color: #994A49;
+}
+.CheckBoxLabel.green{
+    background: #435B22;
+}
+.CheckBox:checked + .CheckBoxLabel.green:before {
+    background: #435B22;
+    background-clip: content-box;
+}
+.CheckBoxLabel.green::before{
+    border-color: #435B22;
+}
+.CheckBoxLabel.violet{
+    background: #7675B2;
+}
+.CheckBox:checked + .CheckBoxLabel.violet:before {
+    background: #7675B2;
+    background-clip: content-box;
+}
+.CheckBoxLabel.violet::before{
+    border-color: #7675B2;
+}
+.CheckBoxLabel.grey{
+    background: #989aa1;
+}
+.CheckBox:checked + .CheckBoxLabel.grey:before {
+    background: #989aa1;
+    background-clip: content-box;
+}
+.CheckBoxLabel.grey::before{
+    border-color: #989aa1;
+}
+
+.CheckBox:focus + .CheckBoxLabel {
+    outline: 1px solid transparent;
+}
+/* SidebarfilterElementNew.js Ends from here */
+
+/* Navigationsubpages.js Starts from here */
+.navbar{
+    background: #0e0e0e;
+    padding: 5px;
+    height: 15vh;
+    display: flex;
+
+}
+.logo{
+    padding: 20px !important;
+    text-align: center !important;
+}
+
+.NavigationElement.logo::after{
+    display: none !important;
+}
+.smallHeadTxt{
+    color: #717071;
+    display: none;
+    position: absolute;
+}
+.leftpanel{
+    width: 75vw;
+}
+.rightPanel{
+    width: 25vw;
+    background:  #0e0e0e;
+}
+.NavigationRightElement{
+    text-decoration: none;
+    color: #fff;
+    font-size: 13px;
+    display: block;
+    padding: 36px 15px;
+    padding-left: 30px;
+    text-align: left;
+    background: #1c1d1f;
+    text-align: left;
+    border-right: 1px solid #0e0e0e;
+    cursor: pointer;
+    margin-top: 3px;
+    position: relative;
+}
+.NavigationRightElement li{
+    text-align: left;
+    position: relative;
+    margin-left: 5px;
+}
+.NavigationRightElement:after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background: #50e3c2;
+    top: 0px;
+    left: 0;
+    opacity: 0;
+}
+.NavigationRightElement:hover::after{
+    opacity: 1;
+}
+.NavigationRightElement li a{
+    text-align: left;
+}
+.rightPanel ul{
+    padding: 0px;
+    display: flex;
+    align-items: top;
+    margin: 0px;
+}
+.rightPanel ul li{
+    width: 50%;
+    list-style: none;
+    margin-left: 5px;
+    position: relative;
+}
+.rightPanel ul li:after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background: #50e3c2;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+.ContainerSub{
+    padding: 0%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 0%;
+    top: 5vh;
+    left: 5vh;
+    color: rgba(100,100,100,0.5);
+    list-style: none;
+}
+
+.ContainerSub li{
+    width: 24.5%;
+    
+    cursor: pointer;
+    position: relative;
+    margin-right: 1px;
+}
+
+.ContainerSub li:hover:after{
+    opacity: 1;
+}
+.ContainerSub li:hover{
+    background: transparent;    
+}
+.NavigationElement:after{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background: #50e3c2;
+    top: 0;
+    left: 0;
+    opacity: 0;
+}
+.ContainerSub li:hover .NavigationElement:after{
+    opacity: 1;
+}
+.NavigationElement{
+    text-decoration: none;
+    color: #50e3c2;
+    font-size: 13px;
+    display: block;
+    padding: 36px 15px;
+    text-align: left;
+    padding-left: 30px;
+    background: #1c1d1f;
+    font-family: IBM_Plex_Mono;
+}
+.NavigationElement .logo{
+    padding: 20px !important;
+}
+
+.active{
+    background: transparent;
+}
+.active .smallHeadTxt{
+    display: block;
+}
+.active:after{
+    opacity: 1;
+}
+
+/* Navigationsubpages.js Ends from here */
+
+/* footer.js Starts from here */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 9vh;
+  background: #0f0f0f;
+  display: flex;
+  padding: 0px;
+  border: 5px solid #2d2d2d;
+}
+
+.leftFooter {
+  width: 30vw;
+  display: flex;
+  border-right: 5px solid #2d2d2d;
+}
+
+.milldleLeft {
+  width: 45vw;
+  border-right: 5px solid #2d2d2d;
+}
+
+.timeSlider {
+  padding-left: 10px;
+  width: 90%;
+}
+
+/* .filter{
+    width: 60%;
+    display: flex;
+    align-items: center;
+} */
+
+.filter {
+  width: 100% !important;
+}
+
+.filterWrap {
+  width:46%;
+  float: left;
+  padding: 10px;
+}
+
+.selectLabel {
+  width: 20%;
+  display: inline-block;
+  color: #a4a4a4;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+    .css-vj8t7z {
+      -webkit-align-items: center;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      background-color: transparent;
+      border-color: hsl(0, 0%, 80%);
+      border-radius: 0;
+      border-style: solid;
+      border-width: 1px;
+      cursor: default;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+      min-height: 38px;
+      outline: 0 !important;
+      position: relative;
+      -webkit-transition: all 100ms;
+      transition: all 100ms;
+      box-sizing: border-box;
+      border: 0px;
+      border-bottom: 2px solid red !important;
+    }
+
+.milldleRight {
+  border-right: 5px solid #2d2d2d;
+  text-align: center;
+  width: 15vw;
+}
+
+.rightFooter {
+  text-align: center;
+  border-right: 5px solid #2d2d2d;
+  width: 10vw;
+}
+
+.btnFooter {
+  background: transparent;
+  border: 0px;
+  color: #fff;
+  cursor: pointer;
+  height: 100%;
+  width: 100%;
+}
+
+.btnFooter:hover {
+  color: #50e3c2;
+}
+/* footer.js Ends from here */
+
+
+
+
+
+
+/* FilterModal.js file css Starts here */
+
+
+
+
+.FilterModal {
+    position: absolute;
+    background: rgba(67, 64, 88, 0.8);
+    z-index: 9999;
+    width: 80vh;
+    height: 70vh;
+    padding: 2vh;
+
+}
+.CheckBoxes {
+    width: 100%;
+    height: 80%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.TextSearch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 20%;
+}
+
+.SearchField{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid white;
+    height: 60%;
+    width: 70%;
+}
+.SearchField input {
+    width: 70%;
+    border: 0;
+    outline: 0;
+    padding-left: 10px;
+    color: white;
+    font-size: 3vh;
+    background: transparent;
+}
+.closebutton{
+    width: 4.7vh;
+    height: 4.7vh;
+    position: absolute;
+    top: 0.2vh;
+    left: 84.2vh;
+    cursor: pointer;
+    margin-left: 2vh;
+}
+/* FilterModal.js file css Ends here */
+
+
+
+
+
+

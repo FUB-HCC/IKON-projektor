@@ -1,214 +1,251 @@
-import * as actionTypes from '../actions/actionTypes'
-import {updateUrl, fieldsStringToInt, topicToField} from '../utility'
-import {getProjectsData, getInstitutionsData} from '../../assets/publicData'
-import {parse as queryStringParse} from 'query-string'
-
-const institutionsData = getInstitutionsData()
-const data = getProjectsData()
-const distFields = []
-const distTopics = []
-const distSponsor = []
-
-Object.keys(data).map(dataEntry => {
-  data[dataEntry].hauptthema = (data[dataEntry].review_board ? data[dataEntry].review_board : 'Unbekannt')
-  data[dataEntry].geldgeber = data[dataEntry].sponsor
-
-  if (data[dataEntry].research_area) {
-    data[dataEntry] = {
-      ...data[dataEntry],
-      forschungsbereich: data[dataEntry].research_area.split(' (')[0],
-      forschungsbereichstr: data[dataEntry].research_area.split(' (')[0], // TODO please change API so it does not contain "(# Mitglieder)"
-      forschungsbereichNumber: fieldsStringToInt(data[dataEntry].research_area.split(' (')[0])
-    }
-  } else {
-    data[dataEntry] = {
-      ...data[dataEntry],
-      forschungsbereich: 'Unbekannt',
-      forschungsbereichstr: 'Unbekannt', // TODO please change API so it does not contain "(# Mitglieder)"
-      forschungsbereichNumber: fieldsStringToInt('Unbekannt')
-    }
-  }
-  
-  Object.keys(data[dataEntry]).map(dataKey => {
-    const val = data[dataEntry][dataKey]
-    
-    if (dataKey === 'forschungsbereichstr') {
-      if (!distFields.some(e => e === val)) distFields.push(val)
-    } else if (dataKey === 'hauptthema') {
-      if (!distTopics.some(e => e === val)) distTopics.push(val)
-    } else if (dataKey === 'geldgeber') {
-      if (!distSponsor.some(e => e === val)) distSponsor.push(val)
-    }
-  })
-}
-)
-const applyFilters = (data, filter) => {
-  let filteredData = data
-  filter.forEach(f => {
-    let newFilteredData = {}
-    filteredData = Object.keys(filteredData).forEach(d => {
-      if (f.type === 'a') {
-        if (f.value.some(value => value === filteredData[d][f.filterKey])) newFilteredData[d] = filteredData[d]
-      } else {
-        if (filteredData[d][f.filterKey].includes(f.value)) newFilteredData[d] = filteredData[d]
-      }
-    })
-    filteredData = newFilteredData
-  })
-  return filteredData
-}
-const compare = (a, b) => {
-  if (topicToField(a) < topicToField(b)) return -1
-  else return 1
-}
+import * as actionTypes from "../actions/actionTypes";
+import {
+  createNewStateFromUrlData,
+  fieldsStringToInt,
+  topicToField,
+  categories,
+  fieldsIntToString
+} from "../../util/utility";
+import { parse as queryStringParse } from "query-string";
 
 const initialState = {
-  filter: [
-    {
-      name: 'Forschungsgebiet',
-      filterKey: 'forschungsbereichstr',
-      type: 'a',
-      distValues: distFields.sort(compare),
-      value: distFields
+  filters: {
+    forschungsgebiet: {
+      name: "Forschungsgebiet",
+      filterKey: "forschungsbereichstr",
+      type: "a",
+      uniqueVals: ["1", "2", "3", "4"],
+      value: ["1", "2", "3", "4"]
     },
-    {
-      name: 'Hauptthema',
-      filterKey: 'hauptthema',
-      type: 'a',
-      distValues: distTopics.sort(compare),
-      value: distTopics
+    hauptthema: {
+      name: "Hauptthema",
+      filterKey: "hauptthema",
+      type: "a",
+      uniqueVals: [],
+      value: []
     },
-    {
-      name: 'Geldgeber',
-      filterKey: 'geldgeber',
-      type: 'a',
-      distValues: distSponsor.sort(compare),
-      value: distSponsor
+    geldgeber: {
+      name: "Geldgeber",
+      filterKey: "geldgeber",
+      type: "a",
+      uniqueVals: [],
+      value: []
     }
-  ],
-  graph: '0',
-  data: data,
-  filteredData: data,
-  institutions: institutionsData,
+  },
+  graph: "2",
+  projects: [],
+  filteredProjects: [],
+  institutions: [],
+  categories: categories,
+  clusterData: undefined,
   selectedProject: undefined
-}
+};
 
 // Keep the reducer switch lean by outsourcing the actual code below
-
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.CHANGE_GRAPH:
-      // console.log('STATE CHANGE: ', action.type, action)
-      const newState = {
+      return {
         ...state,
         graph: action.value,
-        filteredData: applyFilters(state.data, state.filter)
-      }
-      updateUrl(newState)
-      return newState
+        filteredData: applyFilters(state.projects, state.filters)
+      };
 
     case actionTypes.FILTER_CHANGE:
-      // console.log('STATE CHANGE: ', action.type, action)
-      return changeFilter(state, action)
-
-    case actionTypes.TOGGLE_FILTERS:
-      return toggleFilters(state, action)
+      return changeFilter(state, action);
 
     case actionTypes.ACTIVATE_POPOVER:
-      console.log('STATE CHANGE: ', action.type, action)
-      return activatePopover(state, action)
+      return activatePopover(state, action);
 
     case actionTypes.DEACTIVATE_POPOVER:
-      console.log('STATE CHANGE: ', action.type, action)
-      return deactivatePopover(state)
+      return deactivatePopover(state);
+
+    case actionTypes.GET_FILTERS_FROM_URL:
+      return urlUpdatesFilters(state);
+
+    case actionTypes.UPDATE_CLUSTER_DATA:
+      return updateClusterData(state, action);
+
+    case actionTypes.UPDATE_INSTITUTIONS_DATA:
+      return updateInstitutionsData(state, action);
+
+    case actionTypes.UPDATE_PROJECTS_DATA:
+      return updateProjectsData(state, action);
 
     default:
-      // console.log('STATE CHANGE: DEFAULT')
-      return urlUpdatesFilters(state)
+      return state;
   }
-}
+};
+
+const applyFilters = (data, filter) => {
+  let filteredData = data;
+  Object.values(filter).forEach(f => {
+    let newFilteredData = {};
+    filteredData = Object.keys(filteredData).forEach(d => {
+      if (f.type === "a") {
+        if (f.value.some(value => value === filteredData[d][f.filterKey]))
+          newFilteredData[d] = filteredData[d];
+      } else {
+        if (filteredData[d][f.filterKey].includes(f.value))
+          newFilteredData[d] = filteredData[d];
+      }
+    });
+    filteredData = newFilteredData;
+  });
+  return Object.values(filteredData);
+};
+
+const compare = (a, b) => {
+  if (topicToField(a) < topicToField(b)) return -1;
+  else return 1;
+};
+
+const updateClusterData = (state, action) =>
+  Object.assign({}, state, {
+    clusterData: action.value
+  });
+
+const updateInstitutionsData = (state, action) =>
+  Object.assign({}, state, {
+    institutions: action.value
+  });
+
+const updateProjectsData = (state, action) => {
+  const projectData = action.value;
+  const projects = Object.values(projectData).map(project => {
+    project.hauptthema = project.review_board
+      ? project.review_board
+      : "Unbekannt";
+    project.geldgeber = project.sponsor;
+    if (project.research_area) {
+      return {
+        ...project,
+        forschungsbereich: project.research_area.split(" (")[0],
+        forschungsbereichstr: project.research_area.split(" (")[0], // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereichNumber: fieldsStringToInt(
+          project.research_area.split(" (")[0]
+        )
+      };
+    } else {
+      return {
+        ...project,
+        forschungsbereich: "Unbekannt",
+        forschungsbereichstr: "Unbekannt", // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereichNumber: fieldsStringToInt("Unbekannt")
+      };
+    }
+  });
+
+  const uniqueFields = [];
+  const uniqueTopics = [];
+  const uniqueSponsors = [];
+
+  Object.values(projects).forEach(project => {
+    Object.keys(project).forEach(property => {
+      const value = project[property];
+      if (property === "forschungsbereichstr") {
+        if (!uniqueFields.some(e => e === value)) uniqueFields.push(value);
+      } else if (property === "hauptthema") {
+        if (!uniqueTopics.some(e => e === value)) uniqueTopics.push(value);
+      } else if (property === "geldgeber") {
+        if (!uniqueSponsors.some(e => e === value)) uniqueSponsors.push(value);
+      }
+    });
+  });
+
+  const newFilters = {
+    ...state.filters,
+    forschungsgebiet: {
+      ...state.filters.forschungsgebiet,
+      uniqueVals: uniqueFields.sort(compare),
+      value: uniqueFields
+    },
+    hauptthema: {
+      ...state.filters.hauptthema,
+      uniqueVals: uniqueTopics.sort(compare),
+      value: uniqueTopics
+    },
+    geldgeber: {
+      ...state.filters.geldgeber,
+      uniqueVals: uniqueSponsors.sort(compare),
+      value: uniqueSponsors
+    }
+  };
+
+  return Object.assign({}, state, {
+    projects: projects,
+    filters: newFilters,
+    filteredProjects: applyFilters(projects, newFilters)
+  });
+};
 
 const changeFilter = (state, action) => {
-  const newFilter = state.filter.slice()
-  const actionValue = action.value
-  if (state.filter[action.id].value.some(e => e === actionValue)) {
-    newFilter[action.id].value = state.filter[action.id].value.filter(key => key !== actionValue)
+  const newFilter = state.filters;
+  if (state.filters[action.id].value.some(e => e === action.value)) {
+    newFilter[action.id].value = state.filters[action.id].value.filter(
+      key => key !== action.value
+    );
   } else {
-    newFilter[action.id].value.push(actionValue)
+    newFilter[action.id].value.push(action.value);
   }
-  const newState = {
+  if (action.id === "forschungsgebiet") {
+    newFilter.hauptthema.value = toggleAllFiltersOfField(
+      newFilter,
+      action.value
+    );
+  }
+  return {
     ...state,
-    filter: newFilter,
-    filteredData: applyFilters(state.data, newFilter)
+    filters: newFilter,
+    filteredProjects: applyFilters(state.projects, newFilter)
+  };
+};
+
+const toggleAllFiltersOfField = (filters, fieldValue) => {
+  const subjectsOfField = filters.hauptthema.uniqueVals.filter(
+    val => fieldsIntToString(topicToField(val)) === fieldValue
+  );
+  let newValue = filters.hauptthema.value.filter(
+    val => !subjectsOfField.includes(val)
+  );
+  if (filters.forschungsgebiet.value.includes(fieldValue)) {
+    newValue = newValue.concat(subjectsOfField);
   }
-  
-  updateUrl(newState)
-  
-  return newState
-}
+  return newValue;
+};
 
-const toggleFilters = (state, action) => state
-//   const newFilter = state.filter.map(fil => {
-//     if (fil.key === action.key) fil.value = action.filters
-//     return fil
-//   })
-//   const newFilteredData = applyFilters(state.data, newFilter)
-//   const newState = {
-//     ...state,
-//     filter: newFilter,
-//     filteredData: newFilteredData
-//   }
-//   updateUrl(newState)
-//   return newState
-// }
-
-const activatePopover = (state, action) => {  
-  let selectedProjectId = null
-  state.data.forEach(project => {
+const activatePopover = (state, action) => {
+  let selectedProjectId = null;
+  state.projects.forEach(project => {
     if (project.id === action.element.project.id) {
-      selectedProjectId = project.id
+      selectedProjectId = project.id;
     }
-  })
-  if (action.vis === 1) {
-    const newState = {
-      ...state,
-      selectedProject: selectedProjectId
-    } 
-    updateUrl(newState)
+  });
+  return {
+    ...state,
+    selectedProject: selectedProjectId
+  };
+};
 
-    return newState
-  } else {    
-    const newState = {
-      ...state,
-      selectedProject: selectedProjectId
-    }
-
-    updateUrl(newState)
-
-    return newState
-  }
-}
-
-const deactivatePopover = (state) => {
+const deactivatePopover = state => {
   const newState = {
     ...state,
     selectedProject: undefined
-  }
-  updateUrl(newState)
-  return newState
-}
+  };
+  return newState;
+};
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
-const urlUpdatesFilters = (state) => {
-  const urlData = queryStringParse(location.search)
-  const dataFromUrl = updateUrl(state, urlData)
+const urlUpdatesFilters = state => {
+  const urlData = queryStringParse(window.location.search);
+  const dataFromUrl = createNewStateFromUrlData(state, urlData);
   return {
     ...state,
     filter: dataFromUrl.filter,
     graph: dataFromUrl.graph,
-    filteredData: applyFilters(state.data, dataFromUrl.filter)
-    // selectedProject: dataFromUrl.selectedProject // TODO
-  }
-}
+    filteredProjects: applyFilters(state.projects, dataFromUrl.filter),
+    selectedProject: dataFromUrl.selectedProject
+  };
+};
 
-export default reducer
+export default reducer;

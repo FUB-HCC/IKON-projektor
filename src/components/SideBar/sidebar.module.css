@@ -1,0 +1,72 @@
+@import "../../../node_modules/react-input-range/lib/css/index.css"; /* Sidebar.js  starts from here */
+
+.filterSetWrapper{
+    margin-top: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+.filterSetTitle{
+    border-bottom: 1px solid #069172;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+.titleText {
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 3vh;
+    color: #069172;
+    font-size: 2vh;
+    font-weight: 100;
+}
+
+.subsetWrapper{
+    width:100%;
+    margin-bottom: 1.5vh;
+}
+.subsetHeader{
+    margin-bottom: 1vh;
+    font-size: 1.7vh;
+}
+.subFilter{
+    font-size: 1.2vh;
+    width:97%;
+    padding-left: 3%;
+}
+.subFilterGroup{
+    padding-left: 10px;
+}
+
+.checkBoxWrapper{
+    overflow: hidden;
+    font-family: TradeGothicLTStd, sans-serif;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.7vh;
+}
+
+.checkBoxWrapper span{
+    overflow: hidden;
+    font-family: TradeGothicLTStd, sans-serif;
+    float: left;
+    width: 85%;
+}
+
+.checkBox {
+    display: none;
+}
+
+.checkBoxLabel {
+    cursor: pointer;
+    margin-left: auto;
+    height: 1vh;
+    width: 1vh;
+    margin-right: 2px;
+}
+
+
+.checkBoxLabel:before {
+    display: inline-block;
+}

@@ -1,0 +1,36 @@
+
+.geoViewWrapper{
+    display: flex;
+    flex-direction: column;
+}
+
+.arcWrapper{
+    width: 100%;
+    height: 65%;
+    padding-bottom: 10px;
+}
+
+.labelWrapper{
+    width: 100%;
+    height: 5%;
+    align-content: center;
+}
+
+.continentLabel{
+    position: absolute;
+    transform: translate(-50%, 0);
+    font-size: 1vw;
+    color: white;
+}
+
+.mapsWrapper{
+    width: 100%;
+    height: 15%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.continentWrapper{
+    width: 16.666%;
+}

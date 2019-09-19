@@ -1,0 +1,44 @@
+.contentWindow {
+    width: 75vw;
+    height: 82vh;
+    background: #0e0e0e;
+    background-size: 800% 800%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float: left;
+}
+.sidebar{
+    width: 25vw;
+    background: #0e0e0e;
+    height: 74vh;
+    overflow-y: scroll;
+    float: left;
+    position: absolute;
+    left: 75vw;
+}
+.bodyWrap{
+    display: block;
+}
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(30,30,30,0.6);
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
