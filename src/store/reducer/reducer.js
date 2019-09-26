@@ -32,7 +32,7 @@ const initialState = {
       value: []
     }
   },
-  graph: "2",
+  graph: "0",
   projects: [],
   filteredProjects: [],
   institutions: [],
