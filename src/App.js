@@ -39,7 +39,7 @@ class App extends Component {
             <div className={classes.sidebar}>
               <Sidebar />
             </div>
-            <Footer />
+            {/*<Footer />*/}
           </div>
         </React.Fragment>
       </ConnectedRouter>
