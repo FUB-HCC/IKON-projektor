@@ -48,7 +48,7 @@ export const fetchClusterData = () => {
 
 export const fetchInstitutionsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/institutions").then(result => {
+    axios.get("institutions.json").then(result => {
       dispatch(updateInstitutionsData(result.data));
     });
   };
@@ -56,7 +56,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/projects").then(result => {
+    axios.get("/projects.json").then(result => {
       dispatch(updateProjectsData(result.data));
     });
   };
