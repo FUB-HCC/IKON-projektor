@@ -40,7 +40,7 @@ export const getFiltersFromURL = () => {
 
 export const fetchClusterData = () => {
   return dispatch => {
-    axios.get("/dataset_v3.json").then(result => {
+    axios.get("/clusters.json").then(result => {
       dispatch(updateClusterData(result.data));
     });
   };
@@ -48,7 +48,7 @@ export const fetchClusterData = () => {
 
 export const fetchInstitutionsData = () => {
   return dispatch => {
-    axios.get("institutions.json").then(result => {
+    axios.get("/institutions.json").then(result => {
       dispatch(updateInstitutionsData(result.data));
     });
   };
