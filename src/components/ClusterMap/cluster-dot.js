@@ -30,11 +30,11 @@ export default class ClusterDot extends React.Component {
         onMouseOut={() => this.setHover(false)}
         style={{ transition: "all 300ms ease-out" }}
       >
-        <circle key={"inner-" + x} cx={x} cy={y} r="2" fill={this.props.color}>
+        <circle key={"inner-" + x} cx={x} cy={y} r="5" fill={this.props.color}>
           {hover && (
             <animate
               attributeName="r"
-              values="2;4;2"
+              values="5;7;5"
               dur="2s"
               repeatCount="indefinite"
               calcMode="paced"
@@ -44,7 +44,7 @@ export default class ClusterDot extends React.Component {
           {!hover && (
             <animate
               attributeName="r"
-              to="2"
+              to="5"
               dur="1s"
               repeatCount="indefinite"
               calcMode="paced"
