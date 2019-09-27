@@ -56,7 +56,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("/projects.json").then(result => {
+    axios.get("/mfnprojects.json").then(result => {
       dispatch(updateProjectsData(result.data));
     });
   };

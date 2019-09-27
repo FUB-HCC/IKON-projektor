@@ -47,8 +47,8 @@ export default class ClusterMapView extends React.Component {
     const shiftY = height;
     const radius = 4/5*height;
     const each = 180 / (categories.length-1);
-    const cats = _.reverse(_.sortBy(categories, x => x.connections.length));
-    const conMax = cats[0].connections.length;
+    const cats = _.reverse(_.sortBy(categories, x => x.count));
+    const conMax = cats[0].count;
 
     return (
       <div className={style.clusterMapWrapper}>
@@ -67,7 +67,7 @@ export default class ClusterMapView extends React.Component {
             const textRotate = startAngle < -90 ? startAngle + 180 : startAngle;
             const hc = this.state.highlightedCat;
             const isHighlighted = hc && hc.id === cat.id;
-            const area = (conLen / conMax) * 300;
+            const area = (conLen / conMax) * 300.;
             const rad = Math.sqrt(area / Math.PI) || 1;
 
             const lines = cat.connections.map(con => {
