@@ -22,8 +22,9 @@ const mapStateToProps = state => {
         cat: cat.id,
         _cat: cat
       };
-      cat.connections.push(point);
-
+      if (point.id in cat.project_ids) {
+        cat.connections.push(point);
+      }
       return point;
     });
 

@@ -28,6 +28,7 @@ class GraphView extends React.Component {
     this.props.fetchClusterData();
     this.props.fetchProjectsData();
     this.props.fetchInstitutionsData();
+    //this.props.fetchKTAData();
   }
 
   resize() {

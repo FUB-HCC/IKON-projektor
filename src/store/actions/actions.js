@@ -62,6 +62,14 @@ export const fetchProjectsData = () => {
   };
 };
 
+export const fetchKTAData = () => {
+  return dispatch => {
+    axios.get("/formats.json").then(result => {
+      dispatch(updateKTAData(result.data));
+    });
+  };
+};
+
 export const updateClusterData = clusterData => {
   return {
     type: actionTypes.UPDATE_CLUSTER_DATA,
@@ -80,5 +88,12 @@ export const updateProjectsData = clusterData => {
   return {
     type: actionTypes.UPDATE_PROJECTS_DATA,
     value: clusterData
+  };
+};
+
+export const updateKTAData = ktaData => {
+  return {
+    type: actionTypes.UPDATE_KTA_DATA,
+    value: ktaData
   };
 };

@@ -56,7 +56,7 @@ export default class ClusterMapView extends React.Component {
           {categories.map((cat, i) => {
             const startAngle = each * i - 180;
             const angle = startAngle * (Math.PI / 180);
-            const conLen = cat.connections.length;
+            const conLen = cat.count;
             const x = shiftX + radius * Math.cos(angle);
             const y = shiftY + radius * Math.sin(angle);
             const textX = shiftX + (radius + 40) * Math.cos(angle);
