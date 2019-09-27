@@ -31,27 +31,28 @@ export default class ClusterMapView extends React.Component {
 
   getPointLocation = pt => {
     const [x, y] = pt;
-    const scaleX = (x * 100) / this.maxX;
+    const scaleX = (x * 50) / this.maxX;
     const scaleY = (y * 100) / this.maxY;
 
     return [
-      (scaleX * this.width) / 100 + 80,
-      (scaleY * this.height) / 100 + 150
+      (scaleX * this.width) / 50 + 80,
+      (scaleY * this.height) / 50 + this.height
     ];
   };
 
   render() {
-    const { categories } = this.props;
+    const { categories, width, height } = this.props;
     const shiftX = 200;
-    const shiftY = 320;
-    const radius = 250;
+    const arcWidth = width - shiftX;
+    const shiftY = height;
+    const radius = 4/5*height;
     const each = 190 / categories.length;
     const cats = _.reverse(_.sortBy(categories, x => x.connections.length));
     const conMax = cats[0].connections.length;
 
     return (
       <div className={style.clusterMapWrapper}>
-        <svg className="viz-3" viewBox="-400 -100 1200 600">
+        <svg className="viz-3" viewBox={"-"+arcWidth/2+ " 0 "+1.5*arcWidth+ " " + height}>
           {categories.map((cat, i) => {
             const startAngle = each * i - 180;
             const angle = startAngle * (Math.PI / 180);
