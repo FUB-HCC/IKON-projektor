@@ -36,7 +36,7 @@ export default class ClusterMapView extends React.Component {
 
     return [
       (scaleX * this.width) / 50 + 80,
-      (scaleY * this.height) / 50 + this.height
+      (scaleY * this.height) / 80 + this.height + 50
     ];
   };
 
@@ -46,7 +46,7 @@ export default class ClusterMapView extends React.Component {
     const arcWidth = width - shiftX;
     const shiftY = height;
     const radius = 4/5*height;
-    const each = 190 / categories.length;
+    const each = 180 / (categories.length-1);
     const cats = _.reverse(_.sortBy(categories, x => x.connections.length));
     const conMax = cats[0].connections.length;
 

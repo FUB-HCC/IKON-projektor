@@ -18,7 +18,7 @@ const mapStateToProps = state => {
       const cat = _.sample(categories);
       const point = {
         ...p,
-        location: [p.embpoint[0] - minX, p.embpoint[1] - minY],
+        location: [p.mappoint[0] - minX, p.mappoint[1] - minY],
         cat: cat.id,
         _cat: cat
       };
