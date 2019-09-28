@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import classes from "../redesigned.module.css";
+import classes from "./navigation-subpages.module.css";
 import { connect } from "react-redux";
 import * as actions from "../../store/actions/actions";
 import logo from "../../assets/ikon_logo.png";
+import {menuBarHeight} from "../../App";
 
 class NavigationSubpages extends Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class NavigationSubpages extends Component {
   }
   render() {
     return (
-      <div className={classes.navbar}>
+      <div className={classes.navbar} style={{flexBasis: menuBarHeight}}>
         <div className={classes.leftpanel}>
           <ul className={classes.ContainerSub}>
             <li>

@@ -1,5 +1,5 @@
 import React from "react";
-import style from "./sidebar.module.css";
+import style from "./filter-selection.module.css";
 import { getFieldColor } from "../../util/utility";
 
 const FilterSet = props => {

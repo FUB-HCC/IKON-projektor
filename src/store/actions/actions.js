@@ -97,3 +97,10 @@ export const updateKTAData = ktaData => {
     value: ktaData
   };
 };
+
+export const setSideBarComponent = component => {
+  return {
+    type: actionTypes.SET_SIDE_BAR_COMPONENT,
+    value: component
+  }
+}

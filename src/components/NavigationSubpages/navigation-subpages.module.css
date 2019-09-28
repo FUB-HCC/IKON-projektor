@@ -1,7 +1,6 @@
 .navbar{
     background: #0e0e0e;
-    padding: 5px;
-    height: 15vh;
+    flex-grow: 0;
     display: flex;
 
 }
@@ -58,7 +57,6 @@
 .NavigationRightElement:hover::after{
     opacity: 1;
 }
-
 .NavigationRightElement li a{
     text-align: left;
 }
@@ -99,7 +97,7 @@
 
 .ContainerSub li{
     width: 24.5%;
-    
+
     cursor: pointer;
     position: relative;
     margin-right: 1px;
@@ -109,7 +107,7 @@
     opacity: 1;
 }
 .ContainerSub li:hover{
-    background: transparent;    
+    background: transparent;
 }
 .NavigationElement:after{
     content: '';
@@ -125,9 +123,6 @@
     opacity: 1;
 }
 .NavigationElement{
-    margin: 0;
-    border: none;
-    cursor: pointer;
     text-decoration: none;
     color: #50e3c2;
     font-size: 13px;
