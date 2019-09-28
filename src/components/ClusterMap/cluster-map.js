@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
 import ClusterMapView from "./cluster-map-view";
 import _ from "lodash";
+import concave from 'concaveman'
 
 const mapStateToProps = state => {
   let clusters = [];
@@ -28,12 +29,15 @@ const mapStateToProps = state => {
       return point;
     });
 
+
+
     const clusterIds = _.uniq(_.map(projects, p => p.cluster));
     clusters = _.map(clusterIds, id => ({
       id: id,
       words: clusterWords[id],
       color: colors[id],
-      projects: _.filter(transformedPoints, p => p.cluster === id)
+      projects: _.filter(transformedPoints, p => p.cluster === id),
+      concaveHull: concave(transformedPoints.filter(p => p.cluster === id).map(p => p.location), 1)
     }));
   }
 

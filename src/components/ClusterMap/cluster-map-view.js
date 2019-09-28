@@ -49,6 +49,7 @@ export default class ClusterMapView extends React.Component {
     const each = 180 / (categories.length-1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
     const conMax = cats[0].count;
+    console.log(this.props.clusterData)
 
     return (
       <div className={style.clusterMapWrapper}>
@@ -150,6 +151,13 @@ export default class ClusterMapView extends React.Component {
             );
           })}
           <g style={{ transform: "translate(0px, 0px)" }}>
+            {this.props.clusterData.map(cluster => (<polygon
+                points={cluster.concaveHull.map(point => this.getPointLocation(point))}
+                stroke='#222222'
+                strokeWidth='17'
+                strokeLinejoin='round'
+                fill='#222222'
+              />))}
             {this.props.clusterData.map(cluster => {
               return (
                 <Cluster
