@@ -2,10 +2,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import CloseIcon from "../../assets/Exit.svg";
 import classes from "../TimeLine/time-line-view.module.css";
-import * as actions from "../../store/actions/actions";
 import icon from "../../assets/geistes_icon.png";
 
-class DetailModal extends Component {
+class ProjectDetailModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -242,14 +241,10 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch => {
   return {
-    changeGraph: value => dispatch(actions.changeGraph(value)),
-    activatePopover: (value, vis) =>
-      dispatch(actions.activatePopover(value, vis)),
-    deactivatePopover: () => dispatch(actions.deactivatePopover())
   };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(DetailModal);
+)(ProjectDetailModal);

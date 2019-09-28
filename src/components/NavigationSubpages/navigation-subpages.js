@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import classes from "./navigation-subpages.module.css";
 import { connect } from "react-redux";
-import * as actions from "../../store/actions/actions";
 import logo from "../../assets/ikon_logo.png";
 import {menuBarHeight} from "../../App";
+import {changeGraph} from "../../store/actions/actions";
 
 class NavigationSubpages extends Component {
   constructor(props) {
@@ -103,10 +103,7 @@ class NavigationSubpages extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    changeGraph: value => dispatch(actions.changeGraph(value)),
-    activatePopover: (value, vis) =>
-      dispatch(actions.activatePopover(value, vis)),
-    deactivatePopover: () => dispatch(actions.deactivatePopover())
+    changeGraph: value => dispatch(changeGraph(value))
   };
 };
 const mapStateToProps = state => {

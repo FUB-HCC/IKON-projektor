@@ -168,6 +168,7 @@ export default class ClusterMapView extends React.Component {
                     this.setState({ highlightedCat })
                   }
                   resetCat={() => this.setState({ highlightedCat: null })}
+                  showProjectDetails = {this.props.showProjectDetails}
                 />
               );
             })}

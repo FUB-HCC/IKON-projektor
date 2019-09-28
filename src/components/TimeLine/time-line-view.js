@@ -14,7 +14,7 @@ import { line as d3Line } from "d3-shape";
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
 import Modal from "../Modal/Modal";
-import DetailModal from "../Modal/DetailModal";
+import ProjectDetailModal from "../Modal/ProjectDetailModal";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
 
@@ -340,7 +340,7 @@ class TimeLineView extends Component {
         {this.renderProjectsHover()}
 
         {this.state.detailModal && (
-          <DetailModal
+          <ProjectDetailModal
             projects={this.state.selectedProjects}
             index={this.state.index}
             headline={this.state.title}

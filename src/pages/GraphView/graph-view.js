@@ -4,7 +4,7 @@ import ClusterMap from "../../components/ClusterMap/cluster-map";
 import GeoMap from "../../components/GeoMap/geo-map-view";
 import TimeGraph from "../../components/TimeLine/time-line";
 import classes from "./graph-view.module.css";
-import * as actions from "../../store/actions/actions";
+import {fetchClusterData, fetchInstitutionsData, fetchProjectsData} from "../../store/actions/actions";
 import {appMargin, menuBarHeight, sideBarWidth} from "../../App";
 
 class GraphView extends React.Component {
@@ -128,13 +128,9 @@ const calculateActiveFilterCount = filter => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchClusterData: () => dispatch(actions.fetchClusterData()),
-    fetchProjectsData: () => dispatch(actions.fetchProjectsData()),
-    fetchInstitutionsData: () => dispatch(actions.fetchInstitutionsData()),
-    changeGraph: value => dispatch(actions.changeGraph(value)),
-    activatePopover: (value, vis) =>
-      dispatch(actions.activatePopover(value, vis)),
-    deactivatePopover: () => dispatch(actions.deactivatePopover())
+    fetchClusterData: () => dispatch(fetchClusterData()),
+    fetchProjectsData: () => dispatch(fetchProjectsData()),
+    fetchInstitutionsData: () => dispatch(fetchInstitutionsData()),
   };
 };
 

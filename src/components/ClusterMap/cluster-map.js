@@ -1,7 +1,10 @@
 import { connect } from "react-redux";
+import React from 'react'
 import ClusterMapView from "./cluster-map-view";
 import _ from "lodash";
 import concave from 'concaveman'
+import {setSelectedProject, setSideBarComponent} from "../../store/actions/actions";
+import ProjectDetailModal from "../Modal/ProjectDetailModal";
 
 const mapStateToProps = state => {
   let clusters = [];
@@ -47,4 +50,14 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(ClusterMapView);
+const mapDispatchToProps = dispatch => {
+  return {
+    showProjectDetails: (project) => {
+      dispatch(setSelectedProject(project));
+      dispatch(setSideBarComponent(<ProjectDetailModal/>));
+    }
+  }
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ClusterMapView);

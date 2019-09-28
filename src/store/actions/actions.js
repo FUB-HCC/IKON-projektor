@@ -18,12 +18,17 @@ export const filterChange = (filterId, value) => {
   };
 };
 
-export const activatePopover = (datapoint, vis) => {
+export const setSelectedProject = (projectId) => {
   return {
-    type: actionTypes.ACTIVATE_POPOVER,
-    element: datapoint,
-    vis: vis
-  };
+    type: actionTypes.SET_SELECTED_PROJECT,
+    value: projectId
+  }
+};
+
+export const resetSelectedProject = () => {
+  return {
+    type: actionTypes.RESET_SELECTED_PROJECT
+  }
 };
 
 export const deactivatePopover = () => {
@@ -56,7 +61,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("/mfnprojects.json").then(result => {
+    axios.get("/projects.json").then(result => {
       dispatch(updateProjectsData(result.data));
     });
   };

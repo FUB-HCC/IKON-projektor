@@ -28,6 +28,9 @@ export default class ClusterDot extends React.Component {
       <g
         onMouseOver={() => this.setHover(true)}
         onMouseOut={() => this.setHover(false)}
+        onClick={() => {
+          this.props.showProjectDetails()}
+        }
         style={{ transition: "all 300ms ease-out" }}
       >
         <circle key={"inner-" + x} cx={x} cy={y} r="5" fill={this.props.color}>

@@ -57,9 +57,6 @@ const reducer = (state = initialState, action) => {
     case actionTypes.FILTER_CHANGE:
       return changeFilter(state, action);
 
-    case actionTypes.ACTIVATE_POPOVER:
-      return activatePopover(state, action);
-
     case actionTypes.DEACTIVATE_POPOVER:
       return deactivatePopover(state);
 
@@ -76,7 +73,13 @@ const reducer = (state = initialState, action) => {
       return updateProjectsData(state, action);
 
     case actionTypes.SET_SIDE_BAR_COMPONENT:
-      return setSideBarComponent(state, action)
+      return setSideBarComponent(state, action);
+
+    case actionTypes.SET_SELECTED_PROJECT:
+      return setSelectedProject(state, action);
+
+    case actionTypes.RESET_SELECTED_PROJECT:
+      return resetSelectedProject(state);
 
     default:
       return state;
@@ -220,18 +223,13 @@ const toggleAllFiltersOfField = (filters, fieldValue) => {
   return newValue;
 };
 
-const activatePopover = (state, action) => {
-  let selectedProjectId = null;
-  state.projects.forEach(project => {
-    if (project.id === action.element.project.id) {
-      selectedProjectId = project.id;
-    }
-  });
-  return {
-    ...state,
-    selectedProject: selectedProjectId
-  };
-};
+const setSelectedProject = (state, action) => (
+  {...state, selectedProject: action.value}
+)
+
+const resetSelectedProject = state => (
+  {...state, setSelectedProject: null}
+)
 
 const deactivatePopover = state => {
   const newState = {
