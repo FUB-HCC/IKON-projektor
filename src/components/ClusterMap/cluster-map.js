@@ -29,7 +29,7 @@ const mapStateToProps = state => {
         cat: cat.id,
         _cat: cat
       };
-      if (point.id in cat.project_ids) {
+      if (cat.project_ids.includes(point.id)) {
         cat.connections.push(point);
       }
       return point;
