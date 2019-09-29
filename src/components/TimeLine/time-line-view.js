@@ -13,8 +13,6 @@ import { line as d3Line } from "d3-shape";
 // Import the D3 libraries we'll use for the axes.
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
-import Modal from "../Modal/Modal";
-import ProjectDetailModal from "../Modal/ProjectDetailModal";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
 
@@ -127,44 +125,7 @@ class TimeLineView extends Component {
       });
     }
 
-    return (
-      !this.state.projectsPopoverHidden && (
-        <Modal
-          year={year}
-          counter={counter}
-          headline={title}
-          className={styles.projectModal}
-          onCloseClick={() => {
-            this.setState({ projectsPopoverHidden: true });
-          }}
-          hidden={this.state.projectsPopoverHidden}
-          width={this.state.width * 0.56}
-          height={this.state.height * 0.75}
-        >
-          <ol
-            className={styles.projects_list}
-            style={
-              {
-                // height: (this.state.height * 0.65) + 'px'
-              }
-            }
-          >
-            {selectedProjects.map((project, i) => {
-              return (
-                <li
-                  onClick={event => {
-                    this.setState({ projectsPopoverHidden: true });
-                    this.onProjectClick({ project: project }, 2);
-                  }}
-                  key={`project-list-link-${project.id}-${i}`}
-                  className={styles.projects_list_item}
-                >{`${project.title} (${project.id})`}</li>
-              );
-            })}
-          </ol>
-        </Modal>
-      )
-    );
+
   }
 
   renderProjectsHover() {
@@ -338,19 +299,6 @@ class TimeLineView extends Component {
         </SVGWithMargin>
         {this.renderProjectsPopover()}
         {this.renderProjectsHover()}
-
-        {this.state.detailModal && (
-          <ProjectDetailModal
-            projects={this.state.selectedProjects}
-            index={this.state.index}
-            headline={this.state.title}
-            year={this.state.year}
-            counter={this.state.counter}
-            closeDetailModal={this.closeDetailModal}
-            project={this.state.project}
-            zurukhBtnAction={this.zurukhBtnAction}
-          />
-        )}
       </div>
     );
   }

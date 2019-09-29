@@ -49,7 +49,6 @@ export default class ClusterMapView extends React.Component {
     const each = 180 / (categories.length-1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
     const conMax = cats[0].count;
-    console.log(this.props.clusterData)
 
     return (
       <div className={style.clusterMapWrapper}>

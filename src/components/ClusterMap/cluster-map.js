@@ -4,7 +4,7 @@ import ClusterMapView from "./cluster-map-view";
 import _ from "lodash";
 import concave from 'concaveman'
 import {setSelectedProject, setSideBarComponent} from "../../store/actions/actions";
-import ProjectDetailModal from "../Modal/ProjectDetailModal";
+import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 
 const mapStateToProps = state => {
   let clusters = [];
@@ -54,7 +54,7 @@ const mapDispatchToProps = dispatch => {
   return {
     showProjectDetails: (project) => {
       dispatch(setSelectedProject(project));
-      dispatch(setSideBarComponent(<ProjectDetailModal/>));
+      dispatch(setSideBarComponent(<ProjectDetailsPanel/>));
     }
   }
 
