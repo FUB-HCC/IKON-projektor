@@ -22,8 +22,8 @@ class TimeLineView extends Component {
     this.state = {
       dataSplitYears: [],
       forschungsbereiche: [],
-      height: props.height * 0.5,
-      width: props.width * 0.6,
+      height: props.height * 0.95,
+      width: props.width * 0.95,
       margin: props.margin,
       firstUpdate: true,
       projectsPopoverHidden: true,
@@ -83,8 +83,8 @@ class TimeLineView extends Component {
     if (!this.state.firstUpdate) {
       // workaround for first time scaling
       this.setState({
-        height: height * 0.5,
-        width: width * 0.6,
+        height: height * 0.95,
+        width: width * 0.95,
         margin: margin
       });
     }
@@ -237,7 +237,6 @@ class TimeLineView extends Component {
         datum
       )
     );
-    console.log(this.state)
     return (
       <div>
         <SVGWithMargin
@@ -264,7 +263,6 @@ class TimeLineView extends Component {
           />
 
           {Object.values(this.state.dataSplitYears).map((line, i) => {
-            console.log(line, i)
             if(line.length === 0){return(<g/>)}
             return (
               <g key={line} className={styles.line}>
