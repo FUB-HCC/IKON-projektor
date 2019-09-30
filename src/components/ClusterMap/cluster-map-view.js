@@ -8,9 +8,6 @@ export default class ClusterMapView extends React.Component {
     highlightedCat: null
   };
 
-  width = 250;
-  height = 180;
-
   get maxX() {
     return _.max(
       _.map(
@@ -29,30 +26,31 @@ export default class ClusterMapView extends React.Component {
     );
   }
 
-  getPointLocation = pt => {
+  getPointLocation = (pt, width, height) => {
+    const clusterSize = 0.2;
+
     const [x, y] = pt;
-    const scaleX = (x * 50) / this.maxX;
-    const scaleY = (y * 100) / this.maxY;
+    const normalizedX = x / this.maxX;
+    const normalizedY = y / this.maxY;
 
     return [
-      (scaleX * this.width) / 50 + 80,
-      (scaleY * this.height) / 80 + this.height + 50
+      (normalizedX * width * clusterSize + (1 - clusterSize) * 0.5 * width),
+      (normalizedY * height * clusterSize + (1 - clusterSize) * 0.5 * height)
     ];
   };
 
   render() {
     const { categories, width, height } = this.props;
-    const shiftX = 200;
-    const arcWidth = width - shiftX;
+    const shiftX = width / 2;
     const shiftY = height;
-    const radius = 4/5*height;
+    const radius = min;
     const each = 180 / (categories.length-1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
     const conMax = cats[0].count;
 
     return (
       <div className={style.clusterMapWrapper}>
-        <svg className="viz-3" viewBox={"-"+arcWidth/2+ " 0 "+1.5*arcWidth+ " " + height}>
+        <svg className="viz-3" viewBox={"0 0 "+width+ " " + height} width={width} height={height}>
           {categories.map((cat, i) => {
             const startAngle = each * i - 180;
             const angle = startAngle * (Math.PI / 180);
@@ -162,7 +160,7 @@ export default class ClusterMapView extends React.Component {
                 <Cluster
                   key={cluster.id}
                   cluster={cluster}
-                  getLocation={this.getPointLocation}
+                  getLocation={p => this.getPointLocation(p, width, height)}
                   highlightCat={highlightedCat =>
                     this.setState({ highlightedCat })
                   }
