@@ -4,7 +4,12 @@ import ClusterMap from "../../components/ClusterMap/cluster-map";
 import GeoMap from "../../components/GeoMap/geo-map-view";
 import TimeGraph from "../../components/TimeLine/time-line";
 import classes from "./graph-view.module.css";
-import * as actions from "../../store/actions/actions";
+import {
+  fetchClusterData,
+  fetchInstitutionsData,
+  fetchProjectsData
+} from "../../store/actions/actions";
+import { appMargin, menuBarHeight, sideBarWidth } from "../../App";
 
 class GraphView extends React.Component {
   constructor(props) {
@@ -20,8 +25,18 @@ class GraphView extends React.Component {
 
   componentDidMount() {
     this.setState({
-      height: window.innerHeight * 0.7 - this.margins.top - this.margins.bottom,
-      width: window.innerWidth * 0.75 - this.margins.left - this.margins.right
+      height:
+        window.innerHeight -
+        menuBarHeight -
+        appMargin * 2 -
+        this.margins.top -
+        this.margins.bottom,
+      width:
+        window.innerWidth -
+        sideBarWidth -
+        appMargin * 2 -
+        this.margins.left -
+        this.margins.right
     });
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
@@ -33,8 +48,18 @@ class GraphView extends React.Component {
 
   resize() {
     this.setState({
-      height: window.innerHeight * 0.7 - this.margins.top - this.margins.bottom,
-      width: window.innerWidth * 0.75 - this.margins.left - this.margins.right
+      height:
+        window.innerHeight -
+        menuBarHeight -
+        appMargin * 2 -
+        this.margins.top -
+        this.margins.bottom,
+      width:
+        window.innerWidth -
+        sideBarWidth -
+        appMargin * 2 -
+        this.margins.left -
+        this.margins.right
     });
   }
 
@@ -127,13 +152,9 @@ const calculateActiveFilterCount = filter => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchClusterData: () => dispatch(actions.fetchClusterData()),
-    fetchProjectsData: () => dispatch(actions.fetchProjectsData()),
-    fetchInstitutionsData: () => dispatch(actions.fetchInstitutionsData()),
-    changeGraph: value => dispatch(actions.changeGraph(value)),
-    activatePopover: (value, vis) =>
-      dispatch(actions.activatePopover(value, vis)),
-    deactivatePopover: () => dispatch(actions.deactivatePopover())
+    fetchClusterData: () => dispatch(fetchClusterData()),
+    fetchProjectsData: () => dispatch(fetchProjectsData()),
+    fetchInstitutionsData: () => dispatch(fetchInstitutionsData())
   };
 };
 

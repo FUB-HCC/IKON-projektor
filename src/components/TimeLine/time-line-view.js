@@ -13,8 +13,6 @@ import { line as d3Line } from "d3-shape";
 // Import the D3 libraries we'll use for the axes.
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
-import Modal from "../Modal/Modal";
-import DetailModal from "../Modal/DetailModal";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
 
@@ -24,8 +22,8 @@ class TimeLineView extends Component {
     this.state = {
       dataSplitYears: [],
       forschungsbereiche: [],
-      height: props.height * 0.5,
-      width: props.width * 0.6,
+      height: props.height * 0.95,
+      width: props.width * 0.95,
       margin: props.margin,
       firstUpdate: true,
       projectsPopoverHidden: true,
@@ -85,8 +83,8 @@ class TimeLineView extends Component {
     if (!this.state.firstUpdate) {
       // workaround for first time scaling
       this.setState({
-        height: height * 0.5,
-        width: width * 0.6,
+        height: height * 0.95,
+        width: width * 0.95,
         margin: margin
       });
     }
@@ -126,45 +124,6 @@ class TimeLineView extends Component {
         year = project.start_date;
       });
     }
-
-    return (
-      !this.state.projectsPopoverHidden && (
-        <Modal
-          year={year}
-          counter={counter}
-          headline={title}
-          className={styles.projectModal}
-          onCloseClick={() => {
-            this.setState({ projectsPopoverHidden: true });
-          }}
-          hidden={this.state.projectsPopoverHidden}
-          width={this.state.width * 0.56}
-          height={this.state.height * 0.75}
-        >
-          <ol
-            className={styles.projects_list}
-            style={
-              {
-                // height: (this.state.height * 0.65) + 'px'
-              }
-            }
-          >
-            {selectedProjects.map((project, i) => {
-              return (
-                <li
-                  onClick={event => {
-                    this.setState({ projectsPopoverHidden: true });
-                    this.onProjectClick({ project: project }, 2);
-                  }}
-                  key={`project-list-link-${project.id}-${i}`}
-                  className={styles.projects_list_item}
-                >{`${project.title} (${project.id})`}</li>
-              );
-            })}
-          </ol>
-        </Modal>
-      )
-    );
   }
 
   renderProjectsHover() {
@@ -276,7 +235,6 @@ class TimeLineView extends Component {
         datum
       )
     );
-
     return (
       <div>
         <SVGWithMargin
@@ -303,9 +261,12 @@ class TimeLineView extends Component {
           />
 
           {Object.values(this.state.dataSplitYears).map((line, i) => {
+            if (line.length === 0) {
+              return <g />;
+            }
             return (
               <g key={line} className={styles.line}>
-                <path style={{ stroke: line[i].color }} d={sparkLine(line)} />
+                <path style={{ stroke: line[0].color }} d={sparkLine(line)} />
               </g>
             );
           })}
@@ -338,19 +299,6 @@ class TimeLineView extends Component {
         </SVGWithMargin>
         {this.renderProjectsPopover()}
         {this.renderProjectsHover()}
-
-        {this.state.detailModal && (
-          <DetailModal
-            projects={this.state.selectedProjects}
-            index={this.state.index}
-            headline={this.state.title}
-            year={this.state.year}
-            counter={this.state.counter}
-            closeDetailModal={this.closeDetailModal}
-            project={this.state.project}
-            zurukhBtnAction={this.zurukhBtnAction}
-          />
-        )}
       </div>
     );
   }
