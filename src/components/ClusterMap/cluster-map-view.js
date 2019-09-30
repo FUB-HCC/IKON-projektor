@@ -3,13 +3,13 @@ import _ from "lodash";
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 
+const arcMarginSides = 300;
+const arcMarginTop = 100;
+
 export default class ClusterMapView extends React.Component {
   state = {
     highlightedCat: null
   };
-
-  width = 250;
-  height = 180;
 
   get maxX() {
     return _.max(
@@ -29,31 +29,40 @@ export default class ClusterMapView extends React.Component {
     );
   }
 
-  getPointLocation = pt => {
+  getPointLocation = (pt, width, height) => {
+    const radius = (Math.min(width, height) - arcMarginSides) / 2;
+    const clusterSize = (radius / Math.min(height, width)) * 0.5;
+
     const [x, y] = pt;
-    const scaleX = (x * 50) / this.maxX;
-    const scaleY = (y * 100) / this.maxY;
+    const normalizedX = x / this.maxX;
+    const normalizedY = y / this.maxY;
 
     return [
-      (scaleX * this.width) / 50 + 80,
-      (scaleY * this.height) / 80 + this.height + 50
+      normalizedX * clusterSize * Math.min(height, width) +
+        (1 - clusterSize) * 0.5 * width,
+      normalizedY * clusterSize * Math.min(height, width) +
+        (1 - clusterSize) * 0.5 * height +
+        arcMarginTop
     ];
   };
 
   render() {
     const { categories, width, height } = this.props;
-    const shiftX = 200;
-    const arcWidth = width - shiftX;
-    const shiftY = height;
-    const radius = 4/5*height;
-    const each = 180 / (categories.length-1);
+    const shiftX = width / 2;
+    const shiftY = height / 2 + arcMarginTop;
+    const radius = (Math.min(width, height) - arcMarginSides) / 2;
+    const each = 180 / (categories.length - 1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
     const conMax = cats[0].count;
-    console.log(this.props.clusterData)
 
     return (
       <div className={style.clusterMapWrapper}>
-        <svg className="viz-3" viewBox={"-"+arcWidth/2+ " 0 "+1.5*arcWidth+ " " + height}>
+        <svg
+          className="viz-3"
+          viewBox={"0 0 " + width + " " + height}
+          width={width}
+          height={height}
+        >
           {categories.map((cat, i) => {
             const startAngle = each * i - 180;
             const angle = startAngle * (Math.PI / 180);
@@ -68,7 +77,7 @@ export default class ClusterMapView extends React.Component {
             const textRotate = startAngle < -90 ? startAngle + 180 : startAngle;
             const hc = this.state.highlightedCat;
             const isHighlighted = hc && hc.id === cat.id;
-            const area = (conLen / conMax) * 300.;
+            const area = (conLen / conMax) * 300;
             const rad = Math.sqrt(area / Math.PI) || 1;
 
             const lines = cat.connections.map(con => {
@@ -164,11 +173,13 @@ export default class ClusterMapView extends React.Component {
                 <Cluster
                   key={cluster.id}
                   cluster={cluster}
-                  getLocation={this.getPointLocation}
+                  getLocation={p => this.getPointLocation(p, width, height)}
+                  radius={radius}
                   highlightCat={highlightedCat =>
                     this.setState({ highlightedCat })
                   }
                   resetCat={() => this.setState({ highlightedCat: null })}
+                  showProjectDetails={this.props.showProjectDetails}
                 />
               );
             })}

@@ -1,4 +1,5 @@
 import * as actionTypes from "../actions/actionTypes";
+import React from "react";
 import {
   createNewStateFromUrlData,
   fieldsStringToInt,
@@ -7,6 +8,7 @@ import {
   fieldsIntToString
 } from "../../util/utility";
 import { parse as queryStringParse } from "query-string";
+import FilterSelection from "../../components/FilterSelection/filter-selection";
 
 const initialState = {
   filters: {
@@ -38,7 +40,8 @@ const initialState = {
   institutions: [],
   categories: categories,
   clusterData: undefined,
-  selectedProject: undefined
+  selectedProject: undefined,
+  sideBarComponent: <FilterSelection />
 };
 
 // Keep the reducer switch lean by outsourcing the actual code below
@@ -54,9 +57,6 @@ const reducer = (state = initialState, action) => {
     case actionTypes.FILTER_CHANGE:
       return changeFilter(state, action);
 
-    case actionTypes.ACTIVATE_POPOVER:
-      return activatePopover(state, action);
-
     case actionTypes.DEACTIVATE_POPOVER:
       return deactivatePopover(state);
 
@@ -71,6 +71,15 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_PROJECTS_DATA:
       return updateProjectsData(state, action);
+
+    case actionTypes.SET_SIDE_BAR_COMPONENT:
+      return setSideBarComponent(state, action);
+
+    case actionTypes.SET_SELECTED_PROJECT:
+      return setSelectedProject(state, action);
+
+    case actionTypes.RESET_SELECTED_PROJECT:
+      return resetSelectedProject(state);
 
     default:
       return state;
@@ -214,18 +223,12 @@ const toggleAllFiltersOfField = (filters, fieldValue) => {
   return newValue;
 };
 
-const activatePopover = (state, action) => {
-  let selectedProjectId = null;
-  state.projects.forEach(project => {
-    if (project.id === action.element.project.id) {
-      selectedProjectId = project.id;
-    }
-  });
-  return {
-    ...state,
-    selectedProject: selectedProjectId
-  };
-};
+const setSelectedProject = (state, action) => ({
+  ...state,
+  selectedProject: action.value
+});
+
+const resetSelectedProject = state => ({ ...state, setSelectedProject: null });
 
 const deactivatePopover = state => {
   const newState = {
@@ -234,6 +237,11 @@ const deactivatePopover = state => {
   };
   return newState;
 };
+
+const setSideBarComponent = (state, action) => ({
+  ...state,
+  sideBarComponent: action.value
+});
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesFilters = state => {

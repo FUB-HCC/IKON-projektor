@@ -210,7 +210,7 @@ const GeoMapView = props => {
     }
   });
 
-  const arcHeight = height * 0.65;
+  const arcHeight = height * 0.5;
   return (
     <div
       className={style.geoViewWrapper}

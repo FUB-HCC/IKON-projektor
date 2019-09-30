@@ -1,7 +1,13 @@
 import { connect } from "react-redux";
+import React from "react";
 import ClusterMapView from "./cluster-map-view";
 import _ from "lodash";
-import concave from 'concaveman'
+import concave from "concaveman";
+import {
+  setSelectedProject,
+  setSideBarComponent
+} from "../../store/actions/actions";
+import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 
 const mapStateToProps = state => {
   let clusters = [];
@@ -29,15 +35,16 @@ const mapStateToProps = state => {
       return point;
     });
 
-
-
     const clusterIds = _.uniq(_.map(projects, p => p.cluster));
     clusters = _.map(clusterIds, id => ({
       id: id,
       words: clusterWords[id],
       color: colors[id],
       projects: _.filter(transformedPoints, p => p.cluster === id),
-      concaveHull: concave(transformedPoints.filter(p => p.cluster === id).map(p => p.location), 1)
+      concaveHull: concave(
+        transformedPoints.filter(p => p.cluster === id).map(p => p.location),
+        1
+      )
     }));
   }
 
@@ -47,4 +54,16 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(ClusterMapView);
+const mapDispatchToProps = dispatch => {
+  return {
+    showProjectDetails: project => {
+      dispatch(setSelectedProject(project));
+      dispatch(setSideBarComponent(<ProjectDetailsPanel />));
+    }
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ClusterMapView);
