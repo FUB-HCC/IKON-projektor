@@ -5,18 +5,22 @@ export default class Cluster extends React.Component {
   state = { hover: false };
   render() {
     const { cluster, getLocation } = this.props;
-    const nwPts = cluster.projects.map(x => x.location).map(getLocation);
+    const projects = cluster.projects.map(project => ({
+      point: getLocation(project.location),
+      color: project.color,
+      projectData: project.project
+    }));
 
     return (
       <g key={cluster.id}>
-        {nwPts.map((point, i) => (
+        {projects.map((project, i) => (
           <ClusterDot
-            point={point}
-            color={cluster.color}
+            point={project}
+            color={project.color}
             key={i}
             radius={this.props.radius}
-            x={point[0]}
-            y={point[1]}
+            x={project.point[0]}
+            y={project.point[1]}
             highlightCat={this.props.highlightCat}
             resetCat={this.props.resetCat}
             showProjectDetails={() =>
