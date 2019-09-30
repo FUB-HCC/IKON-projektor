@@ -126,7 +126,7 @@ const updateProjectsData = (state, action) => {
       project.participating_subject_areas &&
       project.participating_subject_areas.split("/")[1]
         ? project.participating_subject_areas.split("/")[1]
-        : "Unbekannt";
+        : "Sonstige";
     project.geldgeber = project.sponsor;
     if (
       project.participating_subject_areas &&
@@ -143,9 +143,9 @@ const updateProjectsData = (state, action) => {
     } else {
       return {
         ...project,
-        forschungsbereich: "Unbekannt",
-        forschungsbereichstr: "Unbekannt", // TODO please change API so it does not contain "(# Mitglieder)"
-        forschungsbereichNumber: fieldsStringToInt("Unbekannt")
+        forschungsbereich: "Sonstige",
+        forschungsbereichstr: "Sonstige", // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereichNumber: fieldsStringToInt("Sonstige")
       };
     }
   });
