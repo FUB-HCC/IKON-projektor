@@ -52,10 +52,10 @@ const graphColors = {
 };
 
 const mapStateToProps = state => {
-  const processedData = processData(state.main.filteredData, graphColors);
+  const processedData = processData(state.main.filteredProjects, graphColors);
   return {
     dataSplitFbYear: processedData,
-    projects: state.main.filteredData,
+    projects: state.main.filteredProjects,
     colors: graphColors
   };
 };
@@ -71,7 +71,7 @@ const processData = (data, colors) => {
 
  */
 
-  if (!data) return [[], [], [], []];
+  if (!data || data === []) return [[], [], [], []];
 
   let dataSplitYears = [];
   for (let projectsKey in data) {

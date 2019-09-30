@@ -237,7 +237,7 @@ class TimeLineView extends Component {
         datum
       )
     );
-
+    console.log(this.state)
     return (
       <div>
         <SVGWithMargin
@@ -264,9 +264,11 @@ class TimeLineView extends Component {
           />
 
           {Object.values(this.state.dataSplitYears).map((line, i) => {
+            console.log(line, i)
+            if(line.length === 0){return(<g/>)}
             return (
               <g key={line} className={styles.line}>
-                <path style={{ stroke: line[i].color }} d={sparkLine(line)} />
+                <path style={{ stroke: line[0].color }} d={sparkLine(line)} />
               </g>
             );
           })}
