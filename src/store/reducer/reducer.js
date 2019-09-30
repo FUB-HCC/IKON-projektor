@@ -122,17 +122,22 @@ const updateInstitutionsData = (state, action) =>
 const updateProjectsData = (state, action) => {
   const projectData = action.value;
   const projects = Object.values(projectData).map(project => {
-    project.hauptthema = project.review_board
-      ? project.review_board
-      : "Unbekannt";
+    project.hauptthema =
+      project.participating_subject_areas &&
+      project.participating_subject_areas.split("/")[1]
+        ? project.participating_subject_areas.split("/")[1]
+        : "Unbekannt";
     project.geldgeber = project.sponsor;
-    if (project.research_area) {
+    if (
+      project.participating_subject_areas &&
+      project.participating_subject_areas.split("/")[0]
+    ) {
       return {
         ...project,
-        forschungsbereich: project.research_area.split(" (")[0],
-        forschungsbereichstr: project.research_area.split(" (")[0], // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereich: project.participating_subject_areas.split("/")[0],
+        forschungsbereichstr: project.participating_subject_areas.split("/")[0], // TODO please change API so it does not contain "(# Mitglieder)"
         forschungsbereichNumber: fieldsStringToInt(
-          project.research_area.split(" (")[0]
+          project.participating_subject_areas.split("/")[0]
         )
       };
     } else {

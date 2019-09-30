@@ -62,6 +62,30 @@ const topicMapping = [
     field: 3,
     color: "#8184a7"
   },
+  {
+    name: "Sozialwissenschaften",
+    num: "1",
+    field: 3,
+    color: "#8184a7"
+  },
+  {
+    name: "Informatik",
+    num: "2",
+    field: 4,
+    color: "#8184a7"
+  },
+  {
+    name: "Erziehungswissenschaft und Bildungsforschung",
+    num: "3",
+    field: 3,
+    color: "#8184a7"
+  },
+  {
+    name: "Mathematik",
+    num: "4",
+    field: 1,
+    color: "#8184a7"
+  },
   { name: "Geschichtswissenschaften", num: "27", field: 3, color: "#8184a7" },
   { name: "Zoologie", num: "28", field: 2, color: "#d9ef36" },
   { name: "Pflanzenwissenschaften", num: "29", field: 2, color: "#d9ef36" },
