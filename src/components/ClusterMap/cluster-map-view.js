@@ -160,17 +160,14 @@ export default class ClusterMapView extends React.Component {
             );
           })}
           <g style={{ transform: "translate(0px, 0px)" }}>
-            {this.props.clusterData.map(cluster => (
-              <polygon
-                points={cluster.concaveHull.map(point =>
-                  this.getPointLocation(point)
-                )}
-                stroke="#222222"
-                strokeWidth="17"
-                strokeLinejoin="round"
-                fill="#222222"
-              />
-            ))}
+            {this.props.clusterData.map(cluster => (<polygon
+                points={cluster.concaveHull.map(point => this.getPointLocation(point))}
+                stroke='#aaaaaa'
+                strokeWidth='20'
+                strokeLinejoin='round'
+                fill='#aaaaaa'
+                opacity='0.5'
+              />))}
             {this.props.clusterData.map(cluster => {
               return (
                 <Cluster
