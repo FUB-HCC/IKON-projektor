@@ -21,11 +21,10 @@ class App extends Component {
   }
 
   render() {
-
     return (
       <ConnectedRouter history={history}>
         <React.Fragment>
-          <div className={classes.offsetWrapper} style={{padding: appMargin}}>
+          <div className={classes.offsetWrapper} style={{ padding: appMargin }}>
             <NavigationSubpages height={menuBarHeight} />
             <div className={classes.appBody}>
               <div className={classes.contentWindow}>
@@ -41,7 +40,10 @@ class App extends Component {
                   <Route path="/about" component={About} />
                 </Switch>
               </div>
-              <div className={classes.sidebar} style={{flexBasis: sideBarWidth}}>
+              <div
+                className={classes.sidebar}
+                style={{ flexBasis: sideBarWidth }}
+              >
                 <Sidebar />
               </div>
               {/*<Footer />*/}

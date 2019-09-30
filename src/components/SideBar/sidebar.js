@@ -1,7 +1,7 @@
-import React from 'react'
-import {setSideBarComponent} from "../../store/actions/actions";
+import React from "react";
+import { setSideBarComponent } from "../../store/actions/actions";
 import connect from "react-redux/es/connect/connect";
-import SideBarView from './sidebar-view'
+import SideBarView from "./sidebar-view";
 
 const mapStateToProps = state => {
   return {
@@ -11,8 +11,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setSideBarComponent: (component) => dispatch(setSideBarComponent(component))
-  }
+    setSideBarComponent: component => dispatch(setSideBarComponent(component))
+  };
 };
 
 export default connect(

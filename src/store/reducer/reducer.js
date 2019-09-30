@@ -1,5 +1,5 @@
 import * as actionTypes from "../actions/actionTypes";
-import React from 'react'
+import React from "react";
 import {
   createNewStateFromUrlData,
   fieldsStringToInt,
@@ -41,7 +41,7 @@ const initialState = {
   categories: categories,
   clusterData: undefined,
   selectedProject: undefined,
-  sideBarComponent:<FilterSelection/>
+  sideBarComponent: <FilterSelection />
 };
 
 // Keep the reducer switch lean by outsourcing the actual code below
@@ -223,13 +223,12 @@ const toggleAllFiltersOfField = (filters, fieldValue) => {
   return newValue;
 };
 
-const setSelectedProject = (state, action) => (
-  {...state, selectedProject: action.value}
-)
+const setSelectedProject = (state, action) => ({
+  ...state,
+  selectedProject: action.value
+});
 
-const resetSelectedProject = state => (
-  {...state, setSelectedProject: null}
-)
+const resetSelectedProject = state => ({ ...state, setSelectedProject: null });
 
 const deactivatePopover = state => {
   const newState = {
@@ -239,9 +238,10 @@ const deactivatePopover = state => {
   return newState;
 };
 
-const setSideBarComponent = (state, action) => (
-  {...state, sideBarComponent: action.value}
-  )
+const setSideBarComponent = (state, action) => ({
+  ...state,
+  sideBarComponent: action.value
+});
 
 // urlUpdatesState: Don't call this function. Only used upon initial loading
 const urlUpdatesFilters = state => {

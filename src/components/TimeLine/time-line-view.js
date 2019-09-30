@@ -124,8 +124,6 @@ class TimeLineView extends Component {
         year = project.start_date;
       });
     }
-
-
   }
 
   renderProjectsHover() {
@@ -263,7 +261,9 @@ class TimeLineView extends Component {
           />
 
           {Object.values(this.state.dataSplitYears).map((line, i) => {
-            if(line.length === 0){return(<g/>)}
+            if (line.length === 0) {
+              return <g />;
+            }
             return (
               <g key={line} className={styles.line}>
                 <path style={{ stroke: line[0].color }} d={sparkLine(line)} />

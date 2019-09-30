@@ -29,11 +29,17 @@ export default class ClusterDot extends React.Component {
         onMouseOver={() => this.setHover(true)}
         onMouseOut={() => this.setHover(false)}
         onClick={() => {
-          this.props.showProjectDetails()}
-        }
+          this.props.showProjectDetails();
+        }}
         style={{ transition: "all 300ms ease-out" }}
       >
-        <circle key={"inner-" + x} cx={x} cy={y} r="5" fill={this.props.color}>
+        <circle
+          key={"inner-" + x}
+          cx={x}
+          cy={y}
+          r={this.props.radius / 70}
+          fill={this.props.color}
+        >
           {hover && (
             <animate
               attributeName="r"
@@ -47,39 +53,8 @@ export default class ClusterDot extends React.Component {
           {!hover && (
             <animate
               attributeName="r"
-              to="5"
+              to={this.props.radius / 70}
               dur="1s"
-              repeatCount="indefinite"
-              calcMode="paced"
-              fill="freeze"
-            />
-          )}
-        </circle>
-        <circle
-          key={"outer-" + x}
-          cx={x}
-          cy={y}
-          r="4"
-          fill="none"
-          className="circle-border"
-        >
-          {hover && (
-            <animate
-              attributeName="r"
-              values="4;9;4"
-              dur="2s"
-              begin="0"
-              repeatCount="indefinite"
-              calcMode="paced"
-              fill="freeze"
-            />
-          )}
-          {!hover && (
-            <animate
-              attributeName="r"
-              to="4"
-              dur="1s"
-              begin="0"
               repeatCount="indefinite"
               calcMode="paced"
               fill="freeze"

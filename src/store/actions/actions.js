@@ -18,17 +18,17 @@ export const filterChange = (filterId, value) => {
   };
 };
 
-export const setSelectedProject = (projectId) => {
+export const setSelectedProject = projectId => {
   return {
     type: actionTypes.SET_SELECTED_PROJECT,
     value: projectId
-  }
+  };
 };
 
 export const resetSelectedProject = () => {
   return {
     type: actionTypes.RESET_SELECTED_PROJECT
-  }
+  };
 };
 
 export const deactivatePopover = () => {
@@ -107,5 +107,5 @@ export const setSideBarComponent = component => {
   return {
     type: actionTypes.SET_SIDE_BAR_COMPONENT,
     value: component
-  }
-}
+  };
+};
