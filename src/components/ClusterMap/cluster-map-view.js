@@ -3,7 +3,7 @@ import _ from "lodash";
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 
-const arcMarginSides = 50;
+const arcMarginSides = 95;
 const arcMarginTop = 200;
 
 export default class ClusterMapView extends React.Component {
