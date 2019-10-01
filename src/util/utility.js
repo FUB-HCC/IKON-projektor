@@ -31,7 +31,7 @@ const fieldsMapping = [
   { name: "Naturwissenschaften", field: 1, color: "#A4782E" },
   { name: "Lebenswissenschaften", field: 2, color: "#994A49" },
   { name: "Geistes- und Sozialwissenschaften", field: 3, color: "#435B22" },
-  { name: "Ingenieurwissenschaften", field: 4, color: "#ed9798" },
+  { name: "Ingenieurwissenschaften", field: 4, color: "#8f5d5e" },
   { name: "Sonstige", field: 5, color: "#7675B2" }
 ];
 
