@@ -44,7 +44,7 @@ export default class ClusterDot extends React.Component {
           cx={this.props.radius / 60}
           cy={this.props.radius / 60}
           r={this.props.radius / 35}
-          fill={"none"}
+          fill={"transparent"}
         />
         <svg
           width={this.props.radius / 30}

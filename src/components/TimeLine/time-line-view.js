@@ -265,7 +265,7 @@ class TimeLineView extends Component {
               return <g />;
             }
             return (
-              <g key={line} className={styles.line}>
+              <g key={line[0].fb} className={styles.line}>
                 <path style={{ stroke: line[0].color }} d={sparkLine(line)} />
               </g>
             );

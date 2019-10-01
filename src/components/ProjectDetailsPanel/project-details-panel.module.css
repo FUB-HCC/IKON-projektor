@@ -1,6 +1,17 @@
 .projectDetailsWrapper{
  margin-top: 10px;
 }
+
+.projectDetailsExit{
+    height: 45px;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.exitSign{
+    fill: #069172;
+    height: 35px;
+}
 .projectDetailsTitle{
     border-bottom: 1px solid #069172;
     padding-bottom: 5px;
