@@ -3,8 +3,8 @@ import _ from "lodash";
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 
-const arcMarginSides = 300;
-const arcMarginTop = 150;
+const arcMarginSides = 50;
+const arcMarginTop = 200;
 
 export default class ClusterMapView extends React.Component {
   state = {
@@ -31,7 +31,7 @@ export default class ClusterMapView extends React.Component {
 
   getPointLocation = (pt, width, height) => {
     const radius = (Math.min(width, height) - arcMarginSides) / 2;
-    const clusterSize = (radius / Math.min(height, width)) * 0.5;
+    const clusterSize = (radius / Math.min(height, width)) * 0.8;
 
     const [x, y] = pt;
     const normalizedX = x / this.maxX;
@@ -48,8 +48,8 @@ export default class ClusterMapView extends React.Component {
 
   render() {
     const { categories, width, height } = this.props;
-    const shiftX = width / 2;
-    const shiftY = height / 2 + arcMarginTop + 100;
+    const shiftX = width / 2 - 70;
+    const shiftY = height / 2 + arcMarginTop;
     const radius = (Math.min(width, height) - arcMarginSides) / 2;
     const each = 180 / (categories.length - 1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
@@ -138,7 +138,7 @@ export default class ClusterMapView extends React.Component {
                     y={lenY}
                     textAnchor="middle"
                     fill="white"
-                    fontSize="6pt"
+                    fontSize="8pt"
                   >
                     {conLen}
                   </text>
@@ -147,7 +147,7 @@ export default class ClusterMapView extends React.Component {
                     y={textY}
                     textAnchor={anchor}
                     fill="white"
-                    fontSize="6pt"
+                    fontSize="8pt"
                     transform={`rotate(${textRotate} ${textX} ${textY})`}
                   >
                     {cat.title}
