@@ -81,7 +81,6 @@ export default class ClusterMapView extends React.Component {
             const rad = Math.sqrt(area / Math.PI) || 1;
 
             let lines = [];
-            console.log(cat.connections);
             if (cat.connections.length > 0) {
               lines = cat.connections.map(con => {
                 const target = this.getPointLocation(

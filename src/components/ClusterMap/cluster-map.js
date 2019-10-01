@@ -66,8 +66,11 @@ const mapStateToProps = state => {
       category.connections = ktas
         .filter(kta => kta.project_id !== null)
         .map(kta =>
-          transformedPoints.find(point => point.project.id === kta.project_id)
-        );
+          transformedPoints
+            .filter(transPoint => transPoint.project)
+            .find(point => point.project.id === kta.project_id)
+        )
+        .filter(connection => connection);
     });
   }
 
