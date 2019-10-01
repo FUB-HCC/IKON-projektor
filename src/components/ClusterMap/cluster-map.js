@@ -8,6 +8,7 @@ import {
   setSideBarComponent
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
+import { getFieldColor } from "../../util/utility";
 
 const mapStateToProps = state => {
   let clusters = [];
@@ -23,11 +24,14 @@ const mapStateToProps = state => {
     categories = state.main.categories.map(cat => cat);
     const transformedPoints = projects.map(p => {
       const cat = _.sample(categories);
+      const project = state.main.projects.find(project => p.id === project.id);
       const point = {
         ...p,
         location: [p.mappoint[0] - minX, p.mappoint[1] - minY],
         cat: cat.id,
-        _cat: cat
+        _cat: cat,
+        project: project,
+        color: project ? getFieldColor(project.forschungsbereich) : "#989aa1"
       };
       if (cat.project_ids.includes(point.id)) {
         cat.connections.push(point);
