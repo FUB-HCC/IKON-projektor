@@ -34,9 +34,9 @@ export default class ClusterDot extends React.Component {
         fill={color}
         transform={
           "translate(" +
-          (x - this.props.radius / 60) +
+          (x - this.props.radius / 40) +
           "," +
-          (y - this.props.radius / 60) +
+          (y - this.props.radius / 40) +
           ")"
         }
       >
@@ -47,8 +47,8 @@ export default class ClusterDot extends React.Component {
           fill={"transparent"}
         />
         <svg
-          width={this.props.radius / 30}
-          height={this.props.radius / 30}
+          width={this.props.radius / 20}
+          height={this.props.radius / 20}
           viewBox="0 0 78 78"
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
