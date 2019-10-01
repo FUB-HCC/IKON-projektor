@@ -31,7 +31,6 @@ export default class ClusterDot extends React.Component {
           this.props.showProjectDetails();
         }}
         style={{ transition: "all 300ms ease-out" }}
-        fill={color}
         transform={
           "translate(" +
           (x - this.props.radius / 40) +
@@ -58,8 +57,8 @@ export default class ClusterDot extends React.Component {
           <g
             id="Project-Icon-Geistes"
             stroke="none"
-            fill={color}
-            stroke={color}
+            fill={hover ? "#DDDDDD" : color}
+            stroke={hover ? "#DDDDDD" : color}
           >
             <circle id="Oval" cx="39.2" cy="39.2" r="13.8" />
             <circle id="Oval" cx="35.3" cy="15.3" r="2.3" />
