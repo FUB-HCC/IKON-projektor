@@ -236,7 +236,7 @@ class TimeLineView extends Component {
       )
     );
     return (
-      <div>
+      <div style={{ marginTop: (this.props.height * 0.75) / 2 }}>
         <SVGWithMargin
           className={styles.timelineContainer}
           contentContainerBackgroundRectClassName={

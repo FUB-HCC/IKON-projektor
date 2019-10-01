@@ -63,6 +63,7 @@ const mapStateToProps = state => {
         .map(filteredKtaM =>
           state.main.ktas.find(kta => filteredKtaM.kta_id === kta.id)
         );
+      category.count = ktas.length;
       category.connections = ktas
         .filter(kta => kta.project_id !== null)
         .map(kta =>
