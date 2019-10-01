@@ -4,7 +4,7 @@ import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 
 const arcMarginSides = 300;
-const arcMarginTop = 100;
+const arcMarginTop = 150;
 
 export default class ClusterMapView extends React.Component {
   state = {
@@ -49,7 +49,7 @@ export default class ClusterMapView extends React.Component {
   render() {
     const { categories, width, height } = this.props;
     const shiftX = width / 2;
-    const shiftY = height / 2 + arcMarginTop;
+    const shiftY = height / 2 + arcMarginTop + 100;
     const radius = (Math.min(width, height) - arcMarginSides) / 2;
     const each = 180 / (categories.length - 1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
@@ -80,37 +80,44 @@ export default class ClusterMapView extends React.Component {
             const area = (conLen / conMax) * 300;
             const rad = Math.sqrt(area / Math.PI) || 1;
 
-            const lines = cat.connections.map(con => {
-              const target = this.getPointLocation(con.location);
-              const angleDeg = startAngle;
-              const angle = angleDeg * (Math.PI / 180);
-              const sourceX = shiftX + (radius - 15) * Math.cos(angle);
-              const sourceY = shiftY + (radius - 15) * Math.sin(angle);
-              const midRadius = (radius - radius / 2) * (Math.PI / 180);
-              const midX = shiftX + midRadius * Math.cos(angle);
-              const midY = shiftY + midRadius * Math.sin(angle);
-              const mid = [midX, midY];
-              const source = [sourceX, sourceY];
+            let lines = [];
+            if (cat.connections.length > 0) {
+              lines = cat.connections.map(con => {
+                const target = this.getPointLocation(
+                  con.location,
+                  width,
+                  height
+                );
+                const angleDeg = startAngle;
+                const angle = angleDeg * (Math.PI / 180);
+                const sourceX = shiftX + (radius - 15) * Math.cos(angle);
+                const sourceY = shiftY + (radius - 15) * Math.sin(angle);
+                const midRadius = (radius - radius / 2) * (Math.PI / 180);
+                const midX = shiftX + midRadius * Math.cos(angle);
+                const midY = shiftY + midRadius * Math.sin(angle);
+                const mid = [midX, midY];
+                const source = [sourceX, sourceY];
 
-              return [
-                {
-                  x: Math.round(source[0]),
-                  y: Math.round(source[1])
-                },
-                {
-                  x: Math.round(mid[0]),
-                  y: Math.round(mid[1])
-                },
-                {
-                  x: Math.round(target[0]),
-                  y: Math.round(target[1])
-                },
-                {
-                  x: Math.round(target[0]),
-                  y: Math.round(target[1])
-                }
-              ];
-            });
+                return [
+                  {
+                    x: Math.round(source[0]),
+                    y: Math.round(source[1])
+                  },
+                  {
+                    x: Math.round(mid[0]),
+                    y: Math.round(mid[1])
+                  },
+                  {
+                    x: Math.round(target[0]),
+                    y: Math.round(target[1])
+                  },
+                  {
+                    x: Math.round(target[0]),
+                    y: Math.round(target[1])
+                  }
+                ];
+              });
+            }
 
             return (
               <g key={cat.id}>
@@ -149,9 +156,9 @@ export default class ClusterMapView extends React.Component {
                 <g>
                   {lines.map(line => (
                     <path
-                      strokeWidth="3"
+                      strokeWidth="2"
                       fill="transparent"
-                      stroke={isHighlighted ? "#fff" : "rgba(255,255,255,0.3)"}
+                      stroke={isHighlighted ? "#fff" : "rgba(255,255,255,0.1)"}
                       d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
                     />
                   ))}

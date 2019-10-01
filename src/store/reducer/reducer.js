@@ -45,6 +45,8 @@ const initialState = {
   projects: [],
   filteredProjects: [],
   institutions: [],
+  ktas: [],
+  ktaMapping: [],
   categories: categories,
   clusterData: undefined,
   selectedProject: undefined,
@@ -81,6 +83,12 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_PROJECTS_DATA:
       return updateProjectsData(state, action);
+
+    case actionTypes.UPDATE_KTA_DATA:
+      return updateKtaData(state, action);
+
+    case actionTypes.UPDATE_KTA_MAPPING_DATA:
+      return updateKtaMappingData(state, action);
 
     case actionTypes.SET_SIDE_BAR_COMPONENT:
       return setSideBarComponent(state, action);
@@ -135,6 +143,13 @@ const updateInstitutionsData = (state, action) =>
   Object.assign({}, state, {
     institutions: action.value
   });
+
+const updateKtaData = (state, action) => ({ ...state, ktas: action.value });
+
+const updateKtaMappingData = (state, action) => ({
+  ...state,
+  ktaMapping: action.value
+});
 
 const updateProjectsData = (state, action) => {
   const projectData = action.value;

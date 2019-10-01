@@ -12,8 +12,13 @@ import { getFieldColor } from "../../util/utility";
 
 const mapStateToProps = state => {
   let clusters = [];
+  let transformedPoints = [];
   let categories = state.main.categories;
-  if (state.main.clusterData) {
+  if (
+    state.main.clusterData &&
+    state.main.projects.length > 0 &&
+    state.main.ktaMapping.length > 0
+  ) {
     const { cluster_data, project_data } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
     const colors = cluster_data.cluster_colour;
@@ -22,7 +27,7 @@ const mapStateToProps = state => {
     const minY = _.min(_.map(projects, c => c.embpoint[1]));
 
     categories = state.main.categories.map(cat => cat);
-    const transformedPoints = projects.map(p => {
+    transformedPoints = projects.map(p => {
       const cat = _.sample(categories);
       const project = state.main.filteredProjects.find(
         project => p.id === project.id
@@ -52,6 +57,21 @@ const mapStateToProps = state => {
         1
       )
     }));
+    categories.forEach(category => {
+      const ktas = state.main.ktaMapping
+        .filter(ktaM => ktaM.targetgroup_id === category.id)
+        .map(filteredKtaM =>
+          state.main.ktas.find(kta => filteredKtaM.kta_id === kta.id)
+        );
+      category.connections = ktas
+        .filter(kta => kta.project_id !== null)
+        .map(kta =>
+          transformedPoints
+            .filter(transPoint => transPoint.project)
+            .find(point => point.project.id === kta.project_id)
+        )
+        .filter(connection => connection);
+    });
   }
 
   return {
