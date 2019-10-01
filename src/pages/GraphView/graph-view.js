@@ -7,7 +7,9 @@ import classes from "./graph-view.module.css";
 import {
   fetchClusterData,
   fetchInstitutionsData,
-  fetchProjectsData
+  fetchProjectsData,
+  fetchKTAData,
+  fetchKTAMappingData
 } from "../../store/actions/actions";
 import { appMargin, menuBarHeight, sideBarWidth } from "../../App";
 
@@ -43,7 +45,8 @@ class GraphView extends React.Component {
     this.props.fetchClusterData();
     this.props.fetchProjectsData();
     this.props.fetchInstitutionsData();
-    //this.props.fetchKTAData();
+    this.props.fetchKtaData();
+    this.props.fetchKtaMappingData();
   }
 
   resize() {
@@ -154,7 +157,9 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchClusterData: () => dispatch(fetchClusterData()),
     fetchProjectsData: () => dispatch(fetchProjectsData()),
-    fetchInstitutionsData: () => dispatch(fetchInstitutionsData())
+    fetchInstitutionsData: () => dispatch(fetchInstitutionsData()),
+    fetchKtaData: () => dispatch(fetchKTAData()),
+    fetchKtaMappingData: () => dispatch(fetchKTAMappingData())
   };
 };
 

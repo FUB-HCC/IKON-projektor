@@ -76,8 +76,16 @@ export const fetchProjectsData = () => {
 
 export const fetchKTAData = () => {
   return dispatch => {
-    axios.get("/formats.json").then(result => {
+    axios.get("/ktas.json").then(result => {
       dispatch(updateKTAData(result.data));
+    });
+  };
+};
+
+export const fetchKTAMappingData = () => {
+  return dispatch => {
+    axios.get("/ktaTargetGroup.json").then(result => {
+      dispatch(updateKTAMappingData(result.data));
     });
   };
 };
@@ -89,17 +97,17 @@ export const updateClusterData = clusterData => {
   };
 };
 
-export const updateInstitutionsData = clusterData => {
+export const updateInstitutionsData = institutionsData => {
   return {
     type: actionTypes.UPDATE_INSTITUTIONS_DATA,
-    value: clusterData
+    value: institutionsData
   };
 };
 
-export const updateProjectsData = clusterData => {
+export const updateProjectsData = projectsData => {
   return {
     type: actionTypes.UPDATE_PROJECTS_DATA,
-    value: clusterData
+    value: projectsData
   };
 };
 
@@ -107,6 +115,13 @@ export const updateKTAData = ktaData => {
   return {
     type: actionTypes.UPDATE_KTA_DATA,
     value: ktaData
+  };
+};
+
+export const updateKTAMappingData = ktaMappingData => {
+  return {
+    type: actionTypes.UPDATE_KTA_MAPPING_DATA,
+    value: ktaMappingData
   };
 };
 
