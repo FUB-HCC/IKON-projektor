@@ -1,15 +1,20 @@
-import React from "react";
-import style from "./filter-timeline.module.css";
+import { connect } from "react-redux";
+import FilterTimelineView from "./filter-timeline-view";
+import { timerangeFilterChange } from "../../store/actions/actions";
 
-const FilterTimeline = props => {
-  return (
-    <div className={style.filterTimelineWrapper}>
-      <div className={style.filterTimelineTitle}>
-        <span className={style.titleText}>Zeitraum</span>
-      </div>
-      <div className={style.filterTimelineSlider}></div>
-    </div>
-  );
-};
+const mapStateToProps = state => ({
+  currentSelectedRange:
+    state.main.filters.time.value.length > 0
+      ? state.main.filters.time.value
+      : [0, 0],
+  maxRange: state.main.filters.time.uniqueVals
+});
 
-export default FilterTimeline;
+const mapDispatchToProps = dispatch => ({
+  changeTimeRangeFilter: value => dispatch(timerangeFilterChange(value))
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FilterTimelineView);

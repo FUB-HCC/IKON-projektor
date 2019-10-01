@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import FilterSet from "./filter-set-view";
-import { filterChange } from "../../store/actions/actions";
+import { checkboxFilterChange } from "../../store/actions/actions";
 import style from "./filter-selection.module.css";
 import { fieldsIntToString, topicToField } from "../../util/utility";
 
@@ -123,7 +123,7 @@ const FilterSelection = props => (
 const mapDispatchToProps = dispatch => {
   return {
     filterChangeHandler: (filterId, value, form) =>
-      dispatch(filterChange(filterId, value, form))
+      dispatch(checkboxFilterChange(filterId, value, form))
   };
 };
 
