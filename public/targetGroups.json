@@ -1,0 +1,78 @@
+[
+  {
+    "id": 5,
+    "type": "Jugendliche"
+  },
+  {
+    "id": 7,
+    "type": "Erwachsene"
+  },
+  {
+    "id": 11,
+    "type": "Kinder"
+  },
+  {
+    "id": 17,
+    "type": "Politikerinnen und Politiker"
+  },
+  {
+    "id": 19,
+    "type": "Unternehmerinnen und Unternehmer"
+  },
+  {
+    "id": 20,
+    "type": "Wissenschaftlerinnen und Wissenschaftler"
+  },
+  {
+    "id": 24,
+    "type": "Bürgerforscherinnen und Bürgerforscher"
+  },
+  {
+    "id": 27,
+    "type": "Schülerinnen und Schüler"
+  },
+  {
+    "id": 29,
+    "type": "Sammlungspflegerinnen und Sammlungspfleger"
+  },
+  {
+    "id": 30,
+    "type": "Präparatorinnen und Präparatoren"
+  },
+  {
+    "id": 41,
+    "type": "KMU"
+  },
+  {
+    "id": 59,
+    "type": "Kulturschaffende"
+  },
+  {
+    "id": 94,
+    "type": "Zoll"
+  },
+  {
+    "id": 107,
+    "type": "Künstlerinnen und Künstler"
+  },
+  {
+    "id": 108,
+    "type": "Lehrerinnen und Lehrer"
+  },
+  {
+    "id": 109,
+    "type": "Erzieherinnen und Erzieher"
+  },
+  {
+    "id": 112,
+    "type": "Kinder ab 5 Jahre"
+  },
+  {
+    "id": 113,
+    "type": "Kinder ab 10 Jahre"
+  },
+  {
+    "id": 209,
+    "type": "Kinder ab 8 Jahre"
+  }
+]
