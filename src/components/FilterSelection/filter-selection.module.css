@@ -3,7 +3,7 @@
     margin-top: 5px;
     display: flex;
     flex-wrap: wrap;
-    width: 90%;
+    width: 100%;
 }
 .filterSetTitle{
     border-bottom: 1px solid #069172;
