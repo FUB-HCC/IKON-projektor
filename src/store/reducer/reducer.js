@@ -8,7 +8,7 @@ import {
   fieldsIntToString
 } from "../../util/utility";
 import { parse as queryStringParse } from "query-string";
-import FilterSelection from "../../components/FilterSelection/filter-selection";
+import FilterPanel from "../../components/FilterPanel/filter-panel";
 
 const initialState = {
   filters: {
@@ -32,6 +32,13 @@ const initialState = {
       type: "a",
       uniqueVals: [],
       value: []
+    },
+    time: {
+      name: "Zeitraum",
+      filterKey: "timeframe",
+      type: "t",
+      uniqueVals: [],
+      value: []
     }
   },
   graph: "0",
@@ -41,7 +48,7 @@ const initialState = {
   categories: categories,
   clusterData: undefined,
   selectedProject: undefined,
-  sideBarComponent: <FilterSelection />
+  sideBarComponent: <FilterPanel />
 };
 
 // Keep the reducer switch lean by outsourcing the actual code below
@@ -54,8 +61,11 @@ const reducer = (state = initialState, action) => {
         filteredData: applyFilters(state.projects, state.filters)
       };
 
-    case actionTypes.FILTER_CHANGE:
-      return changeFilter(state, action);
+    case actionTypes.CHECKBOX_FILTER_CHANGE:
+      return changeCheckboxFilter(state, action);
+
+    case actionTypes.TIMERANGE_FILTER_CHANGE:
+      return changeTimeRangeFilter(state, action);
 
     case actionTypes.DEACTIVATE_POPOVER:
       return deactivatePopover(state);
@@ -94,6 +104,13 @@ const applyFilters = (data, filter) => {
       if (f.type === "a") {
         if (f.value.some(value => value === filteredData[d][f.filterKey]))
           newFilteredData[d] = filteredData[d];
+      } else if (f.type === "t") {
+        if (
+          f.value[0] <= filteredData[d][f.filterKey][0] &&
+          f.value[1] >= filteredData[d][f.filterKey][1]
+        ) {
+          newFilteredData[d] = filteredData[d];
+        }
       } else {
         if (filteredData[d][f.filterKey].includes(f.value))
           newFilteredData[d] = filteredData[d];
@@ -128,6 +145,10 @@ const updateProjectsData = (state, action) => {
         ? project.participating_subject_areas.split("/")[1]
         : "Sonstige";
     project.geldgeber = project.sponsor;
+    project.timeframe = [
+      new Date(project.funding_start_year).getFullYear(),
+      new Date(project.funding_end_year).getFullYear()
+    ];
     if (
       project.participating_subject_areas &&
       project.participating_subject_areas.split("/")[0]
@@ -153,6 +174,7 @@ const updateProjectsData = (state, action) => {
   const uniqueFields = [];
   const uniqueTopics = [];
   const uniqueSponsors = [];
+  const maxDateRange = [5000, 0];
 
   Object.values(projects).forEach(project => {
     Object.keys(project).forEach(property => {
@@ -163,6 +185,11 @@ const updateProjectsData = (state, action) => {
         if (!uniqueTopics.some(e => e === value)) uniqueTopics.push(value);
       } else if (property === "geldgeber") {
         if (!uniqueSponsors.some(e => e === value)) uniqueSponsors.push(value);
+      } else if (property === "timeframe") {
+        maxDateRange[0] =
+          maxDateRange[0] < value[0] ? maxDateRange[0] : value[0];
+        maxDateRange[1] =
+          maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
       }
     });
   });
@@ -183,6 +210,11 @@ const updateProjectsData = (state, action) => {
       ...state.filters.geldgeber,
       uniqueVals: uniqueSponsors.sort(compare),
       value: uniqueSponsors
+    },
+    time: {
+      ...state.filters.time,
+      uniqueVals: maxDateRange,
+      value: maxDateRange
     }
   };
 
@@ -193,7 +225,7 @@ const updateProjectsData = (state, action) => {
   });
 };
 
-const changeFilter = (state, action) => {
+const changeCheckboxFilter = (state, action) => {
   const newFilter = state.filters;
   if (state.filters[action.id].value.some(e => e === action.value)) {
     newFilter[action.id].value = state.filters[action.id].value.filter(
@@ -208,6 +240,21 @@ const changeFilter = (state, action) => {
       action.value
     );
   }
+  return {
+    ...state,
+    filters: newFilter,
+    filteredProjects: applyFilters(state.projects, newFilter)
+  };
+};
+
+const changeTimeRangeFilter = (state, action) => {
+  const newFilter = {
+    ...state.filters,
+    time: {
+      ...state.filters.time,
+      value: action.value
+    }
+  };
   return {
     ...state,
     filters: newFilter,

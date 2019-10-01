@@ -10,10 +10,17 @@ export const changeGraph = value => {
   };
 };
 
-export const filterChange = (filterId, value) => {
+export const checkboxFilterChange = (filterId, value) => {
   return {
-    type: actionTypes.FILTER_CHANGE,
+    type: actionTypes.CHECKBOX_FILTER_CHANGE,
     id: filterId,
+    value: value
+  };
+};
+
+export const timerangeFilterChange = value => {
+  return {
+    type: actionTypes.TIMERANGE_FILTER_CHANGE,
     value: value
   };
 };
