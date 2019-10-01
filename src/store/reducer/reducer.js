@@ -9,6 +9,7 @@ import {
 } from "../../util/utility";
 import { parse as queryStringParse } from "query-string";
 import FilterPanel from "../../components/FilterPanel/filter-panel";
+import { updateOldProjectData } from "../actions/actions";
 
 const initialState = {
   filters: {
@@ -99,6 +100,9 @@ const reducer = (state = initialState, action) => {
     case actionTypes.RESET_SELECTED_PROJECT:
       return resetSelectedProject(state);
 
+    case actionTypes.UPDATE_OLD_PROJECT_DATA:
+      return updateOldProjectsData(state, action);
+
     default:
       return state;
   }
@@ -150,6 +154,12 @@ const updateKtaMappingData = (state, action) => ({
   ...state,
   ktaMapping: action.value
 });
+
+const updateOldProjectsData = (state, action) => {
+  const projectData = action.value;
+
+  return { ...state, oldProjects: projectData };
+};
 
 const updateProjectsData = (state, action) => {
   const projectData = action.value;

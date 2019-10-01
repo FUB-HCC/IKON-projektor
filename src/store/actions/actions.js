@@ -90,10 +90,25 @@ export const fetchKTAMappingData = () => {
   };
 };
 
+export const fetchOldProjectData = () => {
+  return dispatch => {
+    axios.get("/projects_old.json").then(result => {
+      dispatch(updateOldProjectData(result.data));
+    });
+  };
+};
+
 export const updateClusterData = clusterData => {
   return {
     type: actionTypes.UPDATE_CLUSTER_DATA,
     value: clusterData
+  };
+};
+
+export const updateOldProjectData = oldProjectData => {
+  return {
+    type: actionTypes.UPDATE_OLD_PROJECT_DATA,
+    value: oldProjectData
   };
 };
 
