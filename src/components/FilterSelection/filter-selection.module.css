@@ -24,6 +24,7 @@
 .subsetWrapper{
     width:100%;
     margin-bottom: 1.5vh;
+    padding-right: 10px;
 }
 .subsetHeader{
     margin-bottom: 1vh;
@@ -31,7 +32,6 @@
 }
 .subFilter{
     font-size: 15px;
-    width:97%;
     padding-left: 3%;
 }
 .subFilterGroup{
@@ -60,8 +60,8 @@
 .checkBoxLabel {
     cursor: pointer;
     margin-left: auto;
-    height: 1vh;
-    width: 1vh;
+    height: 20px;
+    width: 20px;
     margin-right: 2px;
 }
 
