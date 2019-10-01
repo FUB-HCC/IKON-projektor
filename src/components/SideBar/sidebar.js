@@ -1,4 +1,3 @@
-import React from "react";
 import { setSideBarComponent } from "../../store/actions/actions";
 import connect from "react-redux/es/connect/connect";
 import SideBarView from "./sidebar-view";

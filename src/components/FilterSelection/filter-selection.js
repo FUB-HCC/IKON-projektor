@@ -42,22 +42,21 @@ const getFilterSets = filters => {
           subFilterId: "hauptthema"
         },
         {
-          name: "Ingenieurswissenschaften",
+          name: "Ingenieurwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
           subFilters: filters.hauptthema.uniqueVals.filter(
             val =>
-              fieldsIntToString(topicToField(val)) ===
-              "Ingenieurswissenschaften"
+              fieldsIntToString(topicToField(val)) === "Ingenieurwissenschaften"
           ),
           subFilterId: "hauptthema"
         },
         {
-          name: "Unbekannt",
+          name: "Sonstige",
           filterId: "forschungsgebiet",
           isTogglable: true,
           subFilters: filters.hauptthema.uniqueVals.filter(
-            val => fieldsIntToString(topicToField(val)) === "Unbekannt"
+            val => fieldsIntToString(topicToField(val)) === "Sonstige"
           ),
           subFilterId: "hauptthema"
         }
