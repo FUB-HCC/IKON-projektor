@@ -3,6 +3,7 @@ import classes from "../redesigned.module.css";
 import { connect } from "react-redux";
 import * as actions from "../../store/actions/actions";
 import logo from "../../assets/ikon_logo.png";
+// import About from "./pages/About";
 
 class NavigationSubpages extends Component {
   constructor(props) {
@@ -28,6 +29,11 @@ class NavigationSubpages extends Component {
       activePopover: -1
     });
   }
+
+  showOverlay = () => {
+    console.log("Overlay here");
+  }
+
   render() {
     return (
       <div className={classes.navbar}>
@@ -91,7 +97,7 @@ class NavigationSubpages extends Component {
               <div className={classes.NavigationRightElement}>SUCHE</div>
             </li>
             <li>
-              <div className={classes.NavigationRightElement}>MENU</div>
+              <div className={classes.NavigationRightElement} onClick={this.showOverlay.bind(this)}>?</div>
             </li>
           </ul>
         </div>

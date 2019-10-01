@@ -1,13 +1,22 @@
 .contentWindow {
-    width: 75vw;
+    width: 99vw;
     height: 82vh;
     background: #0e0e0e;
     background-size: 800% 800%;
     overflow: hidden;
-    display: flex;
+    display: flex-start;
     justify-content: center;
     align-items: center;
     float: left;
+}
+.sidebarHint{
+    width: 1vw;
+    background: blueviolet;
+    height: 82vh;
+    /*overflow-y: scroll;*/
+    float: right;
+    position: absolute;
+    right: 0vw;
 }
 .sidebar{
     width: 25vw;

@@ -63,6 +63,18 @@
     width: 100%;
     height: 100%;
 }
+.OuterDiv1 {
+    width: 45%;
+    height: 50%;
+    float: left;
+    border: 5px solid purple;
+}
+.OuterDiv2 {
+    width: 50%;
+    height: 50%;
+    float: right;
+    border: 5px solid lightsalmon;
+}
 .statisticsWrapper {
     height: 70vh;
     width: 20%;
@@ -70,5 +82,14 @@
     top: 25vh;
     left: 80%;
     z-index: -5;
+}
+.seperator{
+    width: 1vw;
+    background: blueviolet;
+    height: 51%;
+    /*overflow-y: scroll;*/
+    /* float: right; */
+    position: absolute;
+    right: 50%;
 }
 

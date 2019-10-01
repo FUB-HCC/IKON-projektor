@@ -5,6 +5,7 @@ import GeoMap from "../../components/GeoMap/geo-map-view";
 import TimeGraph from "../../components/TimeLine/time-line";
 import classes from "./graph-view.module.css";
 import * as actions from "../../store/actions/actions";
+// import { SortablePane, Pane } from 'react-sortable-pane';
 
 class GraphView extends React.Component {
   constructor(props) {
@@ -21,7 +22,9 @@ class GraphView extends React.Component {
   componentDidMount() {
     this.setState({
       height: window.innerHeight * 0.7 - this.margins.top - this.margins.bottom,
-      width: window.innerWidth * 0.75 - this.margins.left - this.margins.right
+      width: window.innerWidth * 0.75 - this.margins.left - this.margins.right,
+      geoMapWidth: window.innerWidth*0.45,
+      geoMapHeight: window.innerHeight*0.4
     });
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
@@ -68,6 +71,13 @@ class GraphView extends React.Component {
       institutions: this.props.institutions,
       projects: this.props.filteredProjects
     };
+    const geoMapProps2 = {
+      height: this.state.geoMapHeight,
+      width: this.state.geoMapWidth,
+      onProjectClick: this.projectClickHandler,
+      institutions: this.props.institutions,
+      projects: this.props.filteredProjects
+    };
     let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
       case "0":
@@ -95,7 +105,22 @@ class GraphView extends React.Component {
         break;
     }
 
-    return <div className={classes.OuterDiv}>{Graph}</div>;
+    return (
+      <div className={classes.OuterDiv}>
+        <div className={classes.OuterDiv2}>
+          
+          <ClusterMap
+            height={this.state.height}
+            width={this.state.width}
+            onProjectClick={this.projectClickHandler}
+          />
+        </div>
+        {/* <div className={classes.seperator} /> */}
+        <div className={classes.OuterDiv1}>
+        <GeoMap {...geoMapProps2} />
+        </div>;
+      </div>
+    );
   }
 }
 
