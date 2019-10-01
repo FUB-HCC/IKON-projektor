@@ -4,7 +4,7 @@ import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 
 const arcMarginSides = 300;
-const arcMarginTop = 100;
+const arcMarginTop = 150;
 
 export default class ClusterMapView extends React.Component {
   state = {
@@ -49,7 +49,7 @@ export default class ClusterMapView extends React.Component {
   render() {
     const { categories, width, height } = this.props;
     const shiftX = width / 2;
-    const shiftY = height / 2 + arcMarginTop;
+    const shiftY = height / 2 + arcMarginTop + 100;
     const radius = (Math.min(width, height) - arcMarginSides) / 2;
     const each = 180 / (categories.length - 1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
@@ -156,7 +156,7 @@ export default class ClusterMapView extends React.Component {
                 <g>
                   {lines.map(line => (
                     <path
-                      strokeWidth="3"
+                      strokeWidth="2"
                       fill="transparent"
                       stroke={isHighlighted ? "#fff" : "rgba(255,255,255,0.1)"}
                       d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
