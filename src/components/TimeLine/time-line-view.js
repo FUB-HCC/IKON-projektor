@@ -22,7 +22,7 @@ class TimeLineView extends Component {
     this.state = {
       dataSplitYears: [],
       forschungsbereiche: [],
-      height: props.height * 0.95,
+      height: props.height * 0.25,
       width: props.width * 0.95,
       margin: props.margin,
       firstUpdate: true,
@@ -83,7 +83,7 @@ class TimeLineView extends Component {
     if (!this.state.firstUpdate) {
       // workaround for first time scaling
       this.setState({
-        height: height * 0.95,
+        height: height * 0.25,
         width: width * 0.95,
         margin: margin
       });
