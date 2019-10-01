@@ -8,7 +8,7 @@ import {
   fieldsIntToString
 } from "../../util/utility";
 import { parse as queryStringParse } from "query-string";
-import FilterSelection from "../../components/FilterSelection/filter-selection";
+import FilterPanel from "../../components/FilterPanel/filter-panel";
 
 const initialState = {
   filters: {
@@ -41,7 +41,7 @@ const initialState = {
   categories: categories,
   clusterData: undefined,
   selectedProject: undefined,
-  sideBarComponent: <FilterSelection />
+  sideBarComponent: <FilterPanel />
 };
 
 // Keep the reducer switch lean by outsourcing the actual code below
