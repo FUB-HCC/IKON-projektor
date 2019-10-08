@@ -93,60 +93,60 @@ const topicMapping = [
 ];
 
 export const categories = [
-  { id: 7, title: "Erwachsene", count: 1, connections: [], project_ids: [1] },
-  { id: 5, title: "Jugendliche", count: 1, connections: [], project_ids: [1] },
-  { id: 11, title: "Kinder", count: 1, connections: [], project_ids: [1] },
+  { id: 2, title: "Erwachsene", count: 1, connections: [], project_ids: [1] },
+  { id: 1, title: "Jugendliche", count: 1, connections: [], project_ids: [1] },
+  { id: 7, title: "Kinder", count: 1, connections: [], project_ids: [1] },
   {
-    id: 112,
+    id: 115,
     title: "Kinder ab 5 Jahre",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 113,
+    id: 108,
     title: "Kinder ab 10 Jahre",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 209,
+    id: 201,
     title: "Kinder ab 8 Jahre",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 27,
+    id: 21,
     title: "Schülerinnen und Schüler",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 108,
+    id: 103,
     title: "Lehrerinnen und Lehrer",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 109,
+    id: 104,
     title: "Erzieherinnen und Erzieher",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 17,
+    id: 15,
     title: "Politikerinnen und Politiker",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 19,
+    id: 12,
     title: "Unternehmerinnen und Unternehmer",
     count: 1,
     connections: [],
@@ -154,21 +154,21 @@ export const categories = [
   },
   { id: 41, title: "KMU", count: 1, connections: [], project_ids: [1] },
   {
-    id: 20,
+    id: 13,
     title: "Wissenschaftlerinnen und Wissenschaftler",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 24,
+    id: 25,
     title: "Bürgerforscherinnen und Bürgerforscher",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 30,
+    id: 23,
     title: "Präparatorinnen und Präparatoren",
     count: 1,
     connections: [],
@@ -182,14 +182,14 @@ export const categories = [
     project_ids: [1]
   },
   {
-    id: 59,
+    id: 53,
     title: "Kulturschaffende",
     count: 1,
     connections: [],
     project_ids: [1]
   },
   {
-    id: 107,
+    id: 99,
     title: "Künstlerinnen und Künstler",
     count: 1,
     connections: [],
