@@ -12,16 +12,20 @@ export default class ClusterDot extends React.Component {
 
   render() {
     const { x, y, color } = this.props;
-    const scale = this.props.highlightedProjects.find(
-      hProject => hProject === this.props.point.projectData.id
-    )
-      ? 1.2
-      : 1;
+    const scale =
+      this.props.projectData &&
+      this.props.highlightedProjects.find(
+        hProject => hProject === this.props.point.projectData.id
+      )
+        ? 1.2
+        : 1;
     return (
       <g
-        onMouseOver={() =>
-          this.props.highlightProject(this.props.point.projectData.id)
-        }
+        onMouseOver={() => {
+          if (this.props.point.projectData) {
+            this.props.highlightProject(this.props.point.projectData.id);
+          }
+        }}
         onMouseOut={() => this.props.unHighlight()}
         onClick={() => {
           this.props.showProjectDetails();
