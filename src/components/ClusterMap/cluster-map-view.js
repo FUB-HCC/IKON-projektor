@@ -18,9 +18,17 @@ const circleScaling = scale => 0.02 * scale;
 const strokeWidth = scale => 0.001 * scale;
 
 export default class ClusterMapView extends React.Component {
-  state = {
-    highlightedCat: null
-  };
+  constructor() {
+    super();
+    this.state = {
+      highlightedCats: [],
+      highlightedLinks: [],
+      highlightedProjects: []
+    };
+    this.highlightCat = this.highlightCat.bind(this);
+    this.highlightProject = this.highlightProject.bind(this);
+    this.unHighlight = this.unHighlight.bind(this);
+  }
 
   get maxX() {
     return _.max(
@@ -37,6 +45,50 @@ export default class ClusterMapView extends React.Component {
         _.flatten(_.map(this.props.clusterData, c => c.projects)),
         c => c.location[1]
       )
+    );
+  }
+
+  unHighlight() {
+    this.setState({
+      highlightedCats: [],
+      highlightedLinks: [],
+      highlightedProjects: []
+    });
+  }
+
+  highlightCat(category) {
+    this.setState({
+      highlightedCats: [category],
+      highlightedLinks: this.findLinksByCat(category),
+      highlightedProjects: this.findProjectsByCat(category)
+    });
+  }
+
+  highlightProject(project) {
+    this.setState({
+      highlightedCats: this.findCatsByProject(project),
+      highlightedLinks: this.findLinksByProject(project),
+      highlightedProjects: [project]
+    });
+  }
+
+  findLinksByCat(category) {
+    return category.connections.map(con => con.id + "|" + category.id);
+  }
+
+  findProjectsByCat(category) {
+    return category.connections.map(con => con.id);
+  }
+
+  findLinksByProject(project) {
+    return this.props.categories
+      .filter(cat => cat.connections.find(con => con.id === project))
+      .map(cat => project + "|" + cat.id);
+  }
+
+  findCatsByProject(project) {
+    return this.props.categories.filter(cat =>
+      cat.connections.find(con => con.id === project)
     );
   }
 
@@ -75,6 +127,36 @@ export default class ClusterMapView extends React.Component {
           height={height}
         >
           <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
+            <g style={{ transform: "translate(0px, 0px)" }}>
+              {this.props.clusterData.map(cluster => (
+                <polygon
+                  key={cluster.id}
+                  points={cluster.concaveHull.map(point =>
+                    this.getPointLocation(point, width, height)
+                  )}
+                  stroke="#aaaaaa"
+                  strokeWidth={clusterHullStrokeWidth(scale)}
+                  strokeLinejoin="round"
+                  fill="#aaaaaa"
+                  opacity="0.3"
+                />
+              ))}
+              {this.props.clusterData.map(cluster => {
+                return (
+                  <Cluster
+                    key={cluster.id}
+                    cluster={cluster}
+                    getLocation={p => this.getPointLocation(p, width, height)}
+                    radius={radius}
+                    highlightProject={this.highlightProject}
+                    highlightedProjects={this.state.highlightedProjects}
+                    unHighlight={this.unHighlight}
+                    resetCat={() => this.setState({ highlightedCat: null })}
+                    showProjectDetails={this.props.showProjectDetails}
+                  />
+                );
+              })}
+            </g>
             {categories.map((cat, i) => {
               const startAngle = each * i - 180;
               const angle = startAngle * (Math.PI / 180);
@@ -92,8 +174,9 @@ export default class ClusterMapView extends React.Component {
               const anchor = startAngle < -90 ? "end" : "start";
               const textRotate =
                 startAngle < -90 ? startAngle + 180 : startAngle;
-              const hc = this.state.highlightedCat;
-              const isHighlighted = hc && hc.id === cat.id;
+              const isHighlighted = this.state.highlightedCats.find(
+                hcat => hcat.id === cat.id
+              );
               const area = conLen / conMax;
               const rad = Math.sqrt(area / Math.PI) * circleScaling(scale) || 1;
 
@@ -135,7 +218,8 @@ export default class ClusterMapView extends React.Component {
                     {
                       x: Math.round(target[0]),
                       y: Math.round(target[1])
-                    }
+                    },
+                    con.id + "|" + cat.id
                   ];
                 });
               }
@@ -143,8 +227,8 @@ export default class ClusterMapView extends React.Component {
               return (
                 <g key={cat.id}>
                   <g
-                    onMouseOver={() => this.setState({ highlightedCat: cat })}
-                    onMouseOut={() => this.setState({ highlightedCat: null })}
+                    onMouseOver={() => this.highlightCat(cat)}
+                    onMouseOut={() => this.unHighlight()}
                   >
                     <circle
                       id={`cat-${cat.id}`}
@@ -168,7 +252,9 @@ export default class ClusterMapView extends React.Component {
                       y={textY}
                       textAnchor={anchor}
                       fill="white"
-                      fontSize={fontSizeText(this.scale)}
+                      fontSize={
+                        fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                      }
                       transform={`rotate(${textRotate} ${textX} ${textY})`}
                     >
                       {cat.title}
@@ -177,11 +263,16 @@ export default class ClusterMapView extends React.Component {
                   <g>
                     {lines.map((line, i) => (
                       <path
+                        pointerEvents="none"
                         key={i}
                         strokeWidth={strokeWidth(scale)}
                         fill="transparent"
                         stroke={
-                          isHighlighted ? "#fff" : "rgba(255,255,255,0.1)"
+                          this.state.highlightedLinks.find(
+                            hline => hline === line[4]
+                          )
+                            ? "#fff"
+                            : "rgba(255,255,255,0.1)"
                         }
                         d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
                       />
@@ -190,36 +281,6 @@ export default class ClusterMapView extends React.Component {
                 </g>
               );
             })}
-            <g style={{ transform: "translate(0px, 0px)" }}>
-              {this.props.clusterData.map(cluster => (
-                <polygon
-                  key={cluster.id}
-                  points={cluster.concaveHull.map(point =>
-                    this.getPointLocation(point, width, height)
-                  )}
-                  stroke="#aaaaaa"
-                  strokeWidth={clusterHullStrokeWidth(scale)}
-                  strokeLinejoin="round"
-                  fill="#aaaaaa"
-                  opacity="0.3"
-                />
-              ))}
-              {this.props.clusterData.map(cluster => {
-                return (
-                  <Cluster
-                    key={cluster.id}
-                    cluster={cluster}
-                    getLocation={p => this.getPointLocation(p, width, height)}
-                    radius={radius}
-                    highlightCat={highlightedCat =>
-                      this.setState({ highlightedCat })
-                    }
-                    resetCat={() => this.setState({ highlightedCat: null })}
-                    showProjectDetails={this.props.showProjectDetails}
-                  />
-                );
-              })}
-            </g>
           </g>
         </svg>
       </div>

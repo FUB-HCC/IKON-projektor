@@ -10,32 +10,27 @@ export default class ClusterDot extends React.Component {
 
   static defaultProps = { x: 0, y: 0, color: "white" };
 
-  state = { hover: false };
-  setHover = hover => {
-    this.setState({ hover });
-    if (hover) {
-      this.props.highlightCat(this.props.point._cat);
-    } else {
-      this.props.resetCat();
-    }
-  };
-
   render() {
     const { x, y, color } = this.props;
-    const { hover } = this.state;
+    const scale = this.props.highlightedProjects.find(
+      hProject => hProject === this.props.point.projectData.id
+    )
+      ? 1.2
+      : 1;
     return (
       <g
-        onMouseOver={() => this.setHover(true)}
-        onMouseOut={() => this.setHover(false)}
+        onMouseOver={() =>
+          this.props.highlightProject(this.props.point.projectData.id)
+        }
+        onMouseOut={() => this.props.unHighlight()}
         onClick={() => {
           this.props.showProjectDetails();
         }}
-        style={{ transition: "all 300ms ease-out" }}
         transform={
           "translate(" +
-          (x - this.props.radius / 40) +
+          (x - (this.props.radius / 40) * scale) +
           "," +
-          (y - this.props.radius / 40) +
+          (y - (this.props.radius / 40) * scale) +
           ")"
         }
       >
@@ -46,19 +41,15 @@ export default class ClusterDot extends React.Component {
           fill={"transparent"}
         />
         <svg
-          width={this.props.radius / 20}
-          height={this.props.radius / 20}
+          width={(this.props.radius / 20) * scale}
+          height={(this.props.radius / 20) * scale}
           viewBox="0 0 78 78"
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
         >
           <title>Project Icon Geistes</title>
           <desc>Created with Sketch.</desc>
-          <g
-            id="Project-Icon-Geistes"
-            fill={hover ? "#DDDDDD" : color}
-            stroke={hover ? "#DDDDDD" : color}
-          >
+          <g id="Project-Icon-Geistes" fill={color} stroke={color}>
             <circle id="Oval" cx="39.2" cy="39.2" r="13.8" />
             <circle id="Oval" cx="35.3" cy="15.3" r="2.3" />
             <circle id="Oval-Copy" cx="63.3" cy="35.3" r="2.3" />
