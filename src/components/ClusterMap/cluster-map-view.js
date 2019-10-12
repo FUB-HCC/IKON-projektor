@@ -3,8 +3,19 @@ import _ from "lodash";
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 
-const arcMarginSides = 95;
-const arcMarginTop = 200;
+const arcMarginSides = (width, scale) => Math.min(0.25 * width, 0.25 * scale);
+const arcMarginTop = (height, scale) => Math.min(0.15 * height, 0.15 * scale);
+const clusterSize = scale => 0.35 * scale;
+const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
+const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
+const clusterHullStrokeWidth = scale => 0.025 * scale;
+const fontSizeText = scale => 0.009 * scale;
+const fontSizeCount = scale => 0.006 * scale;
+const textOffsetFromArc = scale => 0.03 * scale;
+const countOffsetFromArc = scale => 0.018 * scale;
+const connectionOffsetFromArc = scale => -0.015 * scale;
+const circleScaling = scale => 0.02 * scale;
+const strokeWidth = scale => 0.001 * scale;
 
 export default class ClusterMapView extends React.Component {
   state = {
@@ -30,31 +41,27 @@ export default class ClusterMapView extends React.Component {
   }
 
   getPointLocation = (pt, width, height) => {
-    const radius = (Math.min(width, height) - arcMarginSides) / 2;
-    const clusterSize = (radius / Math.min(height, width)) * 0.8;
-
     const [x, y] = pt;
     const normalizedX = x / this.maxX;
     const normalizedY = y / this.maxY;
 
     return [
-      normalizedX * clusterSize * Math.min(height, width) +
-        (1 - clusterSize) * 0.5 * width,
-      normalizedY * clusterSize * Math.min(height, width) +
-        (1 - clusterSize) * 0.5 * height +
-        arcMarginTop
+      normalizedX * clusterSize(this.scale) + clusterPosX(width, this.scale),
+      normalizedY * clusterSize(this.scale) + clusterPosY(height, this.scale)
     ];
   };
 
   render() {
     const { categories, width, height } = this.props;
-    if (categories.length === 0 || !width || !height) {
+    this.scale = Math.min(height, width);
+    const scale = this.scale;
+    if (categories.length === 0 || !width || !height || scale <= 0) {
       return <div />;
     }
 
-    const shiftX = width / 2 - 70;
-    const shiftY = height / 2 + arcMarginTop;
-    const radius = (Math.min(width, height) - arcMarginSides) / 2;
+    const shiftX = width / 2;
+    const shiftY = height / 2;
+    const radius = (scale - arcMarginSides(width, scale)) / 2;
     const each = 180 / (categories.length - 1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
     const conMax = cats[0].count;
@@ -67,139 +74,152 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
-          {categories.map((cat, i) => {
-            const startAngle = each * i - 180;
-            const angle = startAngle * (Math.PI / 180);
-            const conLen = cat.count;
-            const x = shiftX + radius * Math.cos(angle);
-            const y = shiftY + radius * Math.sin(angle);
-            const textX = shiftX + (radius + 40) * Math.cos(angle);
-            const textY = shiftY + (radius + 40) * Math.sin(angle);
-            const lenX = shiftX + (radius + 25) * Math.cos(angle);
-            const lenY = shiftY + (radius + 25) * Math.sin(angle);
-            const anchor = startAngle < -90 ? "end" : "start";
-            const textRotate = startAngle < -90 ? startAngle + 180 : startAngle;
-            const hc = this.state.highlightedCat;
-            const isHighlighted = hc && hc.id === cat.id;
-            const area = (conLen / conMax) * 300;
-            const rad = Math.sqrt(area / Math.PI) || 1;
+          <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
+            {categories.map((cat, i) => {
+              const startAngle = each * i - 180;
+              const angle = startAngle * (Math.PI / 180);
+              const conLen = cat.count;
+              const x = shiftX + radius * Math.cos(angle);
+              const y = shiftY + radius * Math.sin(angle);
+              const textX =
+                shiftX + (radius + textOffsetFromArc(scale)) * Math.cos(angle);
+              const textY =
+                shiftY + (radius + textOffsetFromArc(scale)) * Math.sin(angle);
+              const lenX =
+                shiftX + (radius + countOffsetFromArc(scale)) * Math.cos(angle);
+              const lenY =
+                shiftY + (radius + countOffsetFromArc(scale)) * Math.sin(angle);
+              const anchor = startAngle < -90 ? "end" : "start";
+              const textRotate =
+                startAngle < -90 ? startAngle + 180 : startAngle;
+              const hc = this.state.highlightedCat;
+              const isHighlighted = hc && hc.id === cat.id;
+              const area = conLen / conMax;
+              const rad = Math.sqrt(area / Math.PI) * circleScaling(scale) || 1;
 
-            let lines = [];
-            if (cat.connections.length > 0) {
-              lines = cat.connections.map(con => {
-                const target = this.getPointLocation(
-                  con.location,
-                  width,
-                  height
-                );
-                const angleDeg = startAngle;
-                const angle = angleDeg * (Math.PI / 180);
-                const sourceX = shiftX + (radius - 15) * Math.cos(angle);
-                const sourceY = shiftY + (radius - 15) * Math.sin(angle);
-                const midRadius = (radius - radius / 2) * (Math.PI / 180);
-                const midX = shiftX + midRadius * Math.cos(angle);
-                const midY = shiftY + midRadius * Math.sin(angle);
-                const mid = [midX, midY];
-                const source = [sourceX, sourceY];
+              let lines = [];
+              if (cat.connections.length > 0) {
+                lines = cat.connections.map(con => {
+                  const target = this.getPointLocation(
+                    con.location,
+                    width,
+                    height
+                  );
+                  const angleDeg = startAngle;
+                  const angle = angleDeg * (Math.PI / 180);
+                  const sourceX =
+                    shiftX +
+                    (radius + connectionOffsetFromArc(scale)) * Math.cos(angle);
+                  const sourceY =
+                    shiftY +
+                    (radius + connectionOffsetFromArc(scale)) * Math.sin(angle);
+                  const midRadius = (radius - radius / 2) * (Math.PI / 180);
+                  const midX = shiftX + midRadius * Math.cos(angle);
+                  const midY = shiftY + midRadius * Math.sin(angle);
+                  const mid = [midX, midY];
+                  const source = [sourceX, sourceY];
 
-                return [
-                  {
-                    x: Math.round(source[0]),
-                    y: Math.round(source[1])
-                  },
-                  {
-                    x: Math.round(mid[0]),
-                    y: Math.round(mid[1])
-                  },
-                  {
-                    x: Math.round(target[0]),
-                    y: Math.round(target[1])
-                  },
-                  {
-                    x: Math.round(target[0]),
-                    y: Math.round(target[1])
-                  }
-                ];
-              });
-            }
+                  return [
+                    {
+                      x: Math.round(source[0]),
+                      y: Math.round(source[1])
+                    },
+                    {
+                      x: Math.round(mid[0]),
+                      y: Math.round(mid[1])
+                    },
+                    {
+                      x: Math.round(target[0]),
+                      y: Math.round(target[1])
+                    },
+                    {
+                      x: Math.round(target[0]),
+                      y: Math.round(target[1])
+                    }
+                  ];
+                });
+              }
 
-            return (
-              <g key={cat.id}>
-                <g
-                  onMouseOver={() => this.setState({ highlightedCat: cat })}
-                  onMouseOut={() => this.setState({ highlightedCat: null })}
-                >
-                  <circle
-                    id={`cat-${cat.id}`}
-                    r={rad}
-                    cx={x}
-                    cy={y}
-                    stroke="white"
-                    fill="white"
-                  />
-                  <text
-                    x={lenX}
-                    y={lenY}
-                    textAnchor="middle"
-                    fill="white"
-                    fontSize="8pt"
-                  >
-                    {conLen}
-                  </text>
-                  <text
-                    x={textX}
-                    y={textY}
-                    textAnchor={anchor}
-                    fill="white"
-                    fontSize="8pt"
-                    transform={`rotate(${textRotate} ${textX} ${textY})`}
-                  >
-                    {cat.title}
-                  </text>
-                </g>
-                <g>
-                  {lines.map((line, i) => (
-                    <path
-                      key={i}
-                      strokeWidth="2"
-                      fill="transparent"
-                      stroke={isHighlighted ? "#fff" : "rgba(255,255,255,0.1)"}
-                      d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                    />
-                  ))}
-                </g>
-              </g>
-            );
-          })}
-          <g style={{ transform: "translate(0px, 0px)" }}>
-            {this.props.clusterData.map(cluster => (
-              <polygon
-                key={cluster.id}
-                points={cluster.concaveHull.map(point =>
-                  this.getPointLocation(point, width, height)
-                )}
-                stroke="#aaaaaa"
-                strokeWidth="20"
-                strokeLinejoin="round"
-                fill="#aaaaaa"
-                opacity="0.3"
-              />
-            ))}
-            {this.props.clusterData.map(cluster => {
               return (
-                <Cluster
-                  key={cluster.id}
-                  cluster={cluster}
-                  getLocation={p => this.getPointLocation(p, width, height)}
-                  radius={radius}
-                  highlightCat={highlightedCat =>
-                    this.setState({ highlightedCat })
-                  }
-                  resetCat={() => this.setState({ highlightedCat: null })}
-                  showProjectDetails={this.props.showProjectDetails}
-                />
+                <g key={cat.id}>
+                  <g
+                    onMouseOver={() => this.setState({ highlightedCat: cat })}
+                    onMouseOut={() => this.setState({ highlightedCat: null })}
+                  >
+                    <circle
+                      id={`cat-${cat.id}`}
+                      r={rad}
+                      cx={x}
+                      cy={y}
+                      stroke="white"
+                      fill="white"
+                    />
+                    <text
+                      x={lenX}
+                      y={lenY}
+                      textAnchor="middle"
+                      fill="white"
+                      fontSize={fontSizeCount(this.scale)}
+                    >
+                      {conLen}
+                    </text>
+                    <text
+                      x={textX}
+                      y={textY}
+                      textAnchor={anchor}
+                      fill="white"
+                      fontSize={fontSizeText(this.scale)}
+                      transform={`rotate(${textRotate} ${textX} ${textY})`}
+                    >
+                      {cat.title}
+                    </text>
+                  </g>
+                  <g>
+                    {lines.map((line, i) => (
+                      <path
+                        key={i}
+                        strokeWidth={strokeWidth(scale)}
+                        fill="transparent"
+                        stroke={
+                          isHighlighted ? "#fff" : "rgba(255,255,255,0.1)"
+                        }
+                        d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                      />
+                    ))}
+                  </g>
+                </g>
               );
             })}
+            <g style={{ transform: "translate(0px, 0px)" }}>
+              {this.props.clusterData.map(cluster => (
+                <polygon
+                  key={cluster.id}
+                  points={cluster.concaveHull.map(point =>
+                    this.getPointLocation(point, width, height)
+                  )}
+                  stroke="#aaaaaa"
+                  strokeWidth={clusterHullStrokeWidth(scale)}
+                  strokeLinejoin="round"
+                  fill="#aaaaaa"
+                  opacity="0.3"
+                />
+              ))}
+              {this.props.clusterData.map(cluster => {
+                return (
+                  <Cluster
+                    key={cluster.id}
+                    cluster={cluster}
+                    getLocation={p => this.getPointLocation(p, width, height)}
+                    radius={radius}
+                    highlightCat={highlightedCat =>
+                      this.setState({ highlightedCat })
+                    }
+                    resetCat={() => this.setState({ highlightedCat: null })}
+                    showProjectDetails={this.props.showProjectDetails}
+                  />
+                );
+              })}
+            </g>
           </g>
         </svg>
       </div>
