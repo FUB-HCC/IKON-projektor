@@ -69,7 +69,6 @@ const GeoMapView = props => {
     return <div />;
   }
   let institutions = props.institutions;
-  console.log(projects, institutions);
   institutions = institutions.map(ins => Object.assign(ins));
   institutions = institutions.filter(ins => ins.lon && ins.lat);
   const width = props.width ? props.width : 1000;

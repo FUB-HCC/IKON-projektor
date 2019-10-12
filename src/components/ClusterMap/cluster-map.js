@@ -36,7 +36,7 @@ const mapStateToProps = state => {
         ...p,
         location: [p.mappoint[0] - minX, p.mappoint[1] - minY],
         cat: cat.id,
-        _cat: cat,
+        category: [],
         project: project,
         color: project ? getFieldColor(project.forschungsbereich) : "none"
       };
@@ -74,6 +74,9 @@ const mapStateToProps = state => {
         .filter(connection => connection);
     });
   }
+  categories.forEach(category => {
+    category.connections.forEach(conn => conn.category.push(category));
+  });
 
   return {
     clusterData: clusters,

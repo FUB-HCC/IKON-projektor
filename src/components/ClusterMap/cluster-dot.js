@@ -56,7 +56,6 @@ export default class ClusterDot extends React.Component {
           <desc>Created with Sketch.</desc>
           <g
             id="Project-Icon-Geistes"
-            stroke="none"
             fill={hover ? "#DDDDDD" : color}
             stroke={hover ? "#DDDDDD" : color}
           >

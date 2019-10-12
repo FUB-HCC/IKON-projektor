@@ -48,6 +48,10 @@ export default class ClusterMapView extends React.Component {
 
   render() {
     const { categories, width, height } = this.props;
+    if (categories.length === 0 || !width || !height) {
+      return <div />;
+    }
+
     const shiftX = width / 2 - 70;
     const shiftY = height / 2 + arcMarginTop;
     const radius = (Math.min(width, height) - arcMarginSides) / 2;
@@ -154,8 +158,9 @@ export default class ClusterMapView extends React.Component {
                   </text>
                 </g>
                 <g>
-                  {lines.map(line => (
+                  {lines.map((line, i) => (
                     <path
+                      key={i}
                       strokeWidth="2"
                       fill="transparent"
                       stroke={isHighlighted ? "#fff" : "rgba(255,255,255,0.1)"}
@@ -169,6 +174,7 @@ export default class ClusterMapView extends React.Component {
           <g style={{ transform: "translate(0px, 0px)" }}>
             {this.props.clusterData.map(cluster => (
               <polygon
+                key={cluster.id}
                 points={cluster.concaveHull.map(point =>
                   this.getPointLocation(point, width, height)
                 )}

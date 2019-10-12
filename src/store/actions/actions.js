@@ -68,7 +68,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/projects").then(result => {
+    axios.get("./projects.json").then(result => {
       dispatch(updateProjectsData(result.data));
     });
   };
@@ -76,7 +76,7 @@ export const fetchProjectsData = () => {
 
 export const fetchKTAData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/knowledgeTransferActivities").then(result => {
+    axios.get("./ktas.json").then(result => {
       dispatch(updateKTAData(result.data));
     });
   };
@@ -84,8 +84,8 @@ export const fetchKTAData = () => {
 
 export const fetchKTAMappingData = () => {
   return dispatch => {
-  //  https://localhost:5433/ktastargetgroups
-    axios.get("https://localhost:5433/ktastargetgroups").then(result => {
+    //  https://localhost:5433/ktastargetgroups
+    axios.get("./kta_mapping.json").then(result => {
       dispatch(updateKTAMappingData(result.data));
     });
   };
@@ -148,7 +148,6 @@ export const updateKTAMappingData = ktaMappingData => {
     value: ktaMappingData
   };
 };
-
 
 export const setSideBarComponent = component => {
   return {

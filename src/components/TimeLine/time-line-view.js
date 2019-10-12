@@ -112,20 +112,6 @@ class TimeLineView extends Component {
     });
   }
 
-  renderProjectsPopover() {
-    let selectedProjects = this.state.selectedProjects;
-    let title = "";
-    let year = "";
-    let counter = 0;
-    if (selectedProjects) {
-      title = selectedProjects[0].research_area;
-      selectedProjects.forEach(project => {
-        counter++;
-        year = project.start_date;
-      });
-    }
-  }
-
   renderProjectsHover() {
     return (
       this.state.hoveredCircle &&
@@ -297,7 +283,6 @@ class TimeLineView extends Component {
             ))}
           </g>
         </SVGWithMargin>
-        {this.renderProjectsPopover()}
         {this.renderProjectsHover()}
       </div>
     );

@@ -26,8 +26,8 @@ public/clusters.json
 public/formats.json
 public/institutions.json
 public/ktas.json
-public/ktaTargetGroup.json
+public/kta_mapping.json
 public/mfnprojects.json
 public/projects.json
-public/targetGroups.json
+public/target_groups.json
 public/projects_old.json
