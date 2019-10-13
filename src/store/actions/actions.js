@@ -68,7 +68,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("./projects.json").then(result => {
+    axios.get("https://localhost:5433/projects").then(result => {
       dispatch(updateProjectsData(result.data));
     });
   };
@@ -76,16 +76,18 @@ export const fetchProjectsData = () => {
 
 export const fetchKTAData = () => {
   return dispatch => {
-    axios.get("./ktas.json").then(result => {
-      dispatch(updateKTAData(result.data));
-    });
+    axios
+      .get("https://localhost:5433/knowledgeTransferActivities")
+      .then(result => {
+        dispatch(updateKTAData(result.data));
+      });
   };
 };
 
 export const fetchKTAMappingData = () => {
   return dispatch => {
     //  https://localhost:5433/ktastargetgroups
-    axios.get("./kta_mapping.json").then(result => {
+    axios.get("https://localhost:5433/ktastargetgroups").then(result => {
       dispatch(updateKTAMappingData(result.data));
     });
   };
