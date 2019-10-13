@@ -9,7 +9,6 @@ import {
 } from "../../util/utility";
 import { parse as queryStringParse } from "query-string";
 import FilterPanel from "../../components/FilterPanel/filter-panel";
-import { updateOldProjectData } from "../actions/actions";
 
 const initialState = {
   filters: {

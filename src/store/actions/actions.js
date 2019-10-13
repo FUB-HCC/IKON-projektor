@@ -76,15 +76,17 @@ export const fetchProjectsData = () => {
 
 export const fetchKTAData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/knowledgeTransferActivities").then(result => {
-      dispatch(updateKTAData(result.data));
-    });
+    axios
+      .get("https://localhost:5433/knowledgeTransferActivities")
+      .then(result => {
+        dispatch(updateKTAData(result.data));
+      });
   };
 };
 
 export const fetchKTAMappingData = () => {
   return dispatch => {
-  //  https://localhost:5433/ktastargetgroups
+    //  https://localhost:5433/ktastargetgroups
     axios.get("https://localhost:5433/ktastargetgroups").then(result => {
       dispatch(updateKTAMappingData(result.data));
     });
@@ -148,7 +150,6 @@ export const updateKTAMappingData = ktaMappingData => {
     value: ktaMappingData
   };
 };
-
 
 export const setSideBarComponent = component => {
   return {

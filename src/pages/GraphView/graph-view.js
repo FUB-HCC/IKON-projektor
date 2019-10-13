@@ -91,7 +91,6 @@ class GraphView extends React.Component {
   }
 
   render() {
-    console.log(this.props.oldProjects, "######");
     const geoMapProps = {
       width: this.state.width,
       height: this.state.height,

@@ -7,6 +7,87 @@ import { ReactComponent as SouthAmerica } from "../../assets/GeoMap/continents/s
 import { ReactComponent as Asia } from "../../assets/GeoMap/continents/asia.svg";
 import { ReactComponent as Australia } from "../../assets/GeoMap/continents/australia.svg";
 
+const continents = [
+  {
+    name: "Europa",
+    svg: <Europe />,
+    xOffset: 97.8,
+    yOffset: 48.4,
+    mapWidth: 292,
+    mapHeight: 384,
+    longMin: -10.6,
+    longMax: 40.166,
+    latMin: 34.8888,
+    latMax: 71.27,
+    institutionCount: 0
+  },
+  {
+    name: "Nordamerika",
+    svg: <NorthAmerica />,
+    xOffset: 61.4,
+    yOffset: 53.1,
+    mapWidth: 378,
+    mapHeight: 384,
+    longMin: -168.1311,
+    longMax: -11.39,
+    latMin: 7.322,
+    latMax: 83.5702,
+    institutionCount: 0
+  },
+  {
+    name: "Südamerika",
+    svg: <SouthAmerica />,
+    xOffset: 97.8,
+    yOffset: 96,
+    mapWidth: 330,
+    mapHeight: 384,
+    longMin: -81.2897,
+    longMax: -26.2463,
+    latMin: -59.473,
+    latMax: 12.6286,
+    institutionCount: 0
+  },
+  {
+    name: "Asien",
+    svg: <Asia />,
+    xOffset: 63.1,
+    yOffset: 55.4,
+    mapWidth: 383,
+    mapHeight: 387,
+    longMin: 20.01,
+    longMax: 189.82,
+    latMin: -22.147,
+    latMax: 81.328,
+    institutionCount: 0
+  },
+  {
+    name: "Afrika",
+    svg: <Africa />,
+    xOffset: 75.8,
+    yOffset: 61.2,
+    mapWidth: 348,
+    mapHeight: 394,
+    longMin: -17.537,
+    longMax: 51.412,
+    latMin: -34.822,
+    latMax: 37.34,
+    institutionCount: 0
+  },
+  {
+    name: "Australien",
+    svg: <Australia />,
+    xOffset: 97.8,
+    yOffset: 96,
+    mapWidth: 330,
+    mapHeight: 384,
+    longMin: 112.9511,
+    longMax: 159.1019,
+    latMin: -54.749,
+    latMax: -10.0516,
+    institutionCount: 0
+  }
+];
+
 const getInstitutionFromId = (institutionsList, id) =>
   institutionsList.find(institution => institution.id === id);
 
@@ -69,91 +150,11 @@ const GeoMapView = props => {
     return <div />;
   }
   let institutions = props.institutions;
-  console.log(projects, institutions);
   institutions = institutions.map(ins => Object.assign(ins));
   institutions = institutions.filter(ins => ins.lon && ins.lat);
   const width = props.width ? props.width : 1000;
   const institution = id => getInstitutionFromId(institutions, id);
-  const continents = [
-    {
-      name: "Europa",
-      svg: <Europe />,
-      xOffset: 97.8,
-      yOffset: 48.4,
-      mapWidth: 292,
-      mapHeight: 384,
-      longMin: -10.6,
-      longMax: 40.166,
-      latMin: 34.8888,
-      latMax: 71.27,
-      institutionCount: 0
-    },
-    {
-      name: "Nordamerika",
-      svg: <NorthAmerica />,
-      xOffset: 61.4,
-      yOffset: 53.1,
-      mapWidth: 378,
-      mapHeight: 384,
-      longMin: -168.1311,
-      longMax: -11.39,
-      latMin: 7.322,
-      latMax: 83.5702,
-      institutionCount: 0
-    },
-    {
-      name: "Südamerika",
-      svg: <SouthAmerica />,
-      xOffset: 97.8,
-      yOffset: 96,
-      mapWidth: 330,
-      mapHeight: 384,
-      longMin: -81.2897,
-      longMax: -26.2463,
-      latMin: -59.473,
-      latMax: 12.6286,
-      institutionCount: 0
-    },
-    {
-      name: "Asien",
-      svg: <Asia />,
-      xOffset: 63.1,
-      yOffset: 55.4,
-      mapWidth: 383,
-      mapHeight: 387,
-      longMin: 20.01,
-      longMax: 189.82,
-      latMin: -22.147,
-      latMax: 81.328,
-      institutionCount: 0
-    },
-    {
-      name: "Afrika",
-      svg: <Africa />,
-      xOffset: 75.8,
-      yOffset: 61.2,
-      mapWidth: 348,
-      mapHeight: 394,
-      longMin: -17.537,
-      longMax: 51.412,
-      latMin: -34.822,
-      latMax: 37.34,
-      institutionCount: 0
-    },
-    {
-      name: "Australien",
-      svg: <Australia />,
-      xOffset: 97.8,
-      yOffset: 96,
-      mapWidth: 330,
-      mapHeight: 384,
-      longMin: 112.9511,
-      longMax: 159.1019,
-      latMin: -54.749,
-      latMax: -10.0516,
-      institutionCount: 0
-    }
-  ];
+
   continents.forEach((c, i) => {
     c.anchorPoint = (width / 12) * (i * 2 + 1);
     c.centroidX = (c.longMax + c.longMin) / 2;
@@ -190,6 +191,7 @@ const GeoMapView = props => {
     continent(institution(project.institution_id));
     cooperatingInstitutions.forEach(c => continent(institution(c)));
   });
+
   let continentConnections = {};
   connections.forEach(con => {
     if (!institution(con[0]) || !institution(con[1])) {
