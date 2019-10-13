@@ -13,7 +13,7 @@ export default class ClusterDot extends React.Component {
   render() {
     const { x, y, color } = this.props;
     const scale =
-      this.props.projectData &&
+      this.props.point.projectData &&
       this.props.highlightedProjects.find(
         hProject => hProject === this.props.point.projectData.id
       )
