@@ -88,6 +88,9 @@ const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_KTA_DATA:
       return updateKtaData(state, action);
 
+    case actionTypes.UPDATE_TARGETGROUPS_DATA:
+      return updateTargetGroupsData(state, action);
+
     case actionTypes.UPDATE_KTA_MAPPING_DATA:
       return updateKtaMappingData(state, action);
 
@@ -149,6 +152,9 @@ const updateInstitutionsData = (state, action) =>
   });
 
 const updateKtaData = (state, action) => ({ ...state, ktas: action.value });
+
+const updateTargetGroupsData = (state, action) => ({ ...state, targetgroups: action.value });
+
 
 const updateKtaMappingData = (state, action) => ({
   ...state,
