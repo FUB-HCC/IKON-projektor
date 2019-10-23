@@ -17,7 +17,8 @@ const mapStateToProps = state => {
   if (
     state.main.clusterData &&
     state.main.projects.length > 0 &&
-    state.main.ktaMapping.length > 0
+    state.main.ktaMapping.length > 0 &&
+    state.main.categories.length > 0
   ) {
     const { cluster_data, project_data } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
@@ -43,6 +44,7 @@ const mapStateToProps = state => {
       if (cat.project_ids.includes(point.id)) {
         cat.connections.push(point);
       }
+
       return point;
     });
 
@@ -63,6 +65,7 @@ const mapStateToProps = state => {
         .map(filteredKtaM =>
           state.main.ktas.find(kta => filteredKtaM.kta_id === kta.id)
         );
+      console.log(ktas);
       category.count = ktas.length;
       category.connections = ktas
         .filter(kta => kta.project_id !== null)
