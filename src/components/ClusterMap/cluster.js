@@ -21,7 +21,9 @@ export default class Cluster extends React.Component {
             radius={this.props.radius}
             x={project.point[0]}
             y={project.point[1]}
-            highlightCat={this.props.highlightCat}
+            highlightedProjects={this.props.highlightedProjects}
+            highlightProject={this.props.highlightProject}
+            unHighlight={this.props.unHighlight}
             resetCat={this.props.resetCat}
             showProjectDetails={() =>
               this.props.showProjectDetails(cluster.projects[i].id)
