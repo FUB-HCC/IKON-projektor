@@ -4,7 +4,6 @@ import {
   createNewStateFromUrlData,
   fieldsStringToInt,
   topicToField,
-  categories,
   fieldsIntToString
 } from "../../util/utility";
 import { parse as queryStringParse } from "query-string";
@@ -48,7 +47,7 @@ const initialState = {
   institutions: [],
   ktas: [],
   ktaMapping: [],
-  categories: categories,
+  categories: [],
   clusterData: undefined,
   selectedProject: undefined,
   sideBarComponent: <FilterPanel />
@@ -153,7 +152,9 @@ const updateInstitutionsData = (state, action) =>
 
 const updateKtaData = (state, action) => ({ ...state, ktas: action.value });
 
-const updateTargetGroupsData = (state, action) => ({ ...state, targetgroups: action.value });
+const updateTargetGroupsData = (state, action) => ({
+  ...state, categories: action.value.map(category => ({...category, connections: [], count: 1, project_ids: []}))
+});
 
 
 const updateKtaMappingData = (state, action) => ({

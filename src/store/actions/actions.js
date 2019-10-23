@@ -143,10 +143,10 @@ export const updateKTAData = ktaData => {
   };
 };
 
-export const updateTargetGroupsData = ktaData => {
+export const updateTargetGroupsData = targetgroups => {
   return {
     type: actionTypes.UPDATE_TARGETGROUPS_DATA,
-    value: TargetGroupsData
+    value: targetgroups
   };
 };
 

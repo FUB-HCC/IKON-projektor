@@ -10,7 +10,8 @@ import {
   fetchProjectsData,
   fetchKTAData,
   fetchKTAMappingData,
-  fetchOldProjectData
+  fetchOldProjectData,
+  fetchTargetGroupsData
 } from "../../store/actions/actions";
 import { appMargin, menuBarHeight, sideBarWidth } from "../../App";
 
@@ -49,6 +50,7 @@ class GraphView extends React.Component {
     this.props.fetchKtaData();
     this.props.fetchKtaMappingData();
     this.props.fetchOldProjectsData();
+    this.props.fetchTargetGroupsData();
   }
 
   resize() {
@@ -164,7 +166,8 @@ const mapDispatchToProps = dispatch => {
     fetchInstitutionsData: () => dispatch(fetchInstitutionsData()),
     fetchKtaData: () => dispatch(fetchKTAData()),
     fetchKtaMappingData: () => dispatch(fetchKTAMappingData()),
-    fetchOldProjectsData: () => dispatch(fetchOldProjectData())
+    fetchOldProjectsData: () => dispatch(fetchOldProjectData()),
+    fetchTargetGroupsData: () => dispatch(fetchTargetGroupsData())
   };
 };
 

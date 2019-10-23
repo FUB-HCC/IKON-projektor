@@ -48,6 +48,10 @@ export default class ClusterMapView extends React.Component {
 
   render() {
     const { categories, width, height } = this.props;
+    console.log(categories);
+    if(categories.length <= 0){
+      return <div/>;
+    }
     const shiftX = width / 2 - 70;
     const shiftY = height / 2 + arcMarginTop;
     const radius = (Math.min(width, height) - arcMarginSides) / 2;
