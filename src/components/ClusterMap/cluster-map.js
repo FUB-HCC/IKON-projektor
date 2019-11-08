@@ -83,6 +83,7 @@ const mapStateToProps = state => {
     category.connections.forEach(conn => conn.category.push(category));
   });
 
+  categories = categories.filter(c => (c.count > 0));
   return {
     clusterData: clusters,
     categories: categories,
