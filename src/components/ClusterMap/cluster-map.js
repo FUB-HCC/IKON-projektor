@@ -14,19 +14,21 @@ const mapStateToProps = state => {
   let clusters = [];
   let transformedPoints = [];
   let categories = state.main.categories;
+  let topography = [];
   if (
     state.main.clusterData &&
     state.main.projects.length > 0 &&
     state.main.ktaMapping.length > 0 &&
     state.main.categories.length > 0
   ) {
-    const { cluster_data, project_data } = state.main.clusterData;
+
+    const { cluster_data, project_data, cluster_topography } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
     const colors = cluster_data.cluster_colour;
     const projects = project_data;
     const minX = _.min(_.map(projects, c => c.embpoint[0]));
     const minY = _.min(_.map(projects, c => c.embpoint[1]));
-
+    topography = cluster_topography;
     categories = state.main.categories.map(cat => cat);
     transformedPoints = projects.map(p => {
       const cat = _.sample(categories);
@@ -65,7 +67,7 @@ const mapStateToProps = state => {
         .map(filteredKtaM =>
           state.main.ktas.find(kta => filteredKtaM.kta_id === kta.id)
         );
-      console.log(ktas);
+      //console.log(ktas);
       category.count = ktas.length;
       category.connections = ktas
         .filter(kta => kta.project_id !== null)
@@ -83,7 +85,8 @@ const mapStateToProps = state => {
 
   return {
     clusterData: clusters,
-    categories: categories
+    categories: categories,
+    topography: topography
   };
 };
 

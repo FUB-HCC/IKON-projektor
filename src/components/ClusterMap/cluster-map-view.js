@@ -2,6 +2,11 @@ import React from "react";
 import _ from "lodash";
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
+import {contours as d3Contours}  from "d3-contour";
+import {
+  scaleLinear as d3ScaleLinear
+} from "d3-scale";
+import {extent as d3extent} from "d3-array";
 
 const arcMarginSides = (width, scale) => Math.min(0.25 * width, 0.25 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.15 * height, 0.15 * scale);
@@ -103,9 +108,27 @@ export default class ClusterMapView extends React.Component {
     ];
   };
 
+  normalizeContours = (coords, width, height) => {
+    var newConts = [];
+    if(typeof coords[0] != "undefined"){
+      for (var i = 0; i<coords[0].length; i++) {
+        const [x, y] = coords[0][i];
+        const nX = ((x/600)*clusterSize(this.scale)+clusterPosX(width, this.scale));
+        const nY = ((y/600)*clusterSize(this.scale)+clusterPosY(height, this.scale));
+        newConts[i] = [nX,nY];
+      }
+    }
+    return newConts;
+  }
+
+
   render() {
     const { categories, width, height } = this.props;
 
+    var colorHeat = d3ScaleLinear()
+        .domain(d3extent(this.props.topography))
+        .range(["#000000","#FFF"]);
+    var contours = d3Contours().size([600,600]).smooth([true])(this.props.topography);
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (categories.length === 0 || !width || !height || scale <= 0) {
@@ -127,6 +150,20 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
+        <g fill= "none" stroke= "#ccc" opacity="0.4"
+          transform={"translate(0 " + arcMarginTop(height, scale) + ")"}
+          strokeWeight="1px" strokeLinejoin="round">
+          {contours.map( cont => {
+            return (
+              <path className="isoline" d={
+                cont.coordinates.map( coord => {
+                  var coords = this.normalizeContours(coord, width, height);
+                  return("M" + coords[0] + "L" + coords);
+                })
+              } fill={colorHeat(cont.value)} />
+            );
+          })}
+        </g>
           <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
             <g style={{ transform: "translate(0px, 0px)" }}>
               {this.props.clusterData.map(cluster => (
@@ -139,7 +176,7 @@ export default class ClusterMapView extends React.Component {
                   strokeWidth={clusterHullStrokeWidth(scale)}
                   strokeLinejoin="round"
                   fill="#aaaaaa"
-                  opacity="0.3"
+                  opacity="0.5"
                 />
               ))}
               {this.props.clusterData.map(cluster => {
