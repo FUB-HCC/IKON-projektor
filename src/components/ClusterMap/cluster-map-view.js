@@ -8,9 +8,9 @@ import {
 } from "d3-scale";
 import {extent as d3extent} from "d3-array";
 
-const arcMarginSides = (width, scale) => Math.min(0.25 * width, 0.25 * scale);
-const arcMarginTop = (height, scale) => Math.min(0.15 * height, 0.15 * scale);
-const clusterSize = scale => 0.35 * scale;
+const arcMarginSides = (width, scale) => Math.min(0.20 * width, 0.20 * scale);
+const arcMarginTop = (height, scale) => Math.min(0.10 * height, 0.10 * scale);
+const clusterSize = scale => 0.5 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
 const clusterHullStrokeWidth = scale => 0.025 * scale;
@@ -97,6 +97,24 @@ export default class ClusterMapView extends React.Component {
     );
   }
 
+  wrapText = (text) => {
+    var newtext = [];
+    var i = 0;
+    var stop =0;
+    for (let j=0; j< text.length; j++){
+      if ((text[j] === " " && i >17) ){
+        newtext.push(text.substring(stop,j+1));
+        stop = j;
+        console.log(newtext);
+        i = 0;
+      } if(j == text.length-1){
+        newtext.push(text.substring(stop,j+1));
+      }
+      i++;
+    }
+    return newtext;
+  }
+
   getPointLocation = (pt, width, height) => {
     const [x, y] = pt;
     const normalizedX = x / this.maxX;
@@ -108,7 +126,7 @@ export default class ClusterMapView extends React.Component {
     ];
   };
 
-  normalizeContours = (coords, width, height) => {
+  scaleContours = (coords, width, height) => {
     var newConts = [];
     if(typeof coords[0] != "undefined"){
       for (var i = 0; i<coords[0].length; i++) {
@@ -127,7 +145,7 @@ export default class ClusterMapView extends React.Component {
 
     var colorHeat = d3ScaleLinear()
         .domain(d3extent(this.props.topography))
-        .range(["#000000","#FFF"]);
+        .range(["#000","#FFF"]);
     var contours = d3Contours().size([600,600]).smooth([true])(this.props.topography);
     this.scale = Math.min(height, width);
     const scale = this.scale;
@@ -150,14 +168,14 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
-        <g fill= "none" stroke= "#ccc" opacity="0.4"
+        <g fill= "none" stroke= "#ccc" 
           transform={"translate(0 " + arcMarginTop(height, scale) + ")"}
           strokeWeight="1px" strokeLinejoin="round">
           {contours.map( cont => {
             return (
               <path className="isoline" d={
                 cont.coordinates.map( coord => {
-                  var coords = this.normalizeContours(coord, width, height);
+                  var coords = this.scaleContours(coord, width, height);
                   return("M" + coords[0] + "L" + coords);
                 })
               } fill={colorHeat(cont.value)} />
@@ -294,8 +312,18 @@ export default class ClusterMapView extends React.Component {
                         fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
                       }
                       transform={`rotate(${textRotate} ${textX} ${textY})`}
-                    >
-                      {cat.title}
+                    >{this.wrapText(cat.title)[0]}
+                    </text>
+                    <text
+                      x={textX-7}
+                      y={textY+9}
+                      textAnchor={anchor}
+                      fill="white"
+                      fontSize={
+                        fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                      }
+                      transform={`rotate(${textRotate} ${textX-5} ${textY+5})`}
+                    >{this.wrapText(cat.title)[1]}
                     </text>
                   </g>
                   <g>
