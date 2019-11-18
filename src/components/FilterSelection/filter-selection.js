@@ -82,23 +82,32 @@ const getFilterSets = filters => {
       ]
     },
     {
-      name: "Infrastruktur",
-      subsets: [
-        {
-          name: "Sammlungen",
-          filterId: null,
-          isTogglable: false,
+      name: "Labore u. Großgeräte",
+      subsets:
+        filters.infrastruktur.uniqueVals.map(
+      val => {
+          return {
+          name: val,
+          filterId: "infrastruktur",
+          isTogglable: true,
           subFilters: [],
-          subFilterId: null
-        },
-        {
-          name: "Labore u. Großgeräte",
-          filterId: null,
-          isTogglable: false,
-          subFilters: [],
-          subFilterId: null
+          subFilterId: null }
         }
-      ]
+      )
+    },
+    {
+      name: "Sammlungen",
+      subsets:
+        filters.collections.uniqueVals.map(
+      val => {
+          return {
+          name: val,
+          filterId: "collections",
+          isTogglable: true,
+          subFilters: [],
+          subFilterId: null }
+        }
+      )
     },
     {
       name: "Geldgeber",
@@ -106,6 +115,7 @@ const getFilterSets = filters => {
     }
   ];
 };
+
 
 const FilterSelection = props => (
   <div className={style.filterSelectionWrapper}>

@@ -51,8 +51,8 @@ export default class ClusterDot extends React.Component {
           version="1.1"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <title>Project Icon Geistes</title>
-          <desc>Created with Sketch.</desc>
+          <title>{this.props.radius}</title>
+          <desc>Description here</desc>
           <g id="Project-Icon-Geistes" fill={color} stroke={color}>
             <circle id="Oval" cx="39.2" cy="39.2" r="13.8" />
             <circle id="Oval" cx="35.3" cy="15.3" r="2.3" />

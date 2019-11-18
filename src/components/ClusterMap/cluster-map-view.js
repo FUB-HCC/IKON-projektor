@@ -7,6 +7,7 @@ import {
   scaleLinear as d3ScaleLinear
 } from "d3-scale";
 import {extent as d3extent} from "d3-array";
+var spo = require('svg-path-outline');
 
 const arcMarginSides = (width, scale) => Math.min(0.20 * width, 0.20 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.10 * height, 0.10 * scale);
@@ -105,9 +106,8 @@ export default class ClusterMapView extends React.Component {
       if ((text[j] === " " && i >17) ){
         newtext.push(text.substring(stop,j+1));
         stop = j;
-        console.log(newtext);
         i = 0;
-      } if(j == text.length-1){
+      } if(j === text.length-1){
         newtext.push(text.substring(stop,j+1));
       }
       i++;
@@ -153,12 +153,37 @@ export default class ClusterMapView extends React.Component {
       return <div />;
     }
 
+    var ClusterHullPoints = [];
+    ClusterHullPoints = (this.props.clusterData.map(cluster =>  {
+      return (cluster.concaveHull.map(point =>{
+       return (this.getPointLocation(point, width, height));} ));}));
+
+    var clusterOutlines= ClusterHullPoints.map( clust => {
+          return spo(("M" + clust[0] + "L" + clust.join(" L ")),clusterHullStrokeWidth(scale/2));
+        });
     const shiftX = width / 2;
     const shiftY = height / 2;
     const radius = (scale - arcMarginSides(width, scale)) / 2;
     const each = 180 / (categories.length - 1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
     const conMax = cats[0].count;
+
+    // {this.props.clusterData.map(cluster => (
+    //   <polygon
+    //     key={cluster.id}
+    //     points={cluster.concaveHull.map(point =>
+    //       this.getPointLocation(point, width, height)
+    //     )}
+    //     outlineWidth="5px"
+    //     outlineStyle="solid"
+    //     outlineColor="#000"
+    //     stroke="#fff"
+    //     strokeWidth={clusterHullStrokeWidth(scale)}
+    //     strokeLinejoin="round"
+    //     opacity="0.5"
+    //     fill="none"
+    //   />
+    // ))}
 
     return (
       <div className={style.clusterMapWrapper}>
@@ -168,12 +193,33 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
-        <g fill= "none" stroke= "#ccc" 
-          transform={"translate(0 " + arcMarginTop(height, scale) + ")"}
-          strokeWeight="1px" strokeLinejoin="round">
+        <defs>
+        <mask x="0" y="0" width="1" height="1" id="clusterMask">
+        <path d={ ClusterHullPoints.map( clust => {
+              return "M" + clust[0] + "L" + clust;
+            }) } fill="#fff" stroke="#fff" strokeLinejoin="round"             strokeWidth={clusterHullStrokeWidth(scale)} />
+        </mask>
+        </defs>
+        <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
+        {this.props.clusterData.map(cluster => (
+          <polygon
+            key={cluster.id}
+            points={cluster.concaveHull.map(point =>
+              this.getPointLocation(point, width, height)
+            )}
+            stroke="#fff"
+            strokeWidth={clusterHullStrokeWidth(scale)}
+            strokeLinejoin="round"
+            opacity="0.5"
+            fill="none"
+          />
+        ))}
+        </g>
+        <g fill="none" mask="url(#clusterMask)"
+          transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
           {contours.map( cont => {
             return (
-              <path className="isoline" d={
+              <path className="isoline" key={cont.value}  d={
                 cont.coordinates.map( coord => {
                   var coords = this.scaleContours(coord, width, height);
                   return("M" + coords[0] + "L" + coords);
@@ -184,19 +230,7 @@ export default class ClusterMapView extends React.Component {
         </g>
           <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
             <g style={{ transform: "translate(0px, 0px)" }}>
-              {this.props.clusterData.map(cluster => (
-                <polygon
-                  key={cluster.id}
-                  points={cluster.concaveHull.map(point =>
-                    this.getPointLocation(point, width, height)
-                  )}
-                  stroke="#aaaaaa"
-                  strokeWidth={clusterHullStrokeWidth(scale)}
-                  strokeLinejoin="round"
-                  fill="#aaaaaa"
-                  opacity="0.5"
-                />
-              ))}
+
               {this.props.clusterData.map(cluster => {
                 return (
                   <Cluster
@@ -212,6 +246,12 @@ export default class ClusterMapView extends React.Component {
                   />
                 );
               })}
+            </g>
+            <g>
+            {clusterOutlines.map( clustOut => {
+              return [
+                <path d={clustOut} fill="none" stroke="#fff" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2px" /> ]})}
+
             </g>
             {categories.map((cat, i) => {
               const startAngle = each * i - 180;
@@ -235,7 +275,6 @@ export default class ClusterMapView extends React.Component {
               );
               const area = conLen / conMax;
               const rad = Math.sqrt(area / Math.PI) * circleScaling(scale) || 1;
-
               let lines = [];
               if (cat.connections.length > 0) {
                 lines = cat.connections.map(con => {
@@ -315,14 +354,14 @@ export default class ClusterMapView extends React.Component {
                     >{this.wrapText(cat.title)[0]}
                     </text>
                     <text
-                      x={textX-7}
-                      y={textY+9}
+                      x={textX-3 }
+                      y={textY+12}
                       textAnchor={anchor}
                       fill="white"
                       fontSize={
                         fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
                       }
-                      transform={`rotate(${textRotate} ${textX-5} ${textY+5})`}
+                      transform={`rotate(${textRotate} ${textX} ${textY})`}
                     >{this.wrapText(cat.title)[1]}
                     </text>
                   </g>

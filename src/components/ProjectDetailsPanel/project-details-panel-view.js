@@ -14,7 +14,7 @@ const ProjectDetailsPanel = props => {
       </div>
       <div className={style.projectDetailsTitle}>
         <span className={style.titleText}>
-          {props.projectData.titelprojekt}
+          {props.projectData.title}
         </span>
       </div>
       <div className={style.projectDetailsAbstract}>

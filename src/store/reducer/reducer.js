@@ -38,6 +38,20 @@ const initialState = {
       type: "t",
       uniqueVals: [],
       value: []
+    },
+    collections: {
+      name: "Sammlungen",
+      filterKey: "collections",
+      type: "a",
+      uniqueVals: [],
+      value: []
+    },
+    infrastruktur: {
+      name: "Labore u. Großgeräte",
+      filterKey: "infrastruktur",
+      type: "a",
+      uniqueVals: [],
+      value: []
     }
   },
   graph: "0",
@@ -139,6 +153,11 @@ const compare = (a, b) => {
   else return 1;
 };
 
+const compareStrings = (a, b) => {
+  if (a < b) return -1;
+  else return 1;
+};
+
 const updateClusterData = (state, action) =>
   Object.assign({}, state, {
     clusterData: action.value
@@ -180,6 +199,8 @@ const updateProjectsData = (state, action) => {
       new Date(project.funding_start_year).getFullYear(),
       new Date(project.funding_end_year).getFullYear()
     ];
+    project.collections = typeof project.sammlungen != "undefined" ? ( project.sammlungen[0] != null ? [project.sammlungen[0]] : "Keine Sammlung") : "Keine Sammlung" ;
+    project.infrastruktur = typeof project.infrastruktur != "undefined" ?( project.infrastruktur[0] != null ? [project.infrastruktur[0]] : "Keine Infrastruktur") : "Keine Infrastruktur" ;
     if (
       project.participating_subject_areas &&
       project.participating_subject_areas.split("/")[0]
@@ -205,6 +226,8 @@ const updateProjectsData = (state, action) => {
   const uniqueFields = [];
   const uniqueTopics = [];
   const uniqueSponsors = [];
+  const uniqueInfrastruktur = [];
+  const uniqueCollections = [];
   const maxDateRange = [5000, 0];
 
   Object.values(projects).forEach(project => {
@@ -221,6 +244,10 @@ const updateProjectsData = (state, action) => {
           maxDateRange[0] < value[0] ? maxDateRange[0] : value[0];
         maxDateRange[1] =
           maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
+      } else if (property === "collections") {
+            if (!uniqueCollections.some(e => e === value)) uniqueCollections.push(value);
+      } else if (property === "infrastruktur") {
+            if (!uniqueInfrastruktur.some(e => e === value)) uniqueInfrastruktur.push(value);
       }
     });
   });
@@ -246,6 +273,16 @@ const updateProjectsData = (state, action) => {
       ...state.filters.time,
       uniqueVals: maxDateRange,
       value: maxDateRange
+    },
+    collections: {
+      ...state.filters.collections,
+      uniqueVals: uniqueCollections.sort(compareStrings),
+      value: uniqueCollections
+    },
+    infrastruktur: {
+      ...state.filters.infrastruktur,
+      uniqueVals: uniqueInfrastruktur.sort(compareStrings),
+      value: uniqueInfrastruktur
     }
   };
 
@@ -305,6 +342,7 @@ const toggleAllFiltersOfField = (filters, fieldValue) => {
   }
   return newValue;
 };
+
 
 const setSelectedProject = (state, action) => ({
   ...state,
