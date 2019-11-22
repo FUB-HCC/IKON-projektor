@@ -8,7 +8,7 @@ import {
   setSideBarComponent
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
-import { getFieldColor } from "../../util/utility";
+import { getFieldIcon } from "../../util/utility";
 
 const mapStateToProps = state => {
   let clusters = [];
@@ -41,7 +41,8 @@ const mapStateToProps = state => {
         cat: cat.id,
         category: [],
         project: project,
-        color: project ? getFieldColor(project.forschungsbereich) : "none"
+        color: project ? colors[p.cluster] : "none",
+        icon: project ? getFieldIcon(project.forschungsbereich) : " "
       };
       if (cat.project_ids.includes(point.id)) {
         cat.connections.push(point);

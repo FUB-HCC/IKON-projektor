@@ -41,15 +41,15 @@ const initialState = {
     },
     collections: {
       name: "Sammlungen",
-      filterKey: "collections",
-      type: "a",
+      filterKey: "sammlungen",
+      type: "l",
       uniqueVals: [],
       value: []
     },
-    infrastruktur: {
-      name: "Labore u. Großgeräte",
+    infrastructure: {
+      name: "Laborgeräte",
       filterKey: "infrastruktur",
-      type: "a",
+      type: "l",
       uniqueVals: [],
       value: []
     }
@@ -138,7 +138,14 @@ const applyFilters = (data, filter) => {
         ) {
           newFilteredData[d] = filteredData[d];
         }
-      } else {
+      } else if (f.type === "l") {
+        //console.log(filteredData[d][f.filterKey]);
+        for (const entry of filteredData[d][f.filterKey]){
+          if (f.value.some(value => value === entry))
+            newFilteredData[d] = filteredData[d];
+        }
+      }
+      else {
         if (filteredData[d][f.filterKey].includes(f.value))
           newFilteredData[d] = filteredData[d];
       }
@@ -199,8 +206,8 @@ const updateProjectsData = (state, action) => {
       new Date(project.funding_start_year).getFullYear(),
       new Date(project.funding_end_year).getFullYear()
     ];
-    project.collections = typeof project.sammlungen != "undefined" ? ( project.sammlungen[0] != null ? [project.sammlungen[0]] : "Keine Sammlung") : "Keine Sammlung" ;
-    project.infrastruktur = typeof project.infrastruktur != "undefined" ?( project.infrastruktur[0] != null ? [project.infrastruktur[0]] : "Keine Infrastruktur") : "Keine Infrastruktur" ;
+    project.sammlungen = typeof project.sammlungen != "undefined" && project.sammlungen[0] != null ? project.sammlungen : ["Keine Sammlung"];
+    project.infrastruktur = typeof project.infrastruktur != "undefined" && project.infrastruktur[0] != null ? project.infrastruktur : ["Kein Laborgerät"];
     if (
       project.participating_subject_areas &&
       project.participating_subject_areas.split("/")[0]
@@ -226,7 +233,7 @@ const updateProjectsData = (state, action) => {
   const uniqueFields = [];
   const uniqueTopics = [];
   const uniqueSponsors = [];
-  const uniqueInfrastruktur = [];
+  const uniqueInfrastructure = [];
   const uniqueCollections = [];
   const maxDateRange = [5000, 0];
 
@@ -244,10 +251,12 @@ const updateProjectsData = (state, action) => {
           maxDateRange[0] < value[0] ? maxDateRange[0] : value[0];
         maxDateRange[1] =
           maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
-      } else if (property === "collections") {
-            if (!uniqueCollections.some(e => e === value)) uniqueCollections.push(value);
+      } else if (property === "sammlungen") {
+        for (const entry of Object.values(value))
+            if (!uniqueCollections.some(e => e === entry)) uniqueCollections.push(entry);
       } else if (property === "infrastruktur") {
-            if (!uniqueInfrastruktur.some(e => e === value)) uniqueInfrastruktur.push(value);
+        for (const entry of Object.values(value))
+            if (!uniqueInfrastructure.some(e => e === entry)) uniqueInfrastructure.push(entry);
       }
     });
   });
@@ -279,10 +288,10 @@ const updateProjectsData = (state, action) => {
       uniqueVals: uniqueCollections.sort(compareStrings),
       value: uniqueCollections
     },
-    infrastruktur: {
-      ...state.filters.infrastruktur,
-      uniqueVals: uniqueInfrastruktur.sort(compareStrings),
-      value: uniqueInfrastruktur
+    infrastructure: {
+      ...state.filters.infrastructure,
+      uniqueVals: uniqueInfrastructure.sort(compareStrings),
+      value: uniqueInfrastructure
     }
   };
 

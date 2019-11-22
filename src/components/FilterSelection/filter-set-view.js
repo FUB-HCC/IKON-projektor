@@ -1,6 +1,8 @@
 import React from "react";
 import style from "./filter-selection.module.css";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor,getFieldIcon } from "../../util/utility";
+
+
 
 const FilterSet = props => {
   return (
@@ -18,6 +20,7 @@ const FilterSet = props => {
             <CheckBox
               name={subset.name}
               id={subset.filterId}
+              icon={subset.name}
               checked={
                 !props.filters[subset.filterId]
                   ? false
@@ -52,7 +55,18 @@ export default FilterSet;
 
 const CheckBox = props => (
   <div className={style.checkBoxWrapper}>
-    <span>{props.name}</span>
+    <span>{props.name}
+    <svg
+      className={style.checkBoxIcon}
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      x="0px" y="0px"
+      viewBox="0 0 100 100"
+      fill={props.color}
+      stroke={getFieldColor(props.icon)}>
+      <path d={getFieldIcon(props.icon)}/>
+    </svg>
+    </span>
     <input
       checked={props.checked}
       className={style.checkBox}

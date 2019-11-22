@@ -52,7 +52,7 @@ const graphColors = {
 };
 
 const mapStateToProps = state => {
-  const processedData = processData(state.main.filteredProjects, graphColors);
+  const processedData = processData(state.main.filteredProjects, state.main.clusterData, graphColors);
   return {
     dataSplitFbYear: processedData,
     projects: state.main.filteredProjects,
@@ -60,7 +60,7 @@ const mapStateToProps = state => {
   };
 };
 
-const processData = (data, colors) => {
+const processData = (data, clusterData, colors) => {
   /*
    Private
    Transforms the data in to a format which can be easily used for the Visulisation.
@@ -98,6 +98,7 @@ const processData = (data, colors) => {
           forschungsbereichData[yearFbIndex].projects.push(data[projectsKey]);
         }
       }
+      //color: clusterData.project_data[projectsKey] ? clusterData.cluster_data.cluster_colour[clusterData.project_data[projectsKey].cluster] : getFieldColor(data[projectsKey].forschungsbereichstr)
       if (!yearExists) {
         forschungsbereichData.push({
           year: year,

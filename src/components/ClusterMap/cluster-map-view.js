@@ -7,14 +7,14 @@ import {
   scaleLinear as d3ScaleLinear
 } from "d3-scale";
 import {extent as d3extent} from "d3-array";
-var spo = require('svg-path-outline');
+//var spo = require('svg-path-outline');
 
 const arcMarginSides = (width, scale) => Math.min(0.20 * width, 0.20 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.10 * height, 0.10 * scale);
-const clusterSize = scale => 0.5 * scale;
+const clusterSize = scale => 0.4 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
-const clusterHullStrokeWidth = scale => 0.025 * scale;
+//const clusterHullStrokeWidth = scale => 0.025 * scale;
 const fontSizeText = scale => 0.009 * scale;
 const fontSizeCount = scale => 0.006 * scale;
 const textOffsetFromArc = scale => 0.03 * scale;
@@ -145,7 +145,7 @@ export default class ClusterMapView extends React.Component {
 
     var colorHeat = d3ScaleLinear()
         .domain(d3extent(this.props.topography))
-        .range(["#000","#FFF"]);
+        .range(["#000","#AAA"]);
     var contours = d3Contours().size([600,600]).smooth([true])(this.props.topography);
     this.scale = Math.min(height, width);
     const scale = this.scale;
@@ -153,30 +153,36 @@ export default class ClusterMapView extends React.Component {
       return <div />;
     }
 
-    var ClusterHullPoints = [];
-    ClusterHullPoints = (this.props.clusterData.map(cluster =>  {
-      return (cluster.concaveHull.map(point =>{
-       return (this.getPointLocation(point, width, height));} ));}));
-
-    var clusterOutlines= ClusterHullPoints.map( clust => {
-          return spo(("M" + clust[0] + "L" + clust.join(" L ")),clusterHullStrokeWidth(scale/2));
-        });
     const shiftX = width / 2;
     const shiftY = height / 2;
     const radius = (scale - arcMarginSides(width, scale)) / 2;
     const each = 180 / (categories.length - 1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
+    const catsSort = _.sortBy(categories, x => x.title);
     const conMax = cats[0].count;
 
+    // var ClusterHullPoints = [];
+    // ClusterHullPoints = (this.props.clusterData.map(cluster =>  {
+    //   return (cluster.concaveHull.map(point =>{
+    //    return (this.getPointLocation(point, width, height));} ));}));
+
+    // var clusterOutlines= ClusterHullPoints.map( clust => {
+    //       return spo(("M" + clust[0] + "L" + clust.join(" L ")),clusterHullStrokeWidth(scale/2));
+    //     });
+    // mask="url(#clusterMask)"
+    // <g>
+    // {clusterOutlines.map( (clustOut,i) => {
+    //   return [
+    //     <path key={i} d={clustOut} fill="none" stroke="#fff" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2px" /> ]})}
+    //
+    // </g>
+    // <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
     // {this.props.clusterData.map(cluster => (
     //   <polygon
     //     key={cluster.id}
     //     points={cluster.concaveHull.map(point =>
     //       this.getPointLocation(point, width, height)
     //     )}
-    //     outlineWidth="5px"
-    //     outlineStyle="solid"
-    //     outlineColor="#000"
     //     stroke="#fff"
     //     strokeWidth={clusterHullStrokeWidth(scale)}
     //     strokeLinejoin="round"
@@ -184,6 +190,14 @@ export default class ClusterMapView extends React.Component {
     //     fill="none"
     //   />
     // ))}
+    // </g>
+    // <defs>
+    // <mask x="0" y="0" width="1" height="1" id="clusterMask">
+    // <path d={ ClusterHullPoints.map( clust => {
+    //       return "M" + clust[0] + "L" + clust;
+    //     }) } fill="#fff" stroke="#fff" strokeLinejoin="round"             strokeWidth={clusterHullStrokeWidth(scale)} />
+    // </mask>
+    // </defs>
 
     return (
       <div className={style.clusterMapWrapper}>
@@ -193,29 +207,8 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
-        <defs>
-        <mask x="0" y="0" width="1" height="1" id="clusterMask">
-        <path d={ ClusterHullPoints.map( clust => {
-              return "M" + clust[0] + "L" + clust;
-            }) } fill="#fff" stroke="#fff" strokeLinejoin="round"             strokeWidth={clusterHullStrokeWidth(scale)} />
-        </mask>
-        </defs>
-        <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
-        {this.props.clusterData.map(cluster => (
-          <polygon
-            key={cluster.id}
-            points={cluster.concaveHull.map(point =>
-              this.getPointLocation(point, width, height)
-            )}
-            stroke="#fff"
-            strokeWidth={clusterHullStrokeWidth(scale)}
-            strokeLinejoin="round"
-            opacity="0.5"
-            fill="none"
-          />
-        ))}
-        </g>
-        <g fill="none" mask="url(#clusterMask)"
+
+        <g fill="none"
           transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
           {contours.map( cont => {
             return (
@@ -247,13 +240,8 @@ export default class ClusterMapView extends React.Component {
                 );
               })}
             </g>
-            <g>
-            {clusterOutlines.map( clustOut => {
-              return [
-                <path d={clustOut} fill="none" stroke="#fff" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2px" /> ]})}
 
-            </g>
-            {categories.map((cat, i) => {
+            {catsSort.map((cat, i) => {
               const startAngle = each * i - 180;
               const angle = startAngle * (Math.PI / 180);
               const conLen = cat.count;
@@ -366,6 +354,22 @@ export default class ClusterMapView extends React.Component {
                     </text>
                   </g>
                   <g>
+                    {lines.map((line, i) => (
+                      <path
+                        pointerEvents="none"
+                        key={i}
+                        strokeWidth={strokeWidth(scale)*3}
+                        fill="transparent"
+                        stroke={
+                          this.state.highlightedLinks.find(
+                            hline => hline === line[4]
+                          )
+                            ? "rgba(100,100,100,1)"
+                            : "rgba(100,100,100,0.1)"
+                        }
+                        d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                      />
+                    ))}
                     {lines.map((line, i) => (
                       <path
                         pointerEvents="none"

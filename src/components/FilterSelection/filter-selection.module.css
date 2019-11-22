@@ -64,10 +64,16 @@
     width: 20px;
     margin-right: 2px;
 }
+.checkBoxIcon {
+    margin-left: 5px;
+    height: 20px;
+    width: 20px;
+    position: relative;
+    top: .125em;
+    margin-right: 2px;
+}
 
 
 .checkBoxLabel:before {
     display: inline-block;
 }
-
-
