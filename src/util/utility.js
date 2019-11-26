@@ -29,10 +29,10 @@ export const createNewStateFromUrlData = (state, urlData) => {
 
 const fieldsMapping = [
   { name: "Naturwissenschaften", field: 1, color: "#989aa1" },
-  { name: "Lebenswissenschaften", field: 2, color: "#989aa1"},
-  { name: "Geistes- und Sozialwissenschaften", field: 3, color: "#989aa1"},
-  { name: "Ingenieurwissenschaften", field: 4, color: "#989aa1"},
-  { name: "Sonstige", field: 5, color: "#989aa1"}
+  { name: "Lebenswissenschaften", field: 2, color: "#989aa1" },
+  { name: "Geistes- und Sozialwissenschaften", field: 3, color: "#989aa1" },
+  { name: "Ingenieurwissenschaften", field: 4, color: "#989aa1" },
+  { name: "Sonstige", field: 5, color: "#989aa1" }
 ];
 
 const topicMapping = [

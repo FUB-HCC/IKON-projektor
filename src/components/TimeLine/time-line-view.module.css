@@ -21,8 +21,8 @@
 }
 
 .timelineContainer > .timelineContentContainer .yAxis text {
-    fill: #717071;
-    font-family: IBM_Plex_Mono;
+  fill: #717071;
+  font-family: IBM_Plex_Mono;
 }
 
 .timelineContainer > .timelineContentContainer .yAxis path {
@@ -46,6 +46,21 @@
 .timelineContainer > .timelineContentContainer .scatter circle:hover {
     stroke: rgba(255, 255, 255, 0.23);
     stroke-width: 8;
+}
+
+.ktasPlot {
+  fill: #717071;
+  color: #717071;
+  font-family: IBM_Plex_Mono;
+  overflow: auto;
+}
+
+.ktasPlot > .ktasLine{
+  font-family: IBM_Plex_Mono;
+  overflow: auto;
+  height: auto !important;
+  width: auto !important;
+  font-size: 10px;
 }
 
 .projects_list {
@@ -170,7 +185,7 @@
     color: #4a4a4a;
     text-transform: uppercase;
     font-size: 10px;
-    margin-bottom: 0;    
+    margin-bottom: 0;
 }
 .info_des{
     color: #9b9b9b;
@@ -192,7 +207,7 @@
 }
 
 .dt_modal_info{
-    width: 50%; 
+    width: 50%;
     margin-bottom: 20px;
 }
 
@@ -249,7 +264,7 @@
 }
 
 
-/* 
+/*
 .popFixer:after, .popFixer:before{
     top: 100%;
 	left: 50%;

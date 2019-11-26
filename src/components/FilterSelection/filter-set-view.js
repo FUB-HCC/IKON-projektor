@@ -31,8 +31,9 @@ const FilterSet = props => {
               color={getFieldColor(subset.name)}
             />
           </div>
-          {subset.subFilters.map((filter, i) => (
-            <div className={style.subFilter} key={subset.filterId + i}>
+          { 
+            subset.subFilters.map((filter, i) => (
+            <div className={style.subFilter} key={subset.name + i}>
               <CheckBox
                 name={filter}
                 id={subset.subFilterId}

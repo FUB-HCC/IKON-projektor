@@ -15,6 +15,7 @@ import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
+import { getFieldIcon } from "../../util/utility";
 
 class TimeLineView extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class TimeLineView extends Component {
     this.state = {
       dataSplitYears: [],
       forschungsbereiche: [],
+      ktasSplitYears: [],
       height: props.height * 0.25,
       width: props.width * 0.95,
       margin: props.margin,
@@ -97,6 +99,7 @@ class TimeLineView extends Component {
 
     this.setState({
       dataSplitYears: data.dataSplitFbYear,
+      ktasSplitYears: data.ktasSplitYears,
       projectsData: data.projects,
       forschungsbereiche: forschungsbereiche,
       firstUpdate: false
@@ -216,13 +219,35 @@ class TimeLineView extends Component {
         {
           x: selectScaledX(datum),
           y: selectScaledY(datum),
-          color: datum.color
+          color: datum.color,
+          icon: getFieldIcon(datum.fb),
+          fb: datum.fb
         },
         datum
       )
     );
     return (
-      <div style={{ marginTop: (this.props.height * 0.75) / 2 }}>
+      <div style={{ marginTop: (this.props.height * 0.05) }}>
+        <div className={styles.ktasPlot}>
+          {Object.keys(this.state.ktasSplitYears).map(targetgroup => {
+              if(this.state.ktasSplitYears[targetgroup].length <3){
+                return "";
+              }
+            return(<div key={targetgroup} className={styles.ktasLine}>
+              <span  >{targetgroup}</span> <br/>
+              <svg height={40} width={this.state.width} >
+              {this.state.ktasSplitYears[targetgroup].map(year =>{
+                return (
+                    <circle key={targetgroup + year.year} cx={xScale(new Date(year.year.toString()).setHours(0, 0, 0, 0))+this.state.margin} cy={19} r={Math.max(year.numberOfWtas/2,1)}
+                    fill="#fff" stroke="#fff"/>
+                );
+              })}
+              <line x1="0" y1="40" x2={this.state.width}  y2="40"stroke="#717071" fill="none" />
+              </svg>
+
+              </div>);})
+          }
+          </div>
         <SVGWithMargin
           className={styles.timelineContainer}
           contentContainerBackgroundRectClassName={
@@ -260,14 +285,18 @@ class TimeLineView extends Component {
           {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
           <g className={styles.scatter}>
             {circlePoints.map(circlePoint => (
-              <circle
-                cx={circlePoint.x}
-                cy={circlePoint.y}
+              <svg
+                width={12}
+                height={12}
+                x={circlePoint.x-6} y={circlePoint.y-6}
+                viewBox="0 0 100 100"
+                fill={circlePoint.color}
+                stroke={circlePoint.color}
                 style={{
                   fill: circlePoint.color,
                   pointerEvents: "fill"
                 }}
-                key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.color}`}
+                key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.fb}`}
                 onClick={evt => {
                   this.handleCircleClick(evt, circlePoint);
                 }}
@@ -277,12 +306,13 @@ class TimeLineView extends Component {
                 }}
                 onMouseEnter={event => {
                   this.handleCircleMouseEnter(circlePoint, event);
-                }}
-                r={4}
-              />
+                }}>
+                <path d={circlePoint.icon}/>
+              </svg>
             ))}
           </g>
         </SVGWithMargin>
+
         {this.renderProjectsHover()}
       </div>
     );
