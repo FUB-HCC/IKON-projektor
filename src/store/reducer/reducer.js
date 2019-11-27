@@ -101,9 +101,6 @@ const reducer = (state = initialState, action) => {
     case actionTypes.RESET_SELECTED_PROJECT:
       return resetSelectedProject(state);
 
-    case actionTypes.UPDATE_OLD_PROJECT_DATA:
-      return updateOldProjectsData(state, action);
-
     default:
       return state;
   }
@@ -152,9 +149,14 @@ const updateInstitutionsData = (state, action) =>
 const updateKtaData = (state, action) => ({ ...state, ktas: action.value });
 
 const updateTargetGroupsData = (state, action) => ({
-  ...state, categories: action.value.map(category => ({...category, connections: [], count: 1, project_ids: []}))
+  ...state,
+  categories: action.value.map(category => ({
+    ...category,
+    connections: [],
+    count: 1,
+    project_ids: []
+  }))
 });
-
 
 const updateKtaMappingData = (state, action) => ({
   ...state,

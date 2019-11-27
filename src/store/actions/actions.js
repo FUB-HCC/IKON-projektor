@@ -100,27 +100,11 @@ export const fetchTargetGroupsData = () => {
     });
   };
 };
-///projects_old.json
-
-export const fetchOldProjectData = () => {
-  return dispatch => {
-    axios.get("https://localhost:5433/projects").then(result => {
-      dispatch(updateOldProjectData(result.data));
-    });
-  };
-};
 
 export const updateClusterData = clusterData => {
   return {
     type: actionTypes.UPDATE_CLUSTER_DATA,
     value: clusterData
-  };
-};
-
-export const updateOldProjectData = oldProjectData => {
-  return {
-    type: actionTypes.UPDATE_OLD_PROJECT_DATA,
-    value: oldProjectData
   };
 };
 

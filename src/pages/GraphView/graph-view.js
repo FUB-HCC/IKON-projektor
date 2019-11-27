@@ -10,7 +10,6 @@ import {
   fetchProjectsData,
   fetchKTAData,
   fetchKTAMappingData,
-  fetchOldProjectData,
   fetchTargetGroupsData
 } from "../../store/actions/actions";
 import { appMargin, menuBarHeight, sideBarWidth } from "../../App";
@@ -49,7 +48,6 @@ class GraphView extends React.Component {
     this.props.fetchInstitutionsData();
     this.props.fetchKtaData();
     this.props.fetchKtaMappingData();
-    this.props.fetchOldProjectsData();
     this.props.fetchTargetGroupsData();
   }
 
@@ -98,7 +96,7 @@ class GraphView extends React.Component {
       height: this.state.height,
       onProjectClick: this.projectClickHandler,
       institutions: this.props.institutions,
-      projects: this.props.oldProjects
+      projects: this.props.filteredProjects
     };
     let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
@@ -165,7 +163,6 @@ const mapDispatchToProps = dispatch => {
     fetchInstitutionsData: () => dispatch(fetchInstitutionsData()),
     fetchKtaData: () => dispatch(fetchKTAData()),
     fetchKtaMappingData: () => dispatch(fetchKTAMappingData()),
-    fetchOldProjectsData: () => dispatch(fetchOldProjectData()),
     fetchTargetGroupsData: () => dispatch(fetchTargetGroupsData())
   };
 };
