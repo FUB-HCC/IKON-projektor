@@ -59,7 +59,8 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         graph: action.value,
-        filteredData: applyFilters(state.projects, state.filters)
+        filteredData: applyFilters(state.projects, state.filters),
+        sideBarComponent: <FilterPanel />
       };
 
     case actionTypes.CHECKBOX_FILTER_CHANGE:
