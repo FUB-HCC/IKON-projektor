@@ -163,12 +163,6 @@ const updateKtaMappingData = (state, action) => ({
   ktaMapping: action.value
 });
 
-const updateOldProjectsData = (state, action) => {
-  const projectData = action.value;
-
-  return { ...state, oldProjects: projectData };
-};
-
 const updateProjectsData = (state, action) => {
   const projectData = action.value;
   const projects = Object.values(projectData).map(project => {
