@@ -1,0 +1,57 @@
+.groupDetailsWrapper{
+ margin-top: 10px;
+}
+
+.groupDetailsExit{
+    height: 45px;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.exitSign{
+    fill: #069172;
+    height: 35px;
+}
+.groupDetailsTitle{
+    border-bottom: 1px solid #069172;
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    width: 100%;
+}
+.titleText {
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 25px;
+    color: #069172;
+    font-size: 25px;
+    font-weight: 100;
+}
+
+.groupDetailsAbstract{
+     color: white;
+     font-size: 20px;
+ }
+
+.ktaInfoList{
+    display: flex;
+    flex-direction: column;
+}
+
+.ktaInfoWrapper{
+    background-color: #1c1d1f;
+    min-height: 40px;
+    margin-top: 15px;
+    padding: 5px;
+}
+
+.ktaKeys{
+    color: #00dcac;
+    font-size: 15px;
+    margin-bottom: 2px;
+}
+
+.ktaValues{
+    color: #8a9ba8;
+    margin-bottom: 10px;
+}

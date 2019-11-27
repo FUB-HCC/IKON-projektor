@@ -4,11 +4,13 @@ import ClusterMapView from "./cluster-map-view";
 import _ from "lodash";
 import concave from "concaveman";
 import {
+  setSelectedGroup,
   setSelectedProject,
   setSideBarComponent
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 import { getFieldColor } from "../../util/utility";
+import GroupDetailsPanel from "../GroupDetailsPanel/group-details-panel";
 
 const mapStateToProps = state => {
   let clusters = [];
@@ -65,7 +67,6 @@ const mapStateToProps = state => {
         .map(filteredKtaM =>
           state.main.ktas.find(kta => filteredKtaM.kta_id === kta.id)
         );
-      console.log(ktas);
       category.count = ktas.length;
       category.connections = ktas
         .filter(kta => kta.project_id !== null)
@@ -92,6 +93,10 @@ const mapDispatchToProps = dispatch => {
     showProjectDetails: project => {
       dispatch(setSelectedProject(project));
       dispatch(setSideBarComponent(<ProjectDetailsPanel />));
+    },
+    showGroupDetails: group => {
+      dispatch(setSelectedGroup(group));
+      dispatch(setSideBarComponent(<GroupDetailsPanel />));
     }
   };
 };

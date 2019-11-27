@@ -238,6 +238,7 @@ export default class ClusterMapView extends React.Component {
                       cy={y}
                       stroke="white"
                       fill="white"
+                      onClick={() => this.props.showGroupDetails(cat.id)}
                     />
                     <text
                       x={lenX}

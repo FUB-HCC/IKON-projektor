@@ -3,7 +3,6 @@ import style from "./project-details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
 
 const ProjectDetailsPanel = props => {
-  console.log(props);
   return (
     <div className={style.projectDetailsWrapper}>
       <div

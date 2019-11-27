@@ -32,9 +32,22 @@ export const setSelectedProject = projectId => {
   };
 };
 
+export const setSelectedGroup = groupId => {
+  return {
+    type: actionTypes.SET_SELECTED_GROUP,
+    value: groupId
+  };
+};
+
 export const resetSelectedProject = () => {
   return {
     type: actionTypes.RESET_SELECTED_PROJECT
+  };
+};
+
+export const resetSelectedGroup = () => {
+  return {
+    type: actionTypes.RESET_SELECTED_GROUP
   };
 };
 

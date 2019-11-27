@@ -48,7 +48,8 @@ const initialState = {
   ktaMapping: [],
   categories: [],
   clusterData: undefined,
-  selectedProject: undefined,
+  selectedProject: null,
+  selectedGroup: null,
   sideBarComponent: <FilterPanel />
 };
 
@@ -101,6 +102,12 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.RESET_SELECTED_PROJECT:
       return resetSelectedProject(state);
+
+    case actionTypes.SET_SELECTED_GROUP:
+      return setSelectedGroup(state, action);
+
+    case actionTypes.RESET_SELECTED_GROUP:
+      return resetSelectedGroup(state);
 
     default:
       return state;
@@ -308,7 +315,14 @@ const setSelectedProject = (state, action) => ({
   selectedProject: action.value
 });
 
-const resetSelectedProject = state => ({ ...state, setSelectedProject: null });
+const resetSelectedProject = state => ({ ...state, selectedProject: null });
+
+const setSelectedGroup = (state, action) => ({
+  ...state,
+  selectedGroup: action.value
+});
+
+const resetSelectedGroup = state => ({ ...state, selectedGroup: null });
 
 const deactivatePopover = state => {
   const newState = {
