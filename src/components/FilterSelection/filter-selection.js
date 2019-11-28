@@ -63,21 +63,6 @@ const getFilterSets = filters => {
       ]
     },
     {
-      name: "Infrastruktur",
-      subsets: [
-        {
-          name: "Sammlungen",
-          subFilters: filters.collections.uniqueVals,
-          subFilterId: "collections"
-        },
-        {
-          name: "Laborgeräte",
-          subFilters: filters.infrastructure.uniqueVals,
-          subFilterId: "infrastructure"
-        }
-      ]
-    },
-    {
       name: "Wissenstransfer",
       subsets: [
         {
@@ -93,6 +78,23 @@ const getFilterSets = filters => {
           isTogglable: false,
           subFilters: [],
           subFilterId: null
+        }
+      ]
+    },
+    {
+      name: "Infrastruktur",
+      subsets: [
+        {
+          name: "Sammlungen",
+          subFilters: filters.collections.uniqueVals,
+          subFilterId: "collections",
+          isTogglable: false
+        },
+        {
+          name: "Laborgeräte",
+          subFilters: filters.infrastructure.uniqueVals,
+          subFilterId: "infrastructure",
+          isTogglable: false
         }
       ]
     }

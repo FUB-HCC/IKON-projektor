@@ -15,7 +15,7 @@ import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
-import { getFieldIcon } from "../../util/utility";
+import { getTimelineIcon } from "../../util/utility";
 
 class TimeLineView extends Component {
   constructor(props) {
@@ -144,7 +144,7 @@ class TimeLineView extends Component {
           >
             {/* {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`} */}
             <label>
-              {`${this.state.hoveredCircle.numberOfActiveProjects} Projects in ${this.state.hoveredCircle.year}`}{" "}
+              {`${this.state.hoveredCircle.numberOfActiveProjects} aktive Projekte in ${this.state.hoveredCircle.fb} im Jahr  ${this.state.hoveredCircle.year}`}{" "}
               <span
                 style={{
                   position: "absolute",
@@ -220,7 +220,7 @@ class TimeLineView extends Component {
           x: selectScaledX(datum),
           y: selectScaledY(datum),
           color: datum.color,
-          icon: getFieldIcon(datum.fb),
+          icon: getTimelineIcon(datum.fb),
           fb: datum.fb
         },
         datum
@@ -286,9 +286,9 @@ class TimeLineView extends Component {
           <g className={styles.scatter}>
             {circlePoints.map(circlePoint => (
               <svg
-                width={12}
-                height={12}
-                x={circlePoint.x-6} y={circlePoint.y-6}
+                width={20}
+                height={20}
+                x={circlePoint.x-10} y={circlePoint.y-10}
                 viewBox="0 0 100 100"
                 fill={circlePoint.color}
                 stroke={circlePoint.color}

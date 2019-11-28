@@ -41,14 +41,14 @@ const initialState = {
     },
     collections: {
       name: "Sammlungen",
-      filterKey: "sammlungen",
+      filterKey: "collections",
       type: "l",
       uniqueVals: [],
       value: []
     },
     infrastructure: {
       name: "Laborgeräte",
-      filterKey: "infrastruktur",
+      filterKey: "infrastructure",
       type: "l",
       uniqueVals: [],
       value: []
@@ -206,8 +206,8 @@ const updateProjectsData = (state, action) => {
       new Date(project.funding_start_year).getFullYear(),
       new Date(project.funding_end_year).getFullYear()
     ];
-    project.sammlungen = typeof project.sammlungen != "undefined" && project.sammlungen[0] != null ? project.sammlungen : ["Keine Sammlung"];
-    project.infrastruktur = typeof project.infrastruktur != "undefined" && project.infrastruktur[0] != null ? project.infrastruktur : ["Kein Laborgerät"];
+    project.collections = typeof project.sammlungen != "undefined" && project.sammlungen[0] != null ? project.sammlungen : ["Keine Sammlung"];
+    project.infrastructure = typeof project.infrastruktur != "undefined" && project.infrastruktur[0] != null ? project.infrastruktur : ["Kein Laborgerät"];
     if (
       project.participating_subject_areas &&
       project.participating_subject_areas.split("/")[0]
@@ -251,10 +251,10 @@ const updateProjectsData = (state, action) => {
           maxDateRange[0] < value[0] ? maxDateRange[0] : value[0];
         maxDateRange[1] =
           maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
-      } else if (property === "sammlungen") {
+      } else if (property === "collections") {
         for (const entry of Object.values(value))
             if (!uniqueCollections.some(e => e === entry)) uniqueCollections.push(entry);
-      } else if (property === "infrastruktur") {
+      } else if (property === "infrastructure") {
         for (const entry of Object.values(value))
             if (!uniqueInfrastructure.some(e => e === entry)) uniqueInfrastructure.push(entry);
       }

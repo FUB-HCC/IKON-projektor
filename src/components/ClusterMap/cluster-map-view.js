@@ -145,7 +145,7 @@ export default class ClusterMapView extends React.Component {
 
     var colorHeat = d3ScaleLinear()
         .domain(d3extent(this.props.topography))
-        .range(["#000","#AAA"]);
+        .range(["#000","#888"]);
     var contours = d3Contours().size([600,600]).smooth([true])(this.props.topography);
     this.scale = Math.min(height, width);
     const scale = this.scale;

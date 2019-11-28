@@ -27,11 +27,40 @@
     font-size: 25px;
     font-weight: 100;
 }
+.projectDetailsIcon{
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+}
+.infoItems {
+  float:left;
+  display:inline;
+  width: 48%;
+  color: #989aa1;
+  margin-bottom: 5px;
+  margin-right: 2%;
 
+}
+.abstractTitle{
+  clear: both;
+  color: white;
+}
 .projectDetailsAbstract{
 
 }
 
+.projectDetailsLink{
+  float:left;
+  display:inline;
+  width: 48%;
+  margin-bottom: 5px;
+  margin-right: 2%;
+}
+
 .abstractText{
     color: white;
+    width: 100%;
+    clear: both;
+    overflow-y: scroll;
+    height: 300px;
 }

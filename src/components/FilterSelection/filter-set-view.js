@@ -5,6 +5,7 @@ import { getFieldColor,getFieldIcon } from "../../util/utility";
 
 
 const FilterSet = props => {
+  const toggleState = [];
   return (
     <div className={style.filterSetWrapper}>
       <div className={style.filterSetTitle}>
@@ -20,7 +21,8 @@ const FilterSet = props => {
             <CheckBox
               name={subset.name}
               id={subset.filterId}
-              icon={subset.name}
+              icon={subset.name !== "Sammlungen" &&
+              subset.name !== "Laborgeräte" ? subset.name : "pfeil"  }
               checked={
                 !props.filters[subset.filterId]
                   ? false
@@ -29,9 +31,10 @@ const FilterSet = props => {
               onChange={props.changeFilter}
               showCheckbox={subset.isTogglable}
               color={getFieldColor(subset.name)}
+              toggleState={toggleState}
             />
           </div>
-          { 
+          {
             subset.subFilters.map((filter, i) => (
             <div className={style.subFilter} key={subset.name + i}>
               <CheckBox
@@ -54,9 +57,25 @@ const FilterSet = props => {
 
 export default FilterSet;
 
+
+const toggleFilterList = (name, state) => {
+  if (state.find(e => e === name)){
+    state.splice(name,1);
+  } else {
+    state.push(name);
+  }
+  console.log(name + " " + state);
+}
+
 const CheckBox = props => (
-  <div className={style.checkBoxWrapper}>
-    <span>{props.name}
+  <div className={style.checkBoxWrapper}
+    onClick={() => {
+      if(props.icon){
+        toggleFilterList(props.name, props.toggleState);
+      }
+    }}>
+    <span>
+    {props.icon && (
     <svg
       className={style.checkBoxIcon}
       version="1.1"
@@ -67,6 +86,8 @@ const CheckBox = props => (
       stroke={getFieldColor(props.icon)}>
       <path d={getFieldIcon(props.icon)}/>
     </svg>
+  )}
+    {props.name}
     </span>
     <input
       checked={props.checked}
