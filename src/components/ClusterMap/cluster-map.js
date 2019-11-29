@@ -5,9 +5,11 @@ import _ from "lodash";
 import concave from "concaveman";
 import {
   setSelectedProject,
+  setSelectedCat,
   setSideBarComponent
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
+import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
 import { getFieldIcon, getFieldColor } from "../../util/utility";
 
 const mapStateToProps = state => {
@@ -97,6 +99,10 @@ const mapDispatchToProps = dispatch => {
     showProjectDetails: project => {
       dispatch(setSelectedProject(project));
       dispatch(setSideBarComponent(<ProjectDetailsPanel />));
+    },
+    showCatDetails: cat => {
+      dispatch(setSelectedCat(cat));
+      dispatch(setSideBarComponent(<CatDetailsPanel />));
     }
   };
 };

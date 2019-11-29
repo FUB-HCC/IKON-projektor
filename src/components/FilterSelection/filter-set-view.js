@@ -1,17 +1,25 @@
-import React from "react";
+import React, { Component } from "react";
 import style from "./filter-selection.module.css";
 import { getFieldColor,getFieldIcon } from "../../util/utility";
 
 
-
-const FilterSet = props => {
-  const toggleState = [];
+//const FilterSet = props => {
+class FilterSet extends Component {
+  constructor(props) {
+    super(props);
+    this.props = props;
+    this.state = {
+      toggleState: []
+    };
+    this.toggledFilterList = this.toggledFilterList.bind(this);
+  }
+  render() {
   return (
     <div className={style.filterSetWrapper}>
       <div className={style.filterSetTitle}>
-        <span className={style.titleText}>{props.set.name}</span>
+        <span className={style.titleText}>{this.props.set.name}</span>
       </div>
-      {props.set.subsets.map(subset => (
+      {this.props.set.subsets.map(subset => (
         <div
           className={style.subsetWrapper}
           style={{ color: getFieldColor(subset.name) }}
@@ -24,54 +32,58 @@ const FilterSet = props => {
               icon={subset.name !== "Sammlungen" &&
               subset.name !== "Laborgeräte" ? subset.name : "pfeil"  }
               checked={
-                !props.filters[subset.filterId]
+                !this.props.filters[subset.filterId]
                   ? false
-                  : props.filters[subset.filterId].value.includes(subset.name)
+                  : this.props.filters[subset.filterId].value.includes(subset.name)
               }
-              onChange={props.changeFilter}
+              onChange={this.props.changeFilter}
               showCheckbox={subset.isTogglable}
               color={getFieldColor(subset.name)}
-              toggleState={toggleState}
+              toggleState={this.props.toggleState}
+              toggledFilterList={this.toggledFilterList}
             />
           </div>
-          {
+          { !this.props.toggleState.includes(subset.name) && (
             subset.subFilters.map((filter, i) => (
             <div className={style.subFilter} key={subset.name + i}>
               <CheckBox
                 name={filter}
                 id={subset.subFilterId}
-                checked={props.filters[subset.subFilterId].value.includes(
+                checked={this.props.filters[subset.subFilterId].value.includes(
                   filter
                 )}
-                onChange={props.changeFilter}
+                onChange={this.props.changeFilter}
                 showCheckbox={true}
                 color={getFieldColor(subset.name)}
               />
             </div>
-          ))}
+          )))}
         </div>
       ))}
     </div>
   );
+}
+ toggledFilterList(name, state, change) {
+  if (state.find(e => e === name)){
+    state.splice(state.indexOf(name),1);
+  } else {
+    state.push(name);
+  }
+  this.setState({toggleState: state});
+}
+
 };
 
 export default FilterSet;
 
 
-const toggleFilterList = (name, state) => {
-  if (state.find(e => e === name)){
-    state.splice(name,1);
-  } else {
-    state.push(name);
-  }
-  console.log(name + " " + state);
-}
+
 
 const CheckBox = props => (
   <div className={style.checkBoxWrapper}
     onClick={() => {
       if(props.icon){
-        toggleFilterList(props.name, props.toggleState);
+        props.toggledFilterList(props.name, props.toggleState);
       }
     }}>
     <span>

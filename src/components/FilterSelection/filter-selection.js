@@ -115,10 +115,12 @@ const FilterSelection = props => (
         set={filterSet}
         changeFilter={props.filterChangeHandler}
         key={filterSet.name}
+        toggleState= {[]}
       />
     ))}
   </div>
 );
+
 
 const mapDispatchToProps = dispatch => {
   return {

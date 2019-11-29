@@ -115,6 +115,9 @@ const reducer = (state = initialState, action) => {
     case actionTypes.RESET_SELECTED_PROJECT:
       return resetSelectedProject(state);
 
+    case actionTypes.SET_SELECTED_CAT:
+      return setSelectedCat(state, action);
+
     case actionTypes.UPDATE_OLD_PROJECT_DATA:
       return updateOldProjectsData(state, action);
 
@@ -356,6 +359,11 @@ const toggleAllFiltersOfField = (filters, fieldValue) => {
 const setSelectedProject = (state, action) => ({
   ...state,
   selectedProject: action.value
+});
+
+const setSelectedCat = (state, action) => ({
+  ...state,
+  selectedCat: action.value
 });
 
 const resetSelectedProject = state => ({ ...state, setSelectedProject: null });

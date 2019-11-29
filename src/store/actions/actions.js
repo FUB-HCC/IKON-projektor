@@ -32,6 +32,13 @@ export const setSelectedProject = projectId => {
   };
 };
 
+export const setSelectedCat = catId => {
+  return {
+    type: actionTypes.SET_SELECTED_CAT,
+    value: catId
+  };
+};
+
 export const resetSelectedProject = () => {
   return {
     type: actionTypes.RESET_SELECTED_PROJECT
