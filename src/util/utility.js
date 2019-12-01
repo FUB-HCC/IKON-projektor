@@ -92,7 +92,6 @@ const topicMapping = [
   { name: "Sonstige", num: "30", field: 5, color: "#989aa1" }
 ];
 
-
 const iconPaths = [
   "M50,27.7c-12.4,0-22.3,10-22.3,22.3c0,12.4,10,22.3,22.3,22.3S72.3,62.4,72.3,50S62.4,27.7,50,27.7z M8.1,43.2c-0.5,0-0.9-0.1-1.4-0.2c-2.4-0.8-3.7-3.3-2.9-5.7C10.9,15.6,25.3,8,37.2,3.9c2.3-0.8,4.9,0.4,5.7,2.7 c0.8,2.3-0.4,4.9-2.7,5.7c-18.6,6.6-24.4,17.2-27.8,27.7C11.7,42,10,43.2,8.1,43.2z M38.6,96.6c-0.5,0-0.9-0.1-1.4-0.2C15.6,89.3,8,74.8,3.8,63c-0.8-2.3,0.4-4.9,2.7-5.7c2.3-0.8,4.9,0.4,5.7,2.7 C18.9,78.6,29.5,84.4,40,87.8c2.4,0.8,3.7,3.3,2.9,5.7C42.3,95.4,40.5,96.6,38.6,96.6z M91.9,43.1c-1.9,0-3.7-1.2-4.3-3.1c-3.4-10.5-9.2-21.1-27.8-27.7c-2.3-0.8-3.6-3.4-2.7-5.7c0.8-2.3,3.4-3.6,5.7-2.7 c22.5,7.9,29.6,22,33.4,33.4c0.8,2.4-0.5,4.9-2.9,5.7C92.8,43,92.4,43.1,91.9,43.1z M61.4,96.5c-1.9,0-3.7-1.2-4.3-3.1c-0.8-2.4,0.5-4.9,2.9-5.7c10.5-3.4,21.1-9.2,27.7-27.8c0.8-2.3,3.4-3.6,5.7-2.7 c2.3,0.8,3.6,3.4,2.7,5.7c-7.9,22.5-22,29.6-33.4,33.4C62.3,96.4,61.8,96.5,61.4,96.5z",
 
@@ -108,8 +107,7 @@ const IconTimelinePaths = [
   "m65.9,69.6c-0.5,0 -31.4,0 -31.4,0c-2.1,0 -4.1,-1.2 -4.1,-3.7c0,0 0,-28.3 0,-30.8c0,-3 1.9,-4.7 4.2,-4.7l30.8,0c2.5,0.1 4.3,2.3 4.3,3.9l0,31.8c-0.2,1.9 -2.2,3.5 -3.8,3.5z",
   "m65.8,69.9l-31.6,0c-5.4,0 -7.1,-5.6 -4.3,-10.3l15.9,-31.8c1.9,-3.8 6,-3.8 8.3,-0.4c0,0 13.2,26.7 16.2,32.3s-0.5,10.2 -4.5,10.2z",
   "m74.1,52.4c-0.3,0.3 -21.3,21.3 -21.3,21.3c-1.4,1.4 -3.6,1.9 -5.3,0.2c0,0 -19.3,-19.3 -20.9,-20.9c-2.1,-2.1 -2,-4.5 -0.4,-6.1l20.9,-20.9c1.7,-1.6 4.4,-1.4 5.5,-0.2l21.6,21.6c1.2,1.4 1,3.9 -0.1,5z"
-
-]
+];
 
 export const fieldsIntToString = number => {
   number = parseInt(number, 10); // pls fix
@@ -150,12 +148,21 @@ export const getFieldColor = field => {
 
 export const getFieldIcon = field => {
   return fieldsMapping.find(e => e.name === field)
-    ? iconPaths[fieldsMapping.find(e => e.name === field).field % iconPaths.length] : field==="pfeil" ? IconTimelinePaths[1] : ""
+    ? iconPaths[
+        fieldsMapping.find(e => e.name === field).field % iconPaths.length
+      ]
+    : field === "pfeil"
+    ? IconTimelinePaths[1]
+    : "";
 };
 
-export const getTimelineIcon = field => {
+export const getFieldSimplifiedIcon = field => {
   return fieldsMapping.find(e => e.name === field)
-    ? IconTimelinePaths[fieldsMapping.find(e => e.name === field).field % IconTimelinePaths.length] : ""
+    ? IconTimelinePaths[
+        fieldsMapping.find(e => e.name === field).field %
+          IconTimelinePaths.length
+      ]
+    : "";
 };
 
 export const getTopicColor = topic => {

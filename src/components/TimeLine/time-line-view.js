@@ -1,8 +1,5 @@
-import "d3-transition";
-import styles from "./time-line-view.module.css";
 import React, { Component } from "react";
-import SVGWithMargin from "./SVGWithMargin";
-
+import "d3-transition";
 // Import the D3 libraries we'll be using for the spark line.
 import { extent as d3ArrayExtent } from "d3-array";
 import {
@@ -13,9 +10,13 @@ import { line as d3Line } from "d3-shape";
 // Import the D3 libraries we'll use for the axes.
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
+
+import styles from "./time-line-view.module.css";
+import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
-import { getTimelineIcon } from "../../util/utility";
+import { getFieldSimplifiedIcon } from "../../util/utility";
+import TargetgroupRow from "./TargetgroupRow";
 
 class TimeLineView extends Component {
   constructor(props) {
@@ -23,7 +24,7 @@ class TimeLineView extends Component {
     this.state = {
       dataSplitYears: [],
       forschungsbereiche: [],
-      ktasSplitYears: [],
+      ktasYearBuckets: [],
       height: props.height * 0.25,
       width: props.width * 0.95,
       margin: props.margin,
@@ -99,7 +100,7 @@ class TimeLineView extends Component {
 
     this.setState({
       dataSplitYears: data.dataSplitFbYear,
-      ktasSplitYears: data.ktasSplitYears,
+      ktasYearBuckets: data.ktasYearBuckets,
       projectsData: data.projects,
       forschungsbereiche: forschungsbereiche,
       firstUpdate: false
@@ -142,9 +143,8 @@ class TimeLineView extends Component {
               padding: "5px 10px"
             }}
           >
-            {/* {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`} */}
             <label>
-              {`${this.state.hoveredCircle.numberOfActiveProjects} aktive Projekte in ${this.state.hoveredCircle.fb} im Jahr  ${this.state.hoveredCircle.year}`}{" "}
+              {`${this.state.hoveredCircle.numberOfActiveProjects} aktive Projekte in ${this.state.hoveredCircle.forschungsbereich} im Jahr  ${this.state.hoveredCircle.year}`}{" "}
               <span
                 style={{
                   position: "absolute",
@@ -220,34 +220,29 @@ class TimeLineView extends Component {
           x: selectScaledX(datum),
           y: selectScaledY(datum),
           color: datum.color,
-          icon: getTimelineIcon(datum.fb),
-          fb: datum.fb
+          icon: getFieldSimplifiedIcon(datum.forschungsbereich),
+          forschungsbereich: datum.forschungsbereich
         },
         datum
       )
     );
     return (
-      <div style={{ marginTop: (this.props.height * 0.05) }}>
+      <div style={{ marginTop: this.props.height * 0.05 }}>
         <div className={styles.ktasPlot}>
-          {Object.keys(this.state.ktasSplitYears).map(targetgroup => {
-              if(this.state.ktasSplitYears[targetgroup].length <3){
-                return "";
+          {Object.keys(this.state.ktasYearBuckets).map(targetgroup => (
+            <TargetgroupRow
+              key={targetgroup}
+              targetgroup={targetgroup}
+              ktasYearBuckets={this.state.ktasYearBuckets}
+              height={this.state.height * 0.15}
+              width={this.state.width}
+              xScale={year =>
+                xScale(new Date(year.toString()).setHours(0, 0, 0, 0)) +
+                this.state.margin
               }
-            return(<div key={targetgroup} className={styles.ktasLine}>
-              <span  >{targetgroup}</span> <br/>
-              <svg height={40} width={this.state.width} >
-              {this.state.ktasSplitYears[targetgroup].map(year =>{
-                return (
-                    <circle key={targetgroup + year.year} cx={xScale(new Date(year.year.toString()).setHours(0, 0, 0, 0))+this.state.margin} cy={19} r={Math.max(year.numberOfWtas/2,1)}
-                    fill="#fff" stroke="#fff"/>
-                );
-              })}
-              <line x1="0" y1="40" x2={this.state.width}  y2="40"stroke="#717071" fill="none" />
-              </svg>
-
-              </div>);})
-          }
-          </div>
+            />
+          ))}
+        </div>
         <SVGWithMargin
           className={styles.timelineContainer}
           contentContainerBackgroundRectClassName={
@@ -276,7 +271,7 @@ class TimeLineView extends Component {
               return <g />;
             }
             return (
-              <g key={line[0].fb} className={styles.line}>
+              <g key={line[0].forschungsbereich} className={styles.line}>
                 <path style={{ stroke: line[0].color }} d={sparkLine(line)} />
               </g>
             );
@@ -288,7 +283,8 @@ class TimeLineView extends Component {
               <svg
                 width={20}
                 height={20}
-                x={circlePoint.x-10} y={circlePoint.y-10}
+                x={circlePoint.x - 10}
+                y={circlePoint.y - 10}
                 viewBox="0 0 100 100"
                 fill={circlePoint.color}
                 stroke={circlePoint.color}
@@ -296,7 +292,7 @@ class TimeLineView extends Component {
                   fill: circlePoint.color,
                   pointerEvents: "fill"
                 }}
-                key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.fb}`}
+                key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.forschungsbereich}`}
                 onClick={evt => {
                   this.handleCircleClick(evt, circlePoint);
                 }}
@@ -306,8 +302,9 @@ class TimeLineView extends Component {
                 }}
                 onMouseEnter={event => {
                   this.handleCircleMouseEnter(circlePoint, event);
-                }}>
-                <path d={circlePoint.icon}/>
+                }}
+              >
+                <path d={circlePoint.icon} />
               </svg>
             ))}
           </g>

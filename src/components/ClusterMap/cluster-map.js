@@ -44,7 +44,6 @@ const mapStateToProps = state => {
         color: project ?  getFieldColor(project.forschungsbereich)   : "none",
         icon: project ? getFieldIcon(project.forschungsbereich) : " "
       };
-      //getFieldColor(project.forschungsbereich) colors[p.cluster]
       if (cat.project_ids.includes(point.id)) {
         cat.connections.push(point);
       }
@@ -68,7 +67,6 @@ const mapStateToProps = state => {
         .map(filteredKtaM =>
           state.main.ktas.find(kta => filteredKtaM.kta_id === kta.id)
         );
-      //console.log(ktas);
       category.count = ktas.length;
       category.connections = ktas
         .filter(kta => kta.project_id !== null)

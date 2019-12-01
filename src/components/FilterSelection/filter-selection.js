@@ -98,14 +98,8 @@ const getFilterSets = filters => {
         }
       ]
     }
-    //,
-    // {
-    //   name: "Geldgeber",
-    //   subsets: []
-    // }
   ];
 };
-
 
 const FilterSelection = props => (
   <div className={style.filterSelectionWrapper}>

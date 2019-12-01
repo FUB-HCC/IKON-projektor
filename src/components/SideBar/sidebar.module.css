@@ -1,5 +1,6 @@
-.sideBarWrapper{
-    overflow-y: scroll;
+.sideBarWrapper {
+  overflow-y: scroll;
+  scrollbar-color: #808080 #0e0e0e;
 }
 /* width */
 ::-webkit-scrollbar {
@@ -8,14 +9,14 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px black;
+  box-shadow: inset 0 0 2px black;
   border-radius: 5px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
   background: #808080;
-  border-radius: 10px;
+  border-radius: 5px;
 }
 
 /* Handle on hover */

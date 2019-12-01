@@ -9,7 +9,7 @@ class TimeLine extends React.Component {
       {
         dataSplitFbYear: this.props.dataSplitFbYear,
         projects: this.props.projects,
-        ktasSplitYears: this.props.ktasSplitYears
+        ktasYearBuckets: this.props.ktasYearBuckets
       },
       this.props.width,
       this.props.height,
@@ -22,7 +22,7 @@ class TimeLine extends React.Component {
       {
         dataSplitFbYear: this.props.dataSplitFbYear,
         projects: this.props.projects,
-        ktasSplitYears: this.props.ktasSplitYears
+        ktasYearBuckets: this.props.ktasYearBuckets
       },
       this.props.height,
       this.props.width,
@@ -60,7 +60,7 @@ const mapStateToProps = state => {
     dataSplitFbYear: processedData,
     projects: state.main.filteredProjects,
     colors: graphColors,
-    ktasSplitYears: processedKtas
+    ktasYearBuckets: processedKtas
   };
 };
 
@@ -102,11 +102,10 @@ const processData = (data, colors) => {
           forschungsbereichData[yearFbIndex].projects.push(data[projectsKey]);
         }
       }
-      //color: clusterData.project_data[projectsKey] ? clusterData.cluster_data.cluster_colour[clusterData.project_data[projectsKey].cluster] : getFieldColor(data[projectsKey].forschungsbereichstr)
       if (!yearExists) {
         forschungsbereichData.push({
           year: year,
-          fb: data[projectsKey].forschungsbereichstr,
+          forschungsbereich: data[projectsKey].forschungsbereichstr,
           numberOfActiveProjects: 1,
           projects: [data[projectsKey]],
           color: getFieldColor(data[projectsKey].forschungsbereichstr)
@@ -122,38 +121,39 @@ const processData = (data, colors) => {
   return dataSplitYears;
 };
 
-const processKtas = (ktas) => {
-
+const processKtas = ktas => {
   if (!ktas || ktas === []) return [];
 
-  let ktasSplitYears = [];
+  let ktasYearBuckets = [];
   for (let ktaKey in ktas) {
     let startDate = parseInt(ktas[ktaKey].start_date);
     let endDate = parseInt(ktas[ktaKey].end_date);
     if (isNaN(startDate) || startDate === "") startDate = 1900;
     if (isNaN(endDate) || endDate === "") endDate = startDate;
-    if(startDate > 2000){
-      for (let targ in ktas[ktaKey].targetgroups){
-        let targName = ktas[ktaKey].targetgroups[targ];
-        if (!(targName in ktasSplitYears)) {
-          ktasSplitYears[targName] = [];
+    if (startDate > 2000) {
+      for (let targetgroup in ktas[ktaKey].targetgroups) {
+        let targetgroupName = ktas[ktaKey].targetgroups[targetgroup];
+        if (!(targetgroupName in ktasYearBuckets)) {
+          ktasYearBuckets[targetgroupName] = [];
         }
 
         let year = startDate;
         while (year <= endDate) {
           let yearExists = false;
-          for (let yearTgIndex in ktasSplitYears[targName]) {
+          for (let yearTgIndex in ktasYearBuckets[targetgroupName]) {
             // check if year already is existent for the forschungsbereich
-            if (ktasSplitYears[targName][yearTgIndex].year === year) {
+            if (ktasYearBuckets[targetgroupName][yearTgIndex].year === year) {
               yearExists = true;
-              ktasSplitYears[targName][yearTgIndex].numberOfWtas =
-                ktasSplitYears[targName][yearTgIndex].numberOfWtas + 1;
-              ktasSplitYears[targName][yearTgIndex].ktas.push(ktas[ktaKey]);
+              ktasYearBuckets[targetgroupName][yearTgIndex].numberOfWtas =
+                ktasYearBuckets[targetgroupName][yearTgIndex].numberOfWtas + 1;
+              ktasYearBuckets[targetgroupName][yearTgIndex].ktas.push(
+                ktas[ktaKey]
+              );
             }
           }
 
           if (!yearExists) {
-            ktasSplitYears[targName].push({
+            ktasYearBuckets[targetgroupName].push({
               year: year,
               numberOfWtas: 1,
               ktas: [ktas[ktaKey]]
@@ -161,12 +161,13 @@ const processKtas = (ktas) => {
           }
           year++;
         }
-        ktasSplitYears[targName] = ktasSplitYears[targName].sort((a, b) => a.year - b.year);
+        ktasYearBuckets[targetgroupName] = ktasYearBuckets[
+          targetgroupName
+        ].sort((a, b) => a.year - b.year);
       }
-
     }
   }
-  return ktasSplitYears;
-}
+  return ktasYearBuckets;
+};
 
 export default connect(mapStateToProps)(TimeLine);
