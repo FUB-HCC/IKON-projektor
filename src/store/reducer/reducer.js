@@ -118,6 +118,9 @@ const reducer = (state = initialState, action) => {
     case actionTypes.SET_SELECTED_CAT:
       return setSelectedCat(state, action);
 
+    case actionTypes.SET_SELECTED_KTA:
+      return setSelectedKta(state, action);
+
     case actionTypes.UPDATE_OLD_PROJECT_DATA:
       return updateOldProjectsData(state, action);
 
@@ -143,12 +146,11 @@ const applyFilters = (data, filter) => {
         }
       } else if (f.type === "l") {
         //console.log(filteredData[d][f.filterKey]);
-        for (const entry of filteredData[d][f.filterKey]){
+        for (const entry of filteredData[d][f.filterKey]) {
           if (f.value.some(value => value === entry))
             newFilteredData[d] = filteredData[d];
         }
-      }
-      else {
+      } else {
         if (filteredData[d][f.filterKey].includes(f.value))
           newFilteredData[d] = filteredData[d];
       }
@@ -178,12 +180,23 @@ const updateInstitutionsData = (state, action) =>
     institutions: action.value
   });
 
-const updateKtaData = (state, action) => ({ ...state, ktas: action.value });
-
-const updateTargetGroupsData = (state, action) => ({
-  ...state, categories: action.value.map(category => ({...category, connections: [], count: 1, project_ids: []}))
+const updateKtaData = (state, action) => ({
+  ...state,
+  ktas: action.value.map(kta => ({
+    ...kta,
+    timeframe: [new Date(kta.start_date), new Date(kta.end_date)]
+  }))
 });
 
+const updateTargetGroupsData = (state, action) => ({
+  ...state,
+  categories: action.value.map(category => ({
+    ...category,
+    connections: [],
+    count: 1,
+    project_ids: []
+  }))
+});
 
 const updateKtaMappingData = (state, action) => ({
   ...state,
@@ -209,8 +222,15 @@ const updateProjectsData = (state, action) => {
       new Date(project.funding_start_year).getFullYear(),
       new Date(project.funding_end_year).getFullYear()
     ];
-    project.collections = typeof project.sammlungen != "undefined" && project.sammlungen[0] != null ? project.sammlungen : ["Keine Sammlung"];
-    project.infrastructure = typeof project.infrastruktur != "undefined" && project.infrastruktur[0] != null ? project.infrastruktur : ["Kein Laborgerät"];
+    project.collections =
+      typeof project.sammlungen != "undefined" && project.sammlungen[0] != null
+        ? project.sammlungen
+        : ["Keine Sammlung"];
+    project.infrastructure =
+      typeof project.infrastruktur != "undefined" &&
+      project.infrastruktur[0] != null
+        ? project.infrastruktur
+        : ["Kein Laborgerät"];
     if (
       project.participating_subject_areas &&
       project.participating_subject_areas.split("/")[0]
@@ -256,10 +276,12 @@ const updateProjectsData = (state, action) => {
           maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
       } else if (property === "collections") {
         for (const entry of Object.values(value))
-            if (!uniqueCollections.some(e => e === entry)) uniqueCollections.push(entry);
+          if (!uniqueCollections.some(e => e === entry))
+            uniqueCollections.push(entry);
       } else if (property === "infrastructure") {
         for (const entry of Object.values(value))
-            if (!uniqueInfrastructure.some(e => e === entry)) uniqueInfrastructure.push(entry);
+          if (!uniqueInfrastructure.some(e => e === entry))
+            uniqueInfrastructure.push(entry);
       }
     });
   });
@@ -355,7 +377,6 @@ const toggleAllFiltersOfField = (filters, fieldValue) => {
   return newValue;
 };
 
-
 const setSelectedProject = (state, action) => ({
   ...state,
   selectedProject: action.value
@@ -364,6 +385,11 @@ const setSelectedProject = (state, action) => ({
 const setSelectedCat = (state, action) => ({
   ...state,
   selectedCat: action.value
+});
+
+const setSelectedKta = (state, action) => ({
+  ...state,
+  selectedKta: action.value
 });
 
 const resetSelectedProject = state => ({ ...state, setSelectedProject: null });

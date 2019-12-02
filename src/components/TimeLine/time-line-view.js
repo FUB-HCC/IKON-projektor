@@ -15,7 +15,7 @@ import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
-import { getTimelineIcon } from "../../util/utility";
+import { getIcon } from "../../util/utility";
 
 class TimeLineView extends Component {
   constructor(props) {
@@ -220,34 +220,52 @@ class TimeLineView extends Component {
           x: selectScaledX(datum),
           y: selectScaledY(datum),
           color: datum.color,
-          icon: getTimelineIcon(datum.fb),
+          icon: getIcon(0),
           fb: datum.fb
         },
         datum
       )
     );
     return (
-      <div style={{ marginTop: (this.props.height * 0.05) }}>
+      <div style={{ marginTop: this.props.height * 0.05 }}>
         <div className={styles.ktasPlot}>
           {Object.keys(this.state.ktasSplitYears).map(targetgroup => {
-              if(this.state.ktasSplitYears[targetgroup].length <3){
-                return "";
-              }
-            return(<div key={targetgroup} className={styles.ktasLine}>
-              <span  >{targetgroup}</span> <br/>
-              <svg height={40} width={this.state.width} >
-              {this.state.ktasSplitYears[targetgroup].map(year =>{
-                return (
-                    <circle key={targetgroup + year.year} cx={xScale(new Date(year.year.toString()).setHours(0, 0, 0, 0))+this.state.margin} cy={19} r={Math.max(year.numberOfWtas/2,1)}
-                    fill="#fff" stroke="#fff"/>
-                );
-              })}
-              <line x1="0" y1="40" x2={this.state.width}  y2="40"stroke="#717071" fill="none" />
-              </svg>
-
-              </div>);})
-          }
-          </div>
+            if (this.state.ktasSplitYears[targetgroup].length < 3) {
+              return "";
+            }
+            return (
+              <div key={targetgroup} className={styles.ktasLine}>
+                <span>{targetgroup}</span> <br />
+                <svg height={40} width={this.state.width}>
+                  {this.state.ktasSplitYears[targetgroup].map(year => {
+                    return (
+                      <circle
+                        key={targetgroup + year.year}
+                        cx={
+                          xScale(
+                            new Date(year.year.toString()).setHours(0, 0, 0, 0)
+                          ) + this.state.margin
+                        }
+                        cy={19}
+                        r={Math.max(year.numberOfWtas / 2, 1)}
+                        fill="#fff"
+                        stroke="#fff"
+                      />
+                    );
+                  })}
+                  <line
+                    x1="0"
+                    y1="40"
+                    x2={this.state.width}
+                    y2="40"
+                    stroke="#717071"
+                    fill="none"
+                  />
+                </svg>
+              </div>
+            );
+          })}
+        </div>
         <SVGWithMargin
           className={styles.timelineContainer}
           contentContainerBackgroundRectClassName={
@@ -288,7 +306,8 @@ class TimeLineView extends Component {
               <svg
                 width={20}
                 height={20}
-                x={circlePoint.x-10} y={circlePoint.y-10}
+                x={circlePoint.x - 10}
+                y={circlePoint.y - 10}
                 viewBox="0 0 100 100"
                 fill={circlePoint.color}
                 stroke={circlePoint.color}
@@ -306,8 +325,9 @@ class TimeLineView extends Component {
                 }}
                 onMouseEnter={event => {
                   this.handleCircleMouseEnter(circlePoint, event);
-                }}>
-                <path d={circlePoint.icon}/>
+                }}
+              >
+                <path d={circlePoint.icon} />
               </svg>
             ))}
           </g>
