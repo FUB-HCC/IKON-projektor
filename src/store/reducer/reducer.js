@@ -205,11 +205,11 @@ const updateProjectsData = (state, action) => {
       new Date(project.funding_end_year).getFullYear()
     ];
     project.collections =
-      project.sammlungen && project.sammlungen[0] != null
+      project.sammlungen && project.sammlungen[0]
         ? project.sammlungen
         : ["Keine Sammlung"];
     project.infrastructure =
-      project.infrastruktur && project.infrastruktur[0] != null
+      project.infrastruktur && project.infrastruktur[0]
         ? project.infrastruktur
         : ["Kein Laborgerät"];
     if (

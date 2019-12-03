@@ -101,6 +101,7 @@ const ProjectDetailsPanel = props => {
           className={style.projectDetailsLink}
           href={props.projectData.href}
           target="_blank"
+          rel="noopener noreferrer" //got warning otherwise
         >
           Link to VIA
         </a>
