@@ -1,7 +1,7 @@
 import React from "react";
 import style from "./project-details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
-import { getFieldIcon, getFieldColor } from "../../util/utility";
+import { getIcon, getFieldColor } from "../../util/utility";
 
 const parseDescription = string => {
   /* the text in via has a few (redundant?) formatting symbols and links to images etc.
@@ -13,16 +13,10 @@ const parseDescription = string => {
   let result = string.split("'''");
   return result;
 };
-const parseList = arr => {
-  if (arr[0].includes("Kein")) {
-    return "Keine Daten";
-  }
-  return arr.map(x => x.replace(/,/, "")).join(", ");
-};
 
 const ProjectDetailsPanel = props => {
   let color = getFieldColor(props.projectData.forschungsbereich);
-  let icon = getFieldIcon(props.projectData.forschungsbereich);
+  let icon = getIcon(1);
   let description = props.projectData.description
     ? parseDescription(props.projectData.description)
     : props.projectData.project_abstract;
@@ -86,13 +80,13 @@ const ProjectDetailsPanel = props => {
         </p>
         <p className={style.infoItems}>
           {"Genutzte Infrastruktur: " +
-            parseList(props.projectData.infrastructure)}
+            props.projectData.infrastructure.join(",\n")}
         </p>
         <p className={style.infoItems}>
           {"Wissenstransferaktivität(en): Keine Daten"}
         </p>
         <p className={style.infoItems}>
-          {"Bezug zu Sammlung: " + parseList(props.projectData.collections)}
+          {"Bezug zu Sammlung: " + props.projectData.collections.join(",\n")}
         </p>
         <p className={style.infoItems}>
           {"Projektleiter: " + props.projectData.projektleiter}

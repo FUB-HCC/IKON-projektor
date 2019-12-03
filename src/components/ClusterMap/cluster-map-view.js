@@ -276,6 +276,7 @@ export default class ClusterMapView extends React.Component {
                   <g
                     onMouseOver={() => this.highlightCat(cat)}
                     onMouseOut={() => this.unHighlight()}
+                    onClick={() => this.props.showCatDetails(cat.id)}
                   >
                     <circle
                       id={`cat-${cat.id}`}
