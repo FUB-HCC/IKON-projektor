@@ -24,7 +24,7 @@ const strokeWidth = scale => 0.001 * scale;
 const contoursSize = 600;
 
 export default class ClusterMapView extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       highlightedCats: [],
@@ -177,14 +177,26 @@ export default class ClusterMapView extends React.Component {
     return newConts;
   };
 
+  componentDidUpdate(prevProps) {
+    const { topography, width, height } = this.props;
+    if (
+      prevProps.height !== height ||
+      prevProps.width !== width ||
+      prevProps.topography.length !== topography.length
+    ) {
+      this.scale = Math.min(height, width);
+      this.colorHeat = d3ScaleLinear()
+        .domain(d3extent(topography))
+        .range(["#000", "#888"]);
+      this.contours = d3Contours()
+        .size([contoursSize, contoursSize])
+        .smooth([false])(this.props.topography);
+      this.forceUpdate();
+    }
+  }
+
   render() {
     const { categories, width, height, InfrastrukturSorted } = this.props;
-    var colorHeat = d3ScaleLinear()
-      .domain(d3extent(this.props.topography))
-      .range(["#0e0e0e", "#888"]);
-    var contours = d3Contours()
-      .size([contoursSize, contoursSize])
-      .smooth([true])(this.props.topography);
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (categories.length === 0 || !width || !height || scale <= 0) {
@@ -212,7 +224,7 @@ export default class ClusterMapView extends React.Component {
             fill="none"
             transform={"translate(0 " + arcMarginTop(height, scale) + ")"}
           >
-            {contours.map(cont => {
+            {this.contours.map(cont => {
               return (
                 <path
                   className="isoline"
@@ -221,7 +233,7 @@ export default class ClusterMapView extends React.Component {
                     var coords = this.scaleContours(coord, width, height);
                     return "M" + coords[0] + "L" + coords;
                   })}
-                  fill={colorHeat(cont.value)}
+                  fill={this.colorHeat(cont.value)}
                 />
               );
             })}

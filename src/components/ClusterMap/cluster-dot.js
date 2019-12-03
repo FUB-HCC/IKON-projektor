@@ -74,6 +74,7 @@ export default class ClusterDot extends React.Component {
           r={this.props.radius / 35}
           fill={"transparent"}
         />
+
         {this.props.point.projectData &&
         this.props.highlightedProjects.find(
           hProject => hProject === this.props.point.projectData.id
