@@ -10,7 +10,7 @@ import {
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
-import { getFieldIcon, getFieldColor } from "../../util/utility";
+import { getIcon, getFieldColor } from "../../util/utility";
 
 const mapStateToProps = state => {
   let clusters = [];
@@ -23,8 +23,11 @@ const mapStateToProps = state => {
     state.main.ktaMapping.length > 0 &&
     state.main.categories.length > 0
   ) {
-
-    const { cluster_data, project_data, cluster_topography } = state.main.clusterData;
+    const {
+      cluster_data,
+      project_data,
+      cluster_topography
+    } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
     const colors = cluster_data.cluster_colour;
     const projects = project_data;
@@ -43,8 +46,8 @@ const mapStateToProps = state => {
         cat: cat.id,
         category: [],
         project: project,
-        color: project ?  getFieldColor(project.forschungsbereich)   : "none",
-        icon: project ? getFieldIcon(project.forschungsbereich) : " "
+        color: project ? getFieldColor(project.forschungsbereich) : "none",
+        icon: project ? getIcon(project.forschungsbereich) : " "
       };
       //getFieldColor(project.forschungsbereich) colors[p.cluster]
       if (cat.project_ids.includes(point.id)) {
@@ -86,7 +89,7 @@ const mapStateToProps = state => {
     category.connections.forEach(conn => conn.category.push(category));
   });
 
-  categories = categories.filter(c => (c.count > 0));
+  categories = categories.filter(c => c.count > 0);
   return {
     clusterData: clusters,
     categories: categories,

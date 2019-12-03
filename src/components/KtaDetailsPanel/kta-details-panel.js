@@ -1,28 +1,20 @@
 import React from "react";
 import connect from "react-redux/es/connect/connect";
-import CatDetailsPanelView from "./cat-details-panel-view";
+import KtaDetailsPanelView from "./kta-details-panel-view";
 import {
   setSelectedProject,
-  setSelectedKta,
+  setSelectedCat,
   setSideBarComponent
 } from "../../store/actions/actions";
 import FilterPanel from "../FilterPanel/filter-panel";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
-import KtaDetailsPanel from "../KtaDetailsPanel/kta-details-panel";
-
-const findKtasForTagetgroup = state => {
-  return state.main.ktas.filter(kta =>
-    state.main.ktaMapping.find(
-      map =>
-        map.kta_id === kta.id && map.targetgroup_id === state.main.selectedCat
-    )
-  );
-};
+import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
 
 const mapStateToProps = state => {
+  console.log(state.main.selectedKta);
   return {
-    catData: state.main.categories.find(c => c.id === state.main.selectedCat),
-    ktas: findKtasForTagetgroup(state)
+    kta: state.main.ktas.find(kta => kta.id === state.main.selectedKta),
+    selectedCat: state.main.selectedCat
   };
 };
 
@@ -32,13 +24,13 @@ const mapDispatchToProps = dispatch => ({
     dispatch(setSelectedProject(project));
     dispatch(setSideBarComponent(<ProjectDetailsPanel />));
   },
-  showKtaDetails: kta => {
-    dispatch(setSelectedKta(kta));
-    dispatch(setSideBarComponent(<KtaDetailsPanel />));
+  showCatDetails: cat => {
+    dispatch(setSelectedCat(cat));
+    dispatch(setSideBarComponent(<CatDetailsPanel />));
   }
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CatDetailsPanelView);
+)(KtaDetailsPanelView);

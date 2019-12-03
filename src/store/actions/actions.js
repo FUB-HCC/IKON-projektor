@@ -39,6 +39,13 @@ export const setSelectedCat = catId => {
   };
 };
 
+export const setSelectedKta = ktaId => {
+  return {
+    type: actionTypes.SET_SELECTED_KTA,
+    value: ktaId
+  };
+};
+
 export const resetSelectedProject = () => {
   return {
     type: actionTypes.RESET_SELECTED_PROJECT
