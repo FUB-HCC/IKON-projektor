@@ -1,8 +1,9 @@
 import React from "react";
 import style from "./filter-selection.module.css";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, getFieldIcon } from "../../util/utility";
 
 const FilterSet = props => {
+  const toggleState = [];
   return (
     <div className={style.filterSetWrapper}>
       <div className={style.filterSetTitle}>
@@ -18,6 +19,11 @@ const FilterSet = props => {
             <CheckBox
               name={subset.name}
               id={subset.filterId}
+              icon={
+                subset.name !== "Sammlungen" && subset.name !== "Laborgeräte"
+                  ? subset.name
+                  : "pfeil"
+              }
               checked={
                 !props.filters[subset.filterId]
                   ? false
@@ -26,10 +32,11 @@ const FilterSet = props => {
               onChange={props.changeFilter}
               showCheckbox={subset.isTogglable}
               color={getFieldColor(subset.name)}
+              toggleState={toggleState}
             />
           </div>
           {subset.subFilters.map((filter, i) => (
-            <div className={style.subFilter} key={subset.filterId + i}>
+            <div className={style.subFilter} key={subset.name + i}>
               <CheckBox
                 name={filter}
                 id={subset.subFilterId}
@@ -50,9 +57,40 @@ const FilterSet = props => {
 
 export default FilterSet;
 
+const toggleFilterList = (name, state) => {
+  if (state.find(e => e === name)) {
+    state.splice(name, 1);
+  } else {
+    state.push(name);
+  }
+};
+
 const CheckBox = props => (
-  <div className={style.checkBoxWrapper}>
-    <span>{props.name}</span>
+  <div
+    className={style.checkBoxWrapper}
+    onClick={() => {
+      if (props.icon) {
+        toggleFilterList(props.name, props.toggleState);
+      }
+    }}
+  >
+    <span>
+      {props.icon && (
+        <svg
+          className={style.checkBoxIcon}
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          x="0px"
+          y="0px"
+          viewBox="0 0 100 100"
+          fill={props.color}
+          stroke={getFieldColor(props.icon)}
+        >
+          <path d={getFieldIcon(props.icon)} />
+        </svg>
+      )}
+      {props.name}
+    </span>
     <input
       checked={props.checked}
       className={style.checkBox}

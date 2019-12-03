@@ -8,15 +8,17 @@ export default class Cluster extends React.Component {
     const projects = cluster.projects.map(project => ({
       point: getLocation(project.location),
       color: project.color,
+      icon: project.icon,
       projectData: project.project
     }));
-
+    
     return (
       <g key={cluster.id}>
         {projects.map((project, i) => (
           <ClusterDot
             point={project}
             color={project.color}
+            icon={project.icon}
             key={i}
             radius={this.props.radius}
             x={project.point[0]}

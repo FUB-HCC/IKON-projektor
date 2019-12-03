@@ -86,23 +86,17 @@ const getFilterSets = filters => {
       subsets: [
         {
           name: "Sammlungen",
-          filterId: null,
-          isTogglable: false,
-          subFilters: [],
-          subFilterId: null
+          subFilters: filters.collections.uniqueVals,
+          subFilterId: "collections",
+          isTogglable: false
         },
         {
-          name: "Labore u. Großgeräte",
-          filterId: null,
-          isTogglable: false,
-          subFilters: [],
-          subFilterId: null
+          name: "Laborgeräte",
+          subFilters: filters.infrastructure.uniqueVals,
+          subFilterId: "infrastructure",
+          isTogglable: false
         }
       ]
-    },
-    {
-      name: "Geldgeber",
-      subsets: []
     }
   ];
 };

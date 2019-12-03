@@ -1,8 +1,5 @@
-import "d3-transition";
-import styles from "./time-line-view.module.css";
 import React, { Component } from "react";
-import SVGWithMargin from "./SVGWithMargin";
-
+import "d3-transition";
 // Import the D3 libraries we'll be using for the spark line.
 import { extent as d3ArrayExtent } from "d3-array";
 import {
@@ -13,8 +10,13 @@ import { line as d3Line } from "d3-shape";
 // Import the D3 libraries we'll use for the axes.
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
+
+import styles from "./time-line-view.module.css";
+import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
+import { getFieldSimplifiedIcon } from "../../util/utility";
+import TargetgroupRow from "./TargetgroupRow";
 
 class TimeLineView extends Component {
   constructor(props) {
@@ -22,6 +24,7 @@ class TimeLineView extends Component {
     this.state = {
       dataSplitYears: [],
       forschungsbereiche: [],
+      ktasYearBuckets: [],
       height: props.height * 0.25,
       width: props.width * 0.95,
       margin: props.margin,
@@ -97,6 +100,7 @@ class TimeLineView extends Component {
 
     this.setState({
       dataSplitYears: data.dataSplitFbYear,
+      ktasYearBuckets: data.ktasYearBuckets,
       projectsData: data.projects,
       forschungsbereiche: forschungsbereiche,
       firstUpdate: false
@@ -139,9 +143,8 @@ class TimeLineView extends Component {
               padding: "5px 10px"
             }}
           >
-            {/* {`${this.state.hoveredCircle.numberOfActiveProjects} active projects for ${this.state.hoveredCircle.fb} in ${this.state.hoveredCircle.year}`} */}
             <label>
-              {`${this.state.hoveredCircle.numberOfActiveProjects} Projects in ${this.state.hoveredCircle.year}`}{" "}
+              {`${this.state.hoveredCircle.numberOfActiveProjects} aktive Projekte in ${this.state.hoveredCircle.forschungsbereich} im Jahr  ${this.state.hoveredCircle.year}`}{" "}
               <span
                 style={{
                   position: "absolute",
@@ -216,13 +219,30 @@ class TimeLineView extends Component {
         {
           x: selectScaledX(datum),
           y: selectScaledY(datum),
-          color: datum.color
+          color: datum.color,
+          icon: getFieldSimplifiedIcon(datum.forschungsbereich),
+          forschungsbereich: datum.forschungsbereich
         },
         datum
       )
     );
     return (
-      <div style={{ marginTop: (this.props.height * 0.75) / 2 }}>
+      <div style={{ marginTop: this.props.height * 0.05 }}>
+        <div className={styles.ktasPlot}>
+          {Object.keys(this.state.ktasYearBuckets).map(targetgroup => (
+            <TargetgroupRow
+              key={targetgroup}
+              targetgroup={targetgroup}
+              ktasYearBuckets={this.state.ktasYearBuckets}
+              height={this.state.height * 0.15}
+              width={this.state.width}
+              xScale={year =>
+                xScale(new Date(year.toString()).setHours(0, 0, 0, 0)) +
+                this.state.margin
+              }
+            />
+          ))}
+        </div>
         <SVGWithMargin
           className={styles.timelineContainer}
           contentContainerBackgroundRectClassName={
@@ -251,7 +271,7 @@ class TimeLineView extends Component {
               return <g />;
             }
             return (
-              <g key={line[0].fb} className={styles.line}>
+              <g key={line[0].forschungsbereich} className={styles.line}>
                 <path style={{ stroke: line[0].color }} d={sparkLine(line)} />
               </g>
             );
@@ -260,14 +280,19 @@ class TimeLineView extends Component {
           {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
           <g className={styles.scatter}>
             {circlePoints.map(circlePoint => (
-              <circle
-                cx={circlePoint.x}
-                cy={circlePoint.y}
+              <svg
+                width={20}
+                height={20}
+                x={circlePoint.x - 10}
+                y={circlePoint.y - 10}
+                viewBox="0 0 100 100"
+                fill={circlePoint.color}
+                stroke={circlePoint.color}
                 style={{
                   fill: circlePoint.color,
                   pointerEvents: "fill"
                 }}
-                key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.color}`}
+                key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.forschungsbereich}`}
                 onClick={evt => {
                   this.handleCircleClick(evt, circlePoint);
                 }}
@@ -278,11 +303,13 @@ class TimeLineView extends Component {
                 onMouseEnter={event => {
                   this.handleCircleMouseEnter(circlePoint, event);
                 }}
-                r={4}
-              />
+              >
+                <path d={circlePoint.icon} />
+              </svg>
             ))}
           </g>
         </SVGWithMargin>
+
         {this.renderProjectsHover()}
       </div>
     );

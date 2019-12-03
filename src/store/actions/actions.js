@@ -52,7 +52,7 @@ export const getFiltersFromURL = () => {
 
 export const fetchClusterData = () => {
   return dispatch => {
-    axios.get("/clusters.json").then(result => {
+    axios.get("http://localhost:5435/clustering").then(result => {
       dispatch(updateClusterData(result.data));
     });
   };

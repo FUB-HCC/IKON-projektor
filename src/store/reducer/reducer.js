@@ -14,28 +14,42 @@ const initialState = {
     forschungsgebiet: {
       name: "Forschungsgebiet",
       filterKey: "forschungsbereichstr",
-      type: "a",
+      type: "string",
       uniqueVals: ["1", "2", "3", "4"],
       value: ["1", "2", "3", "4"]
     },
     hauptthema: {
       name: "Hauptthema",
       filterKey: "hauptthema",
-      type: "a",
+      type: "string",
       uniqueVals: [],
       value: []
     },
     geldgeber: {
       name: "Geldgeber",
       filterKey: "geldgeber",
-      type: "a",
+      type: "string",
       uniqueVals: [],
       value: []
     },
     time: {
       name: "Zeitraum",
       filterKey: "timeframe",
-      type: "t",
+      type: "timeframe",
+      uniqueVals: [],
+      value: []
+    },
+    collections: {
+      name: "Sammlungen",
+      filterKey: "collections",
+      type: "array",
+      uniqueVals: [],
+      value: []
+    },
+    infrastructure: {
+      name: "Laborgeräte",
+      filterKey: "infrastructure",
+      type: "array",
       uniqueVals: [],
       value: []
     }
@@ -114,15 +128,20 @@ const applyFilters = (data, filter) => {
   Object.values(filter).forEach(f => {
     let newFilteredData = {};
     filteredData = Object.keys(filteredData).forEach(d => {
-      if (f.type === "a") {
+      if (f.type === "string") {
         if (f.value.some(value => value === filteredData[d][f.filterKey]))
           newFilteredData[d] = filteredData[d];
-      } else if (f.type === "t") {
+      } else if (f.type === "timeframe") {
         if (
           f.value[0] <= filteredData[d][f.filterKey][0] &&
           f.value[1] >= filteredData[d][f.filterKey][1]
         ) {
           newFilteredData[d] = filteredData[d];
+        }
+      } else if (f.type === "array") {
+        for (const entry of filteredData[d][f.filterKey]) {
+          if (f.value.some(value => value === entry))
+            newFilteredData[d] = filteredData[d];
         }
       } else {
         if (filteredData[d][f.filterKey].includes(f.value))
@@ -152,9 +171,14 @@ const updateInstitutionsData = (state, action) =>
 const updateKtaData = (state, action) => ({ ...state, ktas: action.value });
 
 const updateTargetGroupsData = (state, action) => ({
-  ...state, categories: action.value.map(category => ({...category, connections: [], count: 1, project_ids: []}))
+  ...state,
+  categories: action.value.map(category => ({
+    ...category,
+    connections: [],
+    count: 1,
+    project_ids: []
+  }))
 });
-
 
 const updateKtaMappingData = (state, action) => ({
   ...state,
@@ -180,6 +204,14 @@ const updateProjectsData = (state, action) => {
       new Date(project.funding_start_year).getFullYear(),
       new Date(project.funding_end_year).getFullYear()
     ];
+    project.collections =
+      project.sammlungen && project.sammlungen[0]
+        ? project.sammlungen
+        : ["Keine Sammlung"];
+    project.infrastructure =
+      project.infrastruktur && project.infrastruktur[0]
+        ? project.infrastruktur
+        : ["Kein Laborgerät"];
     if (
       project.participating_subject_areas &&
       project.participating_subject_areas.split("/")[0]
@@ -205,6 +237,8 @@ const updateProjectsData = (state, action) => {
   const uniqueFields = [];
   const uniqueTopics = [];
   const uniqueSponsors = [];
+  const uniqueInfrastructure = [];
+  const uniqueCollections = [];
   const maxDateRange = [5000, 0];
 
   Object.values(projects).forEach(project => {
@@ -221,6 +255,14 @@ const updateProjectsData = (state, action) => {
           maxDateRange[0] < value[0] ? maxDateRange[0] : value[0];
         maxDateRange[1] =
           maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
+      } else if (property === "collections") {
+        for (const sammlung of Object.values(value))
+          if (!uniqueCollections.some(e => e === sammlung))
+            uniqueCollections.push(sammlung);
+      } else if (property === "infrastructure") {
+        for (const infrastruktur of Object.values(value))
+          if (!uniqueInfrastructure.some(e => e === infrastruktur))
+            uniqueInfrastructure.push(infrastruktur);
       }
     });
   });
@@ -246,6 +288,16 @@ const updateProjectsData = (state, action) => {
       ...state.filters.time,
       uniqueVals: maxDateRange,
       value: maxDateRange
+    },
+    collections: {
+      ...state.filters.collections,
+      uniqueVals: uniqueCollections.sort((a, b) => a.localeCompare(b)),
+      value: uniqueCollections
+    },
+    infrastructure: {
+      ...state.filters.infrastructure,
+      uniqueVals: uniqueInfrastructure.sort((a, b) => a.localeCompare(b)),
+      value: uniqueInfrastructure
     }
   };
 

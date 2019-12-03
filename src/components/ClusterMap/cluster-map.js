@@ -8,25 +8,27 @@ import {
   setSideBarComponent
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
-import { getFieldColor } from "../../util/utility";
+import { getFieldIcon, getFieldColor } from "../../util/utility";
 
 const mapStateToProps = state => {
   let clusters = [];
   let transformedPoints = [];
   let categories = state.main.categories;
+  let topography = [];
   if (
     state.main.clusterData &&
     state.main.projects.length > 0 &&
     state.main.ktaMapping.length > 0 &&
     state.main.categories.length > 0
   ) {
-    const { cluster_data, project_data } = state.main.clusterData;
+
+    const { cluster_data, project_data, cluster_topography } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
     const colors = cluster_data.cluster_colour;
     const projects = project_data;
     const minX = _.min(_.map(projects, c => c.embpoint[0]));
     const minY = _.min(_.map(projects, c => c.embpoint[1]));
-
+    topography = cluster_topography;
     categories = state.main.categories.map(cat => cat);
     transformedPoints = projects.map(p => {
       const cat = _.sample(categories);
@@ -39,12 +41,12 @@ const mapStateToProps = state => {
         cat: cat.id,
         category: [],
         project: project,
-        color: project ? getFieldColor(project.forschungsbereich) : "none"
+        color: project ?  getFieldColor(project.forschungsbereich)   : "none",
+        icon: project ? getFieldIcon(project.forschungsbereich) : " "
       };
       if (cat.project_ids.includes(point.id)) {
         cat.connections.push(point);
       }
-
       return point;
     });
 
@@ -65,7 +67,6 @@ const mapStateToProps = state => {
         .map(filteredKtaM =>
           state.main.ktas.find(kta => filteredKtaM.kta_id === kta.id)
         );
-      console.log(ktas);
       category.count = ktas.length;
       category.connections = ktas
         .filter(kta => kta.project_id !== null)
@@ -81,9 +82,11 @@ const mapStateToProps = state => {
     category.connections.forEach(conn => conn.category.push(category));
   });
 
+  categories = categories.filter(c => (c.count > 0));
   return {
     clusterData: clusters,
-    categories: categories
+    categories: categories,
+    topography: topography
   };
 };
 
