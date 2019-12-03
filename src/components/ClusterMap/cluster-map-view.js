@@ -6,9 +6,11 @@ import { extent as d3extent } from "d3-array";
 
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
+import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
+import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
-const arcMarginTop = (height, scale) => Math.min(0.1 * height, 0.1 * scale);
+const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.1 * scale);
 const clusterSize = scale => 0.4 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
@@ -27,10 +29,12 @@ export default class ClusterMapView extends React.Component {
     this.state = {
       highlightedCats: [],
       highlightedLinks: [],
-      highlightedProjects: []
+      highlightedProjects: [],
+      highlightedInfs: []
     };
     this.highlightCat = this.highlightCat.bind(this);
     this.highlightProject = this.highlightProject.bind(this);
+    this.highlightInfrastructure = this.highlightInfrastructure.bind(this);
     this.unHighlight = this.unHighlight.bind(this);
   }
 
@@ -56,7 +60,8 @@ export default class ClusterMapView extends React.Component {
     this.setState({
       highlightedCats: [],
       highlightedLinks: [],
-      highlightedProjects: []
+      highlightedProjects: [],
+      highlightedInfs: []
     });
   }
 
@@ -68,10 +73,19 @@ export default class ClusterMapView extends React.Component {
     });
   }
 
+  highlightInfrastructure(inf) {
+    this.setState({
+      highlightedLinks: this.findLinksByInf(inf),
+      highlightedProjects: this.findProjectsByInf(inf),
+      highlightedInfs: [inf]
+    });
+  }
+
   highlightProject(project) {
     this.setState({
       highlightedCats: this.findCatsByProject(project),
       highlightedLinks: this.findLinksByProject(project),
+      highlightedInfs: this.findInfsByProject(project),
       highlightedProjects: [project]
     });
   }
@@ -87,13 +101,32 @@ export default class ClusterMapView extends React.Component {
   findLinksByProject(project) {
     return this.props.categories
       .filter(cat => cat.connections.find(con => con.id === project))
-      .map(cat => project + "|" + cat.id);
+      .map(cat => project + "|" + cat.id)
+      .concat(
+        this.props.InfrastrukturSorted.filter(inf =>
+          inf.connections.find(con => con.id === project)
+        ).map(inf => project + "|" + inf.name)
+      );
   }
 
   findCatsByProject(project) {
     return this.props.categories.filter(cat =>
       cat.connections.find(con => con.id === project)
     );
+  }
+
+  findInfsByProject(project) {
+    return this.props.InfrastrukturSorted.filter(inf =>
+      inf.connections.find(con => con.id === project)
+    );
+  }
+
+  findLinksByInf(inf) {
+    return inf.connections.map(con => con.id + "|" + inf.name);
+  }
+
+  findProjectsByInf(inf) {
+    return inf.connections.map(con => con.id);
   }
 
   splitLongTitles = title => {
@@ -138,8 +171,7 @@ export default class ClusterMapView extends React.Component {
   };
 
   render() {
-    const { categories, width, height } = this.props;
-
+    const { categories, width, height, InfrastrukturSorted } = this.props;
     var colorHeat = d3ScaleLinear()
       .domain(d3extent(this.props.topography))
       .range(["#000", "#888"]);
@@ -153,8 +185,9 @@ export default class ClusterMapView extends React.Component {
     }
     const shiftX = width / 2;
     const shiftY = height / 2;
-    const radius = (scale - arcMarginSides(width, scale)) / 2;
-    const each = 180 / (categories.length - 1);
+    const radius = (scale - arcMarginSides(width, scale)) / 2.2;
+    const eachCat = 180 / (categories.length - 1);
+    const eachInf = 170 / (InfrastrukturSorted.length - 1);
     const sortedTargetgroups = categories.sort((a, b) =>
       a.title < b.title ? 1 : -1
     );
@@ -187,26 +220,8 @@ export default class ClusterMapView extends React.Component {
             })}
           </g>
           <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
-            <g style={{ transform: "translate(0px, 0px)" }}>
-              {this.props.clusterData.map(cluster => {
-                return (
-                  <Cluster
-                    key={cluster.id}
-                    cluster={cluster}
-                    getLocation={p => this.getPointLocation(p, width, height)}
-                    radius={radius}
-                    highlightProject={this.highlightProject}
-                    highlightedProjects={this.state.highlightedProjects}
-                    unHighlight={this.unHighlight}
-                    resetCat={() => this.setState({ highlightedCat: null })}
-                    showProjectDetails={this.props.showProjectDetails}
-                  />
-                );
-              })}
-            </g>
-
             {sortedTargetgroups.map((cat, i) => {
-              const startAngle = each * i - 180;
+              const startAngle = eachCat * i - 180;
               const angle = startAngle * (Math.PI / 180);
               const conLen = cat.count;
               const x = shiftX + radius * Math.cos(angle);
@@ -243,7 +258,7 @@ export default class ClusterMapView extends React.Component {
                   const sourceY =
                     shiftY +
                     (radius + connectionOffsetFromArc(scale)) * Math.sin(angle);
-                  const midRadius = (radius - radius / 2) * (Math.PI / 180);
+                  const midRadius = radius / 1.5;
                   const midX = shiftX + midRadius * Math.cos(angle);
                   const midY = shiftY + midRadius * Math.sin(angle);
                   const mid = [midX, midY];
@@ -297,7 +312,7 @@ export default class ClusterMapView extends React.Component {
                     </text>
                     <text
                       textAnchor={anchor}
-                      fill="white"
+                      fill={isHighlighted ? "#afca0b" : "#AAA"}
                       fontSize={
                         fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
                       }
@@ -312,41 +327,207 @@ export default class ClusterMapView extends React.Component {
                   </g>
                   <g>
                     {lines.map((line, i) => (
-                      <path
-                        pointerEvents="none"
-                        key={i}
-                        strokeWidth={strokeWidth(scale) * 3}
-                        fill="transparent"
-                        stroke={
-                          this.state.highlightedLinks.find(
-                            hline => hline === line[4]
-                          )
-                            ? "rgba(100,100,100,1)"
-                            : "rgba(100,100,100,0.1)"
-                        }
-                        d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                      />
-                    ))}
-                    {lines.map((line, i) => (
-                      <path
-                        pointerEvents="none"
-                        key={i}
-                        strokeWidth={strokeWidth(scale)}
-                        fill="transparent"
-                        stroke={
-                          this.state.highlightedLinks.find(
-                            hline => hline === line[4]
-                          )
-                            ? "#fff"
-                            : "rgba(255,255,255,0.1)"
-                        }
-                        d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                      />
+                      <g key={i}>
+                        <path
+                          pointerEvents="none"
+                          key={i + "a"}
+                          strokeWidth={strokeWidth(scale) * 3}
+                          fill="transparent"
+                          stroke={
+                            this.state.highlightedLinks.find(
+                              hline => hline === line[4]
+                            )
+                              ? "rgba(100,100,100,1)"
+                              : "rgba(100,100,100,0.1)"
+                          }
+                          d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                        />
+                        <path
+                          pointerEvents="none"
+                          key={i + "b"}
+                          strokeWidth={strokeWidth(scale)}
+                          fill="transparent"
+                          stroke={
+                            this.state.highlightedLinks.find(
+                              hline => hline === line[4]
+                            )
+                              ? "#fff"
+                              : "rgba(255,255,255,0.1)"
+                          }
+                          d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                        />
+                      </g>
                     ))}
                   </g>
                 </g>
               );
             })}
+
+            <g>
+              {InfrastrukturSorted.map((infrastruktur, i) => {
+                const startAngle = eachInf * i + 5;
+                const angle = startAngle * (Math.PI / 180);
+                const x = shiftX - 6 + radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+                const textX =
+                  shiftX +
+                  (radius + countOffsetFromArc(scale)) * Math.cos(angle);
+                const textY =
+                  shiftY +
+                  (radius + countOffsetFromArc(scale)) * Math.sin(angle);
+                const anchor = startAngle > 90 ? "end" : "start";
+                const textRotate =
+                  startAngle > 90 ? startAngle + 180 : startAngle;
+                const isHighlighted = this.state.highlightedInfs.find(
+                  hinf => hinf.name === infrastruktur.name
+                );
+                let lines = [];
+                if (infrastruktur.connections) {
+                  lines = infrastruktur.connections.map(con => {
+                    const target = this.getPointLocation(
+                      con.location,
+                      width,
+                      height
+                    );
+                    const angleDeg = startAngle;
+                    const angle = angleDeg * (Math.PI / 180);
+                    const sourceX =
+                      shiftX +
+                      (radius + connectionOffsetFromArc(scale)) *
+                        Math.cos(angle);
+                    const sourceY =
+                      shiftY +
+                      (radius + connectionOffsetFromArc(scale)) *
+                        Math.sin(angle);
+                    const midRadius = radius / 1.5;
+                    const midX = shiftX + midRadius * Math.cos(angle);
+                    const midY = shiftY + midRadius * Math.sin(angle);
+                    const mid = [midX, midY];
+                    const source = [sourceX, sourceY];
+
+                    return [
+                      {
+                        x: Math.round(source[0]),
+                        y: Math.round(source[1])
+                      },
+                      {
+                        x: Math.round(mid[0]),
+                        y: Math.round(mid[1])
+                      },
+                      {
+                        x: Math.round(target[0]),
+                        y: Math.round(target[1])
+                      },
+                      {
+                        x: Math.round(target[0]),
+                        y: Math.round(target[1])
+                      },
+                      con.id + "|" + infrastruktur.name
+                    ];
+                  });
+                }
+                return (
+                  <g
+                    key={infrastruktur.name}
+                    onMouseOver={() =>
+                      this.highlightInfrastructure(infrastruktur)
+                    }
+                    onMouseOut={() => this.unHighlight()}
+                  >
+                    <g>
+                      {infrastruktur.type === "collection" ? (
+                        <CollectionIcon
+                          id={`inf-${infrastruktur[0]}`}
+                          x={x}
+                          y={y}
+                          width="12px"
+                          heigth="12px"
+                          fill="white"
+                        />
+                      ) : (
+                        <InfrastructureIcon
+                          id={`inf-${infrastruktur.name}`}
+                          x={x}
+                          y={y}
+                          width="12px"
+                          heigth="12px"
+                          fill="white"
+                        />
+                      )}
+                      <text
+                        x={textX}
+                        y={textY}
+                        textAnchor={anchor}
+                        fill={isHighlighted ? "#afca0b" : "#AAA"}
+                        fontSize={
+                          fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                        }
+                        transform={`rotate(${textRotate} ${textX} ${textY})`}
+                      >
+                        {this.splitLongTitles(infrastruktur.name).map(
+                          (titlePart, j) => (
+                            <tspan x={textX} y={textY + j * 10}>
+                              {titlePart}
+                            </tspan>
+                          )
+                        )}
+                      </text>
+                    </g>
+                    <g>
+                      {lines.map((line, i) => (
+                        <g key={i}>
+                          <path
+                            pointerEvents="none"
+                            key={i + "a"}
+                            strokeWidth={strokeWidth(scale) * 3}
+                            fill="transparent"
+                            stroke={
+                              this.state.highlightedLinks.find(
+                                hline => hline === line[4]
+                              )
+                                ? "rgba(100,100,100,1)"
+                                : "rgba(100,100,100,0.1)"
+                            }
+                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                          />
+                          <path
+                            pointerEvents="none"
+                            key={i + "b"}
+                            strokeWidth={strokeWidth(scale)}
+                            fill="transparent"
+                            stroke={
+                              this.state.highlightedLinks.find(
+                                hline => hline === line[4]
+                              )
+                                ? "#fff"
+                                : "rgba(255,255,255,0.1)"
+                            }
+                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                          />
+                        </g>
+                      ))}
+                    </g>
+                  </g>
+                );
+              })}
+            </g>
+            <g style={{ transform: "translate(0px, 0px)" }}>
+              {this.props.clusterData.map(cluster => {
+                return (
+                  <Cluster
+                    key={cluster.id}
+                    cluster={cluster}
+                    getLocation={p => this.getPointLocation(p, width, height)}
+                    radius={radius}
+                    highlightProject={this.highlightProject}
+                    highlightedProjects={this.state.highlightedProjects}
+                    unHighlight={this.unHighlight}
+                    resetCat={() => this.setState({ highlightedCat: null })}
+                    showProjectDetails={this.props.showProjectDetails}
+                  />
+                );
+              })}
+            </g>
           </g>
         </svg>
       </div>

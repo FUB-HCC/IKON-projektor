@@ -10,13 +10,19 @@ import {
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
-import { getIcon, getFieldColor } from "../../util/utility";
+import { getFieldColor } from "../../util/utility";
 
 const mapStateToProps = state => {
   let clusters = [];
   let transformedPoints = [];
   let categories = state.main.categories;
   let topography = [];
+  let typedCollections = state.main.filters.collections.value.map(el => {
+    return { name: el, type: "collection", connections: [] };
+  });
+  let typedInfrastructures = state.main.filters.infrastructure.value.map(el => {
+    return { name: el, type: "infrastructure", connections: [] };
+  });
   if (
     state.main.clusterData &&
     state.main.projects.length > 0 &&
@@ -46,8 +52,7 @@ const mapStateToProps = state => {
         cat: cat.id,
         category: [],
         project: project,
-        color: project ? getFieldColor(project.forschungsbereich) : "none",
-        icon: project ? getIcon(project.forschungsbereich) : " "
+        color: project ? getFieldColor(project.forschungsbereich) : "none"
       };
       if (cat.project_ids.includes(point.id)) {
         cat.connections.push(point);
@@ -82,16 +87,40 @@ const mapStateToProps = state => {
         )
         .filter(connection => connection);
     });
+
+    typedCollections.map(
+      collection =>
+        (collection.connections = transformedPoints.filter(
+          point =>
+            point.project && point.project.collections.includes(collection.name)
+        ))
+    );
+
+    typedInfrastructures.forEach(
+      infrastructure =>
+        (infrastructure.connections = transformedPoints.filter(
+          point =>
+            point.project &&
+            point.project.infrastructure.includes(infrastructure.name)
+        ))
+    );
   }
   categories.forEach(category => {
     category.connections.forEach(conn => conn.category.push(category));
   });
 
   categories = categories.filter(c => c.count > 0);
+
+  let InfrastrukturSorted = typedCollections
+    .concat(typedInfrastructures)
+    .sort((a, b) => (a.type < b.type ? 1 : -1))
+    .filter(inf => !inf.name.includes("Kein"));
+
   return {
     clusterData: clusters,
     categories: categories,
-    topography: topography
+    topography: topography,
+    InfrastrukturSorted: InfrastrukturSorted
   };
 };
 
