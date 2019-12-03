@@ -64,7 +64,7 @@ export default class ClusterDot extends React.Component {
           fill={color}
           stroke={color}
         >
-          <path d={getIcon(icon)} />
+          <path stroke="#7c7c7c" d={getIcon(icon)} />
         </svg>
       </g>
     );

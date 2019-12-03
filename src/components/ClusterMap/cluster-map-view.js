@@ -2,15 +2,15 @@ import React from "react";
 import _ from "lodash";
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
-import {contours as d3Contours}  from "d3-contour";
-import {
-  scaleLinear as d3ScaleLinear
-} from "d3-scale";
-import {extent as d3extent} from "d3-array";
+import { contours as d3Contours } from "d3-contour";
+import { scaleLinear as d3ScaleLinear } from "d3-scale";
+import { extent as d3extent } from "d3-array";
 //var spo = require('svg-path-outline');
+import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
+import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 
-const arcMarginSides = (width, scale) => Math.min(0.20 * width, 0.20 * scale);
-const arcMarginTop = (height, scale) => Math.min(0.10 * height, 0.10 * scale);
+const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
+const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.1 * scale);
 const clusterSize = scale => 0.4 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
@@ -29,10 +29,12 @@ export default class ClusterMapView extends React.Component {
     this.state = {
       highlightedCats: [],
       highlightedLinks: [],
-      highlightedProjects: []
+      highlightedProjects: [],
+      highlightedInfs: []
     };
     this.highlightCat = this.highlightCat.bind(this);
     this.highlightProject = this.highlightProject.bind(this);
+    this.highlightInfrastructure = this.highlightInfrastructure.bind(this);
     this.unHighlight = this.unHighlight.bind(this);
   }
 
@@ -58,7 +60,8 @@ export default class ClusterMapView extends React.Component {
     this.setState({
       highlightedCats: [],
       highlightedLinks: [],
-      highlightedProjects: []
+      highlightedProjects: [],
+      highlightedInfs: []
     });
   }
 
@@ -70,10 +73,19 @@ export default class ClusterMapView extends React.Component {
     });
   }
 
+  highlightInfrastructure(inf) {
+    this.setState({
+      highlightedLinks: this.findLinksByInf(inf),
+      highlightedProjects: this.findProjectsByInf(inf),
+      highlightedInfs: [inf]
+    });
+  }
+
   highlightProject(project) {
     this.setState({
       highlightedCats: this.findCatsByProject(project),
       highlightedLinks: this.findLinksByProject(project),
+      highlightedInfs: this.findInfsByProject(project),
       highlightedProjects: [project]
     });
   }
@@ -89,7 +101,12 @@ export default class ClusterMapView extends React.Component {
   findLinksByProject(project) {
     return this.props.categories
       .filter(cat => cat.connections.find(con => con.id === project))
-      .map(cat => project + "|" + cat.id);
+      .map(cat => project + "|" + cat.id)
+      .concat(
+        this.props.InfrastrukturSorted.filter(inf =>
+          inf.connections.find(con => con.id === project)
+        ).map(inf => project + "|" + inf.name)
+      );
   }
 
   findCatsByProject(project) {
@@ -98,22 +115,37 @@ export default class ClusterMapView extends React.Component {
     );
   }
 
-  wrapText = (text) => {
+  findInfsByProject(project) {
+    return this.props.InfrastrukturSorted.filter(inf =>
+      inf.connections.find(con => con.id === project)
+    );
+  }
+
+  findLinksByInf(inf) {
+    return inf.connections.map(con => con.id + "|" + inf.name);
+  }
+
+  findProjectsByInf(inf) {
+    return inf.connections.map(con => con.id);
+  }
+
+  wrapText = (text, after) => {
     var newtext = [];
     var i = 0;
-    var stop =0;
-    for (let j=0; j< text.length; j++){
-      if ((text[j] === " " && i >17) ){
-        newtext.push(text.substring(stop,j+1));
+    var stop = 0;
+    for (let j = 0; j < text.length; j++) {
+      if (text[j] === " " && i > after) {
+        newtext.push(text.substring(stop, j + 1));
         stop = j;
         i = 0;
-      } if(j === text.length-1){
-        newtext.push(text.substring(stop,j+1));
+      }
+      if (j === text.length - 1) {
+        newtext.push(text.substring(stop, j + 1));
       }
       i++;
     }
     return newtext;
-  }
+  };
 
   getPointLocation = (pt, width, height) => {
     const [x, y] = pt;
@@ -128,76 +160,40 @@ export default class ClusterMapView extends React.Component {
 
   scaleContours = (coords, width, height) => {
     var newConts = [];
-    if(typeof coords[0] != "undefined"){
-      for (var i = 0; i<coords[0].length; i++) {
+    if (typeof coords[0] != "undefined") {
+      for (var i = 0; i < coords[0].length; i++) {
         const [x, y] = coords[0][i];
-        const nX = ((x/600)*clusterSize(this.scale)+clusterPosX(width, this.scale));
-        const nY = ((y/600)*clusterSize(this.scale)+clusterPosY(height, this.scale));
-        newConts[i] = [nX,nY];
+        const nX =
+          (x / 600) * clusterSize(this.scale) + clusterPosX(width, this.scale);
+        const nY =
+          (y / 600) * clusterSize(this.scale) + clusterPosY(height, this.scale);
+        newConts[i] = [nX, nY];
       }
     }
     return newConts;
-  }
-
+  };
 
   render() {
-    const { categories, width, height } = this.props;
-
+    const { categories, width, height, InfrastrukturSorted } = this.props;
     var colorHeat = d3ScaleLinear()
-        .domain(d3extent(this.props.topography))
-        .range(["#000","#888"]);
-    var contours = d3Contours().size([600,600]).smooth([true])(this.props.topography);
+      .domain(d3extent(this.props.topography))
+      .range(["#000", "#888"]);
+    var contours = d3Contours()
+      .size([600, 600])
+      .smooth([true])(this.props.topography);
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (categories.length === 0 || !width || !height || scale <= 0) {
       return <div />;
     }
-
     const shiftX = width / 2;
     const shiftY = height / 2;
-    const radius = (scale - arcMarginSides(width, scale)) / 2;
-    const each = 180 / (categories.length - 1);
+    const radius = (scale - arcMarginSides(width, scale)) / 2.2;
+    const eachCat = 180 / (categories.length - 1);
+    const eachInf = 170 / (InfrastrukturSorted.length - 1);
     const cats = _.reverse(_.sortBy(categories, x => x.count));
     const catsSort = _.sortBy(categories, x => x.title);
     const conMax = cats[0].count;
-
-    // var ClusterHullPoints = [];
-    // ClusterHullPoints = (this.props.clusterData.map(cluster =>  {
-    //   return (cluster.concaveHull.map(point =>{
-    //    return (this.getPointLocation(point, width, height));} ));}));
-
-    // var clusterOutlines= ClusterHullPoints.map( clust => {
-    //       return spo(("M" + clust[0] + "L" + clust.join(" L ")),clusterHullStrokeWidth(scale/2));
-    //     });
-    // mask="url(#clusterMask)"
-    // <g>
-    // {clusterOutlines.map( (clustOut,i) => {
-    //   return [
-    //     <path key={i} d={clustOut} fill="none" stroke="#fff" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2px" /> ]})}
-    //
-    // </g>
-    // <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
-    // {this.props.clusterData.map(cluster => (
-    //   <polygon
-    //     key={cluster.id}
-    //     points={cluster.concaveHull.map(point =>
-    //       this.getPointLocation(point, width, height)
-    //     )}
-    //     stroke="#fff"
-    //     strokeWidth={clusterHullStrokeWidth(scale)}
-    //     strokeLinejoin="round"
-    //     opacity="0.5"
-    //     fill="none"
-    //   />
-    // ))}
-    // </g>
-    // <defs>
-    // <mask x="0" y="0" width="1" height="1" id="clusterMask">
-    // <path d={ ClusterHullPoints.map( clust => {
-    //       return "M" + clust[0] + "L" + clust;
-    //     }) } fill="#fff" stroke="#fff" strokeLinejoin="round"             strokeWidth={clusterHullStrokeWidth(scale)} />
-    // </mask>
-    // </defs>
 
     return (
       <div className={style.clusterMapWrapper}>
@@ -207,42 +203,27 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
-
-        <g fill="none"
-          transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
-          {contours.map( cont => {
-            return (
-              <path className="isoline" key={cont.value}  d={
-                cont.coordinates.map( coord => {
-                  var coords = this.scaleContours(coord, width, height);
-                  return("M" + coords[0] + "L" + coords);
-                })
-              } fill={colorHeat(cont.value)} />
-            );
-          })}
-        </g>
+          <g
+            fill="none"
+            transform={"translate(0 " + arcMarginTop(height, scale) + ")"}
+          >
+            {contours.map(cont => {
+              return (
+                <path
+                  className="isoline"
+                  key={cont.value}
+                  d={cont.coordinates.map(coord => {
+                    var coords = this.scaleContours(coord, width, height);
+                    return "M" + coords[0] + "L" + coords;
+                  })}
+                  fill={colorHeat(cont.value)}
+                />
+              );
+            })}
+          </g>
           <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
-            <g style={{ transform: "translate(0px, 0px)" }}>
-
-              {this.props.clusterData.map(cluster => {
-                return (
-                  <Cluster
-                    key={cluster.id}
-                    cluster={cluster}
-                    getLocation={p => this.getPointLocation(p, width, height)}
-                    radius={radius}
-                    highlightProject={this.highlightProject}
-                    highlightedProjects={this.state.highlightedProjects}
-                    unHighlight={this.unHighlight}
-                    resetCat={() => this.setState({ highlightedCat: null })}
-                    showProjectDetails={this.props.showProjectDetails}
-                  />
-                );
-              })}
-            </g>
-
             {catsSort.map((cat, i) => {
-              const startAngle = each * i - 180;
+              const startAngle = eachCat * i - 180;
               const angle = startAngle * (Math.PI / 180);
               const conLen = cat.count;
               const x = shiftX + radius * Math.cos(angle);
@@ -279,7 +260,7 @@ export default class ClusterMapView extends React.Component {
                   const sourceY =
                     shiftY +
                     (radius + connectionOffsetFromArc(scale)) * Math.sin(angle);
-                  const midRadius = (radius - radius / 2) * (Math.PI / 180);
+                  const midRadius = radius / 1.5;
                   const midX = shiftX + midRadius * Math.cos(angle);
                   const midY = shiftY + midRadius * Math.sin(angle);
                   const mid = [midX, midY];
@@ -335,62 +316,230 @@ export default class ClusterMapView extends React.Component {
                       x={textX}
                       y={textY}
                       textAnchor={anchor}
-                      fill="white"
+                      fill={isHighlighted ? "#afca0b" : "#AAA"}
                       fontSize={
                         fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
                       }
                       transform={`rotate(${textRotate} ${textX} ${textY})`}
-                    >{this.wrapText(cat.title)[0]}
+                    >
+                      {this.wrapText(cat.title, 14)[0]}
                     </text>
                     <text
-                      x={textX-3 }
-                      y={textY+12}
+                      x={textX - 3}
+                      y={textY + 12}
                       textAnchor={anchor}
-                      fill="white"
+                      fill={isHighlighted ? "#afca0b" : "#AAA"}
                       fontSize={
                         fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
                       }
                       transform={`rotate(${textRotate} ${textX} ${textY})`}
-                    >{this.wrapText(cat.title)[1]}
+                    >
+                      {this.wrapText(cat.title, 14)[1]}
                     </text>
                   </g>
                   <g>
                     {lines.map((line, i) => (
-                      <path
-                        pointerEvents="none"
-                        key={i}
-                        strokeWidth={strokeWidth(scale)*3}
-                        fill="transparent"
-                        stroke={
-                          this.state.highlightedLinks.find(
-                            hline => hline === line[4]
-                          )
-                            ? "rgba(100,100,100,1)"
-                            : "rgba(100,100,100,0.1)"
-                        }
-                        d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                      />
-                    ))}
-                    {lines.map((line, i) => (
-                      <path
-                        pointerEvents="none"
-                        key={i}
-                        strokeWidth={strokeWidth(scale)}
-                        fill="transparent"
-                        stroke={
-                          this.state.highlightedLinks.find(
-                            hline => hline === line[4]
-                          )
-                            ? "#fff"
-                            : "rgba(255,255,255,0.1)"
-                        }
-                        d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                      />
+                      <g key={i}>
+                        <path
+                          pointerEvents="none"
+                          key={i + "a"}
+                          strokeWidth={strokeWidth(scale) * 3}
+                          fill="transparent"
+                          stroke={
+                            this.state.highlightedLinks.find(
+                              hline => hline === line[4]
+                            )
+                              ? "rgba(100,100,100,1)"
+                              : "rgba(100,100,100,0.1)"
+                          }
+                          d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                        />
+                        <path
+                          pointerEvents="none"
+                          key={i + "b"}
+                          strokeWidth={strokeWidth(scale)}
+                          fill="transparent"
+                          stroke={
+                            this.state.highlightedLinks.find(
+                              hline => hline === line[4]
+                            )
+                              ? "#fff"
+                              : "rgba(255,255,255,0.1)"
+                          }
+                          d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                        />
+                      </g>
                     ))}
                   </g>
                 </g>
               );
             })}
+
+            <g>
+              {InfrastrukturSorted.map((infrastruktur, i) => {
+                const startAngle = eachInf * i + 5;
+                const angle = startAngle * (Math.PI / 180);
+                const x = shiftX - 6 + radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+                const textX =
+                  shiftX +
+                  (radius + countOffsetFromArc(scale)) * Math.cos(angle);
+                const textY =
+                  shiftY +
+                  (radius + countOffsetFromArc(scale)) * Math.sin(angle);
+                const anchor = startAngle > 90 ? "end" : "start";
+                const textRotate =
+                  startAngle > 90 ? startAngle + 180 : startAngle;
+                const isHighlighted = this.state.highlightedInfs.find(
+                  hinf => hinf.name === infrastruktur.name
+                );
+                let lines = [];
+                if (infrastruktur.connections) {
+                  lines = infrastruktur.connections.map(con => {
+                    const target = this.getPointLocation(
+                      con.location,
+                      width,
+                      height
+                    );
+                    const angleDeg = startAngle;
+                    const angle = angleDeg * (Math.PI / 180);
+                    const sourceX =
+                      shiftX +
+                      (radius + connectionOffsetFromArc(scale)) *
+                        Math.cos(angle);
+                    const sourceY =
+                      shiftY +
+                      (radius + connectionOffsetFromArc(scale)) *
+                        Math.sin(angle);
+                    const midRadius = radius / 1.5;
+                    const midX = shiftX + midRadius * Math.cos(angle);
+                    const midY = shiftY + midRadius * Math.sin(angle);
+                    const mid = [midX, midY];
+                    const source = [sourceX, sourceY];
+
+                    return [
+                      {
+                        x: Math.round(source[0]),
+                        y: Math.round(source[1])
+                      },
+                      {
+                        x: Math.round(mid[0]),
+                        y: Math.round(mid[1])
+                      },
+                      {
+                        x: Math.round(target[0]),
+                        y: Math.round(target[1])
+                      },
+                      {
+                        x: Math.round(target[0]),
+                        y: Math.round(target[1])
+                      },
+                      con.id + "|" + infrastruktur.name
+                    ];
+                  });
+                }
+                return (
+                  <g
+                    key={infrastruktur.name}
+                    onMouseOver={() =>
+                      this.highlightInfrastructure(infrastruktur)
+                    }
+                    onMouseOut={() => this.unHighlight()}
+                  >
+                    <g>
+                      {infrastruktur.type === "collection" ? (
+                        <CollectionIcon
+                          id={`inf-${infrastruktur[0]}`}
+                          x={x}
+                          y={y}
+                          width="12px"
+                          heigth="12px"
+                          fill="white"
+                        />
+                      ) : (
+                        <InfrastructureIcon
+                          id={`inf-${infrastruktur.name}`}
+                          x={x}
+                          y={y}
+                          width="12px"
+                          heigth="12px"
+                          fill="white"
+                        />
+                      )}
+                      <text
+                        x={textX}
+                        y={textY}
+                        textAnchor={anchor}
+                        fill={isHighlighted ? "#afca0b" : "#AAA"}
+                        fontSize={
+                          fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                        }
+                        transform={`rotate(${textRotate} ${textX} ${textY})`}
+                      >
+                        {this.wrapText(infrastruktur.name, 17).map(
+                          (titlePart, j) => (
+                            <tspan x={textX} y={textY + j * 10}>
+                              {titlePart}
+                            </tspan>
+                          )
+                        )}
+                      </text>
+                    </g>
+                    <g>
+                      {lines.map((line, i) => (
+                        <g key={i}>
+                          <path
+                            pointerEvents="none"
+                            key={i + "a"}
+                            strokeWidth={strokeWidth(scale) * 3}
+                            fill="transparent"
+                            stroke={
+                              this.state.highlightedLinks.find(
+                                hline => hline === line[4]
+                              )
+                                ? "rgba(100,100,100,1)"
+                                : "rgba(100,100,100,0.1)"
+                            }
+                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                          />
+                          <path
+                            pointerEvents="none"
+                            key={i + "b"}
+                            strokeWidth={strokeWidth(scale)}
+                            fill="transparent"
+                            stroke={
+                              this.state.highlightedLinks.find(
+                                hline => hline === line[4]
+                              )
+                                ? "#fff"
+                                : "rgba(255,255,255,0.1)"
+                            }
+                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                          />
+                        </g>
+                      ))}
+                    </g>
+                  </g>
+                );
+              })}
+            </g>
+            <g style={{ transform: "translate(0px, 0px)" }}>
+              {this.props.clusterData.map(cluster => {
+                return (
+                  <Cluster
+                    key={cluster.id}
+                    cluster={cluster}
+                    getLocation={p => this.getPointLocation(p, width, height)}
+                    radius={radius}
+                    highlightProject={this.highlightProject}
+                    highlightedProjects={this.state.highlightedProjects}
+                    unHighlight={this.unHighlight}
+                    resetCat={() => this.setState({ highlightedCat: null })}
+                    showProjectDetails={this.props.showProjectDetails}
+                  />
+                );
+              })}
+            </g>
           </g>
         </svg>
       </div>
