@@ -433,6 +433,9 @@ export default class ClusterMapView extends React.Component {
                       this.highlightInfrastructure(infrastruktur)
                     }
                     onMouseOut={() => this.unHighlight()}
+                    onClick={() =>
+                      this.props.showInfraDetails(infrastruktur.name)
+                    }
                   >
                     <g>
                       {infrastruktur.type === "collection" ? (

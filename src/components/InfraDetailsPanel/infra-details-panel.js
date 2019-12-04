@@ -1,28 +1,18 @@
 import React from "react";
 import connect from "react-redux/es/connect/connect";
-import KtaDetailsPanelView from "./kta-details-panel-view";
+import InfraDetailsPanelView from "./infra-details-panel-view";
 import {
   setSelectedProject,
-  setSelectedCat,
   setSideBarComponent
 } from "../../store/actions/actions";
 import FilterPanel from "../FilterPanel/filter-panel";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
-import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
-
-const findCategoriesForKta = state => {
-  return state.main.categories.filter(cat =>
-    state.main.ktaMapping.find(
-      map =>
-        map.kta_id === state.main.selectedKta && map.targetgroup_id === cat.id
-    )
-  );
-};
 
 const mapStateToProps = state => {
   return {
-    kta: state.main.ktas.find(kta => kta.id === state.main.selectedKta),
-    categories: findCategoriesForKta(state)
+    infraData:
+      state.main.collections.find(c => c.name === state.main.selectedInfra) ||
+      state.main.infrastructures.find(i => i.name === state.main.selectedInfra)
   };
 };
 
@@ -31,14 +21,10 @@ const mapDispatchToProps = dispatch => ({
   showProjectDetails: project => {
     dispatch(setSelectedProject(project));
     dispatch(setSideBarComponent(<ProjectDetailsPanel />));
-  },
-  showCatDetails: cat => {
-    dispatch(setSelectedCat(cat));
-    dispatch(setSideBarComponent(<CatDetailsPanel />));
   }
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(KtaDetailsPanelView);
+)(InfraDetailsPanelView);

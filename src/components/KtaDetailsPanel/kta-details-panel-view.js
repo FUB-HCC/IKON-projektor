@@ -37,7 +37,20 @@ const KtaDetailsPanel = props => {
       </div>
 
       <p className={style.infoItems}>
-        {"Zielgruppen: " + props.kta.targetgroups.join(",\n")}
+        <span>
+          Zielgruppen: <br />
+        </span>
+        {props.categories.map(cat => (
+          <span
+            href="#"
+            onClick={() => props.showCatDetails(cat.id)}
+            key={cat.id}
+            className={style.catLinkToItem}
+          >
+            {cat.title}
+            <br />
+          </span>
+        ))}
       </p>
       <p className={style.infoItems}>{"Format: " + props.kta.format}</p>
       <p className={style.infoItems}>
@@ -50,8 +63,24 @@ const KtaDetailsPanel = props => {
       <p className={style.abstractText}>
         {props.kta.description.split("https://")[0]}
       </p>
-      <p className={style.infoItems}>{"Infrastruktur: Keine Daten"}</p>
-      <p className={style.infoItems}>{"Projekte: Keine Daten"}</p>
+      <p className={style.infoItems}>
+        <span>
+          Projekte:
+          <br />
+        </span>
+        {props.categories.map(cat =>
+          [...new Set(cat.connections.map(c => c.id))].map((con, i) => (
+            <span
+              href="#"
+              onClick={() => props.showProjectDetails(con)}
+              key={i + " " + con}
+              className={style.catLinkToItem}
+            >
+              {cat.connections.find(p => p.id === con).title + ",\n "}
+            </span>
+          ))
+        )}
+      </p>
       <a
         className={style.projectDetailsLink}
         href={props.kta.href}

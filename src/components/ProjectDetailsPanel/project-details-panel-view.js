@@ -79,14 +79,45 @@ const ProjectDetailsPanel = props => {
           ))}
         </p>
         <p className={style.infoItems}>
-          {"Genutzte Infrastruktur: " +
-            props.projectData.infrastructure.join(",\n")}
+          <span>Genutzte Infrastruktur: </span>
+          {props.projectData.infrastructure.map((con, i) => (
+            <span
+              href="#"
+              onClick={() => props.showInfraDetails(con)}
+              key={i + " " + con}
+            >
+              {con}
+              <br />
+            </span>
+          ))}
         </p>
         <p className={style.infoItems}>
-          {"Wissenstransferaktivität(en): Keine Daten"}
+          <span>Bezug zu Sammlung: </span>
+          {props.projectData.collections.map(con => {
+            return (
+              <span
+                href="#"
+                onClick={() => props.showInfraDetails(con)}
+                key={con}
+              >
+                {con}
+                <br />
+              </span>
+            );
+          })}
         </p>
         <p className={style.infoItems}>
-          {"Bezug zu Sammlung: " + props.projectData.collections.join(",\n")}
+          <span>Wissenstransferaktivität(en): </span>
+          {props.ktas.map(kta => (
+            <span
+              href="#"
+              onClick={() => props.showKtaDetails(kta.id)}
+              key={kta.id}
+              className={style.catLinkToItem}
+            >
+              {kta.title + ",\n "}
+            </span>
+          ))}
         </p>
         <p className={style.infoItems}>
           {"Projektleiter: " + props.projectData.projektleiter}

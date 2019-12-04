@@ -6,10 +6,12 @@ import concave from "concaveman";
 import {
   setSelectedProject,
   setSelectedCat,
+  setSelectedInfra,
   setSideBarComponent
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
+import InfraDetailsPanel from "../InfraDetailsPanel/infra-details-panel";
 import { getFieldColor } from "../../util/utility";
 
 const mapStateToProps = state => {
@@ -17,12 +19,8 @@ const mapStateToProps = state => {
   let transformedPoints = [];
   let categories = state.main.categories;
   let topography = [];
-  let typedCollections = state.main.filters.collections.value.map(el => {
-    return { name: el, type: "collection", connections: [] };
-  });
-  let typedInfrastructures = state.main.filters.infrastructure.value.map(el => {
-    return { name: el, type: "infrastructure", connections: [] };
-  });
+  let typedCollections = state.main.collections;
+  let typedInfrastructures = state.main.infrastructures;
   if (
     state.main.clusterData &&
     state.main.projects.length > 0 &&
@@ -133,6 +131,10 @@ const mapDispatchToProps = dispatch => {
     showCatDetails: cat => {
       dispatch(setSelectedCat(cat));
       dispatch(setSideBarComponent(<CatDetailsPanel />));
+    },
+    showInfraDetails: infra => {
+      dispatch(setSelectedInfra(infra));
+      dispatch(setSideBarComponent(<InfraDetailsPanel />));
     }
   };
 };

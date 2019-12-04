@@ -61,6 +61,8 @@ const initialState = {
   ktas: [],
   ktaMapping: [],
   categories: [],
+  infrastructures: [],
+  collections: [],
   clusterData: undefined,
   selectedProject: undefined,
   sideBarComponent: <FilterPanel />
@@ -103,6 +105,12 @@ const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_TARGETGROUPS_DATA:
       return updateTargetGroupsData(state, action);
 
+    case actionTypes.UPDATE_COLLECTIONS_DATA:
+      return updateCollectionsData(state, action);
+
+    case actionTypes.UPDATE_INFRASTRUCTURE_DATA:
+      return updateInfrastructureData(state, action);
+
     case actionTypes.UPDATE_KTA_MAPPING_DATA:
       return updateKtaMappingData(state, action);
 
@@ -117,6 +125,9 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.SET_SELECTED_CAT:
       return setSelectedCat(state, action);
+
+    case actionTypes.SET_SELECTED_INFRA:
+      return setSelectedInfra(state, action);
 
     case actionTypes.SET_SELECTED_KTA:
       return setSelectedKta(state, action);
@@ -189,6 +200,24 @@ const updateTargetGroupsData = (state, action) => ({
     connections: [],
     count: 1,
     project_ids: []
+  }))
+});
+
+const updateCollectionsData = (state, action) => ({
+  ...state,
+  collections: action.value.map(collection => ({
+    ...collection,
+    connections: [],
+    type: "collection"
+  }))
+});
+
+const updateInfrastructureData = (state, action) => ({
+  ...state,
+  infrastructures: action.value.map(infrastructure => ({
+    ...infrastructure,
+    connections: [],
+    type: "infrastructure"
   }))
 });
 
@@ -383,6 +412,11 @@ const setSelectedCat = (state, action) => ({
 const setSelectedKta = (state, action) => ({
   ...state,
   selectedKta: action.value
+});
+
+const setSelectedInfra = (state, action) => ({
+  ...state,
+  selectedInfra: action.value
 });
 
 const resetSelectedProject = state => ({ ...state, setSelectedProject: null });
