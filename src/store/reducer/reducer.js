@@ -46,17 +46,34 @@ const initialState = {
       uniqueVals: [],
       value: []
     },
-    infrastructure: {
+    infrastructures: {
       name: "Laborgeräte",
-      filterKey: "infrastructure",
+      filterKey: "infrastructures",
+      type: "array",
+      uniqueVals: [],
+      value: []
+    },
+    targetgroups: {
+      name: "Zielgruppen",
+      filterKey: "targetgroups",
       type: "array",
       uniqueVals: [],
       value: []
     }
+    // formats: {
+    //   name: "Formate",
+    //   filterKey: "formats",
+    //   type: "array",
+    //   uniqueVals: [],
+    //   value: []
+    // }
   },
   graph: "0",
   projects: [],
   filteredProjects: [],
+  filteredCategories: [],
+  filteredCollections: [],
+  filteredInfrastructures: [],
   institutions: [],
   ktas: [],
   ktaMapping: [],
@@ -132,6 +149,9 @@ const reducer = (state = initialState, action) => {
     case actionTypes.SET_SELECTED_KTA:
       return setSelectedKta(state, action);
 
+    case actionTypes.DESELECT_ITEMS:
+      return deselectItems(state);
+
     case actionTypes.UPDATE_OLD_PROJECT_DATA:
       return updateOldProjectsData(state, action);
 
@@ -156,9 +176,16 @@ const applyFilters = (data, filter) => {
           newFilteredData[d] = filteredData[d];
         }
       } else if (f.type === "array") {
-        for (const entry of filteredData[d][f.filterKey]) {
-          if (f.value.some(value => value === entry))
-            newFilteredData[d] = filteredData[d];
+        if (
+          !filteredData[d][f.filterKey] ||
+          filteredData[d][f.filterKey].length === 0
+        ) {
+          newFilteredData[d] = filteredData[d];
+        } else {
+          for (const entry of filteredData[d][f.filterKey]) {
+            if (f.value.some(value => value === entry))
+              newFilteredData[d] = filteredData[d];
+          }
         }
       } else {
         if (filteredData[d][f.filterKey].includes(f.value))
@@ -168,6 +195,17 @@ const applyFilters = (data, filter) => {
     filteredData = newFilteredData;
   });
   return Object.values(filteredData);
+};
+
+const applyCategoryFilters = (categories, filter) => {
+  let newCategories = categories;
+
+  return newCategories.filter(cat => filter.value.includes(cat.title));
+};
+
+const applyInfraFilters = (infras, filter) => {
+  let newInfras = infras;
+  return newInfras.filter(infra => filter.value.includes(infra.name));
 };
 
 const compare = (a, b) => {
@@ -195,7 +233,23 @@ const updateKtaData = (state, action) => ({
 
 const updateTargetGroupsData = (state, action) => ({
   ...state,
+  filters: {
+    ...state.filters,
+    targetgroups: {
+      name: "Zielgruppen",
+      filterKey: "targetgroups",
+      type: "array",
+      uniqueVals: action.value.map(t => t.title),
+      value: action.value.map(t => t.title)
+    }
+  },
   categories: action.value.map(category => ({
+    ...category,
+    connections: [],
+    count: 1,
+    project_ids: []
+  })),
+  filteredCategories: action.value.map(category => ({
     ...category,
     connections: [],
     count: 1,
@@ -209,7 +263,8 @@ const updateCollectionsData = (state, action) => ({
     ...collection,
     connections: [],
     type: "collection"
-  }))
+  })),
+  filteredCollections: action.value
 });
 
 const updateInfrastructureData = (state, action) => ({
@@ -218,7 +273,8 @@ const updateInfrastructureData = (state, action) => ({
     ...infrastructure,
     connections: [],
     type: "infrastructure"
-  }))
+  })),
+  filteredInfrastructures: action.value
 });
 
 const updateKtaMappingData = (state, action) => ({
@@ -246,13 +302,11 @@ const updateProjectsData = (state, action) => {
       new Date(project.funding_end_year).getFullYear()
     ];
     project.collections =
-      project.sammlungen && project.sammlungen[0]
-        ? project.sammlungen
-        : ["Keine Sammlung"];
-    project.infrastructure =
+      project.sammlungen && project.sammlungen[0] ? project.sammlungen : [];
+    project.infrastructures =
       project.infrastruktur && project.infrastruktur[0]
         ? project.infrastruktur
-        : ["Kein Laborgerät"];
+        : [];
     if (
       project.participating_subject_areas &&
       project.participating_subject_areas.split("/")[0]
@@ -278,7 +332,7 @@ const updateProjectsData = (state, action) => {
   const uniqueFields = [];
   const uniqueTopics = [];
   const uniqueSponsors = [];
-  const uniqueInfrastructure = [];
+  const uniqueInfrastructures = [];
   const uniqueCollections = [];
   const maxDateRange = [5000, 0];
 
@@ -300,10 +354,10 @@ const updateProjectsData = (state, action) => {
         for (const sammlung of Object.values(value))
           if (!uniqueCollections.some(e => e === sammlung))
             uniqueCollections.push(sammlung);
-      } else if (property === "infrastructure") {
+      } else if (property === "infrastructures") {
         for (const infrastruktur of Object.values(value))
-          if (!uniqueInfrastructure.some(e => e === infrastruktur))
-            uniqueInfrastructure.push(infrastruktur);
+          if (!uniqueInfrastructures.some(e => e === infrastruktur))
+            uniqueInfrastructures.push(infrastruktur);
       }
     });
   });
@@ -335,10 +389,10 @@ const updateProjectsData = (state, action) => {
       uniqueVals: uniqueCollections.sort((a, b) => a.localeCompare(b)),
       value: uniqueCollections
     },
-    infrastructure: {
-      ...state.filters.infrastructure,
-      uniqueVals: uniqueInfrastructure.sort((a, b) => a.localeCompare(b)),
-      value: uniqueInfrastructure
+    infrastructures: {
+      ...state.filters.infrastructures,
+      uniqueVals: uniqueInfrastructures.sort((a, b) => a.localeCompare(b)),
+      value: uniqueInfrastructures
     }
   };
 
@@ -366,6 +420,18 @@ const changeCheckboxFilter = (state, action) => {
   }
   return {
     ...state,
+    filteredCategories: applyCategoryFilters(
+      state.categories,
+      newFilter.targetgroups
+    ),
+    filteredCollections: applyInfraFilters(
+      state.collections,
+      newFilter.collections
+    ),
+    filteredInfrastructures: applyInfraFilters(
+      state.infrastructures,
+      newFilter.infrastructures
+    ),
     filters: newFilter,
     filteredProjects: applyFilters(state.projects, newFilter)
   };
@@ -418,7 +484,13 @@ const setSelectedInfra = (state, action) => ({
   ...state,
   selectedInfra: action.value
 });
-
+const deselectItems = state => ({
+  ...state,
+  selectedProject: null,
+  selectedInfra: null,
+  selectedCat: null,
+  selectedKta: null
+});
 const resetSelectedProject = state => ({ ...state, setSelectedProject: null });
 
 const deactivatePopover = state => {

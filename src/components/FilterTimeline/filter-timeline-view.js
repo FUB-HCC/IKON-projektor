@@ -18,6 +18,7 @@ class FilterTimelineView extends React.Component {
         </div>
         <div className={style.filterTimelineSlider}>
           <RangeSlider
+            className={style.RangeSliderStyle}
             min={maxRange[0]}
             max={maxRange[1]}
             labelStepSize={4}

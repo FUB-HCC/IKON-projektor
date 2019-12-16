@@ -14,10 +14,10 @@ const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.1 * scale);
 const clusterSize = scale => 0.4 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
-const fontSizeText = scale => 0.009 * scale;
-const fontSizeCount = scale => 0.006 * scale;
-const textOffsetFromArc = scale => 0.03 * scale;
-const countOffsetFromArc = scale => 0.018 * scale;
+const fontSizeText = scale => 0.012 * scale;
+const fontSizeCount = scale => 0.01 * scale;
+const textOffsetFromArc = scale => 0.038 * scale;
+const countOffsetFromArc = scale => 0.022 * scale;
 const connectionOffsetFromArc = scale => -0.015 * scale;
 const circleScaling = scale => 0.02 * scale;
 const strokeWidth = scale => 0.001 * scale;
@@ -60,7 +60,7 @@ export default class ClusterMapView extends React.Component {
     this.setState({
       highlightedCats: [],
       highlightedLinks: [],
-      highlightedProjects: [],
+      highlightedProjects: [this.props.selectedProject],
       highlightedInfs: []
     });
   }
@@ -68,8 +68,13 @@ export default class ClusterMapView extends React.Component {
   highlightCat(category) {
     this.setState({
       highlightedCats: [category],
-      highlightedLinks: this.findLinksByCat(category),
-      highlightedProjects: this.findProjectsByCat(category)
+      highlightedLinks: this.findLinksByCat(category).concat(
+        this.findProjectsByCat(category).map(p => this.findLinksByProject(p))
+      ),
+      highlightedProjects: this.findProjectsByCat(category),
+      highlightedInfs: this.findProjectsByCat(category).map(p =>
+        this.findInfsByProject(p)
+      )
     });
   }
 
@@ -86,7 +91,7 @@ export default class ClusterMapView extends React.Component {
       highlightedCats: this.findCatsByProject(project),
       highlightedLinks: this.findLinksByProject(project),
       highlightedInfs: this.findInfsByProject(project),
-      highlightedProjects: [project]
+      highlightedProjects: [this.props.selectedProject, project]
     });
   }
 
@@ -126,11 +131,13 @@ export default class ClusterMapView extends React.Component {
   }
 
   findProjectsByInf(inf) {
-    return inf.connections.map(con => con.id);
+    return inf.connections
+      .map(con => con.id)
+      .concat(this.props.selectedProject);
   }
 
   splitLongTitles = title => {
-    var words = title.split(" ");
+    var words = title.split(/[\s-]+/);
     var newtext = [words[0]];
     for (let i = 1; i < words.length; i++) {
       if (newtext[newtext.length - 1].length < 13) {
@@ -185,9 +192,8 @@ export default class ClusterMapView extends React.Component {
     }
     const shiftX = width / 2;
     const shiftY = height / 2;
-    const radius = (scale - arcMarginSides(width, scale)) / 2.2;
-    const eachCat = 180 / (categories.length - 1);
-    const eachInf = 170 / (InfrastrukturSorted.length - 1);
+    const radius = scale * 0.55 - arcMarginSides(width, scale);
+    const each = 360 / (categories.length + InfrastrukturSorted.length);
     const sortedTargetgroups = categories.sort((a, b) =>
       a.title < b.title ? 1 : -1
     );
@@ -221,15 +227,23 @@ export default class ClusterMapView extends React.Component {
           </g>
           <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
             {sortedTargetgroups.map((cat, i) => {
-              const startAngle = eachCat * i - 180;
+              const startAngle = each * i - sortedTargetgroups.length * each;
               const angle = startAngle * (Math.PI / 180);
               const conLen = cat.count;
               const x = shiftX + radius * Math.cos(angle);
               const y = shiftY + radius * Math.sin(angle);
+              const isHighlighted =
+                this.state.highlightedCats.find(hcat => hcat.id === cat.id) ||
+                this.props.selectedCat === cat.id;
+              const higlightOffset = isHighlighted ? 7 : 0;
               const textX =
-                shiftX + (radius + textOffsetFromArc(scale)) * Math.cos(angle);
+                shiftX +
+                (radius + higlightOffset + textOffsetFromArc(scale)) *
+                  Math.cos(angle);
               const textY =
-                shiftY + (radius + textOffsetFromArc(scale)) * Math.sin(angle);
+                shiftY +
+                (radius + higlightOffset + textOffsetFromArc(scale)) *
+                  Math.sin(angle);
               const lenX =
                 shiftX + (radius + countOffsetFromArc(scale)) * Math.cos(angle);
               const lenY =
@@ -237,10 +251,8 @@ export default class ClusterMapView extends React.Component {
               const anchor = startAngle < -90 ? "end" : "start";
               const textRotate =
                 startAngle < -90 ? startAngle + 180 : startAngle;
-              const isHighlighted = this.state.highlightedCats.find(
-                hcat => hcat.id === cat.id
-              );
-              const area = conLen / conMax;
+
+              const area = (conLen * 1.2) / conMax;
               const rad = Math.sqrt(area / Math.PI) * circleScaling(scale) || 1;
               let lines = [];
               if (cat.connections.length > 0) {
@@ -298,24 +310,31 @@ export default class ClusterMapView extends React.Component {
                       r={rad}
                       cx={x}
                       cy={y}
-                      stroke="white"
-                      fill="white"
+                      cursor="POINTER"
+                      stroke={isHighlighted ? "#afca0b" : "white"}
+                      fill={isHighlighted ? "#afca0b" : "white"}
                     />
                     <text
                       x={lenX}
                       y={lenY}
                       textAnchor="middle"
-                      fill="white"
-                      fontSize={fontSizeCount(this.scale)}
+                      fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                      fontSize={
+                        fontSizeCount(this.scale) * (isHighlighted ? 1.2 : 1)
+                      }
+                      fontWeight="700"
+                      cursor="POINTER"
                     >
                       {conLen}
                     </text>
                     <text
                       textAnchor={anchor}
-                      fill={isHighlighted ? "#afca0b" : "#AAA"}
+                      fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                       fontSize={
                         fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
                       }
+                      fontWeight="700"
+                      cursor="POINTER"
                       transform={`rotate(${textRotate} ${textX} ${textY})`}
                     >
                       {this.splitLongTitles(cat.title).map((titlePart, i) => (
@@ -337,7 +356,7 @@ export default class ClusterMapView extends React.Component {
                             this.state.highlightedLinks.find(
                               hline => hline === line[4]
                             )
-                              ? "rgba(100,100,100,1)"
+                              ? "rgba(175, 202, 11, 0.1)"
                               : "rgba(100,100,100,0.1)"
                           }
                           d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
@@ -351,7 +370,7 @@ export default class ClusterMapView extends React.Component {
                             this.state.highlightedLinks.find(
                               hline => hline === line[4]
                             )
-                              ? "#fff"
+                              ? "rgba(175, 202, 11, 0.5)"
                               : "rgba(255,255,255,0.1)"
                           }
                           d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
@@ -365,22 +384,27 @@ export default class ClusterMapView extends React.Component {
 
             <g>
               {InfrastrukturSorted.map((infrastruktur, i) => {
-                const startAngle = eachInf * i + 5;
+                const startAngle = each * i;
                 const angle = startAngle * (Math.PI / 180);
                 const x = shiftX - 6 + radius * Math.cos(angle);
                 const y = radius * Math.sin(angle);
+                const isHighlighted =
+                  this.state.highlightedInfs.find(
+                    hinf => hinf.name === infrastruktur.name
+                  ) || this.props.selectedInfra === infrastruktur.name;
+                const higlightOffset = isHighlighted ? 7 : 0;
                 const textX =
                   shiftX +
-                  (radius + countOffsetFromArc(scale)) * Math.cos(angle);
+                  (radius + higlightOffset + countOffsetFromArc(scale)) *
+                    Math.cos(angle);
                 const textY =
                   shiftY +
-                  (radius + countOffsetFromArc(scale)) * Math.sin(angle);
+                  (radius + higlightOffset + countOffsetFromArc(scale)) *
+                    Math.sin(angle);
                 const anchor = startAngle > 90 ? "end" : "start";
                 const textRotate =
                   startAngle > 90 ? startAngle + 180 : startAngle;
-                const isHighlighted = this.state.highlightedInfs.find(
-                  hinf => hinf.name === infrastruktur.name
-                );
+
                 let lines = [];
                 if (infrastruktur.connections) {
                   lines = infrastruktur.connections.map(con => {
@@ -438,33 +462,41 @@ export default class ClusterMapView extends React.Component {
                     }
                   >
                     <g>
-                      {infrastruktur.type === "collection" ? (
-                        <CollectionIcon
-                          id={`inf-${infrastruktur[0]}`}
-                          x={x}
-                          y={y}
-                          width="12px"
-                          heigth="12px"
-                          fill="white"
-                        />
-                      ) : (
-                        <InfrastructureIcon
-                          id={`inf-${infrastruktur.name}`}
-                          x={x}
-                          y={y}
-                          width="12px"
-                          heigth="12px"
-                          fill="white"
-                        />
-                      )}
+                      <g>
+                        {infrastruktur.type === "collection" ? (
+                          <CollectionIcon
+                            id={`inf-${infrastruktur.name}`}
+                            x={x}
+                            y={y}
+                            width={fontSizeText(this.scale) * 1.3}
+                            heigth={fontSizeText(this.scale) * 1.3}
+                            fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                            stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                            cursor="POINTER"
+                          />
+                        ) : (
+                          <InfrastructureIcon
+                            id={`inf-${infrastruktur.name}`}
+                            x={x}
+                            y={y}
+                            width={fontSizeText(this.scale) * 1.3}
+                            heigth={fontSizeText(this.scale) * 1.3}
+                            fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                            stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                            cursor="POINTER"
+                          />
+                        )}
+                      </g>
                       <text
                         x={textX}
                         y={textY}
                         textAnchor={anchor}
-                        fill={isHighlighted ? "#afca0b" : "#AAA"}
+                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                         fontSize={
                           fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
                         }
+                        fontWeight="700"
+                        cursor="POINTER"
                         transform={`rotate(${textRotate} ${textX} ${textY})`}
                       >
                         {this.splitLongTitles(infrastruktur.name).map(
@@ -488,7 +520,7 @@ export default class ClusterMapView extends React.Component {
                               this.state.highlightedLinks.find(
                                 hline => hline === line[4]
                               )
-                                ? "rgba(100,100,100,1)"
+                                ? "rgba(175, 202, 11, 0.1)"
                                 : "rgba(100,100,100,0.1)"
                             }
                             d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
@@ -502,7 +534,7 @@ export default class ClusterMapView extends React.Component {
                               this.state.highlightedLinks.find(
                                 hline => hline === line[4]
                               )
-                                ? "#fff"
+                                ? "rgba(175, 202, 11, 0.5)"
                                 : "rgba(255,255,255,0.1)"
                             }
                             d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}

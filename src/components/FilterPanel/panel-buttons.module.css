@@ -1,0 +1,28 @@
+.panelButtonsWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.titleText {
+  color: #aaa;
+  background-color: #1c1d1f;
+  cursor: POINTER;
+  fill: #aaa;
+  padding: 3% 0% 3% 0%;
+  font-size: 100%;
+  text-align: center;
+  flex-grow: 1;
+  border-right: 4px solid #0e0e0e;
+  border-lef: 4px solid #0e0e0e;
+}
+.buttonIcon {
+  width: 20%;
+  height: width;
+  display: flex;
+  margin: auto;
+}
+
+.titleText:hover {
+  color: #afca0b;
+  fill: #afca0b;
+}

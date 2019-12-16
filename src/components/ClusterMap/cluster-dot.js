@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { getIcon } from "../../util/utility";
+import { ReactComponent as SelectedIcon } from "../../assets/Selected-Project.svg";
+import { ReactComponent as UnselectedIcon } from "../../assets/Unselected-Project.svg";
 
 export default class ClusterDot extends React.Component {
   static propTypes = {
@@ -20,13 +21,6 @@ export default class ClusterDot extends React.Component {
       )
         ? 1.2
         : 1;
-    const icon =
-      this.props.point.projectData &&
-      this.props.highlightedProjects.find(
-        hProject => hProject === this.props.point.projectData.id
-      )
-        ? 1
-        : 0;
 
     return (
       <g
@@ -53,19 +47,36 @@ export default class ClusterDot extends React.Component {
           r={this.props.radius / 35}
           fill={"transparent"}
         />
-        <svg
-          width={(this.props.radius / 15) * scale}
-          height={(this.props.radius / 15) * scale}
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          x="0px"
-          y="0px"
-          viewBox="0 0 100 100"
-          fill={color}
-          stroke={color}
-        >
-          <path stroke="#7c7c7c" d={getIcon(icon)} />
-        </svg>
+        {this.props.point.projectData &&
+        this.props.highlightedProjects.find(
+          hProject => hProject === this.props.point.projectData.id
+        ) ? (
+          <SelectedIcon
+            width={(this.props.radius / 15) * scale}
+            height={(this.props.radius / 15) * scale}
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            viewBox="0 0 100 100"
+            fill={color}
+            stroke="#7c7c7c"
+            cursor="POINTER"
+          />
+        ) : (
+          <UnselectedIcon
+            width={(this.props.radius / 15) * scale}
+            height={(this.props.radius / 15) * scale}
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            viewBox="0 0 100 100"
+            fill={color}
+            stroke="#7c7c7c"
+            cursor="POINTER"
+          />
+        )}
       </g>
     );
   }

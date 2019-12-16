@@ -53,6 +53,12 @@ export const setSelectedKta = ktaId => {
   };
 };
 
+export const deselectItems = () => {
+  return {
+    type: actionTypes.DESELECT_ITEMS
+  };
+};
+
 export const resetSelectedProject = () => {
   return {
     type: actionTypes.RESET_SELECTED_PROJECT

@@ -7,7 +7,8 @@ import {
   setSelectedProject,
   setSelectedCat,
   setSelectedInfra,
-  setSideBarComponent
+  setSideBarComponent,
+  deselectItems
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
@@ -17,10 +18,10 @@ import { getFieldColor } from "../../util/utility";
 const mapStateToProps = state => {
   let clusters = [];
   let transformedPoints = [];
-  let categories = state.main.categories;
+  let categories = state.main.filteredCategories;
   let topography = [];
-  let typedCollections = state.main.collections;
-  let typedInfrastructures = state.main.infrastructures;
+  let typedCollections = state.main.filteredCollections;
+  let typedInfrastructures = state.main.filteredInfrastructures;
   if (
     state.main.clusterData &&
     state.main.projects.length > 0 &&
@@ -33,12 +34,11 @@ const mapStateToProps = state => {
       cluster_topography
     } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
-    const colors = cluster_data.cluster_colour;
     const projects = project_data;
     const minX = _.min(_.map(projects, c => c.embpoint[0]));
     const minY = _.min(_.map(projects, c => c.embpoint[1]));
     topography = cluster_topography;
-    categories = state.main.categories.map(cat => cat);
+    categories = state.main.filteredCategories.map(cat => cat);
     transformedPoints = projects.map(p => {
       const cat = _.sample(categories);
       const project = state.main.filteredProjects.find(
@@ -62,7 +62,6 @@ const mapStateToProps = state => {
     clusters = _.map(clusterIds, id => ({
       id: id,
       words: clusterWords[id],
-      color: colors[id],
       projects: _.filter(transformedPoints, p => p.cluster === id),
       concaveHull: concave(
         transformedPoints.filter(p => p.cluster === id).map(p => p.location),
@@ -84,6 +83,7 @@ const mapStateToProps = state => {
             .find(point => point.project.id === kta.project_id)
         )
         .filter(connection => connection);
+      category.project_ids = [...new Set(category.connections.map(c => c.id))];
     });
 
     typedCollections.map(
@@ -99,7 +99,7 @@ const mapStateToProps = state => {
         (infrastructure.connections = transformedPoints.filter(
           point =>
             point.project &&
-            point.project.infrastructure.includes(infrastructure.name)
+            point.project.infrastructures.includes(infrastructure.name)
         ))
     );
   }
@@ -118,21 +118,27 @@ const mapStateToProps = state => {
     clusterData: clusters,
     categories: categories,
     topography: topography,
-    InfrastrukturSorted: InfrastrukturSorted
+    InfrastrukturSorted: InfrastrukturSorted,
+    selectedCat: state.main.selectedCat,
+    selectedProject: state.main.selectedProject,
+    selectedInfra: state.main.selectedInfra
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     showProjectDetails: project => {
+      dispatch(deselectItems());
       dispatch(setSelectedProject(project));
       dispatch(setSideBarComponent(<ProjectDetailsPanel />));
     },
     showCatDetails: cat => {
+      dispatch(deselectItems());
       dispatch(setSelectedCat(cat));
       dispatch(setSideBarComponent(<CatDetailsPanel />));
     },
     showInfraDetails: infra => {
+      dispatch(deselectItems());
       dispatch(setSelectedInfra(infra));
       dispatch(setSideBarComponent(<InfraDetailsPanel />));
     }

@@ -1,31 +1,60 @@
 import React from "react";
-import style from "./infra-details-panel.module.css";
+import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
+import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
+import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 
 const InfraDetailsPanel = props => {
   return (
-    <div className={style.projectDetailsWrapper}>
-      <div
-        className={style.projectDetailsExit}
-        onClick={props.returnToFilterView}
-      >
-        <Exit height={45} width={45} />
+    <div className={style.DetailsWrapper}>
+      <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+        <Exit height={35} width={35} />
       </div>
-      <div className={style.projectDetailsTitle}>
+      <div className={style.DetailsTitle}>
+        {props.infraData.type === "collection" ? (
+          <CollectionIcon
+            className={style.TitleIcon}
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            viewBox="0 0 100 100"
+            fill="#aaa"
+          />
+        ) : (
+          <InfrastructureIcon
+            className={style.TitleIcon}
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            viewBox="0 0 100 100"
+            fill="#aaa"
+          />
+        )}
+        <span className={style.titleTopic}>
+          {props.infraData.type === "collection"
+            ? "Sammlung "
+            : "Labor/Infrastruktur "}
+        </span>
+        <br />
         <span className={style.titleText}>{props.infraData.name}</span>
       </div>
-      <p className={style.abstractText}>
-        {props.infraData.type === "collection"
-          ? "Typ: Sammlung"
-          : "Typ: Laborgerät/Infrastruktur"}
-      </p>
-      <h3 className={style.abstractTitle}>Beschreibung:</h3>
-      <p className={style.abstractText}>{props.infraData.description}</p>
+
+      <div className={style.abstractText}>
+        <span className={style.infoItemTitle}>
+          Beschreibung:
+          <br />
+        </span>
+        {props.infraData.description}
+      </div>
       {props.infraData.connections.length > 0 && (
         <div>
-          <h2 className={style.abstractTitle}>
-            Forschungsprojekte, die diese Infrastruktur nutzen:{" "}
-          </h2>
+          <span className={style.infoItemTitle}>
+            <br />
+            Forschungsprojekte, die diese Infrastruktur nutzen:
+            <br />
+          </span>
           <p className={style.abstractText}>
             {[...new Set(props.infraData.connections.map(c => c.id))].map(
               (con, i) => (
@@ -33,7 +62,7 @@ const InfraDetailsPanel = props => {
                   href="#"
                   onClick={() => props.showProjectDetails(con)}
                   key={i + " " + con}
-                  className={style.catLinkToItem}
+                  className={style.DetailsLink}
                 >
                   {props.infraData.connections.find(p => p.id === con).title}
                   <br />
@@ -44,6 +73,16 @@ const InfraDetailsPanel = props => {
           </p>
         </div>
       )}
+      <a
+        className={style.DetailsViaLink}
+        href={
+          "https://via.museumfuernaturkunde.berlin/wiki/" + props.infraData.name
+        }
+        target="_blank"
+        rel="noopener noreferrer" //got warning otherwise
+      >
+        Im VIA-Wiki anschauen
+      </a>
     </div>
   );
 };

@@ -11,7 +11,6 @@ import { history } from "./index";
 import classes from "./App.module.css";
 import { getFiltersFromURL } from "./store/actions/actions";
 
-export const sideBarWidth = 450;
 export const menuBarHeight = 100;
 export const appMargin = 10;
 
@@ -40,10 +39,7 @@ class App extends Component {
                   <Route path="/about" component={About} />
                 </Switch>
               </div>
-              <div
-                className={classes.sidebar}
-                style={{ flexBasis: sideBarWidth }}
-              >
+              <div className={classes.sidebar}>
                 <Sidebar />
               </div>
               {/*<Footer />*/}

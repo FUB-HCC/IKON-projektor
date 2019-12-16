@@ -1,21 +1,28 @@
-.filterTimelineWrapper{
-    margin-top: 15px;
+.filterTimelineWrapper {
+  margin-top: 10px;
+  background-color: #1c1d1f;
+  padding-left: 2%;
 }
-.filterTimelineTitle{
-    border-bottom: 1px solid #069172;
-    padding-bottom: 5px;
-    margin-bottom: 15px;
-    width: 100%;
+.filterTimelineTitle {
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  margin-bottom: 15px;
+  width: 100%;
 }
 .titleText {
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    height: 25px;
-    color: #069172;
-    font-size: 22px;
-    font-weight: 100;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 25px;
+  color: #aaa;
+  font-size: 22px;
+  font-weight: 100;
 }
 .filterTimelineSlider {
-    padding: 25px;
+  padding: 25px;
+  color: #fff;
+}
+
+.RangeSliderStyle {
 }

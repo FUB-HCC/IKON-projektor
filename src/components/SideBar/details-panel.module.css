@@ -1,0 +1,81 @@
+.DetailsWrapper {
+  background-color: #1c1d1f;
+  padding: 3%;
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.DetailsExit {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 0px;
+  left: 90%;
+  flex-grow: 0;
+}
+
+.DetailsTitle {
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  flex-grow: 0;
+  color: #aaa;
+}
+.titleTopic {
+  font-size: 18px;
+  text-align: center;
+}
+.titleText {
+  width: 100%;
+  font-size: 25px;
+  font-weight: 100;
+}
+.TitleIcon {
+  width: 20px;
+  height: width;
+  margin-right: 8px;
+}
+.infoItems {
+  float: left;
+  width: 100%;
+  color: #989aa1;
+  margin-bottom: 5px;
+  flex-grow: 1;
+}
+.infoItemTitle {
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+.abstractTitle {
+  color: #aaa;
+}
+
+.DetailsLink {
+  margin-bottom: 5px;
+  cursor: pointer;
+  flex-grow: 1;
+  text-decoration: underline;
+}
+.DetailsLink:hover {
+  color: #afca0b;
+}
+.DetailsViaLink {
+  color: #afca0b;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  padding: 5px;
+  text-align: center;
+  font-size: 130%;
+  background-color: #333;
+}
+.DetailsViaLink:hover {
+  color: #fff;
+}
+.abstractText {
+  color: #aaa;
+  flex-grow: 1;
+}

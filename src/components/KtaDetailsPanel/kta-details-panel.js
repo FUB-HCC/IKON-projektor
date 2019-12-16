@@ -4,7 +4,8 @@ import KtaDetailsPanelView from "./kta-details-panel-view";
 import {
   setSelectedProject,
   setSelectedCat,
-  setSideBarComponent
+  setSideBarComponent,
+  deselectItems
 } from "../../store/actions/actions";
 import FilterPanel from "../FilterPanel/filter-panel";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
@@ -27,7 +28,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  returnToFilterView: () => dispatch(setSideBarComponent(<FilterPanel />)),
+  returnToFilterView: () => {
+    dispatch(setSideBarComponent(<FilterPanel />));
+    dispatch(deselectItems());
+  },
   showProjectDetails: project => {
     dispatch(setSelectedProject(project));
     dispatch(setSideBarComponent(<ProjectDetailsPanel />));

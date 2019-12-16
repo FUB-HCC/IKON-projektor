@@ -15,7 +15,7 @@ import {
   fetchCollectionsData,
   fetchInfrastructureData
 } from "../../store/actions/actions";
-import { appMargin, menuBarHeight, sideBarWidth } from "../../App";
+import { appMargin, menuBarHeight } from "../../App";
 
 class GraphView extends React.Component {
   constructor(props) {
@@ -38,11 +38,11 @@ class GraphView extends React.Component {
         this.margins.top -
         this.margins.bottom,
       width:
-        window.innerWidth -
-        sideBarWidth -
-        appMargin * 2 -
-        this.margins.left -
-        this.margins.right
+        (window.innerWidth -
+          appMargin * 2 -
+          this.margins.left -
+          this.margins.right) *
+        0.75
     });
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
@@ -66,11 +66,11 @@ class GraphView extends React.Component {
         this.margins.top -
         this.margins.bottom,
       width:
-        window.innerWidth -
-        sideBarWidth -
-        appMargin * 2 -
-        this.margins.left -
-        this.margins.right
+        (window.innerWidth -
+          appMargin * 2 -
+          this.margins.left -
+          this.margins.right) *
+        0.75
     });
   }
 

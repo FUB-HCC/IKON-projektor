@@ -5,7 +5,8 @@ import {
   setSideBarComponent,
   setSelectedInfra,
   setSelectedKta,
-  setSelectedCat
+  setSelectedCat,
+  deselectItems
 } from "../../store/actions/actions";
 import FilterPanel from "../FilterPanel/filter-panel";
 import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
@@ -28,7 +29,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  returnToFilterView: () => dispatch(setSideBarComponent(<FilterPanel />)),
+  returnToFilterView: () => {
+    dispatch(setSideBarComponent(<FilterPanel />));
+    dispatch(deselectItems());
+  },
   showInfraDetails: infra => {
     dispatch(setSelectedInfra(infra));
     dispatch(setSideBarComponent(<InfraDetailsPanel />));

@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import style from "./filter-selection.module.css";
 import { getFieldColor } from "../../util/utility";
+import { ReactComponent as ArrowUp } from "../../assets/collapse-up.svg";
+import { ReactComponent as ArrowDown } from "../../assets/collapse-down.svg";
 
 //const FilterSet = props => {
 class FilterSet extends Component {
@@ -8,7 +10,7 @@ class FilterSet extends Component {
     super(props);
     this.props = props;
     this.state = {
-      toggleState: []
+      toggleState: this.props.set.subsets.map(s => s.name)
     };
     this.toggledFilterList = this.toggledFilterList.bind(this);
   }
@@ -28,11 +30,6 @@ class FilterSet extends Component {
               <CheckBox
                 name={subset.name}
                 id={subset.filterId}
-                icon={
-                  subset.name !== "Sammlungen" && subset.name !== "Laborgeräte"
-                    ? subset.name
-                    : "pfeil"
-                }
                 checked={
                   !this.props.filters[subset.filterId]
                     ? false
@@ -43,11 +40,26 @@ class FilterSet extends Component {
                 onChange={this.props.changeFilter}
                 showCheckbox={subset.isTogglable}
                 color={getFieldColor(subset.name)}
-                toggleState={this.props.toggleState}
+                toggleState={this.state.toggleState}
                 toggledFilterList={this.toggledFilterList}
+                iconSize="20px"
+                iconMargin="8"
+                icon={
+                  this.state.toggleState.includes(subset.name) ? (
+                    <ArrowDown
+                      stroke={getFieldColor(subset.name)}
+                      className={style.arrowIcon}
+                    />
+                  ) : (
+                    <ArrowUp
+                      className={style.arrowIcon}
+                      stroke={getFieldColor(subset.name)}
+                    />
+                  )
+                }
               />
             </div>
-            {!this.props.toggleState.includes(subset.name) &&
+            {!this.state.toggleState.includes(subset.name) &&
               subset.subFilters.map((filter, i) => (
                 <div className={style.subFilter} key={subset.name + i}>
                   <CheckBox
@@ -59,6 +71,8 @@ class FilterSet extends Component {
                     onChange={this.props.changeFilter}
                     showCheckbox={true}
                     color={getFieldColor(subset.name)}
+                    iconSize="16px"
+                    iconMargin="16"
                   />
                 </div>
               ))}
@@ -67,6 +81,7 @@ class FilterSet extends Component {
       </div>
     );
   }
+
   toggledFilterList(name, state, change) {
     if (state.find(e => e === name)) {
       state.splice(state.indexOf(name), 1);
@@ -88,7 +103,6 @@ const CheckBox = props => (
       }
     }}
   >
-    <span>{props.name}</span>
     <input
       checked={props.checked}
       className={style.checkBox}
@@ -102,9 +116,16 @@ const CheckBox = props => (
         htmlFor={props.name}
         style={{
           border: props.color + " 2px solid",
-          backgroundColor: props.checked ? props.color : "rgba(0,0,0,0)"
+          borderRadius: "50%",
+          backgroundColor: props.checked ? props.color : "rgba(0,0,0,0)",
+          width: props.iconSize,
+          height: props.iconSize,
+          marginRight: props.iconMargin + "px",
+          marginLeft: props.iconMargin * 0.5 + "px"
         }}
       />
     )}
+    <span>{props.name}</span>
+    {props.icon}
   </div>
 );
