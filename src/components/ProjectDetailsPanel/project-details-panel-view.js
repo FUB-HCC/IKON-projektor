@@ -85,7 +85,7 @@ const ProjectDetailsPanel = props => {
         <span className={style.infoItemTitle}>
           Genutzte Infrastruktur: <br />
         </span>
-        {props.projectData.infrastructure.map((con, i) => (
+        {props.projectData.infrastructures.map((con, i) => (
           <span
             href="#"
             onClick={() => props.showInfraDetails(con)}
@@ -117,7 +117,7 @@ const ProjectDetailsPanel = props => {
       </p>
       <p className={style.abstractText}>
         <span className={style.infoItemTitle}>
-          Wissenstransferaktivität(en):
+          Wissenstransferaktivität(en): <br />
         </span>
         {props.ktas.map(kta => (
           <span

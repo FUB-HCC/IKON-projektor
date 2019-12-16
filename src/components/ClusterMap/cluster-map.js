@@ -18,7 +18,7 @@ import { getFieldColor } from "../../util/utility";
 const mapStateToProps = state => {
   let clusters = [];
   let transformedPoints = [];
-  let categories = state.main.filteredCategories;
+  let categories = state.main.categories;
   let topography = [];
   let typedCollections = state.main.filteredCollections;
   let typedInfrastructures = state.main.filteredInfrastructures;
@@ -38,7 +38,7 @@ const mapStateToProps = state => {
     const minX = _.min(_.map(projects, c => c.embpoint[0]));
     const minY = _.min(_.map(projects, c => c.embpoint[1]));
     topography = cluster_topography;
-    categories = state.main.filteredCategories.map(cat => cat);
+    categories = state.main.categories.map(cat => cat);
     transformedPoints = projects.map(p => {
       const cat = _.sample(categories);
       const project = state.main.filteredProjects.find(
@@ -107,7 +107,9 @@ const mapStateToProps = state => {
     category.connections.forEach(conn => conn.category.push(category));
   });
 
-  categories = categories.filter(c => c.count > 0);
+  categories = categories.filter(
+    c => c.count > 0 && state.main.filters.targetgroups.value.includes(c.title)
+  );
 
   let InfrastrukturSorted = typedCollections
     .concat(typedInfrastructures)

@@ -46,7 +46,8 @@
   flex-grow: 1;
 }
 .infoItemTitle {
-  color: #555;
+  color: #777;
+  font-size: 120%;
   font-weight: 500;
   margin-bottom: 5px;
 }

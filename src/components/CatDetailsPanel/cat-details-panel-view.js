@@ -31,25 +31,26 @@ const CatDetailsPanel = props => {
           ))}
         </p>
       </div>
-      {props.catData.connections.length > 0 && (
+      {props.catData.project_ids.length > 0 && (
         <div className={style.abstractText}>
           <span className={style.infoItemTitle}>
-            Assoziierte Forschungsrojekte: <br />
+            Assoziierte Forschungsprojekte: <br />
           </span>
           <p>
-            {[...new Set(props.catData.connections.map(c => c.id))].map(
-              (con, i) => (
-                <span
-                  href="#"
-                  onClick={() => props.showProjectDetails(con)}
-                  key={i + " " + con}
-                  className={style.DetailsLink}
-                >
-                  {props.catData.connections.find(p => p.id === con).title}
-                  <br />
-                </span>
-              )
-            )}
+            {props.catData.project_ids.map(project => (
+              <span
+                href="#"
+                onClick={() => props.showProjectDetails(project)}
+                key={project}
+                className={style.DetailsLink}
+              >
+                {
+                  props.catData.connections.find(con => con.id === project)
+                    .title
+                }
+                <br />
+              </span>
+            ))}
           </p>
         </div>
       )}
