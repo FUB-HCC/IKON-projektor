@@ -115,6 +115,12 @@ const reducer = (state = initialState, action) => {
     case actionTypes.RESET_SELECTED_PROJECT:
       return resetSelectedProject(state);
 
+    case actionTypes.SET_SELECTED_CAT:
+      return setSelectedCat(state, action);
+
+    case actionTypes.SET_SELECTED_KTA:
+      return setSelectedKta(state, action);
+
     case actionTypes.UPDATE_OLD_PROJECT_DATA:
       return updateOldProjectsData(state, action);
 
@@ -168,7 +174,13 @@ const updateInstitutionsData = (state, action) =>
     institutions: action.value
   });
 
-const updateKtaData = (state, action) => ({ ...state, ktas: action.value });
+const updateKtaData = (state, action) => ({
+  ...state,
+  ktas: action.value.map(kta => ({
+    ...kta,
+    timeframe: [new Date(kta.start_date), new Date(kta.end_date)]
+  }))
+});
 
 const updateTargetGroupsData = (state, action) => ({
   ...state,
@@ -361,6 +373,16 @@ const toggleAllFiltersOfField = (filters, fieldValue) => {
 const setSelectedProject = (state, action) => ({
   ...state,
   selectedProject: action.value
+});
+
+const setSelectedCat = (state, action) => ({
+  ...state,
+  selectedCat: action.value
+});
+
+const setSelectedKta = (state, action) => ({
+  ...state,
+  selectedKta: action.value
 });
 
 const resetSelectedProject = state => ({ ...state, setSelectedProject: null });
