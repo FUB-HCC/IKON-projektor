@@ -71,20 +71,19 @@ const ProjectDetailsPanel = props => {
           " bis " +
           props.projectData.timeframe[1]}
       </p>
-
+      <span className={style.infoItemTitle}>
+        Beschreibung:
+        <br />
+      </span>
       <div className={style.abstractText}>
-        <span className={style.infoItemTitle}>
-          Beschreibung:
-          <br />
-        </span>
         {description.map((part, i) => (
           <p key={i}>{part}</p>
         ))}
       </div>
-      <p className={style.infoItems}>
-        <span className={style.infoItemTitle}>
-          Genutzte Infrastruktur: <br />
-        </span>
+      <span className={style.infoItemTitle}>
+        Genutzte Infrastruktur: <br />
+      </span>
+      <p className={style.abstractText}>
         {props.projectData.infrastructures.map((con, i) => (
           <span
             href="#"
@@ -97,10 +96,10 @@ const ProjectDetailsPanel = props => {
           </span>
         ))}
       </p>
-      <p className={style.infoItems}>
-        <span className={style.infoItemTitle}>
-          Bezug zu Sammlung: <br />
-        </span>
+      <span className={style.infoItemTitle}>
+        Bezug zu Sammlung: <br />
+      </span>
+      <p className={style.abstractText}>
         {props.projectData.collections.map(con => {
           return (
             <span
@@ -115,10 +114,10 @@ const ProjectDetailsPanel = props => {
           );
         })}
       </p>
+      <span className={style.infoItemTitle}>
+        Wissenstransferaktivität(en): <br />
+      </span>
       <p className={style.abstractText}>
-        <span className={style.infoItemTitle}>
-          Wissenstransferaktivität(en): <br />
-        </span>
         {props.ktas.map(kta => (
           <span
             href="#"

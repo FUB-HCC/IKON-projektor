@@ -1,11 +1,11 @@
 .DetailsWrapper {
   background-color: #1c1d1f;
   padding: 3%;
-  min-height: 100%;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .DetailsExit {
@@ -50,6 +50,7 @@
   font-size: 120%;
   font-weight: 500;
   margin-bottom: 5px;
+  flex-grow: 0;
 }
 .abstractTitle {
   color: #aaa;
@@ -79,4 +80,7 @@
 .abstractText {
   color: #aaa;
   flex-grow: 1;
+  min-height: 2%;
+  max-height: 50%;
+  overflow-y: scroll;
 }

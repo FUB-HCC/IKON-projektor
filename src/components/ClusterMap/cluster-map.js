@@ -20,8 +20,8 @@ const mapStateToProps = state => {
   let transformedPoints = [];
   let categories = state.main.categories;
   let topography = [];
-  let typedCollections = state.main.filteredCollections;
-  let typedInfrastructures = state.main.filteredInfrastructures;
+  let typedCollections = state.main.collections;
+  let typedInfrastructures = state.main.infrastructures;
   if (
     state.main.clusterData &&
     state.main.projects.length > 0 &&
@@ -38,7 +38,7 @@ const mapStateToProps = state => {
     const minX = _.min(_.map(projects, c => c.embpoint[0]));
     const minY = _.min(_.map(projects, c => c.embpoint[1]));
     topography = cluster_topography;
-    categories = state.main.categories.map(cat => cat);
+    categories = state.main.categories;
     transformedPoints = projects.map(p => {
       const cat = _.sample(categories);
       const project = state.main.filteredProjects.find(
@@ -114,7 +114,12 @@ const mapStateToProps = state => {
   let InfrastrukturSorted = typedCollections
     .concat(typedInfrastructures)
     .sort((a, b) => (a.type < b.type ? 1 : -1))
-    .filter(inf => !inf.name.includes("Kein"));
+    .filter(
+      inf =>
+        !inf.name.includes("Kein") &&
+        (state.main.filters.collections.value.includes(inf.name) ||
+          state.main.filters.infrastructures.value.includes(inf.name))
+    );
 
   return {
     clusterData: clusters,
