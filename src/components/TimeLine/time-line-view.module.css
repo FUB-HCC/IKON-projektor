@@ -252,3 +252,13 @@
 .zurukhBtn span {
   font-size: 10px;
 }
+.wtaBucketCircle {
+  fill: #fff;
+  stroke: #fff;
+}
+
+.wtaBucketCircle:hover {
+  fill: #afca0b;
+  stroke: #afca0b;
+  cursor: pointer;
+}
