@@ -40,38 +40,30 @@ const InfraDetailsPanel = props => {
         <br />
         <span className={style.titleText}>{props.infraData.name}</span>
       </div>
-
-      <div className={style.abstractText}>
-        <span className={style.infoItemTitle}>
-          Beschreibung:
-          <br />
-        </span>
-        {props.infraData.description}
-      </div>
+      <span className={style.infoItemTitle}>
+        Beschreibung:
+        <br />
+      </span>
+      <div className={style.abstractText}>{props.infraData.description}</div>
+      <span className={style.infoItemTitle}>
+        <br />
+        Forschungsprojekte, die diese Infrastruktur nutzen:
+        <br />
+      </span>
       {props.infraData.connections.length > 0 && (
-        <div>
-          <span className={style.infoItemTitle}>
-            <br />
-            Forschungsprojekte, die diese Infrastruktur nutzen:
-            <br />
-          </span>
-          <p className={style.abstractText}>
-            {[...new Set(props.infraData.connections.map(c => c.id))].map(
-              (con, i) => (
-                <span
-                  href="#"
-                  onClick={() => props.showProjectDetails(con)}
-                  key={i + " " + con}
-                  className={style.DetailsLink}
-                >
-                  {props.infraData.connections.find(p => p.id === con).title}
-                  <br />
-                  <br />
-                </span>
-              )
-            )}
-          </p>
-        </div>
+        <p className={style.abstractText}>
+          {props.infraData.connections.map((con, i) => (
+            <span
+              href="#"
+              onClick={() => props.showProjectDetails(con.id)}
+              key={i + " " + con}
+              className={style.DetailsLink}
+            >
+              {con.title}
+              <br />
+            </span>
+          ))}
+        </p>
       )}
       <a
         className={style.DetailsViaLink}

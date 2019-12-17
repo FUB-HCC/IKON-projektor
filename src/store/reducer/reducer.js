@@ -59,14 +59,14 @@ const initialState = {
       type: "array",
       uniqueVals: [],
       value: []
+    },
+    formats: {
+      name: "Formate",
+      filterKey: "formats",
+      type: "array",
+      uniqueVals: [],
+      value: []
     }
-    // formats: {
-    //   name: "Formate",
-    //   filterKey: "formats",
-    //   type: "array",
-    //   uniqueVals: [],
-    //   value: []
-    // }
   },
   graph: "0",
   projects: [],
@@ -92,7 +92,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         graph: action.value,
-        filteredData: applyFilters(state.projects, state.filters)
+        filteredProjects: applyFilters(state.projects, state.filters)
       };
 
     case actionTypes.CHECKBOX_FILTER_CHANGE:
@@ -199,8 +199,9 @@ const applyFilters = (data, filter) => {
 
 const applyCategoryFilters = (categories, filter) => {
   let newCategories = categories;
-
-  return newCategories.filter(cat => filter.value.includes(cat.title));
+  return newCategories.filter(cat =>
+    filter.targetgroups.value.includes(cat.title)
+  );
 };
 
 const applyInfraFilters = (infras, filter) => {
@@ -228,7 +229,22 @@ const updateKtaData = (state, action) => ({
   ktas: action.value.map(kta => ({
     ...kta,
     timeframe: [new Date(kta.start_date), new Date(kta.end_date)]
-  }))
+  })),
+  filters: {
+    ...state.filters,
+    formats: {
+      name: "Formate",
+      filterKey: "formats",
+      type: "array",
+      uniqueVals: [
+        ...new Set(action.value.map(kta => kta.format).filter(f => f != null))
+      ],
+      value: [
+        ...new Set(action.value.map(kta => kta.format).filter(f => f != null))
+      ]
+    }
+  }
+  //
 });
 
 const updateTargetGroupsData = (state, action) => ({
@@ -264,7 +280,11 @@ const updateCollectionsData = (state, action) => ({
     connections: [],
     type: "collection"
   })),
-  filteredCollections: action.value
+  filteredCollections: action.value.map(collection => ({
+    ...collection,
+    connections: [],
+    type: "collection"
+  }))
 });
 
 const updateInfrastructureData = (state, action) => ({
@@ -274,7 +294,11 @@ const updateInfrastructureData = (state, action) => ({
     connections: [],
     type: "infrastructure"
   })),
-  filteredInfrastructures: action.value
+  filteredInfrastructures: action.value.map(infrastructure => ({
+    ...infrastructure,
+    connections: [],
+    type: "infrastructure"
+  }))
 });
 
 const updateKtaMappingData = (state, action) => ({
@@ -420,10 +444,7 @@ const changeCheckboxFilter = (state, action) => {
   }
   return {
     ...state,
-    filteredCategories: applyCategoryFilters(
-      state.categories,
-      newFilter.targetgroups
-    ),
+    filteredCategories: applyCategoryFilters(state.categories, newFilter),
     filteredCollections: applyInfraFilters(
       state.collections,
       newFilter.collections

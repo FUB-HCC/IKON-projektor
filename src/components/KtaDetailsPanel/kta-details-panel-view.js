@@ -44,11 +44,10 @@ const KtaDetailsPanel = props => {
         <br />
         <span className={style.titleText}>{props.kta.title}</span>
       </div>
-
+      <span className={style.infoItemTitle}>
+        Zielgruppen: <br />
+      </span>
       <div className={style.abstractText}>
-        <span className={style.infoItemTitle}>
-          Zielgruppen: <br />
-        </span>
         {props.categories.map(cat => (
           <span
             href="#"
@@ -79,18 +78,18 @@ const KtaDetailsPanel = props => {
         </span>
         {zeitraum(props.kta.timeframe)}
       </p>
+      <span className={style.infoItemTitle}>
+        Beschreibung:
+        <br />
+      </span>
       <div className={style.abstractText}>
-        <span className={style.infoItemTitle}>
-          Beschreibung:
-          <br />
-        </span>
         {props.kta.description.split("https://")[0]}
       </div>
+      <span className={style.infoItemTitle}>
+        Assoziierte Forschungsprojekte:
+        <br />
+      </span>
       <p className={style.infoItems}>
-        <span className={style.infoItemTitle}>
-          Projekte:
-          <br />
-        </span>
         {props.kta.project_id && (
           <span
             href="#"

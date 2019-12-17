@@ -127,7 +127,9 @@ export default class ClusterMapView extends React.Component {
   }
 
   findLinksByInf(inf) {
-    return inf.connections.map(con => con.id + "|" + inf.name);
+    return inf.connections.length > 0
+      ? inf.connections.map(con => con.id + "|" + inf.name)
+      : [];
   }
 
   findProjectsByInf(inf) {

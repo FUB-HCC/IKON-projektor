@@ -12,46 +12,39 @@ const CatDetailsPanel = props => {
         <span className={style.titleTopic}>Zielgruppe</span> <br />
         <span className={style.titleText}>{props.catData.title}</span>
       </div>
+      <span className={style.infoItemTitle}>
+        Wissenstransferaktivitäten mit dieser Zielgruppe:
+        <br />
+      </span>
       <div className={style.abstractText}>
-        <span className={style.infoItemTitle}>
-          Wissenstransferaktivitäten mit dieser Zielgruppe:
-          <br />
-        </span>
-        <p>
-          {props.ktas.map((kta, i) => (
+        {props.ktas.map((kta, i) => (
+          <span
+            href="#"
+            onClick={() => props.showKtaDetails(kta.id)}
+            key={i + " " + kta.id}
+            className={style.DetailsLink}
+          >
+            {kta.title}
+            <br />
+          </span>
+        ))}
+      </div>
+      <span className={style.infoItemTitle}>
+        Assoziierte Forschungsprojekte: <br />
+      </span>
+      {props.catData.project_ids.length > 0 && (
+        <div className={style.abstractText}>
+          {props.catData.project_ids.map(project => (
             <span
               href="#"
-              onClick={() => props.showKtaDetails(kta.id)}
-              key={i + " " + kta.id}
+              onClick={() => props.showProjectDetails(project)}
+              key={project}
               className={style.DetailsLink}
             >
-              {kta.title}
+              {props.catData.connections.find(con => con.id === project).title}
               <br />
             </span>
           ))}
-        </p>
-      </div>
-      {props.catData.project_ids.length > 0 && (
-        <div className={style.abstractText}>
-          <span className={style.infoItemTitle}>
-            Assoziierte Forschungsprojekte: <br />
-          </span>
-          <p>
-            {props.catData.project_ids.map(project => (
-              <span
-                href="#"
-                onClick={() => props.showProjectDetails(project)}
-                key={project}
-                className={style.DetailsLink}
-              >
-                {
-                  props.catData.connections.find(con => con.id === project)
-                    .title
-                }
-                <br />
-              </span>
-            ))}
-          </p>
         </div>
       )}
       <a

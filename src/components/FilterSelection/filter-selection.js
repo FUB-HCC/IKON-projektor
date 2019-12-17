@@ -73,10 +73,9 @@ const getFilterSets = filters => {
         },
         {
           name: "Format",
-          filterId: null,
+          subFilterId: "formats",
           isTogglable: false,
-          subFilters: [],
-          subFilterId: null
+          subFilters: filters.formats.uniqueVals
         }
       ]
     },
