@@ -15,7 +15,7 @@ import styles from "./time-line-view.module.css";
 import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import arrowHover from "../../assets";
-import { getFieldSimplifiedIcon } from "../../util/utility";
+import { getIcon } from "../../util/utility";
 import TargetgroupRow from "./TargetgroupRow";
 
 class TimeLineView extends Component {
@@ -220,7 +220,7 @@ class TimeLineView extends Component {
           x: selectScaledX(datum),
           y: selectScaledY(datum),
           color: datum.color,
-          icon: getFieldSimplifiedIcon(datum.forschungsbereich),
+          icon: getIcon(0),
           forschungsbereich: datum.forschungsbereich
         },
         datum

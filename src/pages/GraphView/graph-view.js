@@ -11,9 +11,11 @@ import {
   fetchKTAData,
   fetchKTAMappingData,
   fetchOldProjectData,
-  fetchTargetGroupsData
+  fetchTargetGroupsData,
+  fetchCollectionsData,
+  fetchInfrastructureData
 } from "../../store/actions/actions";
-import { appMargin, menuBarHeight, sideBarWidth } from "../../App";
+import { appMargin, menuBarHeight } from "../../App";
 
 class GraphView extends React.Component {
   constructor(props) {
@@ -36,11 +38,11 @@ class GraphView extends React.Component {
         this.margins.top -
         this.margins.bottom,
       width:
-        window.innerWidth -
-        sideBarWidth -
-        appMargin * 2 -
-        this.margins.left -
-        this.margins.right
+        (window.innerWidth -
+          appMargin * 2 -
+          this.margins.left -
+          this.margins.right) *
+        0.75
     });
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
@@ -51,6 +53,8 @@ class GraphView extends React.Component {
     this.props.fetchKtaMappingData();
     this.props.fetchOldProjectsData();
     this.props.fetchTargetGroupsData();
+    this.props.fetchCollectionsData();
+    this.props.fetchInfrastructureData();
   }
 
   resize() {
@@ -62,11 +66,11 @@ class GraphView extends React.Component {
         this.margins.top -
         this.margins.bottom,
       width:
-        window.innerWidth -
-        sideBarWidth -
-        appMargin * 2 -
-        this.margins.left -
-        this.margins.right
+        (window.innerWidth -
+          appMargin * 2 -
+          this.margins.left -
+          this.margins.right) *
+        0.75
     });
   }
 
@@ -166,7 +170,9 @@ const mapDispatchToProps = dispatch => {
     fetchKtaData: () => dispatch(fetchKTAData()),
     fetchKtaMappingData: () => dispatch(fetchKTAMappingData()),
     fetchOldProjectsData: () => dispatch(fetchOldProjectData()),
-    fetchTargetGroupsData: () => dispatch(fetchTargetGroupsData())
+    fetchTargetGroupsData: () => dispatch(fetchTargetGroupsData()),
+    fetchCollectionsData: () => dispatch(fetchCollectionsData()),
+    fetchInfrastructureData: () => dispatch(fetchInfrastructureData())
   };
 };
 

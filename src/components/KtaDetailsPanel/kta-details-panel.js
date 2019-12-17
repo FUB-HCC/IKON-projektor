@@ -4,22 +4,34 @@ import KtaDetailsPanelView from "./kta-details-panel-view";
 import {
   setSelectedProject,
   setSelectedCat,
-  setSideBarComponent
+  setSideBarComponent,
+  deselectItems
 } from "../../store/actions/actions";
 import FilterPanel from "../FilterPanel/filter-panel";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
 
+const findCategoriesForKta = state => {
+  return state.main.categories.filter(cat =>
+    state.main.ktaMapping.find(
+      map =>
+        map.kta_id === state.main.selectedKta && map.targetgroup_id === cat.id
+    )
+  );
+};
+
 const mapStateToProps = state => {
-  console.log(state.main.selectedKta);
   return {
     kta: state.main.ktas.find(kta => kta.id === state.main.selectedKta),
-    selectedCat: state.main.selectedCat
+    categories: findCategoriesForKta(state)
   };
 };
 
 const mapDispatchToProps = dispatch => ({
-  returnToFilterView: () => dispatch(setSideBarComponent(<FilterPanel />)),
+  returnToFilterView: () => {
+    dispatch(setSideBarComponent(<FilterPanel />));
+    dispatch(deselectItems());
+  },
   showProjectDetails: project => {
     dispatch(setSelectedProject(project));
     dispatch(setSideBarComponent(<ProjectDetailsPanel />));

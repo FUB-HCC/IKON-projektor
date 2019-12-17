@@ -68,7 +68,9 @@ export default class ClusterMapView extends React.Component {
   highlightCat(category) {
     this.setState({
       highlightedCats: [category],
-      highlightedLinks: this.findLinksByCat(category),
+      highlightedLinks: this.findLinksByCat(category).concat(
+        this.findProjectsByCat(category).map(p => this.findLinksByProject(p))
+      ),
       highlightedProjects: this.findProjectsByCat(category),
       highlightedInfs: this.findProjectsByCat(category).map(p =>
         this.findInfsByProject(p)

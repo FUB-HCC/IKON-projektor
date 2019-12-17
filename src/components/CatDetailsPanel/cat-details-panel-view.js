@@ -1,62 +1,62 @@
 import React from "react";
-import style from "./cat-details-panel.module.css";
+import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
 
 const CatDetailsPanel = props => {
   return (
-    <div className={style.projectDetailsWrapper}>
-      <div
-        className={style.projectDetailsExit}
-        onClick={props.returnToFilterView}
-      >
-        <Exit height={45} width={45} />
+    <div className={style.DetailsWrapper}>
+      <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+        <Exit height={35} width={35} />
       </div>
-      <div className={style.projectDetailsTitle}>
+      <div className={style.DetailsTitle}>
+        <span className={style.titleTopic}>Zielgruppe</span> <br />
         <span className={style.titleText}>{props.catData.title}</span>
       </div>
-      {props.catData.connections.length > 0 && (
-        <div>
-          <h2 className={style.abstractTitle}>
-            Über eine Wissenstransferaktivität mit dieser Zielgruppe verbundene
-            Projekte:{" "}
-          </h2>
-          <p className={style.abstractText}>
-            {[...new Set(props.catData.connections.map(c => c.id))].map(
-              (con, i) => (
-                <span
-                  href="#"
-                  onClick={() => props.showProjectDetails(con)}
-                  key={i + " " + con}
-                  className={style.catLinkToItem}
-                >
-                  {props.catData.connections.find(p => p.id === con).title}
-                  <br />
-                  <br />
-                </span>
-              )
-            )}
-          </p>
-        </div>
-      )}
-      <div>
-        <h2 className={style.abstractTitle}>
-          Wissenstransferaktivitäten mit dieser Zielgruppe:{" "}
-        </h2>
-        <p className={style.abstractText}>
-          {props.ktas.map((kta, i) => (
+      <span className={style.infoItemTitle}>
+        Wissenstransferaktivitäten mit dieser Zielgruppe:
+        <br />
+      </span>
+      <div className={style.abstractText}>
+        {props.ktas.map((kta, i) => (
+          <span
+            href="#"
+            onClick={() => props.showKtaDetails(kta.id)}
+            key={i + " " + kta.id}
+            className={style.DetailsLink}
+          >
+            {kta.title}
+            <br />
+          </span>
+        ))}
+      </div>
+      <span className={style.infoItemTitle}>
+        Assoziierte Forschungsprojekte: <br />
+      </span>
+      {props.catData.project_ids.length > 0 && (
+        <div className={style.abstractText}>
+          {props.catData.project_ids.map(project => (
             <span
               href="#"
-              onClick={() => props.showKtaDetails(kta.id)}
-              key={i + " " + kta.id}
-              className={style.catLinkToItem}
+              onClick={() => props.showProjectDetails(project)}
+              key={project}
+              className={style.DetailsLink}
             >
-              {kta.title}
-              <br />
+              {props.catData.connections.find(con => con.id === project).title}
               <br />
             </span>
           ))}
-        </p>
-      </div>
+        </div>
+      )}
+      <a
+        className={style.DetailsViaLink}
+        href={
+          "https://via.museumfuernaturkunde.berlin/wiki/" + props.catData.title
+        }
+        target="_blank"
+        rel="noopener noreferrer" //got warning otherwise
+      >
+        Im VIA-Wiki anschauen
+      </a>
     </div>
   );
 };

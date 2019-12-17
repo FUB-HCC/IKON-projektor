@@ -39,10 +39,23 @@ export const setSelectedCat = catId => {
   };
 };
 
+export const setSelectedInfra = infraName => {
+  return {
+    type: actionTypes.SET_SELECTED_INFRA,
+    value: infraName
+  };
+};
+
 export const setSelectedKta = ktaId => {
   return {
     type: actionTypes.SET_SELECTED_KTA,
     value: ktaId
+  };
+};
+
+export const deselectItems = () => {
+  return {
+    type: actionTypes.DESELECT_ITEMS
   };
 };
 
@@ -116,6 +129,22 @@ export const fetchTargetGroupsData = () => {
 };
 ///projects_old.json
 
+export const fetchInfrastructureData = () => {
+  return dispatch => {
+    axios.get("https://localhost:5433/infrastructure").then(result => {
+      dispatch(updateInfrastructureData(result.data));
+    });
+  };
+};
+
+export const fetchCollectionsData = () => {
+  return dispatch => {
+    axios.get("https://localhost:5433/collections").then(result => {
+      dispatch(updateCollectionsData(result.data));
+    });
+  };
+};
+
 export const fetchOldProjectData = () => {
   return dispatch => {
     axios.get("https://localhost:5433/projects").then(result => {
@@ -163,6 +192,20 @@ export const updateTargetGroupsData = targetgroups => {
   return {
     type: actionTypes.UPDATE_TARGETGROUPS_DATA,
     value: targetgroups
+  };
+};
+
+export const updateInfrastructureData = infrastructures => {
+  return {
+    type: actionTypes.UPDATE_INFRASTRUCTURE_DATA,
+    value: infrastructures
+  };
+};
+
+export const updateCollectionsData = collections => {
+  return {
+    type: actionTypes.UPDATE_COLLECTIONS_DATA,
+    value: collections
   };
 };
 

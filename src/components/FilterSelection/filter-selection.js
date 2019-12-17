@@ -67,10 +67,9 @@ const getFilterSets = filters => {
       subsets: [
         {
           name: "Zielgruppe",
-          filterId: null,
           isTogglable: false,
-          subFilters: [],
-          subFilterId: null
+          subFilters: filters.targetgroups.uniqueVals,
+          subFilterId: "targetgroups"
         },
         {
           name: "Format",
@@ -92,8 +91,8 @@ const getFilterSets = filters => {
         },
         {
           name: "Laborgeräte",
-          subFilters: filters.infrastructure.uniqueVals,
-          subFilterId: "infrastructure",
+          subFilters: filters.infrastructures.uniqueVals,
+          subFilterId: "infrastructures",
           isTogglable: false
         }
       ]
@@ -109,12 +108,10 @@ const FilterSelection = props => (
         set={filterSet}
         changeFilter={props.filterChangeHandler}
         key={filterSet.name}
-        toggleState= {[]}
       />
     ))}
   </div>
 );
-
 
 const mapDispatchToProps = dispatch => {
   return {
