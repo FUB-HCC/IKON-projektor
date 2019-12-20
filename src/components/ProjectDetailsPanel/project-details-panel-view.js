@@ -83,53 +83,56 @@ const ProjectDetailsPanel = props => {
       <span className={style.infoItemTitle}>
         Genutzte Infrastruktur: <br />
       </span>
-      <p className={style.abstractText}>
-        {props.projectData.infrastructures.map((con, i) => (
-          <span
-            href="#"
-            onClick={() => props.showInfraDetails(con)}
-            key={i + " " + con}
-            className={style.DetailsLink}
-          >
-            {con}
-            <br />
-          </span>
-        ))}
-      </p>
-      <span className={style.infoItemTitle}>
-        Bezug zu Sammlung: <br />
-      </span>
-      <p className={style.abstractText}>
-        {props.projectData.collections.map(con => {
-          return (
+      {props.projectData.infrastructures.length > 0 && (
+        <p className={style.abstractText}>
+          {props.projectData.infrastructures.map((con, i) => (
             <span
               href="#"
               onClick={() => props.showInfraDetails(con)}
-              key={con}
+              key={i + " " + con}
               className={style.DetailsLink}
             >
               {con}
-              <br />
             </span>
-          );
-        })}
-      </p>
+          ))}
+        </p>
+      )}
+      <span className={style.infoItemTitle}>
+        Bezug zu Sammlung: <br />
+      </span>
+      {props.projectData.collections.length > 0 && (
+        <p className={style.abstractText}>
+          {props.projectData.collections.map(con => {
+            return (
+              <span
+                href="#"
+                onClick={() => props.showInfraDetails(con)}
+                key={con}
+                className={style.DetailsLink}
+              >
+                {con}
+              </span>
+            );
+          })}
+        </p>
+      )}
       <span className={style.infoItemTitle}>
         Wissenstransferaktivität(en): <br />
       </span>
-      <p className={style.abstractText}>
-        {props.ktas.map(kta => (
-          <span
-            href="#"
-            onClick={() => props.showKtaDetails(kta.id)}
-            key={kta.id}
-            className={style.DetailsLink}
-          >
-            {kta.title + "\n "}
-            <br />
-          </span>
-        ))}
-      </p>
+      {props.ktas.length > 0 && (
+        <p className={style.abstractText}>
+          {props.ktas.map(kta => (
+            <span
+              href="#"
+              onClick={() => props.showKtaDetails(kta.id)}
+              key={kta.id}
+              className={style.DetailsLink}
+            >
+              {kta.title}
+            </span>
+          ))}
+        </p>
+      )}
       <p className={style.infoItems}>
         <span className={style.infoItemTitle}>
           Projektleiter: <br />

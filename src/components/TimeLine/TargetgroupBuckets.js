@@ -7,14 +7,13 @@ const TargetgroupBuckets = props => {
       return "";
     } else {
       return (
-        <div>
+        <div className={styles.wtaBucketName} key={targetgroup}>
           <span>{targetgroup}</span> <br />
           <svg height={props.height} width={props.width}>
             {props.ktasYearBuckets[targetgroup].map(year => {
               return (
-                <g>
+                <g key={targetgroup + year.year}>
                   <circle
-                    key={targetgroup + year.year}
                     cx={props.xScale(year.year)}
                     cy={props.height * 0.5}
                     r={(year.numberOfWtas * props.height) / 55}

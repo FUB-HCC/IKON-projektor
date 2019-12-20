@@ -1,5 +1,4 @@
 import React from "react";
-import _ from "lodash";
 import { contours as d3Contours } from "d3-contour";
 import { scaleLinear as d3ScaleLinear } from "d3-scale";
 import { extent as d3extent } from "d3-array";
@@ -8,10 +7,11 @@ import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
+import IconExplanation from "./icon-explanation";
 
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.1 * scale);
-const clusterSize = scale => 0.4 * scale;
+const clusterSize = scale => 0.45 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
 const fontSizeText = scale => 0.012 * scale;
@@ -39,20 +39,18 @@ export default class ClusterMapView extends React.Component {
   }
 
   get maxX() {
-    return _.max(
-      _.map(
-        _.flatten(_.map(this.props.clusterData, c => c.projects)),
-        c => c.location[0]
-      )
+    return Math.max(
+      ...this.props.clusterData
+        .map(c => c.projects.map(p => p.location[0]))
+        .flat()
     );
   }
 
   get maxY() {
-    return _.max(
-      _.map(
-        _.flatten(_.map(this.props.clusterData, c => c.projects)),
-        c => c.location[1]
-      )
+    return Math.max(
+      ...this.props.clusterData
+        .map(c => c.projects.map(p => p.location[1]))
+        .flat()
     );
   }
 
@@ -203,6 +201,7 @@ export default class ClusterMapView extends React.Component {
 
     return (
       <div className={style.clusterMapWrapper}>
+        <IconExplanation posX={20} posY={height * 0.95} />
         <svg
           className="viz-3"
           viewBox={"0 0 " + width + " " + height}
@@ -222,7 +221,7 @@ export default class ClusterMapView extends React.Component {
                     var coords = this.scaleContours(coord, width, height);
                     return "M" + coords[0] + "L" + coords;
                   })}
-                  fill={colorHeat(cont.value)}
+                  fill={cont.value > 0 ? colorHeat(cont.value) : "transparent"}
                 />
               );
             })}
@@ -313,8 +312,8 @@ export default class ClusterMapView extends React.Component {
                       cx={x}
                       cy={y}
                       cursor="POINTER"
-                      stroke={isHighlighted ? "#afca0b" : "white"}
-                      fill={isHighlighted ? "#afca0b" : "white"}
+                      stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                      fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                     />
                     <text
                       x={lenX}

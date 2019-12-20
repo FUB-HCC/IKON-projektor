@@ -2,6 +2,7 @@ import React from "react";
 import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
 import { ReactComponent as KtaIcon } from "../../assets/Icon-WTA.svg";
+import { getFieldColor } from "../../util/utility";
 
 const zeitraum = timeframe => {
   if (timeframe[0].getFullYear() > 2000) {
@@ -27,10 +28,10 @@ const zeitraum = timeframe => {
 const KtaDetailsPanel = props => {
   return (
     <div className={style.DetailsWrapper}>
-      <div className={style.DetailsExit} onClick={props.returnToFilterView}>
-        <Exit height={35} width={35} />
-      </div>
       <div className={style.DetailsTitle}>
+        <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+          <Exit height={35} width={35} />
+        </div>
         <KtaIcon
           className={style.TitleIcon}
           version="1.1"
@@ -55,7 +56,7 @@ const KtaDetailsPanel = props => {
             key={cat.id}
             className={style.DetailsLink}
           >
-            {cat.title + "\n"}
+            {cat.title}
             <br />
           </span>
         ))}
@@ -96,8 +97,23 @@ const KtaDetailsPanel = props => {
             onClick={() => props.showProjectDetails(props.kta.project_id)}
             key={props.kta.project_id}
             className={style.DetailsLink}
+            style={{
+              color: getFieldColor(
+                props.categories.map(
+                  cat =>
+                    cat.connections.find(con => con.id === props.kta.project_id)
+                      .project.forschungsbereich
+                )[0]
+              )
+            }}
           >
-            {props.kta.project_id + "\n "}
+            {
+              props.categories.map(
+                cat =>
+                  cat.connections.find(con => con.id === props.kta.project_id)
+                    .title
+              )[0]
+            }
           </span>
         )}
       </p>

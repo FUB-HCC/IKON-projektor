@@ -35,8 +35,8 @@ const mapStateToProps = state => {
     } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
     const projects = project_data;
-    const minX = _.min(_.map(projects, c => c.embpoint[0]));
-    const minY = _.min(_.map(projects, c => c.embpoint[1]));
+    const minX = _.min(_.map(projects, c => c.mappoint[0]));
+    const minY = _.min(_.map(projects, c => c.mappoint[1]));
     topography = cluster_topography;
     categories = state.main.categories;
     transformedPoints = projects.map(p => {
@@ -46,7 +46,7 @@ const mapStateToProps = state => {
       );
       const point = {
         ...p,
-        location: [p.mappoint[0] - minX, p.mappoint[1] - minY],
+        location: [-1 * p.mappoint[0] - 1.64 * minX, p.mappoint[1] - minY],
         cat: cat.id,
         category: [],
         project: project,

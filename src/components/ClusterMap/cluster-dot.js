@@ -21,13 +21,6 @@ export default class ClusterDot extends React.Component {
       )
         ? 1.2
         : 1;
-    const icon =
-      this.props.point.projectData &&
-      this.props.highlightedProjects.find(
-        hProject => hProject === this.props.point.projectData.id
-      )
-        ? 1
-        : 0;
 
     return (
       <g

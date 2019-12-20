@@ -3,14 +3,15 @@ import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
+import { getFieldColor } from "../../util/utility";
 
 const InfraDetailsPanel = props => {
   return (
     <div className={style.DetailsWrapper}>
-      <div className={style.DetailsExit} onClick={props.returnToFilterView}>
-        <Exit height={35} width={35} />
-      </div>
       <div className={style.DetailsTitle}>
+        <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+          <Exit height={35} width={35} />
+        </div>
         {props.infraData.type === "collection" ? (
           <CollectionIcon
             className={style.TitleIcon}
@@ -58,6 +59,9 @@ const InfraDetailsPanel = props => {
               onClick={() => props.showProjectDetails(con.id)}
               key={i + " " + con}
               className={style.DetailsLink}
+              style={{
+                color: getFieldColor(con.project.forschungsbereich)
+              }}
             >
               {con.title}
               <br />

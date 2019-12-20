@@ -180,7 +180,7 @@ class TimeLineView extends Component {
       <svg
         key="gridline"
         style={{
-          height: "100%",
+          height: this.props.height,
           width: this.props.width,
           position: "absolute",
           margin: "0",
