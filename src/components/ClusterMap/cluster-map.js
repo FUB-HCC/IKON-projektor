@@ -46,7 +46,7 @@ const mapStateToProps = state => {
       );
       const point = {
         ...p,
-        location: [-1 * p.mappoint[0] - 1.64 * minX, p.mappoint[1] - minY],
+        location: [-1 * p.mappoint[0] - 0.76 * minX, p.mappoint[1] - minY],
         cat: cat.id,
         category: [],
         project: project,

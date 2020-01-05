@@ -181,7 +181,7 @@ export default class ClusterMapView extends React.Component {
     const { categories, width, height, InfrastrukturSorted } = this.props;
     var colorHeat = d3ScaleLinear()
       .domain(d3extent(this.props.topography))
-      .range(["#000", "#888"]);
+      .range(["#0e0e0e", "#888"]);
     var contours = d3Contours()
       .size([contoursSize, contoursSize])
       .smooth([true])(this.props.topography);
@@ -221,7 +221,7 @@ export default class ClusterMapView extends React.Component {
                     var coords = this.scaleContours(coord, width, height);
                     return "M" + coords[0] + "L" + coords;
                   })}
-                  fill={cont.value > 0 ? colorHeat(cont.value) : "transparent"}
+                  fill={colorHeat(cont.value)}
                 />
               );
             })}

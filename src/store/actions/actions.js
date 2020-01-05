@@ -79,7 +79,7 @@ export const getFiltersFromURL = () => {
 
 export const fetchClusterData = () => {
   return dispatch => {
-    axios.get("/api/clustering").then(result => {
+    axios.get("http://localhost:5435/clustering").then(result => {
       dispatch(updateClusterData(result.data));
     });
   };
@@ -87,7 +87,7 @@ export const fetchClusterData = () => {
 
 export const fetchInstitutionsData = () => {
   return dispatch => {
-    axios.get("/api/institutions").then(result => {
+    axios.get("https://localhost:5433/institutions").then(result => {
       dispatch(updateInstitutionsData(result.data));
     });
   };
@@ -95,7 +95,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("/api/projects").then(result => {
+    axios.get("https://localhost:5433/projects").then(result => {
       dispatch(updateProjectsData(result.data));
     });
   };
@@ -104,7 +104,7 @@ export const fetchProjectsData = () => {
 export const fetchKTAData = () => {
   return dispatch => {
     axios
-      .get("/api/knowledgeTransferActivities")
+      .get("https://localhost:5433/knowledgeTransferActivities")
       .then(result => {
         dispatch(updateKTAData(result.data));
       });
@@ -147,7 +147,7 @@ export const fetchCollectionsData = () => {
 
 export const fetchOldProjectData = () => {
   return dispatch => {
-    axios.get("/api/projects").then(result => {
+    axios.get("https://localhost:5433/projects").then(result => {
       dispatch(updateOldProjectData(result.data));
     });
   };
