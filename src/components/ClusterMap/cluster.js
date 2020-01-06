@@ -30,6 +30,7 @@ export default class Cluster extends React.Component {
             showProjectDetails={() =>
               this.props.showProjectDetails(cluster.projects[i].id)
             }
+            splitLongTitles={this.props.splitLongTitles}
           />
         ))}
       </g>
