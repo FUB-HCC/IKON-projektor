@@ -79,7 +79,7 @@ export const getFiltersFromURL = () => {
 
 export const fetchClusterData = () => {
   return dispatch => {
-    axios.get("http://localhost:5435/clustering").then(result => {
+    axios.get("/api/clustering").then(result => {
       dispatch(updateClusterData(result.data));
     });
   };
@@ -87,7 +87,7 @@ export const fetchClusterData = () => {
 
 export const fetchInstitutionsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/institutions").then(result => {
+    axios.get("/api/institutions").then(result => {
       dispatch(updateInstitutionsData(result.data));
     });
   };
@@ -95,7 +95,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/projects").then(result => {
+    axios.get("/api/projects").then(result => {
       dispatch(updateProjectsData(result.data));
     });
   };
@@ -103,18 +103,15 @@ export const fetchProjectsData = () => {
 
 export const fetchKTAData = () => {
   return dispatch => {
-    axios
-      .get("https://localhost:5433/knowledgeTransferActivities")
-      .then(result => {
-        dispatch(updateKTAData(result.data));
-      });
+    axios.get("/api/knowledgeTransferActivities").then(result => {
+      dispatch(updateKTAData(result.data));
+    });
   };
 };
 
 export const fetchKTAMappingData = () => {
   return dispatch => {
-    //  https://localhost:5433/ktastargetgroups
-    axios.get("https://localhost:5433/ktastargetgroups").then(result => {
+    axios.get("/api/ktastargetgroups").then(result => {
       dispatch(updateKTAMappingData(result.data));
     });
   };
@@ -122,7 +119,7 @@ export const fetchKTAMappingData = () => {
 
 export const fetchTargetGroupsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/targetgroups").then(result => {
+    axios.get("/api/targetgroups").then(result => {
       dispatch(updateTargetGroupsData(result.data));
     });
   };
@@ -131,7 +128,7 @@ export const fetchTargetGroupsData = () => {
 
 export const fetchInfrastructureData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/infrastructure").then(result => {
+    axios.get("/api/infrastructure").then(result => {
       dispatch(updateInfrastructureData(result.data));
     });
   };
@@ -139,7 +136,7 @@ export const fetchInfrastructureData = () => {
 
 export const fetchCollectionsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/collections").then(result => {
+    axios.get("/api/collections").then(result => {
       dispatch(updateCollectionsData(result.data));
     });
   };
@@ -147,7 +144,7 @@ export const fetchCollectionsData = () => {
 
 export const fetchOldProjectData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/projects").then(result => {
+    axios.get("/api/projects").then(result => {
       dispatch(updateOldProjectData(result.data));
     });
   };
