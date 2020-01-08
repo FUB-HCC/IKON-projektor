@@ -6,11 +6,12 @@
 
 .timelineContainer > .timelineContentContainer .xAxis text {
   fill: #717071;
+  font-weight: 700;
   font-family: IBM_Plex_Mono;
 }
 
 .timelineContainer > .timelineContentContainer .xAxis line {
-  stroke: #0e0e0e;
+  stroke: transparent;
 }
 
 .timelineContainer > .timelineContentContainer .xAxis path {
@@ -23,6 +24,7 @@
 
 .timelineContainer > .timelineContentContainer .yAxis text {
   fill: #717071;
+  font-weight: 700;
   font-family: IBM_Plex_Mono;
 }
 
@@ -46,13 +48,6 @@
 .timelineContainer > .timelineContentContainer .scatter circle:hover {
   stroke: rgba(255, 255, 255, 0.23);
   stroke-width: 8;
-}
-
-.ktasPlot {
-  fill: #717071;
-  color: #717071;
-  font-family: IBM_Plex_Mono;
-  font-size: 12px;
 }
 
 .projects_list {
@@ -251,4 +246,22 @@
 }
 .zurukhBtn span {
   font-size: 10px;
+}
+.wtaBucketCircle {
+  fill: #fff;
+  stroke: #fff;
+}
+
+.wtaBucketCircle:hover {
+  fill: #afca0b;
+  stroke: #afca0b;
+  cursor: pointer;
+}
+
+.wtaBucketName {
+  color: #717071;
+}
+
+.wtaBucketName:hover {
+  color: #afca0b;
 }

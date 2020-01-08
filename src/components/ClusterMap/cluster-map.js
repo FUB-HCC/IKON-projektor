@@ -5,31 +5,40 @@ import _ from "lodash";
 import concave from "concaveman";
 import {
   setSelectedProject,
-  setSideBarComponent
+  setSelectedCat,
+  setSelectedInfra,
+  setSideBarComponent,
+  deselectItems
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
-import { getFieldIcon, getFieldColor } from "../../util/utility";
+import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
+import InfraDetailsPanel from "../InfraDetailsPanel/infra-details-panel";
+import { getFieldColor } from "../../util/utility";
 
 const mapStateToProps = state => {
   let clusters = [];
   let transformedPoints = [];
   let categories = state.main.categories;
   let topography = [];
+  let typedCollections = state.main.collections;
+  let typedInfrastructures = state.main.infrastructures;
   if (
     state.main.clusterData &&
     state.main.projects.length > 0 &&
     state.main.ktaMapping.length > 0 &&
     state.main.categories.length > 0
   ) {
-
-    const { cluster_data, project_data, cluster_topography } = state.main.clusterData;
+    const {
+      cluster_data,
+      project_data,
+      cluster_topography
+    } = state.main.clusterData;
     const clusterWords = cluster_data.cluster_words;
-    const colors = cluster_data.cluster_colour;
     const projects = project_data;
-    const minX = _.min(_.map(projects, c => c.embpoint[0]));
-    const minY = _.min(_.map(projects, c => c.embpoint[1]));
+    const minX = _.min(_.map(projects, c => c.mappoint[0]));
+    const minY = _.min(_.map(projects, c => c.mappoint[1]));
     topography = cluster_topography;
-    categories = state.main.categories.map(cat => cat);
+    categories = state.main.categories;
     transformedPoints = projects.map(p => {
       const cat = _.sample(categories);
       const project = state.main.filteredProjects.find(
@@ -37,12 +46,11 @@ const mapStateToProps = state => {
       );
       const point = {
         ...p,
-        location: [p.mappoint[0] - minX, p.mappoint[1] - minY],
+        location: [-1 * p.mappoint[0] - 0.76 * minX, p.mappoint[1] - minY],
         cat: cat.id,
         category: [],
         project: project,
-        color: project ?  getFieldColor(project.forschungsbereich)   : "none",
-        icon: project ? getFieldIcon(project.forschungsbereich) : " "
+        color: project ? getFieldColor(project.forschungsbereich) : "none"
       };
       if (cat.project_ids.includes(point.id)) {
         cat.connections.push(point);
@@ -54,7 +62,6 @@ const mapStateToProps = state => {
     clusters = _.map(clusterIds, id => ({
       id: id,
       words: clusterWords[id],
-      color: colors[id],
       projects: _.filter(transformedPoints, p => p.cluster === id),
       concaveHull: concave(
         transformedPoints.filter(p => p.cluster === id).map(p => p.location),
@@ -76,25 +83,71 @@ const mapStateToProps = state => {
             .find(point => point.project.id === kta.project_id)
         )
         .filter(connection => connection);
+      category.project_ids = [...new Set(category.connections.map(c => c.id))];
     });
+
+    typedCollections.map(
+      collection =>
+        (collection.connections = transformedPoints.filter(
+          point =>
+            point.project && point.project.collections.includes(collection.name)
+        ))
+    );
+
+    typedInfrastructures.forEach(
+      infrastructure =>
+        (infrastructure.connections = transformedPoints.filter(
+          point =>
+            point.project &&
+            point.project.infrastructures.includes(infrastructure.name)
+        ))
+    );
   }
   categories.forEach(category => {
     category.connections.forEach(conn => conn.category.push(category));
   });
 
-  categories = categories.filter(c => (c.count > 0));
+  categories = categories.filter(
+    c => c.count > 0 && state.main.filters.targetgroups.value.includes(c.title)
+  );
+
+  let InfrastrukturSorted = typedCollections
+    .concat(typedInfrastructures)
+    .sort((a, b) => (a.type < b.type ? 1 : -1))
+    .filter(
+      inf =>
+        !inf.name.includes("Kein") &&
+        (state.main.filters.collections.value.includes(inf.name) ||
+          state.main.filters.infrastructures.value.includes(inf.name))
+    );
+
   return {
     clusterData: clusters,
     categories: categories,
-    topography: topography
+    topography: topography,
+    InfrastrukturSorted: InfrastrukturSorted,
+    selectedCat: state.main.selectedCat,
+    selectedProject: state.main.selectedProject,
+    selectedInfra: state.main.selectedInfra
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     showProjectDetails: project => {
+      dispatch(deselectItems());
       dispatch(setSelectedProject(project));
       dispatch(setSideBarComponent(<ProjectDetailsPanel />));
+    },
+    showCatDetails: cat => {
+      dispatch(deselectItems());
+      dispatch(setSelectedCat(cat));
+      dispatch(setSideBarComponent(<CatDetailsPanel />));
+    },
+    showInfraDetails: infra => {
+      dispatch(deselectItems());
+      dispatch(setSelectedInfra(infra));
+      dispatch(setSideBarComponent(<InfraDetailsPanel />));
     }
   };
 };

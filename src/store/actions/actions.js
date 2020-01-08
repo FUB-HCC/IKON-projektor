@@ -32,6 +32,33 @@ export const setSelectedProject = projectId => {
   };
 };
 
+export const setSelectedCat = catId => {
+  return {
+    type: actionTypes.SET_SELECTED_CAT,
+    value: catId
+  };
+};
+
+export const setSelectedInfra = infraName => {
+  return {
+    type: actionTypes.SET_SELECTED_INFRA,
+    value: infraName
+  };
+};
+
+export const setSelectedKta = ktaId => {
+  return {
+    type: actionTypes.SET_SELECTED_KTA,
+    value: ktaId
+  };
+};
+
+export const deselectItems = () => {
+  return {
+    type: actionTypes.DESELECT_ITEMS
+  };
+};
+
 export const resetSelectedProject = () => {
   return {
     type: actionTypes.RESET_SELECTED_PROJECT
@@ -52,7 +79,7 @@ export const getFiltersFromURL = () => {
 
 export const fetchClusterData = () => {
   return dispatch => {
-    axios.get("http://localhost:5435/clustering").then(result => {
+    axios.get("/api/clustering").then(result => {
       dispatch(updateClusterData(result.data));
     });
   };
@@ -60,7 +87,7 @@ export const fetchClusterData = () => {
 
 export const fetchInstitutionsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/institutions").then(result => {
+    axios.get("/api/institutions").then(result => {
       dispatch(updateInstitutionsData(result.data));
     });
   };
@@ -68,7 +95,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/projects").then(result => {
+    axios.get("/api/projects").then(result => {
       dispatch(updateProjectsData(result.data));
     });
   };
@@ -76,18 +103,15 @@ export const fetchProjectsData = () => {
 
 export const fetchKTAData = () => {
   return dispatch => {
-    axios
-      .get("https://localhost:5433/knowledgeTransferActivities")
-      .then(result => {
-        dispatch(updateKTAData(result.data));
-      });
+    axios.get("/api/knowledgeTransferActivities").then(result => {
+      dispatch(updateKTAData(result.data));
+    });
   };
 };
 
 export const fetchKTAMappingData = () => {
   return dispatch => {
-    //  https://localhost:5433/ktastargetgroups
-    axios.get("https://localhost:5433/ktastargetgroups").then(result => {
+    axios.get("/api/ktastargetgroups").then(result => {
       dispatch(updateKTAMappingData(result.data));
     });
   };
@@ -95,16 +119,32 @@ export const fetchKTAMappingData = () => {
 
 export const fetchTargetGroupsData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/targetgroups").then(result => {
+    axios.get("/api/targetgroups").then(result => {
       dispatch(updateTargetGroupsData(result.data));
     });
   };
 };
 ///projects_old.json
 
+export const fetchInfrastructureData = () => {
+  return dispatch => {
+    axios.get("/api/infrastructure").then(result => {
+      dispatch(updateInfrastructureData(result.data));
+    });
+  };
+};
+
+export const fetchCollectionsData = () => {
+  return dispatch => {
+    axios.get("/api/collections").then(result => {
+      dispatch(updateCollectionsData(result.data));
+    });
+  };
+};
+
 export const fetchOldProjectData = () => {
   return dispatch => {
-    axios.get("https://localhost:5433/projects").then(result => {
+    axios.get("/api/projects").then(result => {
       dispatch(updateOldProjectData(result.data));
     });
   };
@@ -149,6 +189,20 @@ export const updateTargetGroupsData = targetgroups => {
   return {
     type: actionTypes.UPDATE_TARGETGROUPS_DATA,
     value: targetgroups
+  };
+};
+
+export const updateInfrastructureData = infrastructures => {
+  return {
+    type: actionTypes.UPDATE_INFRASTRUCTURE_DATA,
+    value: infrastructures
+  };
+};
+
+export const updateCollectionsData = collections => {
+  return {
+    type: actionTypes.UPDATE_COLLECTIONS_DATA,
+    value: collections
   };
 };
 

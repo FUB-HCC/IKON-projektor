@@ -1,96 +1,108 @@
-import React from "react";
+import React, { Component } from "react";
 import style from "./filter-selection.module.css";
-import { getFieldColor, getFieldIcon } from "../../util/utility";
+import { getFieldColor } from "../../util/utility";
+import { ReactComponent as ArrowUp } from "../../assets/collapse-up.svg";
+import { ReactComponent as ArrowDown } from "../../assets/collapse-down.svg";
 
-const FilterSet = props => {
-  const toggleState = [];
-  return (
-    <div className={style.filterSetWrapper}>
-      <div className={style.filterSetTitle}>
-        <span className={style.titleText}>{props.set.name}</span>
-      </div>
-      {props.set.subsets.map(subset => (
-        <div
-          className={style.subsetWrapper}
-          style={{ color: getFieldColor(subset.name) }}
-          key={subset.name}
-        >
-          <div className={style.subsetHeader}>
-            <CheckBox
-              name={subset.name}
-              id={subset.filterId}
-              icon={
-                subset.name !== "Sammlungen" && subset.name !== "Laborgeräte"
-                  ? subset.name
-                  : "pfeil"
-              }
-              checked={
-                !props.filters[subset.filterId]
-                  ? false
-                  : props.filters[subset.filterId].value.includes(subset.name)
-              }
-              onChange={props.changeFilter}
-              showCheckbox={subset.isTogglable}
-              color={getFieldColor(subset.name)}
-              toggleState={toggleState}
-            />
-          </div>
-          {subset.subFilters.map((filter, i) => (
-            <div className={style.subFilter} key={subset.name + i}>
+//const FilterSet = props => {
+class FilterSet extends Component {
+  constructor(props) {
+    super(props);
+    this.props = props;
+    this.state = {
+      toggleState: this.props.set.subsets.map(s => s.name)
+    };
+    this.toggledFilterList = this.toggledFilterList.bind(this);
+  }
+  render() {
+    return (
+      <div className={style.filterSetWrapper}>
+        <div className={style.filterSetTitle}>
+          <span className={style.titleText}>{this.props.set.name}</span>
+        </div>
+        {this.props.set.subsets.map(subset => (
+          <div
+            className={style.subsetWrapper}
+            style={{ color: getFieldColor(subset.name) }}
+            key={subset.name}
+          >
+            <div className={style.subsetHeader}>
               <CheckBox
-                name={filter}
-                id={subset.subFilterId}
-                checked={props.filters[subset.subFilterId].value.includes(
-                  filter
-                )}
-                onChange={props.changeFilter}
-                showCheckbox={true}
+                name={subset.name}
+                id={subset.filterId}
+                checked={
+                  !this.props.filters[subset.filterId]
+                    ? false
+                    : this.props.filters[subset.filterId].value.includes(
+                        subset.name
+                      )
+                }
+                onChange={this.props.changeFilter}
+                showCheckbox={subset.isTogglable}
                 color={getFieldColor(subset.name)}
+                toggleState={this.state.toggleState}
+                toggledFilterList={this.toggledFilterList}
+                iconSize="20px"
+                iconMargin="8"
+                icon={
+                  this.state.toggleState.includes(subset.name) ? (
+                    <ArrowDown
+                      stroke={getFieldColor(subset.name)}
+                      className={style.arrowIcon}
+                    />
+                  ) : (
+                    <ArrowUp
+                      className={style.arrowIcon}
+                      stroke={getFieldColor(subset.name)}
+                    />
+                  )
+                }
               />
             </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-};
+            {!this.state.toggleState.includes(subset.name) &&
+              subset.subFilters.map((filter, i) => (
+                <div className={style.subFilter} key={subset.name + i}>
+                  <CheckBox
+                    name={filter}
+                    id={subset.subFilterId}
+                    checked={this.props.filters[
+                      subset.subFilterId
+                    ].value.includes(filter)}
+                    onChange={this.props.changeFilter}
+                    showCheckbox={true}
+                    color={getFieldColor(subset.name)}
+                    iconSize="16px"
+                    iconMargin="16"
+                  />
+                </div>
+              ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  toggledFilterList(name, state, change) {
+    if (state.find(e => e === name)) {
+      state.splice(state.indexOf(name), 1);
+    } else {
+      state.push(name);
+    }
+    this.setState({ toggleState: state });
+  }
+}
 
 export default FilterSet;
-
-const toggleFilterList = (name, state) => {
-  if (state.find(e => e === name)) {
-    state.splice(name, 1);
-  } else {
-    state.push(name);
-  }
-};
 
 const CheckBox = props => (
   <div
     className={style.checkBoxWrapper}
     onClick={() => {
       if (props.icon) {
-        toggleFilterList(props.name, props.toggleState);
+        props.toggledFilterList(props.name, props.toggleState);
       }
     }}
   >
-    <span>
-      {props.icon && (
-        <svg
-          className={style.checkBoxIcon}
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
-          x="0px"
-          y="0px"
-          viewBox="0 0 100 100"
-          fill={props.color}
-          stroke={getFieldColor(props.icon)}
-        >
-          <path d={getFieldIcon(props.icon)} />
-        </svg>
-      )}
-      {props.name}
-    </span>
     <input
       checked={props.checked}
       className={style.checkBox}
@@ -104,9 +116,16 @@ const CheckBox = props => (
         htmlFor={props.name}
         style={{
           border: props.color + " 2px solid",
-          backgroundColor: props.checked ? props.color : "rgba(0,0,0,0)"
+          borderRadius: "50%",
+          backgroundColor: props.checked ? props.color : "rgba(0,0,0,0)",
+          width: props.iconSize,
+          height: props.iconSize,
+          marginRight: props.iconMargin + "px",
+          marginLeft: props.iconMargin * 0.5 + "px"
         }}
       />
     )}
+    <span>{props.name}</span>
+    {props.icon}
   </div>
 );

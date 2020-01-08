@@ -54,7 +54,10 @@ const graphColors = {
 };
 
 const mapStateToProps = state => {
-  const processedKtas = processKtas(state.main.ktas);
+  const processedKtas = processKtas(
+    state.main.ktas,
+    state.main.filteredCategories
+  );
   const processedData = processData(state.main.filteredProjects, graphColors);
   return {
     dataSplitFbYear: processedData,
@@ -121,7 +124,7 @@ const processData = (data, colors) => {
   return dataSplitYears;
 };
 
-const processKtas = ktas => {
+const processKtas = (ktas, filteredTargetgroups) => {
   if (!ktas || ktas === []) return [];
 
   let ktasYearBuckets = [];
@@ -130,40 +133,43 @@ const processKtas = ktas => {
     let endDate = parseInt(ktas[ktaKey].end_date);
     if (isNaN(startDate) || startDate === "") startDate = 1900;
     if (isNaN(endDate) || endDate === "") endDate = startDate;
-    if (startDate > 2000) {
+    if (startDate > 2000 && ktas[ktaKey].targetgroups[0]) {
       for (let targetgroup in ktas[ktaKey].targetgroups) {
         let targetgroupName = ktas[ktaKey].targetgroups[targetgroup];
-        if (!(targetgroupName in ktasYearBuckets)) {
-          ktasYearBuckets[targetgroupName] = [];
-        }
+        if (filteredTargetgroups.some(t => t.title === targetgroupName)) {
+          if (!(targetgroupName in ktasYearBuckets)) {
+            ktasYearBuckets[targetgroupName] = [];
+          }
 
-        let year = startDate;
-        while (year <= endDate) {
-          let yearExists = false;
-          for (let yearTgIndex in ktasYearBuckets[targetgroupName]) {
-            // check if year already is existent for the forschungsbereich
-            if (ktasYearBuckets[targetgroupName][yearTgIndex].year === year) {
-              yearExists = true;
-              ktasYearBuckets[targetgroupName][yearTgIndex].numberOfWtas =
-                ktasYearBuckets[targetgroupName][yearTgIndex].numberOfWtas + 1;
-              ktasYearBuckets[targetgroupName][yearTgIndex].ktas.push(
-                ktas[ktaKey]
-              );
+          let year = startDate;
+          while (year <= endDate) {
+            let yearExists = false;
+            for (let yearTgIndex in ktasYearBuckets[targetgroupName]) {
+              // check if year already is existent for the forschungsbereich
+              if (ktasYearBuckets[targetgroupName][yearTgIndex].year === year) {
+                yearExists = true;
+                ktasYearBuckets[targetgroupName][yearTgIndex].numberOfWtas =
+                  ktasYearBuckets[targetgroupName][yearTgIndex].numberOfWtas +
+                  1;
+                ktasYearBuckets[targetgroupName][yearTgIndex].ktas.push(
+                  ktas[ktaKey]
+                );
+              }
             }
-          }
 
-          if (!yearExists) {
-            ktasYearBuckets[targetgroupName].push({
-              year: year,
-              numberOfWtas: 1,
-              ktas: [ktas[ktaKey]]
-            });
+            if (!yearExists) {
+              ktasYearBuckets[targetgroupName].push({
+                year: year,
+                numberOfWtas: 1,
+                ktas: [ktas[ktaKey]]
+              });
+            }
+            year++;
           }
-          year++;
+          ktasYearBuckets[targetgroupName] = ktasYearBuckets[
+            targetgroupName
+          ].sort((a, b) => a.year - b.year);
         }
-        ktasYearBuckets[targetgroupName] = ktasYearBuckets[
-          targetgroupName
-        ].sort((a, b) => a.year - b.year);
       }
     }
   }
