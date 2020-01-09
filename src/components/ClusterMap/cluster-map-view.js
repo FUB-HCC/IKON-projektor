@@ -2,6 +2,8 @@ import React from "react";
 import { contours as d3Contours } from "d3-contour";
 import { scaleLinear as d3ScaleLinear } from "d3-scale";
 import { extent as d3extent } from "d3-array";
+import introJs from "intro.js";
+import "intro.js/introjs.css";
 
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
@@ -178,6 +180,7 @@ export default class ClusterMapView extends React.Component {
   };
 
   render() {
+    introJs().addHints();
     const { categories, width, height, InfrastrukturSorted } = this.props;
     var colorHeat = d3ScaleLinear()
       .domain(d3extent(this.props.topography))
@@ -207,6 +210,9 @@ export default class ClusterMapView extends React.Component {
           viewBox={"0 0 " + width + " " + height}
           width={width}
           height={height}
+          transform={
+            "translate(" + 0.3 * arcMarginSides(height, scale) + ", 0)"
+          }
         >
           <g
             fill="none"

@@ -145,3 +145,14 @@
 .active:after {
   opacity: 1;
 }
+
+.introTooltip {
+  background-color: #1c1d1f;
+  color: #e1e1e1;
+  opacity: 80%;
+}
+
+.introHighlightClass {
+  background-color: #aaa;
+  color: #000;
+}

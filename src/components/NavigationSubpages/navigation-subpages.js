@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import introJs from "intro.js";
+import "intro.js/introjs.css";
 import classes from "./navigation-subpages.module.css";
 import { connect } from "react-redux";
 import logo from "../../assets/ikon_logo.png";
@@ -29,6 +31,20 @@ class NavigationSubpages extends Component {
       activePopover: -1
     });
   }
+
+  startTour() {
+    var tour = introJs();
+    tour.setOption("tooltipPosition", "auto");
+    tour.setOption("positionPrecedence", ["right", "top", "left", "bottom"]);
+    tour.setOption("hidePrev", true);
+    tour.setOption("hideNext", true);
+    tour.setOption("showStepNumbers", false);
+    tour.setOption("overlayOpacity", 0.2);
+    tour.setOption("tooltipClass", classes.introTooltip);
+    tour.setOption("highlightClass", classes.introHighlightClass);
+    tour.start();
+  }
+
   render() {
     return (
       <div className={classes.navbar} style={{ flexBasis: menuBarHeight }}>
@@ -89,7 +105,12 @@ class NavigationSubpages extends Component {
         <div className={classes.rightPanel}>
           <ul>
             <li>
-              <div className={classes.NavigationRightElement}>SUCHE</div>
+              <div
+                className={classes.NavigationRightElement}
+                onClick={() => this.startTour()}
+              >
+                HILFE
+              </div>
             </li>
             <li>
               <div className={classes.NavigationRightElement}>MENU</div>

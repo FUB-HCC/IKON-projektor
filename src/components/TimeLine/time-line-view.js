@@ -285,7 +285,11 @@ class TimeLineView extends Component {
         {this.renderGridline(lines)}
 
         {this.highlightGridLine()}
-        <div className={styles.ktasPlot}>
+        <div
+          className={styles.ktasPlot}
+          data-intro="Hier werden die Wissentransferaktivitäten der wichtigsten Zielgruppen nach Jahren aufgeteilt. Die Größe der Kreise spiegelt die Anzahl an Wissentransferaktivitäten im jeweiligen Jahr wieder."
+          data-step="1"
+        >
           <TargetgroupBuckets
             ktasYearBuckets={this.state.ktasYearBuckets}
             height={this.state.height * 0.15}
@@ -300,6 +304,8 @@ class TimeLineView extends Component {
           />
         </div>
         <SVGWithMargin
+          data-intro="In diesem Liniendiagramm wird die Anzahl der Projekte pro Forschungsgebiet im zeitlichen Verlauf visualisiert."
+          data-step="2"
           className={styles.timelineContainer}
           contentContainerBackgroundRectClassName={
             styles.timelineContentContainerBackgroundRect

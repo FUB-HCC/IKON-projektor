@@ -2,34 +2,31 @@ import React from "react";
 import PropTypes from "prop-types";
 import { ReactComponent as SelectedIcon } from "../../assets/Selected-Project.svg";
 import { ReactComponent as UnselectedIcon } from "../../assets/Unselected-Project.svg";
-import HoverPopover from "../HoverPopover/HoverPopover";
 
 export default class ClusterDot extends React.Component {
   static propTypes = {
     x: PropTypes.number,
     y: PropTypes.number,
-    color: PropTypes.string
+    color: PropTypes.string,
+    hover: PropTypes.bool
   };
 
-  static defaultProps = { x: 0, y: 0, color: "white" };
+  static defaultProps = { x: 0, y: 0, color: "white", hover: false };
 
   renderProjectsHover() {
     return (
-      this.props.point.projectData &&
-      this.props.highlightedProjects.find(
-        hProject => hProject === this.props.point.projectData.id
-      ) && (
+      this.hover && (
         <g
           style={{
             position: "absolute",
             zIndex: "999"
           }}
         >
-          <text x="25" y="-20" fill="#afca0b" fontSize="10px">
+          <text x="30" y="-10" fill="#afca0b" fontSize="10px">
             {this.props
               .splitLongTitles(this.props.point.projectData.title)
               .map((titlePart, j) => (
-                <tspan x="25" y={-20 + j * 10}>
+                <tspan x="30" y={-10 + j * 10}>
                   {titlePart}
                 </tspan>
               ))}
@@ -53,10 +50,14 @@ export default class ClusterDot extends React.Component {
       <g
         onMouseOver={() => {
           if (this.props.point.projectData) {
+            this.hover = true;
             this.props.highlightProject(this.props.point.projectData.id);
           }
         }}
-        onMouseOut={() => this.props.unHighlight()}
+        onMouseOut={() => {
+          this.hover = false;
+          this.props.unHighlight();
+        }}
         onClick={() => {
           this.props.showProjectDetails();
         }}

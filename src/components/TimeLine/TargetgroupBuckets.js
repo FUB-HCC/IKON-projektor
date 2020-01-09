@@ -16,7 +16,7 @@ const TargetgroupBuckets = props => {
                   <circle
                     cx={props.xScale(year.year)}
                     cy={props.height * 0.5}
-                    r={(year.numberOfWtas * props.height) / 55}
+                    r={Math.max((year.numberOfWtas * props.height) / 70, 2)}
                     className={styles.wtaBucketCircle}
                     onMouseOver={event => {
                       props.handleCircleMouseEnter(

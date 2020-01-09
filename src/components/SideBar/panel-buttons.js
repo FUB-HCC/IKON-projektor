@@ -15,7 +15,6 @@ class FilterPanelButtons extends React.Component {
           <span>
             <Download className={style.buttonIcon} />
           </span>
-          <br />
           <span> Exportieren</span>
         </div>
 
@@ -26,7 +25,6 @@ class FilterPanelButtons extends React.Component {
           <span>
             <Teilen className={style.buttonIcon} />
           </span>
-          <br />
           <span> Teilen</span>
         </div>
 
@@ -37,7 +35,6 @@ class FilterPanelButtons extends React.Component {
           <span>
             <Reset className={style.buttonIcon} />
           </span>{" "}
-          <br />
           <span>Zurücksetzen</span>
         </div>
       </div>
