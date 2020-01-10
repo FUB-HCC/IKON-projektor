@@ -29,7 +29,7 @@ export default class ClusterDot extends React.Component {
             {this.props
               .splitLongTitles(this.props.point.projectData.title)
               .map((titlePart, j) => (
-                <tspan x="25" y={-20 + j * 10}>
+                <tspan x="25" y={-20 + j * 10} key={j}>
                   {titlePart}
                 </tspan>
               ))}
@@ -40,7 +40,7 @@ export default class ClusterDot extends React.Component {
   }
 
   render() {
-    const { x, y, color } = this.props;
+    const { x, y, color, key } = this.props;
     const scale =
       this.props.point.projectData &&
       this.props.highlightedProjects.find(

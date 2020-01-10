@@ -184,23 +184,36 @@ export default class ClusterMapView extends React.Component {
       prevProps.width !== width ||
       prevProps.topography.length !== topography.length
     ) {
-      this.scale = Math.min(height, width);
-      this.colorHeat = d3ScaleLinear()
-        .domain(d3extent(topography))
-        .range(["#000", "#888"]);
-      this.contours = d3Contours()
-        .size([contoursSize, contoursSize])
-        .smooth([false])(this.props.topography);
-      this.forceUpdate();
+      this.generateContourMap(height, width, topography);
     }
   }
 
+  generateContourMap(height, width, topography) {
+    this.scale = Math.min(height, width);
+    this.colorHeat = d3ScaleLinear()
+      .domain(d3extent(topography))
+      .range(["#0e0e0e", "#888"]);
+    this.contours = d3Contours()
+      .size([contoursSize, contoursSize])
+      .smooth([false])(this.props.topography);
+    this.forceUpdate();
+  }
+
   render() {
-    const { categories, width, height, InfrastrukturSorted } = this.props;
+    const {
+      categories,
+      width,
+      height,
+      InfrastrukturSorted,
+      topography
+    } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (categories.length === 0 || !width || !height || scale <= 0) {
       return <div />;
+    }
+    if (!this.contours) {
+      this.generateContourMap(height, width, topography);
     }
     const shiftX = width / 2;
     const shiftY = height / 2;
