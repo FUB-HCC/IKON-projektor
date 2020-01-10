@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { ReactComponent as SelectedIcon } from "../../assets/Selected-Project.svg";
 import { ReactComponent as UnselectedIcon } from "../../assets/Unselected-Project.svg";
-import HoverPopover from "../HoverPopover/HoverPopover";
 
 export default class ClusterDot extends React.Component {
   static propTypes = {
@@ -40,7 +39,7 @@ export default class ClusterDot extends React.Component {
   }
 
   render() {
-    const { x, y, color, key } = this.props;
+    const { x, y, color } = this.props;
     const scale =
       this.props.point.projectData &&
       this.props.highlightedProjects.find(

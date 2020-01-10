@@ -24,7 +24,7 @@ const strokeWidth = scale => 0.001 * scale;
 const contoursSize = 600;
 
 export default class ClusterMapView extends React.Component {
-  constructor(props) {
+  constructor() {
     super();
     this.state = {
       highlightedCats: [],
@@ -195,7 +195,7 @@ export default class ClusterMapView extends React.Component {
       .range(["#0e0e0e", "#888"]);
     this.contours = d3Contours()
       .size([contoursSize, contoursSize])
-      .smooth([false])(this.props.topography);
+      .smooth([true])(this.props.topography);
     this.forceUpdate();
   }
 
