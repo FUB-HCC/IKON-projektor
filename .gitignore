@@ -22,12 +22,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-public/clusters.json
-public/formats.json
-public/institutions.json
-public/ktas.json
-public/kta_mapping.json
-public/mfnprojects.json
-public/projects.json
-public/target_groups.json
-public/projects_old.json
+public/*.json

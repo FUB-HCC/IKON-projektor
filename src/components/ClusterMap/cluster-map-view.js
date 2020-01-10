@@ -177,18 +177,43 @@ export default class ClusterMapView extends React.Component {
     return newConts;
   };
 
-  render() {
-    const { categories, width, height, InfrastrukturSorted } = this.props;
-    var colorHeat = d3ScaleLinear()
-      .domain(d3extent(this.props.topography))
+  componentDidUpdate(prevProps) {
+    const { topography, width, height } = this.props;
+    if (
+      prevProps.height !== height ||
+      prevProps.width !== width ||
+      prevProps.topography.length !== topography.length
+    ) {
+      this.generateContourMap(height, width, topography);
+    }
+  }
+
+  generateContourMap(height, width, topography) {
+    this.scale = Math.min(height, width);
+    this.colorHeat = d3ScaleLinear()
+      .domain(d3extent(topography))
       .range(["#0e0e0e", "#888"]);
-    var contours = d3Contours()
+    this.contours = d3Contours()
       .size([contoursSize, contoursSize])
       .smooth([true])(this.props.topography);
+    this.forceUpdate();
+  }
+
+  render() {
+    const {
+      categories,
+      width,
+      height,
+      InfrastrukturSorted,
+      topography
+    } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (categories.length === 0 || !width || !height || scale <= 0) {
       return <div />;
+    }
+    if (!this.contours) {
+      this.generateContourMap(height, width, topography);
     }
     const shiftX = width / 2;
     const shiftY = height / 2;
@@ -212,7 +237,7 @@ export default class ClusterMapView extends React.Component {
             fill="none"
             transform={"translate(0 " + arcMarginTop(height, scale) + ")"}
           >
-            {contours.map(cont => {
+            {this.contours.map(cont => {
               return (
                 <path
                   className="isoline"
@@ -221,7 +246,7 @@ export default class ClusterMapView extends React.Component {
                     var coords = this.scaleContours(coord, width, height);
                     return "M" + coords[0] + "L" + coords;
                   })}
-                  fill={colorHeat(cont.value)}
+                  fill={this.colorHeat(cont.value)}
                 />
               );
             })}

@@ -224,11 +224,8 @@ const GeoMapView = props => {
           {Object.values(continentConnections).map(con => (
             <path
               d={`M${con.end},${arcHeight} C${con.end},${arcHeight -
-                Math.abs(con.end - con.start) * 0.5} ${
-                con.start
-              },${arcHeight - Math.abs(con.end - con.start) * 0.5} ${
-                con.start
-              },${arcHeight}`}
+                Math.abs(con.end - con.start) * 0.5} ${con.start},${arcHeight -
+                Math.abs(con.end - con.start) * 0.5} ${con.start},${arcHeight}`}
               stroke="white"
               strokeWidth={con.weight}
               fill="none"

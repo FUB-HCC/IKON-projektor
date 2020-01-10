@@ -2,7 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { ReactComponent as SelectedIcon } from "../../assets/Selected-Project.svg";
 import { ReactComponent as UnselectedIcon } from "../../assets/Unselected-Project.svg";
-import HoverPopover from "../HoverPopover/HoverPopover";
 
 export default class ClusterDot extends React.Component {
   static propTypes = {
@@ -29,7 +28,7 @@ export default class ClusterDot extends React.Component {
             {this.props
               .splitLongTitles(this.props.point.projectData.title)
               .map((titlePart, j) => (
-                <tspan x="25" y={-20 + j * 10}>
+                <tspan x="25" y={-20 + j * 10} key={j}>
                   {titlePart}
                 </tspan>
               ))}
@@ -74,6 +73,7 @@ export default class ClusterDot extends React.Component {
           r={this.props.radius / 35}
           fill={"transparent"}
         />
+
         {this.props.point.projectData &&
         this.props.highlightedProjects.find(
           hProject => hProject === this.props.point.projectData.id

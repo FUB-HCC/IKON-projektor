@@ -120,7 +120,6 @@ const mapStateToProps = state => {
         (state.main.filters.collections.value.includes(inf.name) ||
           state.main.filters.infrastructures.value.includes(inf.name))
     );
-
   return {
     clusterData: clusters,
     categories: categories,

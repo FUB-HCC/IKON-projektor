@@ -11,7 +11,7 @@ export default class Cluster extends React.Component {
       icon: project.icon,
       projectData: project.project
     }));
-    
+
     return (
       <g key={cluster.id}>
         {projects.map((project, i) => (
