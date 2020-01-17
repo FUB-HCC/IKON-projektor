@@ -16,7 +16,7 @@ import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import TargetgroupBuckets from "./TargetgroupBuckets";
 
-class TimeLineView extends Component {
+export default class TimeLineView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -106,6 +106,7 @@ class TimeLineView extends Component {
   }
 
   handleCircleClick(evt, circlePoint) {
+    this.props.showYearDetails(circlePoint);
     let selectedProjects = circlePoint.projects;
     this.setState({
       projectsPopoverHidden: false,
@@ -117,7 +118,6 @@ class TimeLineView extends Component {
   renderProjectsHover() {
     return (
       this.state.hoveredCircle &&
-      this.state.hoveredCircle.forschungsbereich &&
       this.state.mouseLocation && (
         <HoverPopover
           width={"15em"}
@@ -132,14 +132,17 @@ class TimeLineView extends Component {
               backgroundColor: "#1c1d1f",
               margin: "0",
               fontSize: "10px",
-              color: "#e9e9e9",
+              color: "#afca0b",
+              fontWeight: "500",
               letterSpacing: "1px",
               overflow: "hidden",
               padding: "5px 10px"
             }}
           >
             <label>
-              {`${this.state.hoveredCircle.numberOfActiveProjects} aktive Projekte in ${this.state.hoveredCircle.forschungsbereich} im Jahr  ${this.state.hoveredCircle.year}`}{" "}
+              {this.state.hoveredCircle.forschungsbereich
+                ? `${this.state.hoveredCircle.year}: ${this.state.hoveredCircle.numberOfActiveProjects} aktive Projekte in ${this.state.hoveredCircle.forschungsbereich}`
+                : `${this.state.hoveredCircle.year}: ${this.state.hoveredCircle.count} Wissenstransferaktivitäten mit der Zielgruppe ${this.state.hoveredCircle.targetgroup}`}
             </label>
           </p>
         </HoverPopover>
@@ -158,17 +161,14 @@ class TimeLineView extends Component {
             height: this.props.height,
             width: this.props.width,
             position: "absolute",
-            margin: "0",
-            display: "flex",
-            flexWrap: "wrap",
             zIndex: -95
           }}
         >
           <line
             x1={this.state.hoveredCircle.x + "px"}
-            y1={this.props.height * 0.03 + "px"}
+            y1="0%"
             x2={this.state.hoveredCircle.x + "px"}
-            y2={this.props.height}
+            y2="100%"
             stroke="#afca0b"
           />
         </svg>
@@ -183,18 +183,15 @@ class TimeLineView extends Component {
           height: this.props.height,
           width: this.props.width,
           position: "absolute",
-          margin: "0",
-          display: "flex",
-          flexWrap: "wrap",
           zIndex: -99
         }}
       >
         {lines.map((line, i) => (
           <line
             x1={line + this.state.margin + "px"}
-            y1={this.props.height * 0.03 + "px"}
+            y1="0%"
             x2={line + this.state.margin + "px"}
-            y2={this.props.height}
+            y2="100%"
             stroke="rgba(65,64,65,0.6)"
             fill="none"
             key={i}
@@ -281,19 +278,26 @@ class TimeLineView extends Component {
       )
     );
     return (
-      <div style={{ marginTop: this.props.height * 0.03 }}>
+      <div
+        style={{
+          height: "auto"
+        }}
+      >
         {this.renderGridline(lines)}
-
         {this.highlightGridLine()}
         <div
-          className={styles.ktasPlot}
           data-intro="Hier werden die Wissentransferaktivitäten der wichtigsten Zielgruppen nach Jahren aufgeteilt. Die Größe der Kreise spiegelt die Anzahl an Wissentransferaktivitäten im jeweiligen Jahr wieder."
           data-step="1"
         >
+          <span className={styles.plotTitle}>
+            Wissenstransferaktivitäten <br />
+            <br />
+          </span>
           <TargetgroupBuckets
             ktasYearBuckets={this.state.ktasYearBuckets}
-            height={this.state.height * 0.15}
+            height={this.state.height * 0.13}
             width={this.state.width}
+            showYearDetails={this.props.showYearDetails}
             fullHeight={this.state.height}
             xScale={year =>
               xScale(new Date(year.toString()).setHours(0, 0, 0, 0)) +
@@ -315,6 +319,9 @@ class TimeLineView extends Component {
           margin={this.state.margin}
           width={this.state.width}
         >
+          <text fill="#717071" x={-this.state.margin} y="10" fontSize="130%">
+            Forschungsprojekte
+          </text>
           {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
           <g
             className={styles.xAxis}
@@ -372,5 +379,3 @@ class TimeLineView extends Component {
     );
   }
 }
-
-export default TimeLineView;

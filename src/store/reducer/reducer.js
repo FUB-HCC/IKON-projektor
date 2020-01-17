@@ -149,6 +149,9 @@ const reducer = (state = initialState, action) => {
     case actionTypes.SET_SELECTED_KTA:
       return setSelectedKta(state, action);
 
+    case actionTypes.SET_SELECTED_YEAR:
+      return setSelectedYear(state, action);
+
     case actionTypes.DESELECT_ITEMS:
       return deselectItems(state);
 
@@ -499,6 +502,11 @@ const setSelectedCat = (state, action) => ({
 const setSelectedKta = (state, action) => ({
   ...state,
   selectedKta: action.value
+});
+
+const setSelectedYear = (state, action) => ({
+  ...state,
+  selectedYear: action.value
 });
 
 const setSelectedInfra = (state, action) => ({
