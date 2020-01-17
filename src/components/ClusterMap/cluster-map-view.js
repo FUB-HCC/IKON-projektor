@@ -19,9 +19,9 @@ const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
 const fontSizeText = scale => 0.014 * scale;
 const fontSizeCount = scale => 0.01 * scale;
-const textOffsetFromArc = scale => 0.035 * scale;
-const countOffsetFromArc = scale => 0.02 * scale;
-const connectionOffsetFromArc = scale => -0.025 * scale;
+const textOffsetFromArc = scale => 0.04 * scale;
+const countOffsetFromArc = scale => 0.025 * scale;
+const connectionOffsetFromArc = scale => -0.02 * scale;
 const circleScaling = scale => 0.02 * scale;
 const strokeWidth = scale => 0.001 * scale;
 const contoursSize = 600;
@@ -207,7 +207,7 @@ export default class ClusterMapView extends React.Component {
     var words = title.split(/[\s-]+/);
     var newtext = [words[0]];
     for (let i = 1; i < words.length; i++) {
-      if (newtext[newtext.length - 1].length < 13) {
+      if (newtext[newtext.length - 1].length < 16) {
         newtext[newtext.length - 1] += " " + words[i];
       } else {
         newtext.push(words[i]);
@@ -290,7 +290,7 @@ export default class ClusterMapView extends React.Component {
     }
     const shiftX = width / 2;
     const shiftY = height / 2;
-    const radius = scale * 0.55 - arcMarginSides(width, scale);
+    const radius = scale * 0.5 - arcMarginSides(width, scale);
     const each = 360 / (categories.length + InfrastrukturSorted.length);
     const sortedTargetgroups = categories.sort((a, b) =>
       a.title < b.title ? 1 : -1
