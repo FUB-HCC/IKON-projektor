@@ -33,10 +33,12 @@ const mapDispatchToProps = dispatch => ({
     dispatch(deselectItems());
   },
   showProjectDetails: project => {
+    dispatch(deselectItems());
     dispatch(setSelectedProject(project));
     dispatch(setSideBarComponent(<ProjectDetailsPanel />));
   },
   showKtaDetails: kta => {
+    dispatch(deselectItems());
     dispatch(setSelectedKta(kta));
     dispatch(setSideBarComponent(<KtaDetailsPanel />));
   }

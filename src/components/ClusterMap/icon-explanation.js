@@ -22,7 +22,9 @@ const IconExplanation = props => {
       <div
         data-intro="Wir setzen maschinelles Lernen ein, um Forschungsprojekte hinsichtlich inhaltlicher Ähnlichkeiten anzuordnen. Die Unsicherheitslandschaft zeigt an, wie treffend der Algorithmus die Anordnung einschätzt. An dunklen Stellen ist die Anordnung eher unpassend, an hellen eher passend."
         data-step="1"
-        style={{ marginBottom: "10px" }}
+        className={style.legendRow}
+        onMouseEnter={() => props.highlightAll("projects")}
+        onMouseOut={() => props.unHighlight()}
       >
         <p
           style={{
@@ -52,15 +54,8 @@ const IconExplanation = props => {
             )
           }
         >
-          <circle
-            className={style.tooltipIcon}
-            r="6"
-            cx={6}
-            cy={6}
-            stroke="#6B6B6B"
-            fill="#6B6B6B"
-          />
-          <text x="3" y="10" style={{ cursor: "POINTER", color: "0e0e0e" }}>
+          <circle className={style.tooltipIcon} r="6" cx={6} cy={6} />
+          <text x="3" y="10" style={{ cursor: "POINTER", stroke: "0e0e0e" }}>
             ?
           </text>
         </svg>
@@ -69,9 +64,12 @@ const IconExplanation = props => {
         style={{ display: "flex" }}
         data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
         data-step="2"
+        className={style.legendRow}
+        onMouseEnter={() => props.highlightAll("categories")}
+        onMouseOut={() => props.unHighlight()}
       >
         <svg width="20" height="20">
-          <circle r="10" cx={10} cy={10} stroke="#6B6B6B" fill="#6B6B6B" />
+          <circle r="10" cx={10} cy={10} className={style.tooltipIcon} />
         </svg>
         <span style={{ marginLeft: "10px" }}>Wissenstransferaktivitäten</span>
       </p>
@@ -79,12 +77,14 @@ const IconExplanation = props => {
         style={{ display: "flex" }}
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Sammlungen am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben können."
         data-step="3"
+        className={style.legendRow}
+        onMouseEnter={() => props.highlightAll("collections")}
+        onMouseOut={() => props.unHighlight()}
       >
         <CollectionIcon
+          className={style.tooltipIcon}
           width="20px"
           heigth="20px"
-          fill="#6B6B6B"
-          stroke="#6B6B6B"
         />
         <span style={{ marginLeft: "10px" }}>Sammlungen</span>
       </p>
@@ -92,12 +92,14 @@ const IconExplanation = props => {
         style={{ display: "flex" }}
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Laborgeräte oder andere Infrastruktur am Museum, die in Forschungsprojekten eingesetzt werden können."
         data-step="4"
+        className={style.legendRow}
+        onMouseEnter={() => props.highlightAll("infrastructures")}
+        onMouseOut={() => props.unHighlight()}
       >
         <InfrastructureIcon
+          className={style.tooltipIcon}
           width="20px"
           heigth="20px"
-          fill="#6B6B6B"
-          stroke="#6B6B6B"
         />
         <span style={{ marginLeft: "10px" }}>
           Laborgeräte und Infrastruktur

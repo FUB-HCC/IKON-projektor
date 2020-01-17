@@ -7,6 +7,10 @@ import logo from "../../assets/ikon_logo.png";
 import { menuBarHeight } from "../../App";
 import { changeGraph } from "../../store/actions/actions";
 
+import { ReactComponent as Download } from "../../assets/Icon-Download.svg";
+import { ReactComponent as Reset } from "../../assets/Icon-Reset.svg";
+import { ReactComponent as Teilen } from "../../assets/Icon-Teilen.svg";
+
 class NavigationSubpages extends Component {
   constructor(props) {
     super(props);
@@ -114,6 +118,25 @@ class NavigationSubpages extends Component {
             </li>
             <li>
               <div className={classes.NavigationRightElement}>MENU</div>
+            </li>
+          </ul>
+          <ul>
+            <li onClick={() => window.alert("wurde exportiert!")}>
+              <div className={classes.NavigationRightElement}>
+                EXPORTIEREN <Download className={classes.buttonIcon} />
+              </div>
+            </li>
+
+            <li onClick={() => window.alert("wurde geteilt!")}>
+              <div className={classes.NavigationRightElement}>
+                TEILEN <Teilen className={classes.buttonIcon} />
+              </div>
+            </li>
+
+            <li onClick={() => window.location.reload()}>
+              <div className={classes.NavigationRightElement}>
+                ZURÜCKSETZEN <Reset className={classes.buttonIcon} />
+              </div>
             </li>
           </ul>
         </div>

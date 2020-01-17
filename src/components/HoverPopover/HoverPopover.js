@@ -19,7 +19,7 @@ const HoverPopover = props => {
         marginLeft: "-4em",
         position: "absolute",
         left: locationX + "px",
-        top: locationY - 120 + "px",
+        top: locationY - 130 + "px",
         backgroundColor: "transparent",
         display: "flex",
         flexWrap: "wrap",

@@ -80,9 +80,11 @@ const ProjectDetailsPanel = props => {
           <p key={i}>{part}</p>
         ))}
       </div>
-      <span className={style.infoItemTitle}>
-        Genutzte Infrastruktur: <br />
-      </span>
+      {props.projectData.infrastructures.length > 0 && (
+        <span className={style.infoItemTitle}>
+          Genutzte Infrastruktur: <br />
+        </span>
+      )}
       {props.projectData.infrastructures.length > 0 && (
         <p className={style.abstractText}>
           {props.projectData.infrastructures.map((con, i) => (
@@ -97,9 +99,11 @@ const ProjectDetailsPanel = props => {
           ))}
         </p>
       )}
-      <span className={style.infoItemTitle}>
-        Bezug zu Sammlung: <br />
-      </span>
+      {props.projectData.collections.length > 0 && (
+        <span className={style.infoItemTitle}>
+          Bezug zu Sammlung: <br />
+        </span>
+      )}
       {props.projectData.collections.length > 0 && (
         <p className={style.abstractText}>
           {props.projectData.collections.map(con => {
@@ -116,9 +120,11 @@ const ProjectDetailsPanel = props => {
           })}
         </p>
       )}
-      <span className={style.infoItemTitle}>
-        Wissenstransferaktivität(en): <br />
-      </span>
+      {props.ktas.length > 0 && (
+        <span className={style.infoItemTitle}>
+          Wissenstransferaktivität(en): <br />
+        </span>
+      )}
       {props.ktas.length > 0 && (
         <p className={style.abstractText}>
           {props.ktas.map(kta => (

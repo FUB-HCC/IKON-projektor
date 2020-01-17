@@ -13,52 +13,36 @@ export default class ClusterDot extends React.Component {
 
   static defaultProps = { x: 0, y: 0, color: "white", hover: false };
 
-  renderProjectsHover() {
-    return (
-      this.hover && (
-        <g
-          style={{
-            position: "absolute",
-            zIndex: "999"
-          }}
-        >
-          <text x="30" y="-10" fill="#afca0b" fontSize="10px">
-            {this.props
-              .splitLongTitles(this.props.point.projectData.title)
-              .map((titlePart, j) => (
-                <tspan x="30" y={-10 + j * 10}>
-                  {titlePart}
-                </tspan>
-              ))}
-          </text>
-        </g>
-      )
-    );
-  }
-
   render() {
     const { x, y, color } = this.props;
-    const scale =
+    const isHighlighted =
       this.props.point.projectData &&
       this.props.highlightedProjects.find(
         hProject => hProject === this.props.point.projectData.id
-      )
-        ? 1.2
-        : 1;
+      );
+    const scale = isHighlighted ? 1.2 : 1;
 
     return (
       <g
-        onMouseOver={() => {
+        onMouseOver={event => {
           if (this.props.point.projectData) {
-            this.hover = true;
-            this.props.highlightProject(this.props.point.projectData.id);
+            this.props.highlightProject(
+              this.props.point.projectData.id,
+              event,
+              this.props.point.projectData.title.substring(0, 60) + "..."
+            );
           }
         }}
-        onMouseOut={() => {
-          this.hover = false;
-          this.props.unHighlight();
+        onMouseLeave={() => {
+          if (this.props.point.projectData.id !== this.props.selectedProject)
+            this.props.unHighlight();
         }}
-        onClick={() => {
+        onClick={event => {
+          this.props.highlightProject(
+            this.props.point.projectData.id,
+            event,
+            this.props.point.projectData.title.substring(0, 60) + "..."
+          );
           this.props.showProjectDetails();
         }}
         transform={
@@ -75,10 +59,7 @@ export default class ClusterDot extends React.Component {
           r={this.props.radius / 35}
           fill={"transparent"}
         />
-        {this.props.point.projectData &&
-        this.props.highlightedProjects.find(
-          hProject => hProject === this.props.point.projectData.id
-        ) ? (
+        {isHighlighted ? (
           <g>
             <SelectedIcon
               width={(this.props.radius / 15) * scale}
@@ -107,7 +88,6 @@ export default class ClusterDot extends React.Component {
             cursor="POINTER"
           />
         )}
-        {this.renderProjectsHover()}
       </g>
     );
   }

@@ -23,16 +23,21 @@
   width: 25vw;
   background: #0e0e0e;
 }
+.buttonIcon {
+  height: 45%;
+  width: height;
+  fill: #aaa;
+  position: absolute;
+  top: 25%;
+  left: 80%;
+}
 .NavigationRightElement {
   text-decoration: none;
   color: #aaa;
   font-size: 13px;
-  display: block;
-  padding: 36px 15px;
-  padding-left: 30px;
+  padding: 13px 20px;
   text-align: left;
   background: #1c1d1f;
-  text-align: left;
   border-right: 1px solid #0e0e0e;
   cursor: pointer;
   margin-top: 3px;
@@ -66,10 +71,8 @@
   margin: 0px;
 }
 .rightPanel ul li {
-  width: 50%;
-  list-style: none;
+  flex-grow: 1;
   margin-left: 5px;
-  position: relative;
 }
 .rightPanel ul li:after {
   content: "";
@@ -130,7 +133,6 @@
   text-align: left;
   padding-left: 30px;
   background: #1c1d1f;
-  font-family: IBM_Plex_Mono;
 }
 .NavigationElement .logo {
   padding: 20px !important;
@@ -141,6 +143,7 @@
 }
 .active .smallHeadTxt {
   display: block;
+  font-family: IBM_Plex_Mono;
 }
 .active:after {
   opacity: 1;

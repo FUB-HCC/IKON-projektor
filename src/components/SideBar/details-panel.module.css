@@ -1,11 +1,11 @@
 .DetailsWrapper {
   background-color: #1c1d1f;
   padding: 2%;
-  height: 90%;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .DetailsExit {
@@ -58,8 +58,8 @@
 
 .DetailsLink {
   padding: 1%;
-  margin-right: 2px;
-  background-color: #0e0e0e;
+  margin-right: 3px;
+  background-color: #000;
   cursor: pointer;
   display: inline;
   line-height: 250%;
@@ -67,6 +67,7 @@
 .DetailsLink:hover {
   color: #afca0b;
 }
+
 .DetailsViaLink {
   color: #afca0b;
   margin-top: 5px;
@@ -83,7 +84,7 @@
 .abstractText {
   color: #aaa;
   flex-grow: 0;
-  min-height: 5%;
+  min-height: 6%;
   max-height: 70%;
   overflow-y: scroll;
   background: linear-gradient(transparent 90%, #171717);

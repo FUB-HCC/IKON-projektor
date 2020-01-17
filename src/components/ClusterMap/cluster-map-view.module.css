@@ -5,5 +5,15 @@
 
 .tooltipIcon:hover {
   fill: #afca0b;
+}
+.legendRow:hover {
+  color: #afca0b;
   stroke: #afca0b;
+  fill: #afca0b;
+}
+
+.legendRow {
+  margin-bottom: 10px;
+  stroke: #6b6b6b;
+  fill: #6b6b6b;
 }

@@ -26,7 +26,6 @@ class SideBarView extends React.Component {
         className={style.sideBarWrapper}
         style={{ height: this.state.height }}
       >
-        <PanelButtons />
         {this.props.sideBarComponent}
       </div>
     );

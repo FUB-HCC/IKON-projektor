@@ -26,7 +26,7 @@ export default class Cluster extends React.Component {
             highlightedProjects={this.props.highlightedProjects}
             highlightProject={this.props.highlightProject}
             unHighlight={this.props.unHighlight}
-            resetCat={this.props.resetCat}
+            selectedProject={this.props.selectedProject}
             showProjectDetails={() =>
               this.props.showProjectDetails(cluster.projects[i].id)
             }

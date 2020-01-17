@@ -10,17 +10,18 @@ import style from "./cluster-map-view.module.css";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 import IconExplanation from "./icon-explanation";
+import HoverPopover from "../HoverPopover/HoverPopover";
 
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.1 * scale);
 const clusterSize = scale => 0.45 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
-const fontSizeText = scale => 0.012 * scale;
+const fontSizeText = scale => 0.014 * scale;
 const fontSizeCount = scale => 0.01 * scale;
-const textOffsetFromArc = scale => 0.038 * scale;
-const countOffsetFromArc = scale => 0.022 * scale;
-const connectionOffsetFromArc = scale => -0.015 * scale;
+const textOffsetFromArc = scale => 0.035 * scale;
+const countOffsetFromArc = scale => 0.02 * scale;
+const connectionOffsetFromArc = scale => -0.025 * scale;
 const circleScaling = scale => 0.02 * scale;
 const strokeWidth = scale => 0.001 * scale;
 const contoursSize = 600;
@@ -38,6 +39,8 @@ export default class ClusterMapView extends React.Component {
     this.highlightProject = this.highlightProject.bind(this);
     this.highlightInfrastructure = this.highlightInfrastructure.bind(this);
     this.unHighlight = this.unHighlight.bind(this);
+    this.renderHover = this.renderHover.bind(this);
+    this.highlightAll = this.highlightAll.bind(this);
   }
 
   get maxX() {
@@ -60,39 +63,101 @@ export default class ClusterMapView extends React.Component {
     this.setState({
       highlightedCats: [],
       highlightedLinks: [],
-      highlightedProjects: [this.props.selectedProject],
-      highlightedInfs: []
+      highlightedProjects: [],
+      highlightedInfs: [],
+      hoverText: undefined
     });
+  }
+
+  highlightAll(group) {
+    if (group === "categories") {
+      this.setState({
+        highlightedCats: this.props.categories
+      });
+    } else if (group === "projects") {
+      this.setState({
+        hoverText: "Unsicherheitslandschaft",
+        mouseLocation: [this.props.width * 0.5, this.props.height * 0.7]
+      });
+    } else if (group === "collections") {
+      this.setState({
+        highlightedInfs: this.props.InfrastrukturSorted.filter(
+          inf => inf.type === "collection"
+        )
+      });
+    } else if (group === "infrastructures") {
+      this.setState({
+        highlightedInfs: this.props.InfrastrukturSorted.filter(
+          inf => inf.type === "infrastructure"
+        )
+      });
+    }
   }
 
   highlightCat(category) {
-    this.setState({
-      highlightedCats: [category],
-      highlightedLinks: this.findLinksByCat(category).concat(
-        this.findProjectsByCat(category).map(p => this.findLinksByProject(p))
-      ),
-      highlightedProjects: this.findProjectsByCat(category),
-      highlightedInfs: this.findProjectsByCat(category).map(p =>
-        this.findInfsByProject(p)
-      )
-    });
+    if (this.props.selectedCat) {
+      this.setState({
+        highlightedCats: [this.props.selectedCat],
+        highlightedLinks: this.findLinksByCat(
+          this.props.categories.find(cat => cat.id === this.props.selectedCat)
+        ),
+        highlightedProjects: this.findProjectsByCat(
+          this.props.categories.find(cat => cat.id === this.props.selectedCat)
+        )
+      });
+    } else if (!(this.props.selectedInfra || this.props.selectedProject)) {
+      this.setState({
+        highlightedCats: [category],
+        highlightedLinks: this.findLinksByCat(category),
+        highlightedProjects: this.findProjectsByCat(category)
+      });
+    }
   }
 
   highlightInfrastructure(inf) {
-    this.setState({
-      highlightedLinks: this.findLinksByInf(inf),
-      highlightedProjects: this.findProjectsByInf(inf),
-      highlightedInfs: [inf]
-    });
+    if (this.props.selectedInfra) {
+      this.setState({
+        highlightedLinks: this.findLinksByInf(
+          this.props.InfrastrukturSorted.find(
+            inf => inf.name === this.props.selectedInfra
+          )
+        ),
+        highlightedProjects: this.findProjectsByInf(
+          this.props.InfrastrukturSorted.find(
+            inf => inf.name === this.props.selectedInfra
+          )
+        ),
+        highlightedInfs: [this.props.selectedInfra]
+      });
+    } else {
+      this.setState({
+        highlightedLinks: this.findLinksByInf(inf),
+        highlightedProjects: this.findProjectsByInf(inf),
+        highlightedInfs: [inf]
+      });
+    }
   }
 
-  highlightProject(project) {
-    this.setState({
-      highlightedCats: this.findCatsByProject(project),
-      highlightedLinks: this.findLinksByProject(project),
-      highlightedInfs: this.findInfsByProject(project),
-      highlightedProjects: [this.props.selectedProject, project]
-    });
+  highlightProject(project, evt, title) {
+    if (this.props.selectedProject) {
+      this.setState({
+        highlightedCats: this.findCatsByProject(this.props.selectedProject),
+        highlightedLinks: this.findLinksByProject(this.props.selectedProject),
+        highlightedInfs: this.findInfsByProject(this.props.selectedProject),
+        highlightedProjects: [this.props.selectedProject, project],
+        hoverText: title,
+        mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
+      });
+    } else {
+      this.setState({
+        highlightedCats: this.findCatsByProject(project),
+        highlightedLinks: this.findLinksByProject(project),
+        highlightedInfs: this.findInfsByProject(project),
+        highlightedProjects: [this.props.selectedProject, project],
+        hoverText: title,
+        mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
+      });
+    }
   }
 
   findLinksByCat(category) {
@@ -179,6 +244,36 @@ export default class ClusterMapView extends React.Component {
     return newConts;
   };
 
+  renderHover() {
+    return (
+      this.state.hoverText &&
+      this.state.mouseLocation && (
+        <HoverPopover
+          width={"15em"}
+          height="20px"
+          locationX={this.state.mouseLocation[0]}
+          locationY={this.state.mouseLocation[1]}
+        >
+          <p
+            style={{
+              position: "absolute",
+              backgroundColor: "#1c1d1f",
+              margin: "0",
+              fontSize: "10px",
+              color: "#afca0b",
+              fontWeight: "500",
+              letterSpacing: "1px",
+              overflow: "hidden",
+              padding: "5px 10px"
+            }}
+          >
+            <label>{this.state.hoverText}</label>
+          </p>
+        </HoverPopover>
+      )
+    );
+  }
+
   render() {
     introJs().addHints();
     const { categories, width, height, InfrastrukturSorted } = this.props;
@@ -204,7 +299,12 @@ export default class ClusterMapView extends React.Component {
 
     return (
       <div className={style.clusterMapWrapper}>
-        <IconExplanation posX={20} posY={height * 0.95} />
+        <IconExplanation
+          posX={20}
+          posY={height * 0.2}
+          highlightAll={this.highlightAll}
+          unHighlight={this.unHighlight}
+        />
         <svg
           className="viz-3"
           viewBox={"0 0 " + width + " " + height}
@@ -309,8 +409,15 @@ export default class ClusterMapView extends React.Component {
                 <g key={cat.id}>
                   <g
                     onMouseOver={() => this.highlightCat(cat)}
-                    onMouseOut={() => this.unHighlight()}
-                    onClick={() => this.props.showCatDetails(cat.id)}
+                    onMouseOut={() => {
+                      if (!this.props.selectedCat) {
+                        this.unHighlight();
+                      }
+                    }}
+                    onClick={() => {
+                      this.highlightCat(cat);
+                      this.props.showCatDetails(cat.id);
+                    }}
                   >
                     <circle
                       id={`cat-${cat.id}`}
@@ -463,10 +570,15 @@ export default class ClusterMapView extends React.Component {
                     onMouseOver={() =>
                       this.highlightInfrastructure(infrastruktur)
                     }
-                    onMouseOut={() => this.unHighlight()}
-                    onClick={() =>
-                      this.props.showInfraDetails(infrastruktur.name)
-                    }
+                    onMouseOut={() => {
+                      if (!this.props.selectedInfra) {
+                        this.unHighlight();
+                      }
+                    }}
+                    onClick={() => {
+                      this.highlightInfrastructure(infrastruktur);
+                      this.props.showInfraDetails(infrastruktur.name);
+                    }}
                   >
                     <g>
                       <g>
@@ -564,15 +676,16 @@ export default class ClusterMapView extends React.Component {
                     highlightProject={this.highlightProject}
                     highlightedProjects={this.state.highlightedProjects}
                     unHighlight={this.unHighlight}
-                    resetCat={() => this.setState({ highlightedCat: null })}
                     showProjectDetails={this.props.showProjectDetails}
                     splitLongTitles={this.splitLongTitles}
+                    selectedProject={this.props.selectedProject}
                   />
                 );
               })}
             </g>
           </g>
         </svg>
+        {this.renderHover()}
       </div>
     );
   }
