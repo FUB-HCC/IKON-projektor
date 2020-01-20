@@ -63,7 +63,9 @@ const InfraDetailsPanel = props => {
                 color: getFieldColor(con.project.forschungsbereich)
               }}
             >
-              {con.title}
+              {con.title.length > 70
+                ? con.title.substring(0, 70) + "..."
+                : con.title}
               <br />
             </span>
           ))}
@@ -77,7 +79,7 @@ const InfraDetailsPanel = props => {
         target="_blank"
         rel="noopener noreferrer" //got warning otherwise
       >
-        Im VIA-Wiki anschauen
+        Anzeigen im VIA-Wiki
       </a>
     </div>
   );

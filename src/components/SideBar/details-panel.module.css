@@ -5,28 +5,33 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
 }
 
 .DetailsExit {
   height: 15px;
   width: 15px;
   position: relative;
+  cursor: pointer;
   top: 0px;
   left: 90%;
   flex-grow: 0;
+  fill: #aaa;
+}
+
+.DetailsExit:hover {
+  fill: #afca0b;
 }
 
 .DetailsTitle {
   border-bottom: 1px solid #aaa;
   padding-bottom: 5px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   flex-grow: 0;
   color: #aaa;
 }
 .titleTopic {
   font-size: 18px;
-  text-align: center;
 }
 .titleText {
   width: 100%;
@@ -57,12 +62,12 @@
 }
 
 .DetailsLink {
-  padding: 1%;
-  margin-right: 3px;
   background-color: #000;
+  border: 5px solid black;
+  border-radius: 5px;
+  margin-right: 3px;
   cursor: pointer;
-  display: inline;
-  line-height: 250%;
+  line-height: 230%;
 }
 .DetailsLink:hover {
   color: #afca0b;
@@ -83,9 +88,10 @@
 }
 .abstractText {
   color: #aaa;
-  flex-grow: 0;
-  min-height: 6%;
-  max-height: 70%;
+  flex-grow: 1;
+  min-height: 8%;
+  max-height: 80%;
   overflow-y: scroll;
-  background: linear-gradient(transparent 90%, #171717);
+  overflow-x: hidden;
+  background: linear-gradient(transparent 80%, #151515);
 }

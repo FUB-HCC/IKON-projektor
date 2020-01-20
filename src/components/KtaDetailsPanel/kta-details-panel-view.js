@@ -26,6 +26,9 @@ const zeitraum = timeframe => {
 };
 
 const KtaDetailsPanel = props => {
+  const project = props.categories.map(
+    cat => cat.connections.find(con => con.id === props.kta.project_id).project
+  )[0];
   return (
     <div className={style.DetailsWrapper}>
       <div className={style.DetailsTitle}>
@@ -91,29 +94,19 @@ const KtaDetailsPanel = props => {
         <br />
       </span>
       <p className={style.infoItems}>
-        {props.kta.project_id && (
+        {project && (
           <span
             href="#"
-            onClick={() => props.showProjectDetails(props.kta.project_id)}
-            key={props.kta.project_id}
+            onClick={() => props.showProjectDetails(project.id)}
+            key={project.id}
             className={style.DetailsLink}
             style={{
-              color: getFieldColor(
-                props.categories.map(
-                  cat =>
-                    cat.connections.find(con => con.id === props.kta.project_id)
-                      .project.forschungsbereich
-                )[0]
-              )
+              color: getFieldColor(project.forschungsbereich)
             }}
           >
-            {
-              props.categories.map(
-                cat =>
-                  cat.connections.find(con => con.id === props.kta.project_id)
-                    .title
-              )[0]
-            }
+            {project.title.length > 70
+              ? project.title.substring(0, 70) + "..."
+              : project.title}
           </span>
         )}
       </p>
@@ -123,7 +116,7 @@ const KtaDetailsPanel = props => {
         target="_blank"
         rel="noopener noreferrer" //got warning otherwise
       >
-        Im VIA-Wiki anschauen
+        Anzeigen im VIA-Wiki
       </a>
     </div>
   );

@@ -4,44 +4,38 @@
   display: flex;
 }
 .logo {
-  padding: 17.5px !important;
+  padding: 14px !important;
   text-align: center !important;
 }
 
 .NavigationElement.logo::after {
   display: none !important;
 }
-.smallHeadTxt {
-  color: #717071;
-  display: none;
-  position: absolute;
-}
+
 .leftpanel {
-  width: 75vw;
+  width: 70vw;
 }
 .rightPanel {
-  width: 25vw;
-  background: #0e0e0e;
+  width: 30vw;
 }
 .buttonIcon {
-  height: 25%;
-  width: height;
-  position: absolute;
-  top: 10%;
-  left: 40%;
+  width: 35px;
+  height: width;
+  margin: 3px;
 }
 .NavigationRightElement {
   text-decoration: none;
   color: #aaa;
   fill: #aaa;
-  font-size: 90%;
-  padding: 36px 10%;
+  font-size: 22px;
+  overflow-x: hidden;
   text-align: center;
   background: #1c1d1f;
-  border-right: 1px solid #0e0e0e;
+  border-right: 3px solid #0e0e0e;
   cursor: pointer;
-  position: relative;
+  display: block;
 }
+
 .NavigationRightElement:hover {
   color: #afca0b;
   fill: #afca0b;
@@ -49,19 +43,24 @@
 
 .rightPanel ul {
   padding: 0px;
-  display: flex;
-  align-items: top;
   margin: 0px;
-}
-.rightPanel ul li {
-  flex-grow: 1;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
   margin-left: 5px;
+  align-items: center;
+}
+
+.rightPanel ul li {
+  width: 33%;
+  cursor: pointer;
+  position: relative;
 }
 
 .ContainerSub {
   padding: 0%;
   display: flex;
-  align-items: center;
+  align-items: top;
   justify-content: space-between;
   flex-wrap: wrap;
   margin: 0%;
@@ -72,7 +71,7 @@
 }
 
 .ContainerSub li {
-  width: 19.5%;
+  width: 24.5%;
   cursor: pointer;
   position: relative;
   margin-right: 1px;
@@ -91,9 +90,9 @@
 .NavigationElement {
   text-decoration: none;
   color: #aaa;
-  font-size: 13px;
+  font-size: 22px;
   display: block;
-  padding: 36px 8%;
+  padding: 28px 8%;
   text-align: left;
   background: #1c1d1f;
 }
@@ -106,17 +105,14 @@
 }
 
 .NavigationElement .logo {
-  padding: 17.5px !important;
+  padding: 14px !important;
 }
 
 .active {
   background: transparent;
   color: #afca0b;
 }
-.active .smallHeadTxt {
-  display: block;
-  font-family: IBM_Plex_Mono;
-}
+
 .active:after {
   opacity: 1;
 }

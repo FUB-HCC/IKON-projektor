@@ -1,6 +1,5 @@
 import React from "react";
 import style from "./sidebar.module.css";
-import PanelButtons from "./panel-buttons";
 import { appMargin, menuBarHeight } from "../../App";
 
 class SideBarView extends React.Component {

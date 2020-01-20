@@ -7,7 +7,7 @@ import logo from "../../assets/ikon_logo.png";
 import { menuBarHeight } from "../../App";
 import { changeGraph } from "../../store/actions/actions";
 
-import { ReactComponent as Download } from "../../assets/Icon-Download.svg";
+import { ReactComponent as Tutorial } from "../../assets/Icon-Tutorial.svg";
 import { ReactComponent as Reset } from "../../assets/Icon-Reset.svg";
 import { ReactComponent as Teilen } from "../../assets/Icon-Teilen.svg";
 
@@ -72,9 +72,6 @@ class NavigationSubpages extends Component {
                 onClick={() => this.changeGraphHandler("0")}
               >
                 WISSEN{" "}
-                <small className={classes.smallHeadTxt}>
-                  Projekte in Clustern
-                </small>{" "}
               </div>
             </li>
             <li>
@@ -87,9 +84,6 @@ class NavigationSubpages extends Component {
                 onClick={() => this.changeGraphHandler("1")}
               >
                 ZEIT{" "}
-                <small className={classes.smallHeadTxt}>
-                  Anzahl der Projekte uber Jahre
-                </small>{" "}
               </div>
             </li>
             <li>
@@ -104,37 +98,25 @@ class NavigationSubpages extends Component {
                 RAUM
               </div>
             </li>
-            <li>
-              <div
-                className={
-                  classes.NavigationElement +
-                  " " +
-                  (this.state.active === "HILFE" ? classes.active : "")
-                }
-                onClick={() => this.startTour()}
-              >
-                HILFE
-              </div>
-            </li>
           </ul>
         </div>
         <div className={classes.rightPanel}>
           <ul>
-            <li onClick={() => window.alert("wurde exportiert!")}>
+            <li onClick={() => this.startTour()}>
               <div className={classes.NavigationRightElement}>
-                EXPORTIEREN <Download className={classes.buttonIcon} />
+                <Tutorial className={classes.buttonIcon} /> <p>HILFE</p>
               </div>
             </li>
 
             <li onClick={() => window.alert("wurde geteilt!")}>
               <div className={classes.NavigationRightElement}>
-                TEILEN <Teilen className={classes.buttonIcon} />
+                <Teilen className={classes.buttonIcon} /> <p>TEILEN</p>
               </div>
             </li>
 
             <li onClick={() => window.location.reload()}>
               <div className={classes.NavigationRightElement}>
-                ZURÜCKSETZEN <Reset className={classes.buttonIcon} />
+                <Reset className={classes.buttonIcon} /> <p>ZURÜCKSETZEN</p>
               </div>
             </li>
           </ul>

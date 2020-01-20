@@ -95,6 +95,7 @@ const ProjectDetailsPanel = props => {
               className={style.DetailsLink}
             >
               {con}
+              <br />
             </span>
           ))}
         </p>
@@ -115,6 +116,7 @@ const ProjectDetailsPanel = props => {
                 className={style.DetailsLink}
               >
                 {con}
+                <br />
               </span>
             );
           })}
@@ -134,7 +136,10 @@ const ProjectDetailsPanel = props => {
               key={kta.id}
               className={style.DetailsLink}
             >
-              {kta.title}
+              {kta.title.length > 70
+                ? kta.title.substring(0, 70) + "..."
+                : kta.title}
+              <br />
             </span>
           ))}
         </p>
@@ -151,7 +156,7 @@ const ProjectDetailsPanel = props => {
         target="_blank"
         rel="noopener noreferrer" //got warning otherwise
       >
-        Im VIA-Wiki ansehen/bearbeiten
+        Anzeigen im VIA-Wiki
       </a>
     </div>
   );

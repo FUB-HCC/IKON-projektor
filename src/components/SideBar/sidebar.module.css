@@ -1,8 +1,9 @@
 .sideBarWrapper {
   scrollbar-color: #808080 #0e0e0e;
-  width: 25vw;
-  padding-left: 9px;
+  width: 30vw;
   overflow-y: auto;
+  padding: 0px;
+  padding-left: 12px;
 }
 /* width */
 ::-webkit-scrollbar {

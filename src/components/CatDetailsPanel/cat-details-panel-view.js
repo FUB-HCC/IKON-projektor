@@ -25,7 +25,10 @@ const CatDetailsPanel = props => {
             key={i + " " + kta.id}
             className={style.DetailsLink}
           >
-            {kta.title}
+            {kta.title.length > 70
+              ? kta.title.substring(0, 70) + "..."
+              : kta.title}
+            <br />
           </span>
         ))}
       </div>
@@ -35,7 +38,10 @@ const CatDetailsPanel = props => {
         </span>
       )}
       {props.catData.project_ids.length > 0 && (
-        <div className={style.abstractText}>
+        <div
+          className={style.abstractText}
+          style={{ minHeight: props.catData.project_ids.length * 3 + "%" }}
+        >
           {props.catData.project_ids.map(project => (
             <span
               href="#"
@@ -49,7 +55,15 @@ const CatDetailsPanel = props => {
                 )
               }}
             >
-              {props.catData.connections.find(con => con.id === project).title}
+              {props.catData.connections.find(con => con.id === project).title
+                .length > 70
+                ? props.catData.connections
+                    .find(con => con.id === project)
+                    .title.substring(0, 70) + "..."
+                : props.catData.connections.find(con => con.id === project)
+                    .title}
+
+              <br />
             </span>
           ))}
         </div>
@@ -62,7 +76,7 @@ const CatDetailsPanel = props => {
         target="_blank"
         rel="noopener noreferrer" //got warning otherwise
       >
-        Im VIA-Wiki anschauen
+        Anzeigen im VIA-Wiki
       </a>
     </div>
   );
