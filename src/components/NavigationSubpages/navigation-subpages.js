@@ -57,7 +57,7 @@ class NavigationSubpages extends Component {
             <li>
               <div
                 className={classes.NavigationElement + " " + classes.logo}
-                to="/projects"
+                style={{ backgroundColor: "#1c1d1f", cursor: "default" }}
               >
                 <img src={logo} alt={"The logo should be here!"} />
               </div>
@@ -104,22 +104,21 @@ class NavigationSubpages extends Component {
                 RAUM
               </div>
             </li>
-          </ul>
-        </div>
-        <div className={classes.rightPanel}>
-          <ul>
             <li>
               <div
-                className={classes.NavigationRightElement}
+                className={
+                  classes.NavigationElement +
+                  " " +
+                  (this.state.active === "HILFE" ? classes.active : "")
+                }
                 onClick={() => this.startTour()}
               >
                 HILFE
               </div>
             </li>
-            <li>
-              <div className={classes.NavigationRightElement}>MENU</div>
-            </li>
           </ul>
+        </div>
+        <div className={classes.rightPanel}>
           <ul>
             <li onClick={() => window.alert("wurde exportiert!")}>
               <div className={classes.NavigationRightElement}>

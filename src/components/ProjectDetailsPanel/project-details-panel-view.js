@@ -151,7 +151,7 @@ const ProjectDetailsPanel = props => {
         target="_blank"
         rel="noopener noreferrer" //got warning otherwise
       >
-        Im VIA-Wiki anschauen
+        Im VIA-Wiki ansehen/bearbeiten
       </a>
     </div>
   );

@@ -24,7 +24,7 @@ const IconExplanation = props => {
         data-step="1"
         className={style.legendRow}
         onMouseEnter={() => props.highlightAll("projects")}
-        onMouseOut={() => props.unHighlight()}
+        onMouseLeave={() => props.unHighlight()}
       >
         <p
           style={{
@@ -66,7 +66,7 @@ const IconExplanation = props => {
         data-step="2"
         className={style.legendRow}
         onMouseEnter={() => props.highlightAll("categories")}
-        onMouseOut={() => props.unHighlight()}
+        onMouseLeave={() => props.unHighlight()}
       >
         <svg width="20" height="20">
           <circle r="10" cx={10} cy={10} className={style.tooltipIcon} />
@@ -79,7 +79,7 @@ const IconExplanation = props => {
         data-step="3"
         className={style.legendRow}
         onMouseEnter={() => props.highlightAll("collections")}
-        onMouseOut={() => props.unHighlight()}
+        onMouseLeave={() => props.unHighlight()}
       >
         <CollectionIcon
           className={style.tooltipIcon}
@@ -94,7 +94,7 @@ const IconExplanation = props => {
         data-step="4"
         className={style.legendRow}
         onMouseEnter={() => props.highlightAll("infrastructures")}
-        onMouseOut={() => props.unHighlight()}
+        onMouseLeave={() => props.unHighlight()}
       >
         <InfrastructureIcon
           className={style.tooltipIcon}
