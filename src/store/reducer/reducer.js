@@ -81,7 +81,10 @@ export const initialState = {
   infrastructures: [],
   collections: [],
   clusterData: undefined,
-  selectedProject: undefined,
+  selectedProject: null,
+  selectedInfra: null,
+  selectedCat: null,
+  selectedKta: null,
   sideBarComponent: <FilterPanel />
 };
 

@@ -4,6 +4,17 @@ import { ReactComponent as Exit } from "../../assets/Exit.svg";
 import { getFieldColor } from "../../util/utility";
 
 const CatDetailsPanel = props => {
+  if (!props.catData) {
+    return (
+      <div className={style.DetailsWrapper}>
+        <div className={style.DetailsTitle}>
+          <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+            <Exit height={35} width={35} />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={style.DetailsWrapper}>
       <div className={style.DetailsTitle}>

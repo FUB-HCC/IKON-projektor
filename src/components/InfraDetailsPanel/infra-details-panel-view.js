@@ -6,6 +6,17 @@ import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructur
 import { getFieldColor } from "../../util/utility";
 
 const InfraDetailsPanel = props => {
+  if (!props.infraData) {
+    return (
+      <div className={style.DetailsWrapper}>
+        <div className={style.DetailsTitle}>
+          <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+            <Exit height={35} width={35} />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={style.DetailsWrapper}>
       <div className={style.DetailsTitle}>

@@ -3,6 +3,9 @@ import { history } from "../index";
 import { initialState } from "../store/reducer/reducer";
 import ProjectDetailsPanel from "../components/ProjectDetailsPanel/project-details-panel";
 import FilterPanel from "../components/FilterPanel/filter-panel";
+import CatDetailsPanel from "../components/CatDetailsPanel/cat-details-panel";
+import KtaDetailsPanel from "../components/KtaDetailsPanel/kta-details-panel";
+import InfraDetailsPanel from "../components/InfraDetailsPanel/infra-details-panel";
 
 export const createNewStateFromUrlData = (state, urlData) => {
   const filterValues = {
@@ -177,7 +180,10 @@ export const pushStateToUrl = newState => {
     in: newState.filters.infrastructures.value,
     ta: newState.filters.targetgroups.value,
     fo: newState.filters.formats.value,
-    sP: newState.selectedProject
+    sP: newState.selectedProject,
+    sC: newState.selectedCat,
+    sI: newState.selectedInfra,
+    sK: newState.selectedKta
   };
 
   let minifiedUrlData = {
@@ -202,6 +208,17 @@ export const parseStateFromUrl = urlString => {
     t: urlState.t.map(f => topicIntToString(f)),
     f: urlState.f.map(t => fieldsIntToString(t))
   };
+
+  let sideBarComponent = <FilterPanel />;
+  if (deminifiedUrlState.sP) {
+    sideBarComponent = <ProjectDetailsPanel />;
+  } else if (deminifiedUrlState.sC) {
+    sideBarComponent = <CatDetailsPanel />;
+  } else if (deminifiedUrlState.sI) {
+    sideBarComponent = <InfraDetailsPanel />;
+  } else if (deminifiedUrlState.sK) {
+    sideBarComponent = <KtaDetailsPanel />;
+  }
   return {
     main: {
       ...initialState,
@@ -237,13 +254,11 @@ export const parseStateFromUrl = urlString => {
           value: deminifiedUrlState.fo
         }
       },
+      selectedCat: deminifiedUrlState.sC,
+      selectedInfra: deminifiedUrlState.sI,
+      selectedKta: deminifiedUrlState.sK,
       selectedProject: deminifiedUrlState.sP,
-      sideBarComponent:
-        deminifiedUrlState.sP != null ? (
-          <ProjectDetailsPanel />
-        ) : (
-          <FilterPanel />
-        )
+      sideBarComponent: sideBarComponent
     }
   };
 };
