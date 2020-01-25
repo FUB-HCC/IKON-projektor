@@ -146,7 +146,7 @@ const edgesFromClique = clique => {
 //EXPECTS: institutions, projects, width, height, onProjectClickHandler
 const GeoMapView = props => {
   const { projects, height } = props;
-  if (isNaN(height)) {
+  if (isNaN(height) || projects == null) {
     return <div />;
   }
   let institutions = props.institutions;

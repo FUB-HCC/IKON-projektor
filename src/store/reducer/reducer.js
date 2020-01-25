@@ -9,14 +9,14 @@ import {
 import { parse as queryStringParse } from "query-string";
 import FilterPanel from "../../components/FilterPanel/filter-panel";
 
-const initialState = {
+export const initialState = {
   filters: {
     forschungsgebiet: {
       name: "Forschungsgebiet",
       filterKey: "forschungsbereichstr",
       type: "string",
-      uniqueVals: ["1", "2", "3", "4"],
-      value: ["1", "2", "3", "4"]
+      uniqueVals: [],
+      value: []
     },
     hauptthema: {
       name: "Hauptthema",
@@ -152,9 +152,6 @@ const reducer = (state = initialState, action) => {
     case actionTypes.DESELECT_ITEMS:
       return deselectItems(state);
 
-    case actionTypes.UPDATE_OLD_PROJECT_DATA:
-      return updateOldProjectsData(state, action);
-
     default:
       return state;
   }
@@ -256,7 +253,10 @@ const updateTargetGroupsData = (state, action) => ({
       filterKey: "targetgroups",
       type: "array",
       uniqueVals: action.value.map(t => t.title),
-      value: action.value.map(t => t.title)
+      value:
+        state.filters.targetgroups.value.length !== 0
+          ? state.filters.targetgroups.value
+          : action.value.map(t => t.title)
     }
   },
   categories: action.value.map(category => ({
@@ -305,12 +305,6 @@ const updateKtaMappingData = (state, action) => ({
   ...state,
   ktaMapping: action.value
 });
-
-const updateOldProjectsData = (state, action) => {
-  const projectData = action.value;
-
-  return { ...state, oldProjects: projectData };
-};
 
 const updateProjectsData = (state, action) => {
   const projectData = action.value;
@@ -391,32 +385,50 @@ const updateProjectsData = (state, action) => {
     forschungsgebiet: {
       ...state.filters.forschungsgebiet,
       uniqueVals: uniqueFields.sort(compare),
-      value: uniqueFields
+      value:
+        state.filters.forschungsgebiet.value.length !== 0
+          ? state.filters.forschungsgebiet.value
+          : uniqueFields
     },
     hauptthema: {
       ...state.filters.hauptthema,
       uniqueVals: uniqueTopics.sort(compare),
-      value: uniqueTopics
+      value:
+        state.filters.hauptthema.value.length !== 0
+          ? state.filters.hauptthema.value
+          : uniqueTopics
     },
     geldgeber: {
       ...state.filters.geldgeber,
       uniqueVals: uniqueSponsors.sort(compare),
-      value: uniqueSponsors
+      value:
+        state.filters.geldgeber.value.length !== 0
+          ? state.filters.geldgeber.value
+          : uniqueSponsors
     },
     time: {
       ...state.filters.time,
       uniqueVals: maxDateRange,
-      value: maxDateRange
+      value:
+        state.filters.time.value.length !== 0
+          ? state.filters.time.value
+          : maxDateRange
     },
     collections: {
       ...state.filters.collections,
       uniqueVals: uniqueCollections.sort((a, b) => a.localeCompare(b)),
-      value: uniqueCollections
+      value:
+        state.filters.collections.value.length !== 0
+          ? state.filters.collections.value
+          : uniqueCollections
     },
     infrastructures: {
       ...state.filters.infrastructures,
       uniqueVals: uniqueInfrastructures.sort((a, b) => a.localeCompare(b)),
-      value: uniqueInfrastructures
+      value:
+        state.filters.infrastructures.value.length !== 0
+          ? state.filters.infrastructures.value
+          : uniqueInfrastructures
     }
   };
 
