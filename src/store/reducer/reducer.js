@@ -237,11 +237,9 @@ const updateKtaData = (state, action) => ({
       filterKey: "formats",
       type: "array",
       uniqueVals: [
-        ...new Set(action.value.map(kta => kta.format).filter(f => f != null))
+        ...action.value.map(kta => kta.format).filter(f => f != null)
       ],
-      value: [
-        ...new Set(action.value.map(kta => kta.format).filter(f => f != null))
-      ]
+      value: [...action.value.map(kta => kta.format).filter(f => f != null)]
     }
   }
   //

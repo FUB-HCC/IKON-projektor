@@ -126,7 +126,6 @@ export const fetchTargetGroupsData = () => {
     });
   };
 };
-///projects_old.json
 
 export const fetchInfrastructureData = () => {
   return dispatch => {

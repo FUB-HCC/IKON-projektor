@@ -26,3 +26,47 @@
   color: #afca0b;
   fill: #afca0b;
 }
+
+.shareDialog{
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  padding: 30px;
+  padding-bottom: 0;
+}
+
+.shareHeader{
+  font-size: 22px;
+  font-weight: 300;
+  color: #aaa;
+  margin-bottom: 30px;
+}
+
+.closeShare{
+  font-weight: 600;
+  font-size: 14px;
+  color: #afca0b;
+  margin-top: 30px;
+}
+
+.shareInput{
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+  background-color: #aaa;
+  width: 50%;
+  text-overflow:ellipsis;
+}
+.shareClipboardLink{
+  color: #afca0b;
+  margin-left: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.bp3Dialog {
+  background-color: #1c1d1f;
+  opacity: 0.85;
+  border-radius: 0;
+
+}
