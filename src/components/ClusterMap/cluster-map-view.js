@@ -1,13 +1,11 @@
 import React from "react";
-import { contours as d3Contours } from "d3-contour";
-import { scaleLinear as d3ScaleLinear } from "d3-scale";
-import { extent as d3extent } from "d3-array";
 
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 import IconExplanation from "./icon-explanation";
+import ClusterContoursMap from "./cluster-contours-map";
 
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.1 * scale);
@@ -160,60 +158,12 @@ export default class ClusterMapView extends React.Component {
     ];
   };
 
-  scaleContours = (coords, width, height) => {
-    var newConts = [];
-    if (coords[0]) {
-      for (var i = 0; i < coords[0].length; i++) {
-        const [x, y] = coords[0][i];
-        const nX =
-          (x / contoursSize) * clusterSize(this.scale) +
-          clusterPosX(width, this.scale);
-        const nY =
-          (y / contoursSize) * clusterSize(this.scale) +
-          clusterPosY(height, this.scale);
-        newConts[i] = [nX, nY];
-      }
-    }
-    return newConts;
-  };
-
-  componentDidUpdate(prevProps) {
-    const { topography, width, height } = this.props;
-    if (
-      prevProps.height !== height ||
-      prevProps.width !== width ||
-      prevProps.topography.length !== topography.length
-    ) {
-      this.generateContourMap(height, width, topography);
-    }
-  }
-
-  generateContourMap(height, width, topography) {
-    this.scale = Math.min(height, width);
-    this.colorHeat = d3ScaleLinear()
-      .domain(d3extent(topography))
-      .range(["#0e0e0e", "#888"]);
-    this.contours = d3Contours()
-      .size([contoursSize, contoursSize])
-      .smooth([true])(this.props.topography);
-    this.forceUpdate();
-  }
-
   render() {
-    const {
-      categories,
-      width,
-      height,
-      InfrastrukturSorted,
-      topography
-    } = this.props;
+    const { categories, width, height, InfrastrukturSorted } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (categories.length === 0 || !width || !height || scale <= 0) {
       return <div />;
-    }
-    if (!this.contours) {
-      this.generateContourMap(height, width, topography);
     }
     const shiftX = width / 2;
     const shiftY = height / 2;
@@ -233,24 +183,16 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
-          <g
-            fill="none"
-            transform={"translate(0 " + arcMarginTop(height, scale) + ")"}
-          >
-            {this.contours.map(cont => {
-              return (
-                <path
-                  className="isoline"
-                  key={cont.value}
-                  d={cont.coordinates.map(coord => {
-                    var coords = this.scaleContours(coord, width, height);
-                    return "M" + coords[0] + "L" + coords;
-                  })}
-                  fill={this.colorHeat(cont.value)}
-                />
-              );
-            })}
-          </g>
+          <ClusterContoursMap
+            width={this.props.width}
+            height={this.props.height}
+            topography={this.props.topography}
+            contoursSize={contoursSize}
+            clusterSize={clusterSize}
+            translateX={arcMarginTop}
+            clusterX={clusterPosX}
+            clusterY={clusterPosY}
+          />
           <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
             {sortedTargetgroups.map((cat, i) => {
               const startAngle = each * i - sortedTargetgroups.length * each;
@@ -364,7 +306,7 @@ export default class ClusterMapView extends React.Component {
                       transform={`rotate(${textRotate} ${textX} ${textY})`}
                     >
                       {this.splitLongTitles(cat.title).map((titlePart, i) => (
-                        <tspan x={textX} y={textY + i * 10}>
+                        <tspan x={textX} y={textY + i * 10} key={titlePart}>
                           {titlePart}
                         </tspan>
                       ))}
@@ -527,7 +469,7 @@ export default class ClusterMapView extends React.Component {
                       >
                         {this.splitLongTitles(infrastruktur.name).map(
                           (titlePart, j) => (
-                            <tspan x={textX} y={textY + j * 10}>
+                            <tspan x={textX} y={textY + j * 10} key={titlePart}>
                               {titlePart}
                             </tspan>
                           )

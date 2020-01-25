@@ -32,8 +32,8 @@ const IconExplanation = props => {
         </p>
         <svg width="80" height="15">
           <linearGradient id="grad1" x1="20%" y1="0%" x2="120%" y2="0%">
-            <stop offset="0%" stop-color="#000" />
-            <stop offset="100%" stop-color="#888" />
+            <stop offset="0%" stopColor="#000" />
+            <stop offset="100%" stopColor="#888" />
           </linearGradient>
           <rect width="80" height="15" fill="url(#grad1)" stroke="none" />
         </svg>{" "}
