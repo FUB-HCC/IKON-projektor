@@ -71,7 +71,6 @@ const computeInfrastructureSorted = (
 };
 
 const mapStateToProps = state => {
-  console.log(state);
   const {
     clusterData,
     categories,
@@ -84,6 +83,13 @@ const mapStateToProps = state => {
     selectedCat,
     selectedInfra
   } = state.main;
+  console.log(
+    selectedCat,
+    selectedInfra,
+    selectedProject,
+    state.main.selectedKta
+  );
+
   let clusterDataForView = [];
   let categoriesForView = [];
   let topography = [];

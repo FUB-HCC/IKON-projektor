@@ -21,10 +21,14 @@ const findCategoriesForKta = state => {
 };
 
 const mapStateToProps = state => {
-  return {
-    kta: state.main.ktas.find(kta => kta.id === state.main.selectedKta),
-    categories: findCategoriesForKta(state)
-  };
+  if (state.main.isDataProcessed) {
+    return {
+      kta: state.main.ktas.find(kta => kta.id === state.main.selectedKta),
+      categories: findCategoriesForKta(state)
+    };
+  } else {
+    return {};
+  }
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -33,10 +37,12 @@ const mapDispatchToProps = dispatch => ({
     dispatch(deselectItems());
   },
   showProjectDetails: project => {
+    dispatch(deselectItems());
     dispatch(setSelectedProject(project));
     dispatch(setSideBarComponent(<ProjectDetailsPanel />));
   },
   showCatDetails: cat => {
+    dispatch(deselectItems());
     dispatch(setSelectedCat(cat));
     dispatch(setSideBarComponent(<CatDetailsPanel />));
   }

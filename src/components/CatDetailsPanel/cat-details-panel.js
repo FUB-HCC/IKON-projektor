@@ -21,10 +21,14 @@ const findKtasForTagetgroup = state => {
 };
 
 const mapStateToProps = state => {
-  return {
-    catData: state.main.categories.find(c => c.id === state.main.selectedCat),
-    ktas: findKtasForTagetgroup(state)
-  };
+  if (state.main.isDataProcessed) {
+    return {
+      catData: state.main.categories.find(c => c.id === state.main.selectedCat),
+      ktas: findKtasForTagetgroup(state)
+    };
+  } else {
+    return {};
+  }
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -33,10 +37,12 @@ const mapDispatchToProps = dispatch => ({
     dispatch(deselectItems());
   },
   showProjectDetails: project => {
+    dispatch(deselectItems());
     dispatch(setSelectedProject(project));
     dispatch(setSideBarComponent(<ProjectDetailsPanel />));
   },
   showKtaDetails: kta => {
+    dispatch(deselectItems());
     dispatch(setSelectedKta(kta));
     dispatch(setSideBarComponent(<KtaDetailsPanel />));
   }
