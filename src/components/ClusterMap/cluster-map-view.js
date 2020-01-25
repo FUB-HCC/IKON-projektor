@@ -43,6 +43,8 @@ export default class ClusterMapView extends React.Component {
           props.selectedProject
         ])
       };
+    } else {
+      return null;
     }
   }
 
