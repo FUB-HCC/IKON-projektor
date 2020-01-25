@@ -88,7 +88,7 @@ export const fetchClusterData = () => {
 
 export const fetchInstitutionsData = () => {
   return dispatch => {
-    axios.get("https://localhost/api/institutions").then(result => {
+    axios.get("/api/institutions").then(result => {
       dispatch(updateInstitutionsData(result.data));
       dispatch(processDataIfReady());
     });
@@ -97,7 +97,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("https://localhost/api/projects").then(result => {
+    axios.get("api/projects").then(result => {
       dispatch(updateProjectsData(result.data));
       dispatch(processDataIfReady());
     });
@@ -106,18 +106,16 @@ export const fetchProjectsData = () => {
 
 export const fetchKTAData = () => {
   return dispatch => {
-    axios
-      .get("https://localhost/api/knowledgeTransferActivities")
-      .then(result => {
-        dispatch(updateKTAData(result.data));
-        dispatch(processDataIfReady());
-      });
+    axios.get("api/knowledgeTransferActivities").then(result => {
+      dispatch(updateKTAData(result.data));
+      dispatch(processDataIfReady());
+    });
   };
 };
 
 export const fetchKTAMappingData = () => {
   return dispatch => {
-    axios.get("https://localhost/api/ktastargetgroups").then(result => {
+    axios.get("api/ktastargetgroups").then(result => {
       dispatch(updateKTAMappingData(result.data));
       dispatch(processDataIfReady());
     });
@@ -126,7 +124,7 @@ export const fetchKTAMappingData = () => {
 
 export const fetchTargetGroupsData = () => {
   return dispatch => {
-    axios.get("https://localhost/api/targetgroups").then(result => {
+    axios.get("api/targetgroups").then(result => {
       dispatch(updateTargetGroupsData(result.data));
       dispatch(processDataIfReady());
     });
@@ -135,7 +133,7 @@ export const fetchTargetGroupsData = () => {
 
 export const fetchInfrastructureData = () => {
   return dispatch => {
-    axios.get("https://localhost/api/infrastructure").then(result => {
+    axios.get("api/infrastructure").then(result => {
       dispatch(updateInfrastructureData(result.data));
       dispatch(processDataIfReady());
     });
@@ -144,7 +142,7 @@ export const fetchInfrastructureData = () => {
 
 export const fetchCollectionsData = () => {
   return dispatch => {
-    axios.get("https://localhost/api/collections").then(result => {
+    axios.get("api/collections").then(result => {
       dispatch(updateCollectionsData(result.data));
       dispatch(processDataIfReady());
     });
@@ -213,5 +211,3 @@ export const setSideBarComponent = component => {
     value: component
   };
 };
-
-//TODO: change back urls !!!
