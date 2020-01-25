@@ -134,30 +134,13 @@ class GraphView extends React.Component {
 }
 
 const mapStateToProps = state => {
-  let selectedProject;
-  state.main.projects.forEach(project => {
-    if (project.id === state.main.selectedProject) selectedProject = project;
-  });
-
   return {
     graph: state.main.graph,
-    filterAmount: Object.keys(state.main.filters).length,
     selectedProject: state.main.selectedProject,
-    selectedDataPoint: selectedProject,
-    activeFilterCount: calculateActiveFilterCount(state.main.filters),
     filter: state.main.filters,
     filteredProjects: state.main.filteredProjects,
-    institutions: state.main.institutions,
-    oldProjects: state.main.oldProjects
+    institutions: state.main.institutions
   };
-};
-
-const calculateActiveFilterCount = filter => {
-  let activeFilterCount = 0;
-  Object.values(filter).forEach(f => {
-    activeFilterCount += f.uniqueVals.length !== f.value.length ? 1 : 0;
-  });
-  return activeFilterCount;
 };
 
 const mapDispatchToProps = dispatch => {

@@ -118,18 +118,8 @@ const mapDispatchToProps = dispatch => {
   };
 };
 const mapStateToProps = state => {
-  let selectedProject;
-  state.main.projects.forEach(project => {
-    if (project.id === state.main.selectedProject) selectedProject = project;
-  });
-
   return {
-    graph: state.main.graph,
-    filterAmount: Object.keys(state.main.filters).length,
-    selectedProject: state.main.selectedProject,
-    selectedDataPoint: selectedProject,
-    filter: state.main.filters,
-    filteredData: state.main.filteredProjects
+    graph: state.main.graph
   };
 };
 

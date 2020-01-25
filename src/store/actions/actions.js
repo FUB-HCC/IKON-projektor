@@ -59,6 +59,12 @@ export const deselectItems = () => {
   };
 };
 
+export const processDataIfReady = () => {
+  return {
+    type: actionTypes.PROCESS_DATA_IF_READY
+  };
+};
+
 export const resetSelectedProject = () => {
   return {
     type: actionTypes.RESET_SELECTED_PROJECT
@@ -71,16 +77,11 @@ export const deactivatePopover = () => {
   };
 };
 
-export const getFiltersFromURL = () => {
-  return {
-    type: actionTypes.GET_FILTERS_FROM_URL
-  };
-};
-
 export const fetchClusterData = () => {
   return dispatch => {
     axios.get("./cluster.json").then(result => {
       dispatch(updateClusterData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -89,6 +90,7 @@ export const fetchInstitutionsData = () => {
   return dispatch => {
     axios.get("https://localhost/api/institutions").then(result => {
       dispatch(updateInstitutionsData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -97,6 +99,7 @@ export const fetchProjectsData = () => {
   return dispatch => {
     axios.get("https://localhost/api/projects").then(result => {
       dispatch(updateProjectsData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -107,6 +110,7 @@ export const fetchKTAData = () => {
       .get("https://localhost/api/knowledgeTransferActivities")
       .then(result => {
         dispatch(updateKTAData(result.data));
+        dispatch(processDataIfReady());
       });
   };
 };
@@ -115,6 +119,7 @@ export const fetchKTAMappingData = () => {
   return dispatch => {
     axios.get("https://localhost/api/ktastargetgroups").then(result => {
       dispatch(updateKTAMappingData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -123,6 +128,7 @@ export const fetchTargetGroupsData = () => {
   return dispatch => {
     axios.get("https://localhost/api/targetgroups").then(result => {
       dispatch(updateTargetGroupsData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -131,6 +137,7 @@ export const fetchInfrastructureData = () => {
   return dispatch => {
     axios.get("https://localhost/api/infrastructure").then(result => {
       dispatch(updateInfrastructureData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -139,6 +146,7 @@ export const fetchCollectionsData = () => {
   return dispatch => {
     axios.get("https://localhost/api/collections").then(result => {
       dispatch(updateCollectionsData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
