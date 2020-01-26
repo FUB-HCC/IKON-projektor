@@ -1,8 +1,6 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
 
-// action emitters to keep the containers clean
-
 export const changeGraph = value => {
   return {
     type: actionTypes.CHANGE_GRAPH,
@@ -211,5 +209,3 @@ export const setSideBarComponent = component => {
     value: component
   };
 };
-
-//TODO: change back urls !!!
