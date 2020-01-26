@@ -36,6 +36,18 @@ export default class ClusterMapView extends React.Component {
     this.unHighlight = this.unHighlight.bind(this);
   }
 
+  static getDerivedStateFromProps(props, state) {
+    if (props.selectedProject) {
+      return {
+        highlightedProjects: state.highlightedProjects.concat([
+          props.selectedProject
+        ])
+      };
+    } else {
+      return null;
+    }
+  }
+
   get maxX() {
     return Math.max(
       ...this.props.clusterData
@@ -56,7 +68,7 @@ export default class ClusterMapView extends React.Component {
     this.setState({
       highlightedCats: [],
       highlightedLinks: [],
-      highlightedProjects: [this.props.selectedProject],
+      highlightedProjects: [],
       highlightedInfs: []
     });
   }
@@ -87,7 +99,7 @@ export default class ClusterMapView extends React.Component {
       highlightedCats: this.findCatsByProject(project),
       highlightedLinks: this.findLinksByProject(project),
       highlightedInfs: this.findInfsByProject(project),
-      highlightedProjects: [this.props.selectedProject, project]
+      highlightedProjects: [project]
     });
   }
 

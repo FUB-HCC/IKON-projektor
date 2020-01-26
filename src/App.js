@@ -9,16 +9,11 @@ import { ConnectedRouter } from "connected-react-router";
 import { Route, Redirect, Switch } from "react-router";
 import { history } from "./index";
 import classes from "./App.module.css";
-import { getFiltersFromURL } from "./store/actions/actions";
 
 export const menuBarHeight = 100;
 export const appMargin = 10;
 
 class App extends Component {
-  componentDidMount() {
-    getFiltersFromURL();
-  }
-
   render() {
     return (
       <ConnectedRouter history={history}>

@@ -1,8 +1,6 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
 
-// action emitters to keep the containers clean
-
 export const changeGraph = value => {
   return {
     type: actionTypes.CHANGE_GRAPH,
@@ -59,6 +57,12 @@ export const deselectItems = () => {
   };
 };
 
+export const processDataIfReady = () => {
+  return {
+    type: actionTypes.PROCESS_DATA_IF_READY
+  };
+};
+
 export const resetSelectedProject = () => {
   return {
     type: actionTypes.RESET_SELECTED_PROJECT
@@ -71,16 +75,11 @@ export const deactivatePopover = () => {
   };
 };
 
-export const getFiltersFromURL = () => {
-  return {
-    type: actionTypes.GET_FILTERS_FROM_URL
-  };
-};
-
 export const fetchClusterData = () => {
   return dispatch => {
     axios.get("/api/clustering").then(result => {
       dispatch(updateClusterData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -89,6 +88,7 @@ export const fetchInstitutionsData = () => {
   return dispatch => {
     axios.get("/api/institutions").then(result => {
       dispatch(updateInstitutionsData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -97,6 +97,7 @@ export const fetchProjectsData = () => {
   return dispatch => {
     axios.get("/api/projects").then(result => {
       dispatch(updateProjectsData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -105,6 +106,7 @@ export const fetchKTAData = () => {
   return dispatch => {
     axios.get("/api/knowledgeTransferActivities").then(result => {
       dispatch(updateKTAData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -113,6 +115,7 @@ export const fetchKTAMappingData = () => {
   return dispatch => {
     axios.get("/api/ktastargetgroups").then(result => {
       dispatch(updateKTAMappingData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -121,15 +124,16 @@ export const fetchTargetGroupsData = () => {
   return dispatch => {
     axios.get("/api/targetgroups").then(result => {
       dispatch(updateTargetGroupsData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
-///projects_old.json
 
 export const fetchInfrastructureData = () => {
   return dispatch => {
     axios.get("/api/infrastructure").then(result => {
       dispatch(updateInfrastructureData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -138,14 +142,7 @@ export const fetchCollectionsData = () => {
   return dispatch => {
     axios.get("/api/collections").then(result => {
       dispatch(updateCollectionsData(result.data));
-    });
-  };
-};
-
-export const fetchOldProjectData = () => {
-  return dispatch => {
-    axios.get("/api/projects").then(result => {
-      dispatch(updateOldProjectData(result.data));
+      dispatch(processDataIfReady());
     });
   };
 };
@@ -154,13 +151,6 @@ export const updateClusterData = clusterData => {
   return {
     type: actionTypes.UPDATE_CLUSTER_DATA,
     value: clusterData
-  };
-};
-
-export const updateOldProjectData = oldProjectData => {
-  return {
-    type: actionTypes.UPDATE_OLD_PROJECT_DATA,
-    value: oldProjectData
   };
 };
 

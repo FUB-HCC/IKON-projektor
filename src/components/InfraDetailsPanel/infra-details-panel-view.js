@@ -6,6 +6,18 @@ import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructur
 import { getFieldColor } from "../../util/utility";
 
 const InfraDetailsPanel = props => {
+  console.log(props);
+  if (!props.infraData) {
+    return (
+      <div className={style.DetailsWrapper}>
+        <div className={style.DetailsTitle}>
+          <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+            <Exit height={35} width={35} />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={style.DetailsWrapper}>
       <div className={style.DetailsTitle}>
@@ -51,19 +63,19 @@ const InfraDetailsPanel = props => {
         Forschungsprojekte, die diese Infrastruktur nutzen:
         <br />
       </span>
-      {props.infraData.connections.length > 0 && (
+      {props.connectedProjects.length > 0 && (
         <p className={style.abstractText}>
-          {props.infraData.connections.map((con, i) => (
+          {props.connectedProjects.map((project, i) => (
             <span
               href="#"
-              onClick={() => props.showProjectDetails(con.id)}
-              key={i + " " + con}
+              onClick={() => props.showProjectDetails(project.id)}
+              key={i + " " + project.id}
               className={style.DetailsLink}
               style={{
-                color: getFieldColor(con.project.forschungsbereich)
+                color: getFieldColor(project.forschungsbereich)
               }}
             >
-              {con.title}
+              {project.title}
               <br />
             </span>
           ))}

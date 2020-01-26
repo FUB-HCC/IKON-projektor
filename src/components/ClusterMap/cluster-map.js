@@ -1,7 +1,6 @@
 import { connect } from "react-redux";
 import React from "react";
 import ClusterMapView from "./cluster-map-view";
-import _ from "lodash";
 import concave from "concaveman";
 import {
   setSelectedProject,
@@ -15,119 +14,106 @@ import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
 import InfraDetailsPanel from "../InfraDetailsPanel/infra-details-panel";
 import { getFieldColor } from "../../util/utility";
 
-const mapStateToProps = state => {
-  let clusters = [];
-  let transformedPoints = [];
-  let categories = state.main.categories;
-  let topography = [];
-  let typedCollections = state.main.collections;
-  let typedInfrastructures = state.main.infrastructures;
-  if (
-    state.main.clusterData &&
-    state.main.projects.length > 0 &&
-    state.main.ktaMapping.length > 0 &&
-    state.main.categories.length > 0
-  ) {
-    const {
-      cluster_data,
-      project_data,
-      cluster_topography
-    } = state.main.clusterData;
-    const clusterWords = cluster_data.cluster_words;
-    const projects = project_data;
-    const minX = _.min(_.map(projects, c => c.mappoint[0]));
-    const minY = _.min(_.map(projects, c => c.mappoint[1]));
-    topography = cluster_topography;
-    categories = state.main.categories;
-    transformedPoints = projects.map(p => {
-      const cat = _.sample(categories);
-      const project = state.main.filteredProjects.find(
-        project => p.id === project.id
-      );
-      const point = {
+const computeClusters = (clusterData, filteredProjects, categories) => {
+  if (!clusterData || categories.length === 0) return [];
+  const { cluster_data, project_data, transformedPoints } = clusterData;
+  const clusterWords = cluster_data.cluster_words;
+  const clusterIds = [...new Set(project_data.map(p => p.cluster))];
+  return clusterIds.map(id => ({
+    id: id,
+    words: clusterWords[id],
+    projects: transformedPoints
+      .filter(p => p.cluster === id)
+      .map(p => ({
         ...p,
-        location: [-1 * p.mappoint[0] - 0.76 * minX, p.mappoint[1] - minY],
-        cat: cat.id,
-        category: [],
-        project: project,
-        color: project ? getFieldColor(project.forschungsbereich) : "none"
-      };
-      if (cat.project_ids.includes(point.id)) {
-        cat.connections.push(point);
-      }
-      return point;
-    });
+        color: filteredProjects.find(project => project.id === p.id)
+          ? getFieldColor(p.project.forschungsbereich)
+          : "none"
+      })),
+    concaveHull: concave(
+      transformedPoints.filter(p => p.cluster === id).map(p => p.location),
+      1
+    )
+  }));
+};
 
-    const clusterIds = _.uniq(_.map(projects, p => p.cluster));
-    clusters = _.map(clusterIds, id => ({
-      id: id,
-      words: clusterWords[id],
-      projects: _.filter(transformedPoints, p => p.cluster === id),
-      concaveHull: concave(
-        transformedPoints.filter(p => p.cluster === id).map(p => p.location),
-        1
-      )
-    }));
-    categories.forEach(category => {
-      const ktas = state.main.ktaMapping
-        .filter(ktaM => ktaM.targetgroup_id === category.id)
-        .map(filteredKtaM =>
-          state.main.ktas.find(kta => filteredKtaM.kta_id === kta.id)
-        );
-      category.count = ktas.length;
-      category.connections = ktas
-        .filter(kta => kta.project_id !== null)
-        .map(kta =>
-          transformedPoints
-            .filter(transPoint => transPoint.project)
-            .find(point => point.project.id === kta.project_id)
-        )
-        .filter(connection => connection);
-      category.project_ids = [...new Set(category.connections.map(c => c.id))];
-    });
-
-    typedCollections.map(
-      collection =>
-        (collection.connections = transformedPoints.filter(
-          point =>
-            point.project && point.project.collections.includes(collection.name)
-        ))
-    );
-
-    typedInfrastructures.forEach(
-      infrastructure =>
-        (infrastructure.connections = transformedPoints.filter(
-          point =>
-            point.project &&
-            point.project.infrastructures.includes(infrastructure.name)
-        ))
-    );
-  }
-  categories.forEach(category => {
-    category.connections.forEach(conn => conn.category.push(category));
-  });
-
-  categories = categories.filter(
-    c => c.count > 0 && state.main.filters.targetgroups.value.includes(c.title)
-  );
-
-  let InfrastrukturSorted = typedCollections
+const computeInfrastructureSorted = (
+  collections,
+  clusterData,
+  infrastructures,
+  filters
+) => {
+  if (!clusterData) return [];
+  const typedCollections = collections.map(collection => ({
+    ...collection,
+    connections: clusterData.transformedPoints.filter(
+      point =>
+        point.project && point.project.collections.includes(collection.name)
+    )
+  }));
+  const typedInfrastructures = infrastructures.map(infrastructure => ({
+    ...infrastructure,
+    connections: clusterData.transformedPoints.filter(
+      point =>
+        point.project &&
+        point.project.infrastructures.includes(infrastructure.name)
+    )
+  }));
+  return typedCollections
     .concat(typedInfrastructures)
     .sort((a, b) => (a.type < b.type ? 1 : -1))
     .filter(
       inf =>
         !inf.name.includes("Kein") &&
-        (state.main.filters.collections.value.includes(inf.name) ||
-          state.main.filters.infrastructures.value.includes(inf.name))
+        (filters.collections.value.includes(inf.name) ||
+          filters.infrastructures.value.includes(inf.name))
     );
+};
+
+const mapStateToProps = state => {
+  const {
+    clusterData,
+    categories,
+    filteredProjects,
+    collections,
+    infrastructures,
+    filters,
+    isDataProcessed,
+    selectedProject,
+    selectedCat,
+    selectedInfra
+  } = state.main;
+
+  let clusterDataForView = [];
+  let categoriesForView = [];
+  let topography = [];
+  let InfrastrukturSorted = [];
+  if (isDataProcessed) {
+    clusterDataForView = computeClusters(
+      clusterData,
+      filteredProjects,
+      categories
+    );
+    categoriesForView = categories.filter(
+      c => c.count > 0 && filters.targetgroups.value.includes(c.title)
+    );
+    topography = clusterData.cluster_topography;
+    InfrastrukturSorted = computeInfrastructureSorted(
+      collections,
+      clusterData,
+      infrastructures,
+      filters
+    );
+  }
+
   return {
-    clusterData: clusters,
-    categories: categories,
+    clusterData: clusterDataForView,
+    categories: categoriesForView,
     topography: topography,
     InfrastrukturSorted: InfrastrukturSorted,
-    selectedCat: state.main.selectedCat,
-    selectedProject: state.main.selectedProject,
-    selectedInfra: state.main.selectedInfra
+    selectedCat: selectedCat,
+    selectedProject: selectedProject,
+    selectedInfra: selectedInfra
   };
 };
 

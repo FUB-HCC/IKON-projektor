@@ -1,22 +1,24 @@
 import * as actionTypes from "../actions/actionTypes";
 import React from "react";
+import { topicToField, fieldsIntToString } from "../../util/utility";
 import {
-  createNewStateFromUrlData,
-  fieldsStringToInt,
-  topicToField,
-  fieldsIntToString
-} from "../../util/utility";
-import { parse as queryStringParse } from "query-string";
+  processProjectsData,
+  processClusterData,
+  processCategories,
+  processCollections,
+  processInfrastructures,
+  processFormats
+} from "./data-transforms";
 import FilterPanel from "../../components/FilterPanel/filter-panel";
 
-const initialState = {
+export const initialState = {
   filters: {
     forschungsgebiet: {
       name: "Forschungsgebiet",
       filterKey: "forschungsbereichstr",
       type: "string",
-      uniqueVals: ["1", "2", "3", "4"],
-      value: ["1", "2", "3", "4"]
+      uniqueVals: [],
+      value: []
     },
     hauptthema: {
       name: "Hauptthema",
@@ -48,7 +50,7 @@ const initialState = {
     },
     infrastructures: {
       name: "Laborgeräte",
-      filterKey: "infrastructures",
+      filterKey: "infrastructure",
       type: "array",
       uniqueVals: [],
       value: []
@@ -81,7 +83,21 @@ const initialState = {
   infrastructures: [],
   collections: [],
   clusterData: undefined,
-  selectedProject: undefined,
+  selectedProject: null,
+  selectedInfra: null,
+  selectedCat: null,
+  selectedKta: null,
+  isDataLoaded: {
+    projects: false,
+    institutions: false,
+    cluster: false,
+    ktas: false,
+    targetgroups: false,
+    ktaMapping: false,
+    collections: false,
+    infrastructures: false
+  },
+  isDataProcessed: false,
   sideBarComponent: <FilterPanel />
 };
 
@@ -103,9 +119,6 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.DEACTIVATE_POPOVER:
       return deactivatePopover(state);
-
-    case actionTypes.GET_FILTERS_FROM_URL:
-      return urlUpdatesFilters(state);
 
     case actionTypes.UPDATE_CLUSTER_DATA:
       return updateClusterData(state, action);
@@ -131,6 +144,9 @@ const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_KTA_MAPPING_DATA:
       return updateKtaMappingData(state, action);
 
+    case actionTypes.PROCESS_DATA_IF_READY:
+      return processDataWhenReady(state);
+
     case actionTypes.SET_SIDE_BAR_COMPONENT:
       return setSideBarComponent(state, action);
 
@@ -152,12 +168,149 @@ const reducer = (state = initialState, action) => {
     case actionTypes.DESELECT_ITEMS:
       return deselectItems(state);
 
-    case actionTypes.UPDATE_OLD_PROJECT_DATA:
-      return updateOldProjectsData(state, action);
-
     default:
       return state;
   }
+};
+
+export const isAllDataLoaded = state =>
+  Object.values(state.isDataLoaded).every(loaded => loaded);
+
+const processDataWhenReady = state =>
+  isAllDataLoaded(state) ? processAllData(state) : state;
+
+const processAllData = state => {
+  const newState = {
+    projects: processProjectsData(state),
+    ktas: processFormats(state),
+    categories: processCategories(state),
+    infrastructures: processInfrastructures(state),
+    collections: processCollections(state),
+    clusterData: processClusterData(state)
+  };
+
+  const uniqueFields = [];
+  const uniqueTopics = [];
+  const uniqueSponsors = [];
+  const uniqueInfrastructures = [];
+  const uniqueCollections = [];
+  const maxDateRange = [5000, 0];
+
+  Object.values(newState.projects).forEach(project => {
+    Object.keys(project).forEach(property => {
+      const value = project[property];
+      if (property === "forschungsbereichstr") {
+        if (!uniqueFields.some(e => e === value)) uniqueFields.push(value);
+      } else if (property === "hauptthema") {
+        if (!uniqueTopics.some(e => e === value)) uniqueTopics.push(value);
+      } else if (property === "geldgeber") {
+        if (!uniqueSponsors.some(e => e === value)) uniqueSponsors.push(value);
+      } else if (property === "timeframe") {
+        maxDateRange[0] =
+          maxDateRange[0] < value[0] ? maxDateRange[0] : value[0];
+        maxDateRange[1] =
+          maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
+      } else if (property === "collections") {
+        for (const sammlung of Object.values(value))
+          if (!uniqueCollections.some(e => e === sammlung))
+            uniqueCollections.push(sammlung);
+      } else if (property === "infrastructures") {
+        for (const infrastruktur of Object.values(value))
+          if (!uniqueInfrastructures.some(e => e === infrastruktur))
+            uniqueInfrastructures.push(infrastruktur);
+      }
+    });
+  });
+
+  const newFilters = {
+    forschungsgebiet: {
+      ...state.filters.forschungsgebiet,
+      uniqueVals: uniqueFields.sort(compare),
+      value:
+        state.filters.forschungsgebiet.value.length > 0
+          ? state.filters.forschungsgebiet.value
+          : uniqueFields
+    },
+    hauptthema: {
+      ...state.filters.hauptthema,
+      uniqueVals: uniqueTopics.sort(compare),
+      value:
+        state.filters.hauptthema.value.length > 0
+          ? state.filters.hauptthema.value
+          : uniqueTopics
+    },
+    geldgeber: {
+      ...state.filters.geldgeber,
+      uniqueVals: uniqueSponsors.sort(compare),
+      value:
+        state.filters.geldgeber.value.length > 0
+          ? state.filters.geldgeber.value
+          : uniqueSponsors
+    },
+    time: {
+      ...state.filters.time,
+      uniqueVals: maxDateRange,
+      value:
+        state.filters.time.value.length > 0
+          ? state.filters.time.value
+          : maxDateRange
+    },
+    collections: {
+      ...state.filters.collections,
+      uniqueVals: uniqueCollections.sort((a, b) => a.localeCompare(b)),
+      value:
+        state.filters.collections.value.length > 0
+          ? state.filters.collections.value
+          : uniqueCollections
+    },
+    formats: {
+      ...state.filters.formats,
+      uniqueVals: [
+        ...new Set(newState.ktas.map(kta => kta.format).filter(f => f != null))
+      ],
+      value:
+        state.filters.formats.value.length > 0
+          ? state.filters.formats.value
+          : [
+              ...new Set(
+                newState.ktas.map(kta => kta.format).filter(f => f != null)
+              )
+            ]
+    },
+    infrastructures: {
+      ...state.filters.infrastructures,
+      uniqueVals: uniqueInfrastructures.sort((a, b) => a.localeCompare(b)),
+      value:
+        state.filters.infrastructures.value.length > 0
+          ? state.filters.infrastructures.value
+          : uniqueInfrastructures
+    },
+    targetgroups: {
+      ...state.filters.targetgroups,
+      uniqueVals: newState.categories.map(t => t.title),
+      value:
+        state.filters.targetgroups.value.length > 0
+          ? state.filters.targetgroups.value
+          : newState.categories.map(t => t.title)
+    }
+  };
+
+  return {
+    ...state,
+    ...newState,
+    filters: newFilters,
+    filteredProjects: applyFilters(newState.projects, newFilters),
+    filteredCategories: applyCategoryFilters(newState.categories, newFilters),
+    filteredCollections: applyInfraFilters(
+      newState.collections,
+      newFilters.collections
+    ),
+    filteredInfrastructures: applyInfraFilters(
+      newState.infrastructures,
+      newFilters.infrastructures
+    ),
+    isDataProcessed: true
+  };
 };
 
 const applyFilters = (data, filter) => {
@@ -214,218 +367,77 @@ const compare = (a, b) => {
   else return 1;
 };
 
-const updateClusterData = (state, action) =>
-  Object.assign({}, state, {
-    clusterData: action.value
-  });
+const updateClusterData = (state, action) => ({
+  ...state,
+  clusterData: action.value,
+  isDataLoaded: {
+    ...state.isDataLoaded,
+    cluster: true
+  }
+});
 
-const updateInstitutionsData = (state, action) =>
-  Object.assign({}, state, {
-    institutions: action.value
-  });
+const updateInstitutionsData = (state, action) => ({
+  ...state,
+  institutions: action.value,
+  isDataLoaded: {
+    ...state.isDataLoaded,
+    institutions: true
+  }
+});
 
 const updateKtaData = (state, action) => ({
   ...state,
-  ktas: action.value.map(kta => ({
-    ...kta,
-    timeframe: [new Date(kta.start_date), new Date(kta.end_date)]
-  })),
-  filters: {
-    ...state.filters,
-    formats: {
-      name: "Formate",
-      filterKey: "formats",
-      type: "array",
-      uniqueVals: [
-        ...new Set(action.value.map(kta => kta.format).filter(f => f != null))
-      ],
-      value: [
-        ...new Set(action.value.map(kta => kta.format).filter(f => f != null))
-      ]
-    }
+  ktas: action.value,
+  isDataLoaded: {
+    ...state.isDataLoaded,
+    ktas: true
   }
-  //
 });
 
 const updateTargetGroupsData = (state, action) => ({
   ...state,
-  filters: {
-    ...state.filters,
-    targetgroups: {
-      name: "Zielgruppen",
-      filterKey: "targetgroups",
-      type: "array",
-      uniqueVals: action.value.map(t => t.title),
-      value: action.value.map(t => t.title)
-    }
-  },
-  categories: action.value.map(category => ({
-    ...category,
-    connections: [],
-    count: 1,
-    project_ids: []
-  })),
-  filteredCategories: action.value.map(category => ({
-    ...category,
-    connections: [],
-    count: 1,
-    project_ids: []
-  }))
+  categories: action.value,
+  isDataLoaded: {
+    ...state.isDataLoaded,
+    targetgroups: true
+  }
 });
 
 const updateCollectionsData = (state, action) => ({
   ...state,
-  collections: action.value.map(collection => ({
-    ...collection,
-    connections: [],
-    type: "collection"
-  })),
-  filteredCollections: action.value.map(collection => ({
-    ...collection,
-    connections: [],
-    type: "collection"
-  }))
+  collections: action.value,
+  isDataLoaded: {
+    ...state.isDataLoaded,
+    collections: true
+  }
 });
 
 const updateInfrastructureData = (state, action) => ({
   ...state,
-  infrastructures: action.value.map(infrastructure => ({
-    ...infrastructure,
-    connections: [],
-    type: "infrastructure"
-  })),
-  filteredInfrastructures: action.value.map(infrastructure => ({
-    ...infrastructure,
-    connections: [],
-    type: "infrastructure"
-  }))
+  infrastructures: action.value,
+  isDataLoaded: {
+    ...state.isDataLoaded,
+    infrastructures: true
+  }
 });
 
 const updateKtaMappingData = (state, action) => ({
   ...state,
-  ktaMapping: action.value
+  ktaMapping: action.value,
+  isDataLoaded: {
+    ...state.isDataLoaded,
+    ktaMapping: true
+  }
 });
 
-const updateOldProjectsData = (state, action) => {
-  const projectData = action.value;
-
-  return { ...state, oldProjects: projectData };
-};
-
-const updateProjectsData = (state, action) => {
-  const projectData = action.value;
-  const projects = Object.values(projectData).map(project => {
-    project.hauptthema =
-      project.participating_subject_areas &&
-      project.participating_subject_areas.split("/")[1]
-        ? project.participating_subject_areas.split("/")[1]
-        : "Sonstige";
-    project.geldgeber = project.sponsor;
-    project.timeframe = [
-      new Date(project.funding_start_year).getFullYear(),
-      new Date(project.funding_end_year).getFullYear()
-    ];
-    project.collections =
-      project.sammlungen && project.sammlungen[0] ? project.sammlungen : [];
-    project.infrastructures =
-      project.infrastruktur && project.infrastruktur[0]
-        ? project.infrastruktur
-        : [];
-    if (
-      project.participating_subject_areas &&
-      project.participating_subject_areas.split("/")[0]
-    ) {
-      return {
-        ...project,
-        forschungsbereich: project.participating_subject_areas.split("/")[0],
-        forschungsbereichstr: project.participating_subject_areas.split("/")[0], // TODO please change API so it does not contain "(# Mitglieder)"
-        forschungsbereichNumber: fieldsStringToInt(
-          project.participating_subject_areas.split("/")[0]
-        )
-      };
-    } else {
-      return {
-        ...project,
-        forschungsbereich: "Sonstige",
-        forschungsbereichstr: "Sonstige", // TODO please change API so it does not contain "(# Mitglieder)"
-        forschungsbereichNumber: fieldsStringToInt("Sonstige")
-      };
-    }
-  });
-
-  const uniqueFields = [];
-  const uniqueTopics = [];
-  const uniqueSponsors = [];
-  const uniqueInfrastructures = [];
-  const uniqueCollections = [];
-  const maxDateRange = [5000, 0];
-
-  Object.values(projects).forEach(project => {
-    Object.keys(project).forEach(property => {
-      const value = project[property];
-      if (property === "forschungsbereichstr") {
-        if (!uniqueFields.some(e => e === value)) uniqueFields.push(value);
-      } else if (property === "hauptthema") {
-        if (!uniqueTopics.some(e => e === value)) uniqueTopics.push(value);
-      } else if (property === "geldgeber") {
-        if (!uniqueSponsors.some(e => e === value)) uniqueSponsors.push(value);
-      } else if (property === "timeframe") {
-        maxDateRange[0] =
-          maxDateRange[0] < value[0] ? maxDateRange[0] : value[0];
-        maxDateRange[1] =
-          maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
-      } else if (property === "collections") {
-        for (const sammlung of Object.values(value))
-          if (!uniqueCollections.some(e => e === sammlung))
-            uniqueCollections.push(sammlung);
-      } else if (property === "infrastructures") {
-        for (const infrastruktur of Object.values(value))
-          if (!uniqueInfrastructures.some(e => e === infrastruktur))
-            uniqueInfrastructures.push(infrastruktur);
-      }
-    });
-  });
-
-  const newFilters = {
-    ...state.filters,
-    forschungsgebiet: {
-      ...state.filters.forschungsgebiet,
-      uniqueVals: uniqueFields.sort(compare),
-      value: uniqueFields
-    },
-    hauptthema: {
-      ...state.filters.hauptthema,
-      uniqueVals: uniqueTopics.sort(compare),
-      value: uniqueTopics
-    },
-    geldgeber: {
-      ...state.filters.geldgeber,
-      uniqueVals: uniqueSponsors.sort(compare),
-      value: uniqueSponsors
-    },
-    time: {
-      ...state.filters.time,
-      uniqueVals: maxDateRange,
-      value: maxDateRange
-    },
-    collections: {
-      ...state.filters.collections,
-      uniqueVals: uniqueCollections.sort((a, b) => a.localeCompare(b)),
-      value: uniqueCollections
-    },
-    infrastructures: {
-      ...state.filters.infrastructures,
-      uniqueVals: uniqueInfrastructures.sort((a, b) => a.localeCompare(b)),
-      value: uniqueInfrastructures
-    }
-  };
-
-  return Object.assign({}, state, {
-    projects: projects,
-    filters: newFilters,
-    filteredProjects: applyFilters(projects, newFilters)
-  });
-};
+const updateProjectsData = (state, action) => ({
+  ...state,
+  projects: action.value,
+  isDataLoaded: {
+    ...state.isDataLoaded,
+    projects: true
+  }
+});
 
 const changeCheckboxFilter = (state, action) => {
   const newFilter = state.filters;
@@ -526,18 +538,5 @@ const setSideBarComponent = (state, action) => ({
   ...state,
   sideBarComponent: action.value
 });
-
-// urlUpdatesState: Don't call this function. Only used upon initial loading
-const urlUpdatesFilters = state => {
-  const urlData = queryStringParse(window.location.search);
-  const dataFromUrl = createNewStateFromUrlData(state, urlData);
-  return {
-    ...state,
-    filter: dataFromUrl.filter,
-    graph: dataFromUrl.graph,
-    filteredProjects: applyFilters(state.projects, dataFromUrl.filter),
-    selectedProject: dataFromUrl.selectedProject
-  };
-};
 
 export default reducer;

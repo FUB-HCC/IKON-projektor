@@ -1,33 +1,9 @@
-import { stringify as queryStringify } from "query-string";
-import { history } from "../../index";
-import {
-  fieldsStringToInt,
-  sponsorStringToInt,
-  topicStringToInt
-} from "../../util/utility";
+import { pushStateToUrl } from "../../util/utility";
 
 export const updateUrl = store => next => action => {
   const result = next(action);
   const newState = store.getState().main;
-  let newUrlData = {
-    g: newState.graph,
-    f: newState.filters.forschungsgebiet.value,
-    t: newState.filters.hauptthema.value,
-    s: newState.filters.geldgeber.value,
-    sP: newState.selectedProject
-  };
-
-  let minifiedUrlData = {
-    ...newUrlData,
-    t: newUrlData.t.map(f => topicStringToInt(f)),
-    f: newUrlData.f.map(t => fieldsStringToInt(t)),
-    s: newUrlData.s.map(s => sponsorStringToInt(newState, s))
-  };
-  const newUrl = "?" + queryStringify(minifiedUrlData);
-  if (newUrl !== window.location.search) {
-    history.push(newUrl);
-  }
-
+  pushStateToUrl(newState);
   return result;
 };
 

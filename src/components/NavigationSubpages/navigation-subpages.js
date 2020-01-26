@@ -9,8 +9,19 @@ class NavigationSubpages extends Component {
   constructor(props) {
     super(props);
     this.changeGraphHandler = this.changeGraphHandler.bind(this);
+    let active = "WISSEN";
+    switch (props.graph) {
+      case "1":
+        active = "ZEIT";
+        break;
+      case "2":
+        active = "RAUM";
+        break;
+      default:
+        break;
+    }
     this.state = {
-      active: "WISSEN"
+      active: active
     };
   }
 
@@ -107,18 +118,8 @@ const mapDispatchToProps = dispatch => {
   };
 };
 const mapStateToProps = state => {
-  let selectedProject;
-  state.main.projects.forEach(project => {
-    if (project.id === state.main.selectedProject) selectedProject = project;
-  });
-
   return {
-    graph: state.main.graph,
-    filterAmount: Object.keys(state.main.filters).length,
-    selectedProject: state.main.selectedProject,
-    selectedDataPoint: selectedProject,
-    filter: state.main.filters,
-    filteredData: state.main.filteredProjects
+    graph: state.main.graph
   };
 };
 
