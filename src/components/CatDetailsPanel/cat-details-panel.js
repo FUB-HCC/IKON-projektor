@@ -21,10 +21,14 @@ const findKtasForTagetgroup = state => {
 };
 
 const mapStateToProps = state => {
-  return {
-    catData: state.main.categories.find(c => c.id === state.main.selectedCat),
-    ktas: findKtasForTagetgroup(state)
-  };
+  if (state.main.isDataProcessed) {
+    return {
+      catData: state.main.categories.find(c => c.id === state.main.selectedCat),
+      ktas: findKtasForTagetgroup(state)
+    };
+  } else {
+    return {};
+  }
 };
 
 const mapDispatchToProps = dispatch => ({

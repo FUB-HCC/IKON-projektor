@@ -16,6 +16,15 @@ const parseDescription = string => {
 };
 
 const ProjectDetailsPanel = props => {
+  if (props.projectData == null) {
+    return (
+      <div className={style.DetailsWrapper}>
+        <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+          <Exit height={35} width={35} />
+        </div>
+      </div>
+    );
+  }
   let color = getFieldColor(props.projectData.forschungsbereich);
   let description = props.projectData.description
     ? parseDescription(props.projectData.description)

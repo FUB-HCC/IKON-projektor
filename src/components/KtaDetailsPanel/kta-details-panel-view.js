@@ -29,6 +29,17 @@ const KtaDetailsPanel = props => {
   const project = props.categories.map(
     cat => cat.connections.find(con => con.id === props.kta.project_id).project
   )[0];
+  if (!props.kta) {
+    return (
+      <div className={style.DetailsWrapper}>
+        <div className={style.DetailsTitle}>
+          <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+            <Exit height={35} width={35} />
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className={style.DetailsWrapper}>
       <div className={style.DetailsTitle}>

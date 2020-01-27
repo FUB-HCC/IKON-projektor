@@ -10,7 +10,6 @@ import {
   fetchProjectsData,
   fetchKTAData,
   fetchKTAMappingData,
-  fetchOldProjectData,
   fetchTargetGroupsData,
   fetchCollectionsData,
   fetchInfrastructureData
@@ -51,7 +50,6 @@ class GraphView extends React.Component {
     this.props.fetchInstitutionsData();
     this.props.fetchKtaData();
     this.props.fetchKtaMappingData();
-    this.props.fetchOldProjectsData();
     this.props.fetchTargetGroupsData();
     this.props.fetchCollectionsData();
     this.props.fetchInfrastructureData();
@@ -102,7 +100,7 @@ class GraphView extends React.Component {
       height: this.state.height,
       onProjectClick: this.projectClickHandler,
       institutions: this.props.institutions,
-      projects: this.props.oldProjects
+      projects: this.props.filteredProjects
     };
     let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
@@ -138,30 +136,13 @@ class GraphView extends React.Component {
 }
 
 const mapStateToProps = state => {
-  let selectedProject;
-  state.main.projects.forEach(project => {
-    if (project.id === state.main.selectedProject) selectedProject = project;
-  });
-
   return {
     graph: state.main.graph,
-    filterAmount: Object.keys(state.main.filters).length,
     selectedProject: state.main.selectedProject,
-    selectedDataPoint: selectedProject,
-    activeFilterCount: calculateActiveFilterCount(state.main.filters),
     filter: state.main.filters,
     filteredProjects: state.main.filteredProjects,
-    institutions: state.main.institutions,
-    oldProjects: state.main.oldProjects
+    institutions: state.main.institutions
   };
-};
-
-const calculateActiveFilterCount = filter => {
-  let activeFilterCount = 0;
-  Object.values(filter).forEach(f => {
-    activeFilterCount += f.uniqueVals.length !== f.value.length ? 1 : 0;
-  });
-  return activeFilterCount;
 };
 
 const mapDispatchToProps = dispatch => {
@@ -171,7 +152,6 @@ const mapDispatchToProps = dispatch => {
     fetchInstitutionsData: () => dispatch(fetchInstitutionsData()),
     fetchKtaData: () => dispatch(fetchKTAData()),
     fetchKtaMappingData: () => dispatch(fetchKTAMappingData()),
-    fetchOldProjectsData: () => dispatch(fetchOldProjectData()),
     fetchTargetGroupsData: () => dispatch(fetchTargetGroupsData()),
     fetchCollectionsData: () => dispatch(fetchCollectionsData()),
     fetchInfrastructureData: () => dispatch(fetchInfrastructureData())

@@ -1,15 +1,14 @@
 import React from "react";
-import { contours as d3Contours } from "d3-contour";
-import { scaleLinear as d3ScaleLinear } from "d3-scale";
-import { extent as d3extent } from "d3-array";
+
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 import IconExplanation from "./icon-explanation";
+
 import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
-
+import ClusterContoursMap from "./cluster-contours-map";
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.1 * scale);
 const clusterSize = scale => 0.45 * scale;
@@ -39,6 +38,18 @@ export default class ClusterMapView extends React.Component {
     this.unHighlight = this.unHighlight.bind(this);
     this.renderHover = this.renderHover.bind(this);
     this.highlightAll = this.highlightAll.bind(this);
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.selectedProject) {
+      return {
+        highlightedProjects: state.highlightedProjects.concat([
+          props.selectedProject
+        ])
+      };
+    } else {
+      return null;
+    }
   }
 
   get maxX() {
@@ -231,23 +242,6 @@ export default class ClusterMapView extends React.Component {
     ];
   };
 
-  scaleContours = (coords, width, height) => {
-    var newConts = [];
-    for (var c in coords) {
-      for (var i in coords[c]) {
-        const [x, y] = coords[c][i];
-        const nX =
-          (x / contoursSize) * clusterSize(this.scale) +
-          clusterPosX(width, this.scale);
-        const nY =
-          (y / contoursSize) * clusterSize(this.scale) +
-          clusterPosY(height, this.scale);
-        newConts.push([nX, nY]);
-      }
-    }
-    return newConts;
-  };
-
   renderHover() {
     return (
       this.state.hoverText &&
@@ -280,12 +274,6 @@ export default class ClusterMapView extends React.Component {
 
   render() {
     const { categories, width, height, InfrastrukturSorted } = this.props;
-    var colorHeat = d3ScaleLinear()
-      .domain(d3extent(this.props.topography))
-      .range(["#0e0e0e", "#777"]);
-    var contours = d3Contours()
-      .size([contoursSize, contoursSize])
-      .smooth([false])(this.props.topography);
 
     this.scale = Math.min(height, width);
     const scale = this.scale;
@@ -321,24 +309,16 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
-          <g
-            fill="none"
-            transform={"translate(0 " + arcMarginTop(height, scale) + ")"}
-          >
-            {contours.map(cont => {
-              return (
-                <path
-                  className="isoline"
-                  key={cont.value}
-                  d={cont.coordinates.map(coord => {
-                    var coords = this.scaleContours(coord, width, height);
-                    return "M" + coords[0] + "L" + coords;
-                  })}
-                  fill={colorHeat(cont.value)}
-                />
-              );
-            })}
-          </g>
+          <ClusterContoursMap
+            width={this.props.width}
+            height={this.props.height}
+            topography={this.props.topography}
+            contoursSize={contoursSize}
+            clusterSize={clusterSize}
+            translateX={arcMarginTop}
+            clusterX={clusterPosX}
+            clusterY={clusterPosY}
+          />
           <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
             {sortedTargetgroups.map((cat, i) => {
               const startAngle = each * i - sortedTargetgroups.length * each;
@@ -459,7 +439,7 @@ export default class ClusterMapView extends React.Component {
                       transform={`rotate(${textRotate} ${textX} ${textY})`}
                     >
                       {this.splitLongTitles(cat.title).map((titlePart, i) => (
-                        <tspan x={textX} y={textY + i * 10}>
+                        <tspan x={textX} y={textY + i * 10} key={titlePart}>
                           {titlePart}
                         </tspan>
                       ))}
@@ -630,7 +610,7 @@ export default class ClusterMapView extends React.Component {
                       >
                         {this.splitLongTitles(infrastruktur.name).map(
                           (titlePart, j) => (
-                            <tspan x={textX} y={textY + j * 10}>
+                            <tspan x={textX} y={textY + j * 10} key={titlePart}>
                               {titlePart}
                             </tspan>
                           )

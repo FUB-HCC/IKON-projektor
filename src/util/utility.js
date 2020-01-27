@@ -1,3 +1,12 @@
+import React from "react";
+import { history } from "../index";
+import { initialState } from "../store/reducer/reducer";
+import ProjectDetailsPanel from "../components/ProjectDetailsPanel/project-details-panel";
+import FilterPanel from "../components/FilterPanel/filter-panel";
+import CatDetailsPanel from "../components/CatDetailsPanel/cat-details-panel";
+import KtaDetailsPanel from "../components/KtaDetailsPanel/kta-details-panel";
+import InfraDetailsPanel from "../components/InfraDetailsPanel/infra-details-panel";
+
 export const createNewStateFromUrlData = (state, urlData) => {
   const filterValues = {
     forschungsgebiet: urlData.f ? urlData.f.map(f => fieldsIntToString(f)) : [],
@@ -159,4 +168,97 @@ export const sponsorIntToString = (state, int) => {
 export const getColor = input => {
   const fColor = getFieldColor(input);
   return fColor === "#989aa1" ? getTopicColor(input) : fColor;
+};
+
+export const pushStateToUrl = newState => {
+  let newUrlData = {
+    g: newState.graph,
+    f: newState.filters.forschungsgebiet.value,
+    t: newState.filters.hauptthema.value,
+    ti: newState.filters.time.value,
+    c: newState.filters.collections.value,
+    in: newState.filters.infrastructures.value,
+    ta: newState.filters.targetgroups.value,
+    fo: newState.filters.formats.value,
+    sP: newState.selectedProject,
+    sC: newState.selectedCat,
+    sI: newState.selectedInfra,
+    sK: newState.selectedKta
+  };
+
+  let minifiedUrlData = {
+    ...newUrlData,
+    t: newUrlData.t.map(f => topicStringToInt(f)),
+    f: newUrlData.f.map(t => fieldsStringToInt(t))
+  };
+  const newUrl = "?state=" + btoa(JSON.stringify(minifiedUrlData));
+  if (newUrl !== window.location.search) {
+    history.push(newUrl);
+  }
+};
+
+export const parseStateFromUrl = urlString => {
+  if (urlString === "") {
+    console.log("No URL params");
+    return {};
+  }
+  const urlState = JSON.parse(atob(urlString));
+  const deminifiedUrlState = {
+    ...urlState,
+    t: urlState.t.map(f => topicIntToString(f)),
+    f: urlState.f.map(t => fieldsIntToString(t))
+  };
+
+  let sideBarComponent = <FilterPanel />;
+  if (deminifiedUrlState.sP) {
+    sideBarComponent = <ProjectDetailsPanel />;
+  } else if (deminifiedUrlState.sC) {
+    sideBarComponent = <CatDetailsPanel />;
+  } else if (deminifiedUrlState.sI) {
+    sideBarComponent = <InfraDetailsPanel />;
+  } else if (deminifiedUrlState.sK) {
+    sideBarComponent = <KtaDetailsPanel />;
+  }
+  return {
+    main: {
+      ...initialState,
+      graph: deminifiedUrlState.g,
+      filters: {
+        ...initialState.filters,
+        forschungsgebiet: {
+          ...initialState.filters.forschungsgebiet,
+          value: deminifiedUrlState.f
+        },
+        hauptthema: {
+          ...initialState.filters.hauptthema,
+          value: deminifiedUrlState.t
+        },
+        time: {
+          ...initialState.filters.time,
+          value: deminifiedUrlState.ti
+        },
+        collections: {
+          ...initialState.filters.collections,
+          value: deminifiedUrlState.c
+        },
+        infrastructures: {
+          ...initialState.filters.infrastructures,
+          value: deminifiedUrlState.in
+        },
+        targetgroups: {
+          ...initialState.filters.targetgroups,
+          value: deminifiedUrlState.ta
+        },
+        formats: {
+          ...initialState.filters.formats,
+          value: deminifiedUrlState.fo
+        }
+      },
+      selectedCat: deminifiedUrlState.sC,
+      selectedInfra: deminifiedUrlState.sI,
+      selectedKta: deminifiedUrlState.sK,
+      selectedProject: deminifiedUrlState.sP,
+      sideBarComponent: sideBarComponent
+    }
+  };
 };

@@ -9,6 +9,11 @@ import { createBrowserHistory } from "history";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import reducer from "./store/reducer/reducer";
 import { updateUrl, logger, thunk } from "./store/middleware/middleware";
+import { parseStateFromUrl } from "./util/utility";
+
+const getPreloadedState = () => {
+  return parseStateFromUrl(window.location.search.slice(7)); // 7 -> ?state=... needs to be removed
+};
 
 export const history = createBrowserHistory();
 
@@ -16,6 +21,7 @@ const mergedReducers = combineReducers({
   main: reducer,
   router: connectRouter(history)
 });
+
 export const store = preloadedState => {
   return createStore(
     mergedReducers,
@@ -27,7 +33,7 @@ export const store = preloadedState => {
 };
 
 ReactDOM.render(
-  <Provider store={store()}>
+  <Provider store={store(getPreloadedState())}>
     <App />
   </Provider>,
   document.getElementById("root")

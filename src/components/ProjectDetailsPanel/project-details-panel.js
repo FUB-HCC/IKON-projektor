@@ -20,12 +20,16 @@ const findKtasForProject = state => {
 };
 
 const mapStateToProps = state => {
-  return {
-    projectData: state.main.projects.find(
-      p => p.id === state.main.selectedProject
-    ),
-    ktas: findKtasForProject(state)
-  };
+  if (state.main.isDataProcessed) {
+    return {
+      projectData: state.main.projects.find(
+        p => p.id === state.main.selectedProject
+      ),
+      ktas: findKtasForProject(state)
+    };
+  } else {
+    return {};
+  }
 };
 
 const mapDispatchToProps = dispatch => ({
@@ -34,14 +38,17 @@ const mapDispatchToProps = dispatch => ({
     dispatch(deselectItems());
   },
   showInfraDetails: infra => {
+    dispatch(deselectItems());
     dispatch(setSelectedInfra(infra));
     dispatch(setSideBarComponent(<InfraDetailsPanel />));
   },
   showKtaDetails: kta => {
+    dispatch(deselectItems());
     dispatch(setSelectedKta(kta));
     dispatch(setSideBarComponent(<KtaDetailsPanel />));
   },
   showCatDetails: cat => {
+    dispatch(deselectItems());
     dispatch(setSelectedCat(cat));
     dispatch(setSideBarComponent(<CatDetailsPanel />));
   }
