@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Dialog } from "@blueprintjs/core";
 import introJs from "intro.js";
 import "intro.js/introjs.css";
 import "intro.js/themes/introjs-modern.css";
@@ -17,6 +18,8 @@ class NavigationSubpages extends Component {
     super(props);
     this.changeGraphHandler = this.changeGraphHandler.bind(this);
     this.startTour = this.startTour.bind(this);
+    this.dialogOpened = this.dialogOpened.bind(this);
+    this.dialogClosed = this.dialogClosed.bind(this);
     let active = "WISSEN";
     switch (props.graph) {
       case "1":
@@ -29,8 +32,24 @@ class NavigationSubpages extends Component {
         break;
     }
     this.state = {
-      active: active
+      active: active,
+      shareDialog: false
     };
+  }
+
+  dialogOpened() {
+    this.setState({ shareDialog: true });
+  }
+  dialogClosed() {
+    this.setState({ shareDialog: false });
+  }
+  copiedToClipboard() {
+    console.log("hdbnimso");
+    const input = document.getElementById("share_input");
+    input.select();
+    input.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    window.alert("Copied link: \n" + input.value);
   }
 
   changeGraphHandler(graph) {
@@ -139,8 +158,38 @@ class NavigationSubpages extends Component {
   }
 
   render() {
+    const { shareDialog } = this.state;
     return (
       <div className={classes.navbar} style={{ flexBasis: menuBarHeight }}>
+        <Dialog
+          isOpen={shareDialog}
+          onClose={this.dialogClosed}
+          className={classes.bp3Dialog}
+        >
+          <div className={classes.shareDialog}>
+            <div className={classes.shareHeader}>
+              {" "}
+              Die aktuelle Auswahl teilen:{" "}
+            </div>
+            <div>
+              <input
+                id={"share_input"}
+                className={classes.shareInput}
+                value={window.location}
+                readOnly={true}
+              />
+              <span
+                className={classes.shareClipboardLink}
+                onClick={this.copiedToClipboard}
+              >
+                In die Zwischenablage kopieren
+              </span>
+            </div>
+            <div className={classes.closeShare} onClick={this.dialogClosed}>
+              Fertig
+            </div>
+          </div>
+        </Dialog>
         <div className={classes.leftpanel}>
           <ul className={classes.ContainerSub}>
             <li>
@@ -197,7 +246,7 @@ class NavigationSubpages extends Component {
                 <Tutorial className={classes.buttonIcon} /> <p>TUTORIAL</p>
               </div>
             </li>
-            <li onClick={() => window.alert("wurde geteilt!")}>
+            <li onClick={this.dialogOpened}>
               <div className={classes.NavigationRightElement}>
                 <Teilen className={classes.buttonIcon} /> <p>TEILEN</p>
               </div>
