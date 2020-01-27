@@ -2,6 +2,7 @@
   background: #0e0e0e;
   flex-grow: 0;
   display: flex;
+  font-family: inherit;
 }
 .logo {
   padding: 14px !important;
@@ -19,15 +20,15 @@
   width: 30vw;
 }
 .buttonIcon {
-  width: 35px;
+  width: 25px;
   height: width;
-  margin: 3px;
+  margin: 8px;
 }
 .NavigationRightElement {
   text-decoration: none;
   color: #aaa;
   fill: #aaa;
-  font-size: 22px;
+  font-size: 18px;
   overflow-x: hidden;
   text-align: center;
   background: #1c1d1f;
@@ -49,6 +50,7 @@
   flex-wrap: wrap;
   margin-left: 5px;
   align-items: center;
+  list-style-type: none;
 }
 
 .rightPanel ul li {
@@ -77,21 +79,10 @@
   margin-right: 1px;
 }
 
-.ContainerSub li:hover:after {
-  opacity: 1;
-}
-.ContainerSub li:hover {
-  background: transparent;
-}
-
-.ContainerSub li:hover .NavigationElement:after {
-  opacity: 1;
-}
 .NavigationElement {
   text-decoration: none;
   color: #aaa;
-  font-size: 22px;
-  display: block;
+  font-size: 18px;
   padding: 28px 8%;
   text-align: left;
   background: #1c1d1f;
@@ -120,10 +111,31 @@
 .introTooltip {
   background-color: #1c1d1f;
   color: #e1e1e1;
-  opacity: 80%;
+  min-width: 600px;
+  font-family: inherit;
+}
+
+.introTooltip h2 {
+  color: #afca0b;
+}
+
+.introTooltip h3 {
+  color: #afca0b;
+}
+
+.introTooltip p {
+  cursor: pointer;
+}
+
+.introTooltip span {
+  cursor: pointer;
+  color: #afca0b;
+  position: absolute;
+  top: 90%;
+  left: 2%;
+  font-weight: 700;
 }
 
 .introHighlightClass {
-  background-color: #aaa;
-  color: #000;
+  background-color: #222;
 }

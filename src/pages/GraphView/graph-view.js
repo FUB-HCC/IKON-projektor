@@ -109,6 +109,7 @@ class GraphView extends React.Component {
       case "0":
         Graph = (
           <ClusterMap
+            id="step1"
             height={this.state.height}
             width={this.state.width}
             onProjectClick={this.projectClickHandler}
@@ -118,6 +119,7 @@ class GraphView extends React.Component {
       case "1":
         Graph = (
           <TimeGraph
+            id="step2"
             height={this.state.height}
             width={this.state.width}
             onProjectClick={this.projectClickHandler}
@@ -125,7 +127,7 @@ class GraphView extends React.Component {
         );
         break;
       case "2":
-        Graph = <GeoMap {...geoMapProps} />;
+        Graph = <GeoMap id="step3" {...geoMapProps} />;
         break;
       default:
         break;
