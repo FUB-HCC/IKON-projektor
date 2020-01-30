@@ -43,8 +43,8 @@ const YearDetailsPanel = props => {
               key={i + " " + kta.id}
               className={style.DetailsLink}
             >
-              {kta.title.length > 70
-                ? kta.title.substring(0, 70) + "..."
+              {kta.title.length > 60
+                ? kta.title.substring(0, 60) + "..."
                 : kta.title}
               <br />
             </span>
@@ -63,8 +63,8 @@ const YearDetailsPanel = props => {
                 color: color
               }}
             >
-              {project.title.length > 70
-                ? project.title.substring(0, 70) + "..."
+              {project.title.length > 60
+                ? project.title.substring(0, 60) + "..."
                 : project.title}
               <br />
             </span>

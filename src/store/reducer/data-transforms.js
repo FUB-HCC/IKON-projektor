@@ -92,19 +92,34 @@ export const processCategories = state => {
   });
 };
 
-export const processInfrastructures = state =>
-  state.infrastructures.map(infrastructure => ({
+export const processInfrastructures = state => {
+  const clusterData = processClusterData(state);
+  return state.infrastructures.map(infrastructure => ({
     ...infrastructure,
-    connections: [],
+    connections: clusterData.transformedPoints
+      ? clusterData.transformedPoints.filter(
+          point =>
+            point.project &&
+            point.project.infrastructures.includes(infrastructure.name)
+        )
+      : [],
     type: "infrastructure"
   }));
+};
 
-export const processCollections = state =>
-  state.collections.map(collection => ({
+export const processCollections = state => {
+  const clusterData = processClusterData(state);
+  return state.collections.map(collection => ({
     ...collection,
-    connections: [],
+    connections: clusterData.transformedPoints
+      ? clusterData.transformedPoints.filter(
+          point =>
+            point.project && point.project.collections.includes(collection.name)
+        )
+      : [],
     type: "collection"
   }));
+};
 
 export const processFormats = state =>
   state.ktas.map(kta => ({

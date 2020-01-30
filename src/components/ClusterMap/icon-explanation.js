@@ -24,8 +24,11 @@ const IconExplanation = props => {
         data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
         data-step="4"
         className={style.legendRow}
-        onMouseEnter={() => props.highlightAll("categories")}
-        onMouseLeave={() => props.unHighlight()}
+        onMouseEnter={() => props.setHighlightState("categories")}
+        onMouseLeave={() => {
+          props.unHighlight();
+          props.setHighlightState([]);
+        }}
       >
         <svg width="20" height="20">
           <circle r="10" cx={10} cy={10} className={style.tooltipIcon} />
@@ -37,8 +40,11 @@ const IconExplanation = props => {
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Sammlungen am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben können."
         data-step="5"
         className={style.legendRow}
-        onMouseEnter={() => props.highlightAll("collections")}
-        onMouseLeave={() => props.unHighlight()}
+        onMouseEnter={() => props.setHighlightState("collection")}
+        onMouseLeave={() => {
+          props.unHighlight();
+          props.setHighlightState([]);
+        }}
       >
         <CollectionIcon
           className={style.tooltipIcon}
@@ -52,8 +58,11 @@ const IconExplanation = props => {
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Laborgeräte oder andere Infrastruktur am Museum, die in Forschungsprojekten eingesetzt werden können."
         data-step="6"
         className={style.legendRow}
-        onMouseEnter={() => props.highlightAll("infrastructures")}
-        onMouseLeave={() => props.unHighlight()}
+        onMouseEnter={() => props.setHighlightState("infrastructure")}
+        onMouseLeave={() => {
+          props.unHighlight();
+          props.setHighlightState([]);
+        }}
       >
         <InfrastructureIcon
           className={style.tooltipIcon}

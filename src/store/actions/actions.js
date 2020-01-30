@@ -218,3 +218,10 @@ export const setSideBarComponent = component => {
     value: component
   };
 };
+
+export const setHighlightState = group => {
+  return {
+    type: actionTypes.SET_HIGHLIGHT_STATE,
+    value: group
+  };
+};

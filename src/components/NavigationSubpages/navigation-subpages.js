@@ -7,7 +7,7 @@ import classes from "./navigation-subpages.module.css";
 import { connect } from "react-redux";
 import logo from "../../assets/ikon_logo.png";
 import { menuBarHeight } from "../../App";
-import { changeGraph } from "../../store/actions/actions";
+import { changeGraph, setHighlightState } from "../../store/actions/actions";
 
 import { ReactComponent as Tutorial } from "../../assets/Icon-Tutorial.svg";
 import { ReactComponent as Reset } from "../../assets/Icon-Reset.svg";
@@ -18,6 +18,7 @@ class NavigationSubpages extends Component {
     super(props);
     this.changeGraphHandler = this.changeGraphHandler.bind(this);
     this.startTour = this.startTour.bind(this);
+    this.startPageTour = this.startPageTour.bind(this);
     this.dialogOpened = this.dialogOpened.bind(this);
     this.dialogClosed = this.dialogClosed.bind(this);
     let active = "WISSEN";
@@ -84,13 +85,13 @@ class NavigationSubpages extends Component {
       steps: [
         {
           intro:
-            "<h2>Willkommen im MfN.projektor</h2>In dieser Visualisierungs-Software werden Drittmittelprojekte, Infrastrukturen und Wissenstransferaktivitäten am Museum für Naturkunde in Verbindung gesetzt. Entdecken Sie strategische Möglichkeiten für Austausch und Transfer!<h3>Beispiele explorieren:</h3><p onClick='window.alert(`zielgruppe`)'>› Zielgruppe für Wissenstransfer finden</p><p onClick=' window.alert(`Fehlende Informationen hinzufügen`)'>› Fehlende Informationen hinzufügen</p><p onClick=' window.alert(`Visualisierungszustand teilen`)'>› Visualisierungszustand teilen</p>",
+            "<h2>Willkommen im MfN.projektor</h2>In dieser Visualisierungs-Software werden Drittmittelprojekte, Infrastrukturen und Wissenstransferaktivitäten am Museum für Naturkunde in Verbindung gesetzt. Entdecken Sie strategische Möglichkeiten für Austausch und Transfer!<h3>Beispiele explorieren:</h3><p onClick='window.alert(`Zielgruppe für Wissenstransfer finden`)'>› Zielgruppe für Wissenstransfer finden</p><p onClick=' window.alert(`Fehlende Informationen hinzufügen`)'>› Fehlende Informationen hinzufügen</p><p onClick=' window.alert(`Visualisierungszustand teilen`)'>› Visualisierungszustand teilen</p>",
           element: "step1"
         },
         {
           element: "#step1",
           intro:
-            "Diese Software bietet drei Ansichten auf Forschung und Wissenstransfer am Museum für Naturkunde. Der Datensatz für die Visualisierungen stammt aus dem <b style='color: #afca0b;'>VIA-Wiki</b>. In <b>WISSEN</b> werden die existierende Verbindungen zwischen Drittmittelprojekten, Infrastrukturen und Wissenstransferaktivitäten dargestellt. Hierdurch können zum Beispiel Inspirationen für Wissenstransfer oder Wissensaustausch zielstrebig gefunden werden."
+            "Diese Software bietet drei Ansichten auf Forschung und Wissenstransfer am Museum für Naturkunde. Der Datensatz für die Visualisierungen stammt aus dem <a style='color: #afca0b;' href='https://via.museumfuernaturkunde.berlin/wiki/'   target='_blank' rel='noopener noreferrer'>VIA-Wiki</a>. In <b>WISSEN</b> werden die existierende Verbindungen zwischen Drittmittelprojekten, Infrastrukturen und Wissenstransferaktivitäten dargestellt. Hierdurch können zum Beispiel Inspirationen für Wissenstransfer oder Wissensaustausch zielstrebig gefunden werden."
         },
         {
           element: "#step2",
@@ -145,15 +146,51 @@ class NavigationSubpages extends Component {
     tour.setOptions({
       tooltipPosition: "auto",
       showStepNumbers: false,
-      overlayOpacity: 0.7,
+      overlayOpacity: 0.1,
       tooltipClass: classes.introTooltip,
-      highlightClass: classes.introHighlightClass,
+      highlightClass: classes.introPageHighlightClass,
       nextLabel: "Weiter",
       prevLabel: "Zurück",
       skipLabel: "Abbrechen",
       doneLabel: "Fertig"
     });
-    tour.onchange(() => {});
+    tour
+      .onchange(() => {
+        if (
+          this.state.active === "WISSEN" &&
+          tour._introItems[1].element !== "g"
+        )
+          switch (tour._currentStep) {
+            case 1: {
+              this.props.setHighlightState(["uncertainty"]);
+              break;
+            }
+            case 2: {
+              this.props.setHighlightState([
+                "infrastructure",
+                "collection",
+                "categories"
+              ]);
+              break;
+            }
+            case 3: {
+              this.props.setHighlightState(["categories"]);
+              break;
+            }
+            case 4: {
+              this.props.setHighlightState(["infrastructure"]);
+              break;
+            }
+            case 5: {
+              this.props.setHighlightState(["collection"]);
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+      })
+      .onexit(() => this.props.setHighlightState([]));
     tour.start();
   }
 
@@ -190,74 +227,74 @@ class NavigationSubpages extends Component {
             </div>
           </div>
         </Dialog>
-        <div className={classes.leftpanel}>
-          <ul className={classes.ContainerSub}>
-            <li>
-              <div
-                className={classes.NavigationElement + " " + classes.logo}
-                style={{ backgroundColor: "#1c1d1f" }}
-                onClick={() => this.startTour()}
-              >
-                <img src={logo} alt={"The logo should be here!"} />
-              </div>
-            </li>
-            <li>
-              <div
-                className={
-                  classes.NavigationElement +
-                  " " +
-                  (this.state.active === "WISSEN" ? classes.active : "")
-                }
-                onClick={() => this.changeGraphHandler("0")}
-              >
-                WISSEN
-              </div>
-            </li>
-            <li>
-              <div
-                className={
-                  classes.NavigationElement +
-                  " " +
-                  (this.state.active === "ZEIT" ? classes.active : "")
-                }
-                onClick={() => this.changeGraphHandler("1")}
-              >
-                ZEIT
-              </div>
-            </li>
-            <li>
-              <div
-                className={
-                  classes.NavigationElement +
-                  " " +
-                  (this.state.active === "RAUM" ? classes.active : "")
-                }
-                onClick={() => this.changeGraphHandler("2")}
-              >
-                RAUM
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div className={classes.rightPanel} id="step4">
-          <ul>
-            <li onClick={() => this.startPageTour()}>
-              <div className={classes.NavigationRightElement}>
-                <Tutorial className={classes.buttonIcon} /> <p>TUTORIAL</p>
-              </div>
-            </li>
-            <li onClick={this.dialogOpened}>
-              <div className={classes.NavigationRightElement}>
-                <Teilen className={classes.buttonIcon} /> <p>TEILEN</p>
-              </div>
-            </li>
-            <li onClick={() => window.location.reload()}>
-              <div className={classes.NavigationRightElement}>
-                <Reset className={classes.buttonIcon} /> <p>ZURÜCKSETZEN</p>
-              </div>
-            </li>
-          </ul>
-        </div>
+        <ul className={classes.leftpanel}>
+          <li>
+            <div
+              className={classes.leftElement}
+              style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
+              onClick={() => this.startTour()}
+            >
+              <img src={logo} alt={"The logo should be here!"} />
+            </div>
+          </li>
+          <li>
+            <div
+              className={
+                classes.leftElement +
+                " " +
+                (this.state.active === "WISSEN" ? classes.active : "")
+              }
+              onClick={() => this.changeGraphHandler("0")}
+            >
+              WISSEN
+            </div>
+          </li>
+          <li>
+            <div
+              className={
+                classes.leftElement +
+                " " +
+                (this.state.active === "ZEIT" ? classes.active : "")
+              }
+              onClick={() => this.changeGraphHandler("1")}
+            >
+              ZEIT
+            </div>
+          </li>
+          <li>
+            <div
+              className={
+                classes.leftElement +
+                " " +
+                (this.state.active === "RAUM" ? classes.active : "")
+              }
+              onClick={() => this.changeGraphHandler("2")}
+            >
+              RAUM
+            </div>
+          </li>
+        </ul>
+        <ul className={classes.rightPanel} id="step4">
+          <li onClick={() => this.startPageTour()}>
+            <div className={classes.rightElement}>
+              <Tutorial className={classes.buttonIcon} /> <p>Tutorial</p>
+            </div>
+          </li>
+          <li onClick={this.dialogOpened}>
+            <div className={classes.rightElement}>
+              <Teilen className={classes.buttonIcon} /> <p>Teilen</p>
+            </div>
+          </li>
+          <li
+            onClick={() =>
+              window.open("http://localhost:3000/explore?", "_self")
+            }
+          >
+            <div className={classes.rightElement}>
+              <Reset className={classes.buttonIcon} /> <p>Zurücksetzen</p>
+            </div>
+          </li>
+        </ul>
       </div>
     );
   }
@@ -265,7 +302,10 @@ class NavigationSubpages extends Component {
 
 const mapDispatchToProps = dispatch => {
   return {
-    changeGraph: value => dispatch(changeGraph(value))
+    changeGraph: value => dispatch(changeGraph(value)),
+    setHighlightState: value => {
+      dispatch(setHighlightState(value));
+    }
   };
 };
 const mapStateToProps = state => {

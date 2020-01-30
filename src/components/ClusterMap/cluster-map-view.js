@@ -10,7 +10,6 @@ import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import ClusterContoursMap from "./cluster-contours-map";
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
-const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.1 * scale);
 const clusterSize = scale => 0.45 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
@@ -24,20 +23,21 @@ const strokeWidth = scale => 0.001 * scale;
 const contoursSize = 600;
 
 export default class ClusterMapView extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
       highlightedCats: [],
       highlightedLinks: [],
       highlightedProjects: [],
-      highlightedInfs: []
+      highlightedInfs: [],
+      uncertaintyHighlight: false
     };
+
     this.highlightCat = this.highlightCat.bind(this);
     this.highlightProject = this.highlightProject.bind(this);
     this.highlightInfrastructure = this.highlightInfrastructure.bind(this);
     this.unHighlight = this.unHighlight.bind(this);
     this.renderHover = this.renderHover.bind(this);
-    this.highlightAll = this.highlightAll.bind(this);
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -47,11 +47,23 @@ export default class ClusterMapView extends React.Component {
           props.selectedProject
         ])
       };
+    } else if (props.highlightedGroup) {
+      const g = props.highlightedGroup;
+      return {
+        highlightedCats: g.includes("categories") ? props.categories : [],
+        uncertaintyHighlight: g.includes("uncertainty"),
+        highlightedInfs:
+          g.includes("collection") || g.includes("infrastructure")
+            ? props.InfrastrukturSorted.filter(inf => g.includes(inf.type))
+            : [],
+        highlightedProjects: g.includes("projects")
+          ? props.clusterData.flat().projects.map(p => p.id)
+          : state.highlightedProjects
+      };
     } else {
       return null;
     }
   }
-
   get maxX() {
     return Math.max(
       ...this.props.clusterData
@@ -77,36 +89,6 @@ export default class ClusterMapView extends React.Component {
       hoverText: undefined,
       uncertaintyHighlight: false
     });
-  }
-
-  highlightAll(group) {
-    if (group === "categories") {
-      this.setState({
-        highlightedCats: this.props.categories
-      });
-    } else if (group === "uncertainty") {
-      this.setState({
-        uncertaintyHighlight: true
-      });
-    } else if (group === "collections") {
-      this.setState({
-        highlightedInfs: this.props.InfrastrukturSorted.filter(
-          inf => inf.type === "collection"
-        )
-      });
-    } else if (group === "infrastructures") {
-      this.setState({
-        highlightedInfs: this.props.InfrastrukturSorted.filter(
-          inf => inf.type === "infrastructure"
-        )
-      });
-    } else if (group === "projects") {
-      this.setState({
-        highlightedProjects: this.props.clusterData
-          .flat()
-          .projects.map(p => p.id)
-      });
-    }
   }
 
   highlightCat(category) {
@@ -144,7 +126,7 @@ export default class ClusterMapView extends React.Component {
         ),
         highlightedInfs: [this.props.selectedInfra]
       });
-    } else {
+    } else if (!(this.props.selectedCat || this.props.selectedProject)) {
       this.setState({
         highlightedLinks: this.findLinksByInf(inf),
         highlightedProjects: this.findProjectsByInf(inf),
@@ -154,25 +136,14 @@ export default class ClusterMapView extends React.Component {
   }
 
   highlightProject(project, evt, title) {
-    if (this.props.selectedProject) {
-      this.setState({
-        highlightedCats: this.findCatsByProject(this.props.selectedProject),
-        highlightedLinks: this.findLinksByProject(this.props.selectedProject),
-        highlightedInfs: this.findInfsByProject(this.props.selectedProject),
-        highlightedProjects: [this.props.selectedProject, project],
-        hoverText: title,
-        mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
-      });
-    } else {
-      this.setState({
-        highlightedCats: this.findCatsByProject(project),
-        highlightedLinks: this.findLinksByProject(project),
-        highlightedInfs: this.findInfsByProject(project),
-        highlightedProjects: [this.props.selectedProject, project],
-        hoverText: title,
-        mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
-      });
-    }
+    this.setState({
+      highlightedCats: this.findCatsByProject(project),
+      highlightedLinks: this.findLinksByProject(project),
+      highlightedInfs: this.findInfsByProject(project),
+      highlightedProjects: [project],
+      hoverText: title,
+      mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
+    });
   }
 
   findLinksByCat(category) {
@@ -274,7 +245,6 @@ export default class ClusterMapView extends React.Component {
 
   render() {
     const { categories, width, height, InfrastrukturSorted } = this.props;
-
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (categories.length === 0 || !width || !height || scale <= 0) {
@@ -288,19 +258,21 @@ export default class ClusterMapView extends React.Component {
       a.title < b.title ? 1 : -1
     );
     const conMax = Math.max(...categories.map(o => o.count), 0);
-
     return (
-      <div className={style.clusterMapWrapper}>
+      <div
+        className={style.clusterMapWrapper}
+        style={{ width: this.props.width, height: this.props.height }}
+      >
         <IconExplanation
           posX={20}
-          posY={height * 0.15}
-          highlightAll={this.highlightAll}
+          posY={110}
+          setHighlightState={this.props.setHighlightState}
           unHighlight={this.unHighlight}
         />
         <UncertaintyExplanation
-          posX={width * 0.8}
-          posY={height * 0.99}
-          highlightAll={this.highlightAll}
+          posX={width - 110}
+          posY={20}
+          setHighlightState={this.props.setHighlightState}
           unHighlight={this.unHighlight}
         />
         <svg
@@ -315,11 +287,11 @@ export default class ClusterMapView extends React.Component {
             topography={this.props.topography}
             contoursSize={contoursSize}
             clusterSize={clusterSize}
-            translateX={arcMarginTop}
             clusterX={clusterPosX}
             clusterY={clusterPosY}
+            isHighlighted={this.state.uncertaintyHighlight}
           />
-          <g transform={"translate(0 " + arcMarginTop(height, scale) + ")"}>
+          <g>
             {sortedTargetgroups.map((cat, i) => {
               const startAngle = each * i - sortedTargetgroups.length * each;
               const angle = startAngle * (Math.PI / 180);
@@ -483,10 +455,7 @@ export default class ClusterMapView extends React.Component {
               );
             })}
 
-            <g
-              data-intro="Die interdisziplinäre Perspektive auf Drittmittelforschung wird durch den äußeren Ring bedeutsam erweitert. Projekte werden hier, basierend auf Informationen aus dem VIA-Wiki, mit Wissenstransferaktivitäten und Infrastrukturen wie Sammlungen und Laborgeräten verknüpft. Hierdurch können einerseits Projekte weitergehend nach Gemeinsamkeiten eingeordnet werden, andererseits Potenziale für Wissenstransfer basierend auf Gemeinsamkeiten entdeckt werden."
-              data-step="3"
-            >
+            <g>
               {InfrastrukturSorted.map((infrastruktur, i) => {
                 const startAngle = each * i;
                 const angle = startAngle * (Math.PI / 180);
@@ -574,6 +543,7 @@ export default class ClusterMapView extends React.Component {
                       <g>
                         {infrastruktur.type === "collection" ? (
                           <CollectionIcon
+                            style={{ cursor: "POINTER" }}
                             id={`inf-${infrastruktur.name}`}
                             x={x}
                             y={y}
@@ -581,10 +551,10 @@ export default class ClusterMapView extends React.Component {
                             heigth={fontSizeText(this.scale) * 1.3}
                             fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                             stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                            cursor="POINTER"
                           />
                         ) : (
                           <InfrastructureIcon
+                            style={{ cursor: "POINTER" }}
                             id={`inf-${infrastruktur.name}`}
                             x={x}
                             y={y}
@@ -592,7 +562,6 @@ export default class ClusterMapView extends React.Component {
                             heigth={fontSizeText(this.scale) * 1.3}
                             fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                             stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                            cursor="POINTER"
                           />
                         )}
                       </g>
@@ -656,7 +625,6 @@ export default class ClusterMapView extends React.Component {
               })}
             </g>
             <g
-              style={{ transform: "translate(0px, 0px)" }}
               data-step="1"
               data-intro="Das Herzstück der <b>WISSEN</b> Ansicht ist die Cluster-Darstellung von Drittmittelprojekten auf Basis algorithmischer Vergleiche von Projekt-Abstracts. Projekte sind nach ihren jeweiligen <b>Forschungsgebieten</b> eingefärbt um eine interdisziplinäre Perspektive auf die Forschung am Haus zu unterstützen. Hierdurch können Drittmittelprojekte basierend auf thematischen Gemeinsamkeiten interaktiv exploriert werden."
             >

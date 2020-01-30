@@ -36,8 +36,8 @@ const CatDetailsPanel = props => {
             key={i + " " + kta.id}
             className={style.DetailsLink}
           >
-            {kta.title.length > 70
-              ? kta.title.substring(0, 70) + "..."
+            {kta.title.length > 60
+              ? kta.title.substring(0, 60) + "..."
               : kta.title}
             <br />
           </span>
@@ -67,10 +67,10 @@ const CatDetailsPanel = props => {
               }}
             >
               {props.catData.connections.find(con => con.id === project).title
-                .length > 70
+                .length > 60
                 ? props.catData.connections
                     .find(con => con.id === project)
-                    .title.substring(0, 70) + "..."
+                    .title.substring(0, 60) + "..."
                 : props.catData.connections.find(con => con.id === project)
                     .title}
 

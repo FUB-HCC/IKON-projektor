@@ -30,12 +30,7 @@ class GraphView extends React.Component {
 
   componentDidMount() {
     this.setState({
-      height:
-        window.innerHeight -
-        menuBarHeight -
-        appMargin * 2 -
-        this.margins.top -
-        this.margins.bottom,
+      height: window.innerHeight - menuBarHeight - appMargin * 2,
       width:
         (window.innerWidth -
           appMargin * 2 -
@@ -68,7 +63,7 @@ class GraphView extends React.Component {
           appMargin * 2 -
           this.margins.left -
           this.margins.right) *
-        0.75
+        0.7
     });
   }
 

@@ -8,7 +8,7 @@ const FilterPanel = props => (
     style={{
       display: "flex",
       flexDirection: "column",
-      justifyContent: "space-between",
+      justifyContent: "flex-start",
       height: "100%"
     }}
   >

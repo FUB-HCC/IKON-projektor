@@ -3,6 +3,7 @@
   padding: 2%;
   height: 100%;
   width: 100%;
+  border-top: 5px solid #0e0e0e;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

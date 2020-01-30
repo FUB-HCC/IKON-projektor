@@ -1,102 +1,75 @@
 .navbar {
   background: #0e0e0e;
-  flex-grow: 0;
   display: flex;
-  font-family: inherit;
-}
-.logo {
-  padding: 14px !important;
-  text-align: center !important;
-}
-
-.NavigationElement.logo::after {
-  display: none !important;
 }
 
 .leftpanel {
-  width: 70vw;
-}
-.rightPanel {
-  width: 30vw;
-}
-.buttonIcon {
-  width: 25px;
-  height: width;
-  margin: 8px;
-}
-.NavigationRightElement {
-  text-decoration: none;
-  color: #aaa;
-  fill: #aaa;
-  font-size: 18px;
-  overflow-x: hidden;
-  text-align: center;
-  background: #1c1d1f;
-  border-right: 3px solid #0e0e0e;
-  cursor: pointer;
-  display: block;
-}
-
-.NavigationRightElement:hover {
-  color: #afca0b;
-  fill: #afca0b;
-}
-
-.rightPanel ul {
-  padding: 0px;
-  margin: 0px;
+  width: 72vw;
   display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin-left: 5px;
-  align-items: center;
-  list-style-type: none;
-}
-
-.rightPanel ul li {
-  width: 33%;
-  cursor: pointer;
-  position: relative;
-}
-
-.ContainerSub {
-  padding: 0%;
-  display: flex;
-  align-items: top;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin: 0%;
-  top: 5vh;
-  left: 5vh;
+  justify-content: space-evenly;
   color: rgba(100, 100, 100, 0.5);
+  margin: 0px;
   list-style: none;
+  padding-inline-start: 0px;
 }
-
-.ContainerSub li {
-  width: 24.5%;
+.leftpanel li {
+  width: 100%;
   cursor: pointer;
-  position: relative;
-  margin-right: 1px;
+  display: flex;
 }
-
-.NavigationElement {
+.leftElement {
+  flex-grow: 1;
   text-decoration: none;
   color: #aaa;
-  font-size: 18px;
-  padding: 28px 8%;
+  font-size: 105%;
   text-align: left;
   background: #1c1d1f;
+  margin-right: 5px;
+  padding-top: 8px;
+  padding-left: 10px;
 }
-.NavigationRightElement:hover::after {
-  opacity: 1;
-}
-.NavigationElement:hover {
+.leftElement:hover {
   background: #aaa;
   color: #1c1d1f;
 }
 
-.NavigationElement .logo {
-  padding: 14px !important;
+.rightPanel {
+  display: flex;
+  justify-content: space-between;
+  margin: 0px;
+  color: rgba(100, 100, 100, 0.5);
+  list-style: none;
+  width: 28vw;
+  padding-inline-start: 0px;
+}
+.rightPanel li {
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+}
+.rightElement {
+  text-decoration: none;
+  flex-grow: 1;
+  color: #aaa;
+  fill: #aaa;
+  font-size: 90%;
+  text-align: center;
+  background: #1c1d1f;
+  cursor: pointer;
+  display: block;
+  padding-top: 5px;
+  border-right: 3px solid #0e0e0e;
+}
+.buttonIcon {
+  width: 25px;
+  height: width;
+}
+.rightElement:hover {
+  color: #afca0b;
+  fill: #afca0b;
+}
+.rightElement:hover::after {
+  opacity: 1;
 }
 
 .active {
@@ -112,14 +85,10 @@
   background-color: #1c1d1f;
   color: #e1e1e1;
   min-width: 600px;
-  font-family: inherit;
 }
 
-.introTooltip h2 {
-  color: #afca0b;
-}
-
-.introTooltip h3 {
+.introTooltip h2,
+h3 {
   color: #afca0b;
 }
 
@@ -139,6 +108,10 @@
 .introHighlightClass {
   background-color: #222;
 }
+.introPageHighlightClass {
+  background-color: #222;
+  color: #afca0b;
+}
 .shareDialog {
   display: flex;
   text-align: center;
@@ -148,7 +121,7 @@
 }
 
 .shareHeader {
-  font-size: 22px;
+  font-size: 130%;
   font-weight: 300;
   color: #aaa;
   margin-bottom: 30px;
@@ -156,7 +129,7 @@
 
 .closeShare {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 100%;
   color: #afca0b;
   margin-top: 30px;
   cursor: pointer;
@@ -164,7 +137,7 @@
 
 .shareInput {
   padding: 10px;
-  font-size: 14px;
+  font-size: 100%;
   border: none;
   background-color: #aaa;
   width: 50%;

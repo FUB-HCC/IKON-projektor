@@ -145,8 +145,8 @@ const ProjectDetailsPanel = props => {
               key={kta.id}
               className={style.DetailsLink}
             >
-              {kta.title.length > 70
-                ? kta.title.substring(0, 70) + "..."
+              {kta.title.length > 60
+                ? kta.title.substring(0, 60) + "..."
                 : kta.title}
               <br />
             </span>

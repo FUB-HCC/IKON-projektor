@@ -21,8 +21,11 @@ const UncertaintyExplanation = props => {
         data-intro="Um die thematische Anordnung der Projekte zu qualifizieren,ist als weiteres Element dieser Ansicht die <b>Unsicherheits-Landschaft</b> integriert. Da die Anordnung auf algorithmischen Schätzungen von inhaltlichen Ähnlichkeite basiert, ünterstützt dieses Element die Interpretation der Anordnung. Je heller die Färbung der Landschaft, desto <b>sicherer</b> ist sich der Algorithmus über die Position des jeweiligen Forschungsprojektes, und umgekehrt."
         data-step="2"
         className={style.legendRow}
-        onMouseEnter={() => props.highlightAll("uncertainty")}
-        onMouseLeave={() => props.unHighlight()}
+        onMouseEnter={() => props.setHighlightState("uncertainty")}
+        onMouseLeave={() => {
+          props.unHighlight();
+          props.setHighlightState([]);
+        }}
         onClick={() =>
           window.alert(
             "Wir setzen maschinelles Lernen ein, um Forschungsprojekte hinsichtlich inhaltlicher Ähnlichkeiten anzuordnen. Die Unsicherheitslandschaft zeigt an, wie treffend der Algorithmus die Anordnung einschätzt."

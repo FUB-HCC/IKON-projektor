@@ -26,9 +26,6 @@ const zeitraum = timeframe => {
 };
 
 const KtaDetailsPanel = props => {
-  const project = props.categories.map(
-    cat => cat.connections.find(con => con.id === props.kta.project_id).project
-  )[0];
   if (!props.kta) {
     return (
       <div className={style.DetailsWrapper}>
@@ -40,6 +37,11 @@ const KtaDetailsPanel = props => {
       </div>
     );
   }
+  const project = props.kta
+    ? props.categories.map(cat =>
+        cat.connections.find(con => con.id === props.kta.project_id)
+      ).project
+    : [];
   return (
     <div className={style.DetailsWrapper}>
       <div className={style.DetailsTitle}>
@@ -66,6 +68,7 @@ const KtaDetailsPanel = props => {
         {props.categories.map(cat => (
           <span
             href="#"
+            onMouseOver={() => props.showCatDetails(cat.id)}
             onClick={() => props.showCatDetails(cat.id)}
             key={cat.id}
             className={style.DetailsLink}
@@ -100,10 +103,12 @@ const KtaDetailsPanel = props => {
       <div className={style.abstractText}>
         {props.kta.description.split("https://")[0]}
       </div>
-      <span className={style.infoItemTitle}>
-        Assoziierte Forschungsprojekte:
-        <br />
-      </span>
+      {project && (
+        <span className={style.infoItemTitle}>
+          Assoziierte Forschungsprojekte:
+          <br />
+        </span>
+      )}
       <p className={style.infoItems}>
         {project && (
           <span
@@ -115,8 +120,8 @@ const KtaDetailsPanel = props => {
               color: getFieldColor(project.forschungsbereich)
             }}
           >
-            {project.title.length > 70
-              ? project.title.substring(0, 70) + "..."
+            {project.title.length > 60
+              ? project.title.substring(0, 60) + "..."
               : project.title}
           </span>
         )}

@@ -75,8 +75,8 @@ const InfraDetailsPanel = props => {
                 color: getFieldColor(project.forschungsbereich)
               }}
             >
-              {project.title.length > 70
-                ? project.title.substring(0, 70) + "..."
+              {project.title.length > 60
+                ? project.title.substring(0, 60) + "..."
                 : project.title}
               <br />
             </span>

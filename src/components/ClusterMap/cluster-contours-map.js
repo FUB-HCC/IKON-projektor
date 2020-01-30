@@ -14,14 +14,16 @@ const scaleContours = (
 ) => {
   var newConts = [];
   const scale = Math.min(height, width);
-  if (coords[0]) {
-    for (var i = 0; i < coords[0].length; i++) {
-      const [x, y] = coords[0][i];
-      const nX =
-        (x / contoursSize) * clusterSize(scale) + clusterX(width, scale);
-      const nY =
-        (y / contoursSize) * clusterSize(scale) + clusterY(height, scale);
-      newConts[i] = [nX, nY];
+  for (var c in coords) {
+    if (c) {
+      for (var i = 0; i < coords[c].length; i++) {
+        const [x, y] = coords[c][i];
+        const nX =
+          (x / contoursSize) * clusterSize(scale) + clusterX(width, scale);
+        const nY =
+          (y / contoursSize) * clusterSize(scale) + clusterY(height, scale);
+        newConts.push([nX, nY]);
+      }
     }
   }
   return newConts;
@@ -52,7 +54,8 @@ class ClusterContoursMap extends React.Component {
     return (
       this.props.width !== nextProps.width ||
       this.props.height !== nextProps.height ||
-      this.props.topography.length !== nextProps.topography.length
+      this.props.topography.length !== nextProps.topography.length ||
+      this.props.isHighlighted !== nextProps.isHighlighted
     );
   }
 
@@ -61,13 +64,11 @@ class ClusterContoursMap extends React.Component {
       width,
       height,
       contoursSize,
-      translateX,
       clusterSize,
       clusterX,
       clusterY,
       topography
     } = this.props;
-
     if (topography.length !== this.state.topography.length) {
       this.contours = constructContours(topography, contoursSize);
       this.colorMap = computeColorMap(topography);
@@ -77,10 +78,7 @@ class ClusterContoursMap extends React.Component {
     }
     const scale = Math.min(height, width);
     return (
-      <g
-        fill="none"
-        transform={"translate(0 " + translateX(height, scale) + ")"}
-      >
+      <g fill="none">
         {this.contours.map(cont => {
           return (
             <path
@@ -102,6 +100,12 @@ class ClusterContoursMap extends React.Component {
             />
           );
         })}
+        <circle
+          cx={clusterX(width, scale) + 0.5 * clusterSize(scale)}
+          cy={clusterY(height, scale) + 0.5 * clusterSize(scale)}
+          r={clusterSize(scale) * 0.58}
+          fill={this.props.isHighlighted ? "#afca0b22" : "none"}
+        />
       </g>
     );
   }

@@ -87,6 +87,7 @@ export const initialState = {
   selectedInfra: null,
   selectedCat: null,
   selectedKta: null,
+  highlightedGroup: null,
   isDataLoaded: {
     projects: false,
     institutions: false,
@@ -170,6 +171,9 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.DESELECT_ITEMS:
       return deselectItems(state);
+
+    case actionTypes.SET_HIGHLIGHT_STATE:
+      return setHighlightState(state, action);
 
     default:
       return state;
@@ -525,12 +529,19 @@ const setSelectedInfra = (state, action) => ({
   ...state,
   selectedInfra: action.value
 });
+
+const setHighlightState = (state, action) => ({
+  ...state,
+  highlightedGroup: action.value
+});
+
 const deselectItems = state => ({
   ...state,
   selectedProject: null,
   selectedInfra: null,
   selectedCat: null,
-  selectedKta: null
+  selectedKta: null,
+  highlightedGroup: []
 });
 const resetSelectedProject = state => ({ ...state, setSelectedProject: null });
 
