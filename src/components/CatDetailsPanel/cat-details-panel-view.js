@@ -1,7 +1,7 @@
 import React from "react";
 import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, shortenString } from "../../util/utility";
 
 const CatDetailsPanel = props => {
   if (!props.catData) {
@@ -36,9 +36,7 @@ const CatDetailsPanel = props => {
             key={i + " " + kta.id}
             className={style.DetailsLink}
           >
-            {kta.title.length > 60
-              ? kta.title.substring(0, 60) + "..."
-              : kta.title}
+            {shortenString(kta.title, 60)}
             <br />
           </span>
         ))}
@@ -66,13 +64,10 @@ const CatDetailsPanel = props => {
                 )
               }}
             >
-              {props.catData.connections.find(con => con.id === project).title
-                .length > 60
-                ? props.catData.connections
-                    .find(con => con.id === project)
-                    .title.substring(0, 60) + "..."
-                : props.catData.connections.find(con => con.id === project)
-                    .title}
+              {shortenString(
+                props.catData.connections.find(con => con.id === project).title,
+                60
+              )}
 
               <br />
             </span>

@@ -170,6 +170,10 @@ export const getColor = input => {
   return fColor === "#989aa1" ? getTopicColor(input) : fColor;
 };
 
+export const shortenString = (string, len) => {
+  return string.length > len ? string.substring(0, len) + "..." : string;
+};
+
 export const pushStateToUrl = newState => {
   let newUrlData = {
     g: newState.graph,

@@ -258,7 +258,7 @@ const GeoMapView = props => {
       <div
         className={style.mapsWrapper}
         data-intro="Die roten Punkte sind Standorte von verschiedenen Instituten, mit denen das Museum für Naturkunde schon kooperiert hat. Einige von diesen scheinen außerhalb der Karte zu liegem, was entweder daher rührt, dass es sich um Inseln handelt oder das die Grenzen zwischen Kontinenten fließend sein können."
-        data-step="3"
+        data-step="2"
       >
         {continents.map(c => {
           const instititutionsOnContinent = Object.values(

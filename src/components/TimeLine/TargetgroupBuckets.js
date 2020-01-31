@@ -20,7 +20,7 @@ const TargetgroupBuckets = props => {
                     className={styles.wtaBucketCircle}
                     onClick={() => {
                       year.targetgroup = targetgroup;
-                      props.showYearDetails(year);
+                      props.showYearDetails(year.year + "|" + targetgroup);
                     }}
                     onMouseOver={event => {
                       props.handleCircleMouseEnter(

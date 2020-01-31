@@ -106,7 +106,9 @@ export default class TimeLineView extends Component {
   }
 
   handleCircleClick(evt, circlePoint) {
-    this.props.showYearDetails(circlePoint);
+    this.props.showYearDetails(
+      circlePoint.year + "|" + circlePoint.forschungsbereich
+    );
     let selectedProjects = circlePoint.projects;
     this.setState({
       projectsPopoverHidden: false,

@@ -12,21 +12,15 @@ const scaleContours = (
   clusterX,
   clusterY
 ) => {
-  var newConts = [];
-  const scale = Math.min(height, width);
-  for (var c in coords) {
-    if (c) {
-      for (var i = 0; i < coords[c].length; i++) {
-        const [x, y] = coords[c][i];
-        const nX =
-          (x / contoursSize) * clusterSize(scale) + clusterX(width, scale);
-        const nY =
-          (y / contoursSize) * clusterSize(scale) + clusterY(height, scale);
-        newConts.push([nX, nY]);
-      }
-    }
-  }
-  return newConts;
+  const factor = clusterSize(Math.min(height, width));
+  const ClusterPosX = clusterX(width, Math.min(height, width));
+  const ClusterPosY = clusterY(height, Math.min(height, width));
+  return coords.map(c =>
+    c.map(point => [
+      (point[0] / contoursSize) * factor + ClusterPosX,
+      (point[1] / contoursSize) * factor + ClusterPosY
+    ])
+  );
 };
 
 const constructContours = (topography, contoursSize) =>

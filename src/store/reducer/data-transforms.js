@@ -124,5 +124,12 @@ export const processCollections = state => {
 export const processFormats = state =>
   state.ktas.map(kta => ({
     ...kta,
-    timeframe: [new Date(kta.start_date), new Date(kta.end_date)]
+    timeframe: [
+      new Date(kta.start_date).getFullYear() === 1970
+        ? new Date(kta.end_date)
+        : new Date(kta.start_date),
+      new Date(kta.end_date).getFullYear() === 1970
+        ? new Date(kta.start_date)
+        : new Date(kta.end_date)
+    ]
   }));

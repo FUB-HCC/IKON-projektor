@@ -2,7 +2,7 @@ import React from "react";
 import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
 import { ReactComponent as Icon } from "../../assets/Selected-Project.svg";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, shortenString } from "../../util/utility";
 
 const parseDescription = string => {
   /* the text in via has a few (redundant?) formatting symbols and links to images etc.
@@ -145,9 +145,7 @@ const ProjectDetailsPanel = props => {
               key={kta.id}
               className={style.DetailsLink}
             >
-              {kta.title.length > 60
-                ? kta.title.substring(0, 60) + "..."
-                : kta.title}
+              {shortenString(kta.title, 60)}
               <br />
             </span>
           ))}

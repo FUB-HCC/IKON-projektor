@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { ReactComponent as SelectedIcon } from "../../assets/Selected-Project.svg";
 import { ReactComponent as UnselectedIcon } from "../../assets/Unselected-Project.svg";
+import { shortenString } from "../../util/utility";
 
 export default class ClusterDot extends React.Component {
   static propTypes = {
@@ -29,7 +30,7 @@ export default class ClusterDot extends React.Component {
             this.props.highlightProject(
               this.props.point.projectData.id,
               event,
-              this.props.point.projectData.title.substring(0, 60) + "..."
+              shortenString(this.props.point.projectData.title, 60)
             );
           }
         }}
@@ -41,7 +42,7 @@ export default class ClusterDot extends React.Component {
           this.props.highlightProject(
             this.props.point.projectData.id,
             event,
-            this.props.point.projectData.title.substring(0, 60) + "..."
+            shortenString(this.props.point.projectData.title, 60)
           );
           this.props.showProjectDetails();
         }}

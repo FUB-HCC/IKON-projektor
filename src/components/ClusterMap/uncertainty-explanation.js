@@ -7,9 +7,7 @@ const UncertaintyExplanation = props => {
       style={{
         position: "absolute",
         left: props.posX + "px",
-        top: props.posY + "px",
-        height: "130px",
-        width: "15%",
+        bottom: props.posY + "px",
         backgroundColor: "transparent",
         zIndex: 99,
         color: "#6B6B6B",
@@ -24,7 +22,7 @@ const UncertaintyExplanation = props => {
         onMouseEnter={() => props.setHighlightState("uncertainty")}
         onMouseLeave={() => {
           props.unHighlight();
-          props.setHighlightState([]);
+          props.setHighlightState();
         }}
         onClick={() =>
           window.alert(
@@ -38,8 +36,7 @@ const UncertaintyExplanation = props => {
             fontWeight: "700",
             fontSize: "80%",
             display: "flex",
-            justifyContent: "space-between",
-            width: "130px"
+            justifyContent: "space-between"
           }}
         >
           <span>unsicher</span>
@@ -47,8 +44,8 @@ const UncertaintyExplanation = props => {
         </p>
         <svg width="130px" height="20">
           <linearGradient id="grad1" x1="20%" y1="0%" x2="120%" y2="0%">
-            <stop offset="0%" stop-color="#000" />
-            <stop offset="100%" stop-color="#888" />
+            <stop offset="0%" stopColor="#000" />
+            <stop offset="100%" stopColor="#888" />
           </linearGradient>
           <rect width="130" height="20" fill="url(#grad1)" stroke="none" />
         </svg>

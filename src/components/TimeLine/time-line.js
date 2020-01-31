@@ -4,7 +4,8 @@ import { getFieldColor } from "../../util/utility";
 import TimeLineView from "./time-line-view";
 import {
   setSelectedYear,
-  setSideBarComponent
+  setSideBarComponent,
+  deselectItems
 } from "../../store/actions/actions";
 import YearDetailsPanel from "../YearDetailsPanel/year-details-panel";
 
@@ -62,6 +63,7 @@ const graphColors = {
 const mapDispatchToProps = dispatch => {
   return {
     showYearDetails: year => {
+      dispatch(deselectItems());
       dispatch(setSelectedYear(year));
       dispatch(setSideBarComponent(<YearDetailsPanel />));
     }

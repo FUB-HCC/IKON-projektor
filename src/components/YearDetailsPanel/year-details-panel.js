@@ -12,8 +12,23 @@ import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 import KtaDetailsPanel from "../KtaDetailsPanel/kta-details-panel";
 
 const mapStateToProps = state => {
+  const year = state.main.selectedYear.split("|")[0];
+  const title = state.main.selectedYear.split("|")[1];
   return {
-    year: state.main.selectedYear
+    year: year,
+    title: title,
+    projects: state.main.projects.filter(
+      p =>
+        p.forschungsbereich === title &&
+        p.timeframe[0] <= year &&
+        year <= p.timeframe[1]
+    ),
+    ktas: state.main.ktas.filter(
+      kta =>
+        kta.targetgroups.includes(title) &&
+        kta.timeframe[0].getFullYear() <= year &&
+        year <= kta.timeframe[1].getFullYear()
+    )
   };
 };
 
@@ -23,10 +38,12 @@ const mapDispatchToProps = dispatch => ({
     dispatch(deselectItems());
   },
   showProjectDetails: project => {
+    dispatch(deselectItems());
     dispatch(setSelectedProject(project));
     dispatch(setSideBarComponent(<ProjectDetailsPanel />));
   },
   showKtaDetails: kta => {
+    dispatch(deselectItems());
     dispatch(setSelectedKta(kta));
     dispatch(setSideBarComponent(<KtaDetailsPanel />));
   }

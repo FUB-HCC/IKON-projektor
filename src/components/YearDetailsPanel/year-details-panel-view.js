@@ -1,12 +1,10 @@
 import React from "react";
 import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, shortenString } from "../../util/utility";
 
 const YearDetailsPanel = props => {
-  const color = props.year.forschungsbereich
-    ? getFieldColor(props.year.forschungsbereich)
-    : "#aaa";
+  const color = getFieldColor(props.title);
   return (
     <div className={style.DetailsWrapper}>
       <div
@@ -19,41 +17,35 @@ const YearDetailsPanel = props => {
         <div className={style.DetailsExit} onClick={props.returnToFilterView}>
           <Exit height={35} width={35} />
         </div>
-        <span className={style.titleTopic}>Jahr {props.year.year}</span> <br />
-        <span className={style.titleText}>
-          {props.year.targetgroup
-            ? props.year.targetgroup
-            : props.year.forschungsbereich}
-        </span>
+        <span className={style.titleTopic}>Jahr {props.year}</span> <br />
+        <span className={style.titleText}>{props.title}</span>
       </div>
 
       <span className={style.infoItemTitle}>
-        {props.year.targetgroup
+        {props.ktas.length > 0
           ? "Wissenstransferaktivitäten mit dieser Zielgruppe "
           : "Forschungsprojekte in diesem Forschungsbereich "}
-        im Jahr {props.year.year}:
+        im Jahr {props.year}:
         <br />
       </span>
-      {props.year.ktas && (
+      {props.ktas.length > 0 && (
         <div className={style.abstractText}>
-          {props.year.ktas.map((kta, i) => (
+          {props.ktas.map((kta, i) => (
             <span
               href="#"
               onClick={() => props.showKtaDetails(kta.id)}
               key={i + " " + kta.id}
               className={style.DetailsLink}
             >
-              {kta.title.length > 60
-                ? kta.title.substring(0, 60) + "..."
-                : kta.title}
+              {shortenString(kta.title, 60)}
               <br />
             </span>
           ))}
         </div>
       )}
-      {props.year.projects && (
+      {props.projects.length > 0 && (
         <div className={style.abstractText}>
-          {props.year.projects.map((project, i) => (
+          {props.projects.map((project, i) => (
             <span
               href="#"
               onClick={() => props.showProjectDetails(project.id)}
@@ -63,9 +55,7 @@ const YearDetailsPanel = props => {
                 color: color
               }}
             >
-              {project.title.length > 60
-                ? project.title.substring(0, 60) + "..."
-                : project.title}
+              {shortenString(project.title, 60)}
               <br />
             </span>
           ))}

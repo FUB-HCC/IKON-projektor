@@ -3,7 +3,7 @@ import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, shortenString } from "../../util/utility";
 
 const InfraDetailsPanel = props => {
   console.log(props);
@@ -75,9 +75,7 @@ const InfraDetailsPanel = props => {
                 color: getFieldColor(project.forschungsbereich)
               }}
             >
-              {project.title.length > 60
-                ? project.title.substring(0, 60) + "..."
-                : project.title}
+              {shortenString(project.title, 60)}
               <br />
             </span>
           ))}
