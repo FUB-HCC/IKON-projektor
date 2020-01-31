@@ -19,69 +19,55 @@ const IconExplanation = props => {
         fontSize: "80%"
       }}
     >
-      <div style={{ marginBottom: "10px" }}>
-        <p
-          style={{
-            fontSize: "80%",
-            fontWeight: "700"
-          }}
-        >
-          <span>unsicher</span>
-          <span>|</span>
-          <span>sicher</span>
-        </p>
-        <svg width="80" height="15">
-          <linearGradient id="grad1" x1="20%" y1="0%" x2="120%" y2="0%">
-            <stop offset="0%" stopColor="#000" />
-            <stop offset="100%" stopColor="#888" />
-          </linearGradient>
-          <rect width="80" height="15" fill="url(#grad1)" stroke="none" />
-        </svg>{" "}
-        Anordnung{" "}
-        <svg
-          width="15"
-          height="15"
-          style={{ cursor: "POINTER" }}
-          onClick={() =>
-            window.alert(
-              "Wir setzen maschinelles Lernen ein, um Forschungsprojekte hinsichtlich inhaltlicher Ähnlichkeiten anzuordnen. Die Unsicherheitslandschaft zeigt an, wie treffend der Algorithmus die Anordnung einschätzt."
-            )
-          }
-        >
-          <circle
-            className={style.tooltipIcon}
-            r="6"
-            cx={6}
-            cy={6}
-            stroke="#6B6B6B"
-            fill="#6B6B6B"
-          />
-          <text x="3" y="10" style={{ cursor: "POINTER", color: "0e0e0e" }}>
-            ?
-          </text>
-        </svg>
-      </div>
-      <p style={{ display: "flex" }}>
+      <p
+        style={{ display: "flex", cursor: "POINTER" }}
+        data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
+        data-step="4"
+        className={style.legendRow}
+        onMouseEnter={() => props.setHighlightState("categories")}
+        onMouseLeave={() => {
+          props.unHighlight();
+          props.setHighlightState([]);
+        }}
+      >
         <svg width="20" height="20">
-          <circle r="10" cx={10} cy={10} stroke="#6B6B6B" fill="#6B6B6B" />
+          <circle r="10" cx={10} cy={10} className={style.tooltipIcon} />
         </svg>
-        <span style={{ marginLeft: "10px" }}>Zielgruppen</span>
+        <span style={{ marginLeft: "10px" }}>Wissenstransferaktivitäten</span>
       </p>
-      <p style={{ display: "flex" }}>
+      <p
+        style={{ display: "flex", cursor: "POINTER" }}
+        data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Sammlungen am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben können."
+        data-step="5"
+        className={style.legendRow}
+        onMouseEnter={() => props.setHighlightState("collection")}
+        onMouseLeave={() => {
+          props.unHighlight();
+          props.setHighlightState([]);
+        }}
+      >
         <CollectionIcon
+          className={style.tooltipIcon}
           width="20px"
           heigth="20px"
-          fill="#6B6B6B"
-          stroke="#6B6B6B"
         />
         <span style={{ marginLeft: "10px" }}>Sammlungen</span>
       </p>
-      <p style={{ display: "flex" }}>
+      <p
+        style={{ display: "flex", cursor: "POINTER" }}
+        data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Laborgeräte oder andere Infrastruktur am Museum, die in Forschungsprojekten eingesetzt werden können."
+        data-step="6"
+        className={style.legendRow}
+        onMouseEnter={() => props.setHighlightState("infrastructure")}
+        onMouseLeave={() => {
+          props.unHighlight();
+          props.setHighlightState([]);
+        }}
+      >
         <InfrastructureIcon
+          className={style.tooltipIcon}
           width="20px"
           heigth="20px"
-          fill="#6B6B6B"
-          stroke="#6B6B6B"
         />
         <span style={{ marginLeft: "10px" }}>
           Laborgeräte und Infrastruktur

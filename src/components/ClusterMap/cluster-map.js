@@ -7,7 +7,8 @@ import {
   setSelectedCat,
   setSelectedInfra,
   setSideBarComponent,
-  deselectItems
+  deselectItems,
+  setHighlightState
 } from "../../store/actions/actions";
 import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
 import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
@@ -44,23 +45,8 @@ const computeInfrastructureSorted = (
   filters
 ) => {
   if (!clusterData) return [];
-  const typedCollections = collections.map(collection => ({
-    ...collection,
-    connections: clusterData.transformedPoints.filter(
-      point =>
-        point.project && point.project.collections.includes(collection.name)
-    )
-  }));
-  const typedInfrastructures = infrastructures.map(infrastructure => ({
-    ...infrastructure,
-    connections: clusterData.transformedPoints.filter(
-      point =>
-        point.project &&
-        point.project.infrastructures.includes(infrastructure.name)
-    )
-  }));
-  return typedCollections
-    .concat(typedInfrastructures)
+  return collections
+    .concat(infrastructures)
     .sort((a, b) => (a.type < b.type ? 1 : -1))
     .filter(
       inf =>
@@ -81,7 +67,8 @@ const mapStateToProps = state => {
     isDataProcessed,
     selectedProject,
     selectedCat,
-    selectedInfra
+    selectedInfra,
+    highlightedGroup
   } = state.main;
 
   let clusterDataForView = [];
@@ -113,7 +100,8 @@ const mapStateToProps = state => {
     InfrastrukturSorted: InfrastrukturSorted,
     selectedCat: selectedCat,
     selectedProject: selectedProject,
-    selectedInfra: selectedInfra
+    selectedInfra: selectedInfra,
+    highlightedGroup: highlightedGroup
   };
 };
 
@@ -133,7 +121,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(deselectItems());
       dispatch(setSelectedInfra(infra));
       dispatch(setSideBarComponent(<InfraDetailsPanel />));
-    }
+    },
+    setHighlightState: value => dispatch(setHighlightState(value))
   };
 };
 

@@ -30,12 +30,7 @@ class GraphView extends React.Component {
 
   componentDidMount() {
     this.setState({
-      height:
-        window.innerHeight -
-        menuBarHeight -
-        appMargin * 2 -
-        this.margins.top -
-        this.margins.bottom,
+      height: window.innerHeight - menuBarHeight - appMargin * 2,
       width:
         (window.innerWidth -
           appMargin * 2 -
@@ -68,7 +63,7 @@ class GraphView extends React.Component {
           appMargin * 2 -
           this.margins.left -
           this.margins.right) *
-        0.75
+        0.7
     });
   }
 
@@ -107,6 +102,7 @@ class GraphView extends React.Component {
       case "0":
         Graph = (
           <ClusterMap
+            id="step1"
             height={this.state.height}
             width={this.state.width}
             onProjectClick={this.projectClickHandler}
@@ -116,6 +112,7 @@ class GraphView extends React.Component {
       case "1":
         Graph = (
           <TimeGraph
+            id="step2"
             height={this.state.height}
             width={this.state.width}
             onProjectClick={this.projectClickHandler}
@@ -123,7 +120,7 @@ class GraphView extends React.Component {
         );
         break;
       case "2":
-        Graph = <GeoMap {...geoMapProps} />;
+        Graph = <GeoMap id="step3" {...geoMapProps} />;
         break;
       default:
         break;

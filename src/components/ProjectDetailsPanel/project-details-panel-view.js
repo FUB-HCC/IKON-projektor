@@ -2,7 +2,7 @@ import React from "react";
 import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
 import { ReactComponent as Icon } from "../../assets/Selected-Project.svg";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, shortenString } from "../../util/utility";
 
 const parseDescription = string => {
   /* the text in via has a few (redundant?) formatting symbols and links to images etc.
@@ -89,9 +89,11 @@ const ProjectDetailsPanel = props => {
           <p key={i}>{part}</p>
         ))}
       </div>
-      <span className={style.infoItemTitle}>
-        Genutzte Infrastruktur: <br />
-      </span>
+      {props.projectData.infrastructures.length > 0 && (
+        <span className={style.infoItemTitle}>
+          Genutzte Infrastruktur: <br />
+        </span>
+      )}
       {props.projectData.infrastructures.length > 0 && (
         <p className={style.abstractText}>
           {props.projectData.infrastructures.map((con, i) => (
@@ -102,13 +104,16 @@ const ProjectDetailsPanel = props => {
               className={style.DetailsLink}
             >
               {con}
+              <br />
             </span>
           ))}
         </p>
       )}
-      <span className={style.infoItemTitle}>
-        Bezug zu Sammlung: <br />
-      </span>
+      {props.projectData.collections.length > 0 && (
+        <span className={style.infoItemTitle}>
+          Bezug zu Sammlung: <br />
+        </span>
+      )}
       {props.projectData.collections.length > 0 && (
         <p className={style.abstractText}>
           {props.projectData.collections.map(con => {
@@ -120,14 +125,17 @@ const ProjectDetailsPanel = props => {
                 className={style.DetailsLink}
               >
                 {con}
+                <br />
               </span>
             );
           })}
         </p>
       )}
-      <span className={style.infoItemTitle}>
-        Wissenstransferaktivität(en): <br />
-      </span>
+      {props.ktas.length > 0 && (
+        <span className={style.infoItemTitle}>
+          Wissenstransferaktivität(en): <br />
+        </span>
+      )}
       {props.ktas.length > 0 && (
         <p className={style.abstractText}>
           {props.ktas.map(kta => (
@@ -137,7 +145,8 @@ const ProjectDetailsPanel = props => {
               key={kta.id}
               className={style.DetailsLink}
             >
-              {kta.title}
+              {shortenString(kta.title, 60)}
+              <br />
             </span>
           ))}
         </p>
@@ -154,7 +163,7 @@ const ProjectDetailsPanel = props => {
         target="_blank"
         rel="noopener noreferrer" //got warning otherwise
       >
-        Im VIA-Wiki anschauen
+        Anzeigen im VIA-Wiki
       </a>
     </div>
   );

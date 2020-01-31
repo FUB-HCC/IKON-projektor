@@ -1,11 +1,17 @@
 import React from "react";
 import FilterTimeline from "../FilterTimeline/filter-timeline";
-import FilterPanelButtons from "./filter-panel-buttons";
 import FilterSelection from "../FilterSelection/filter-selection";
 
 const FilterPanel = props => (
-  <div>
-    <FilterPanelButtons />
+  <div
+    id="step5"
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flex-start",
+      height: "100%"
+    }}
+  >
     <FilterTimeline />
     <FilterSelection />
   </div>

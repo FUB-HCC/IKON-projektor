@@ -1,7 +1,8 @@
 .filterTimelineWrapper {
-  margin-top: 10px;
   background-color: #1c1d1f;
   padding-left: 2%;
+  flex-grow: 1;
+  margin-top: 5px;
 }
 .filterTimelineTitle {
   border-bottom: 1px solid #aaa;

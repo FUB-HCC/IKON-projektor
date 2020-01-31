@@ -12,19 +12,15 @@ const scaleContours = (
   clusterX,
   clusterY
 ) => {
-  var newConts = [];
-  const scale = Math.min(height, width);
-  if (coords[0]) {
-    for (var i = 0; i < coords[0].length; i++) {
-      const [x, y] = coords[0][i];
-      const nX =
-        (x / contoursSize) * clusterSize(scale) + clusterX(width, scale);
-      const nY =
-        (y / contoursSize) * clusterSize(scale) + clusterY(height, scale);
-      newConts[i] = [nX, nY];
-    }
-  }
-  return newConts;
+  const factor = clusterSize(Math.min(height, width));
+  const ClusterPosX = clusterX(width, Math.min(height, width));
+  const ClusterPosY = clusterY(height, Math.min(height, width));
+  return coords.map(c =>
+    c.map(point => [
+      (point[0] / contoursSize) * factor + ClusterPosX,
+      (point[1] / contoursSize) * factor + ClusterPosY
+    ])
+  );
 };
 
 const constructContours = (topography, contoursSize) =>
@@ -52,7 +48,8 @@ class ClusterContoursMap extends React.Component {
     return (
       this.props.width !== nextProps.width ||
       this.props.height !== nextProps.height ||
-      this.props.topography.length !== nextProps.topography.length
+      this.props.topography.length !== nextProps.topography.length ||
+      this.props.isHighlighted !== nextProps.isHighlighted
     );
   }
 
@@ -61,13 +58,11 @@ class ClusterContoursMap extends React.Component {
       width,
       height,
       contoursSize,
-      translateX,
       clusterSize,
       clusterX,
       clusterY,
       topography
     } = this.props;
-
     if (topography.length !== this.state.topography.length) {
       this.contours = constructContours(topography, contoursSize);
       this.colorMap = computeColorMap(topography);
@@ -77,10 +72,7 @@ class ClusterContoursMap extends React.Component {
     }
     const scale = Math.min(height, width);
     return (
-      <g
-        fill="none"
-        transform={"translate(0 " + translateX(height, scale) + ")"}
-      >
+      <g fill="none">
         {this.contours.map(cont => {
           return (
             <path
@@ -102,6 +94,12 @@ class ClusterContoursMap extends React.Component {
             />
           );
         })}
+        <circle
+          cx={clusterX(width, scale) + 0.5 * clusterSize(scale)}
+          cy={clusterY(height, scale) + 0.5 * clusterSize(scale)}
+          r={clusterSize(scale) * 0.58}
+          fill={this.props.isHighlighted ? "#afca0b22" : "none"}
+        />
       </g>
     );
   }

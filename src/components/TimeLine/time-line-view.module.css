@@ -29,7 +29,7 @@
 }
 
 .timelineContainer > .timelineContentContainer .yAxis path {
-  stroke: #0e0e0e !important;
+  stroke: transparent !important;
 }
 
 .timelineContainer > .timelineContentContainer .line path {
@@ -264,4 +264,8 @@
 
 .wtaBucketName:hover {
   color: #afca0b;
+}
+.plotTitle {
+  color: #717071;
+  font-size: 130%;
 }

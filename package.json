@@ -14,6 +14,8 @@
     "geolib": "^3.0.4",
     "history": "^4.9.0",
     "husky": "^3.0.3",
+    "intro.js": "^2.9.3",
+    "intro.js-react": "^0.2.0",
     "lint-staged": "^9.2.1",
     "prettier": "^1.18.2",
     "query-string": "^6.8.1",

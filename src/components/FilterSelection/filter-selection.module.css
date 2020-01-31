@@ -1,7 +1,17 @@
-.filterSetWrapper {
-  margin-top: 10px;
+.filterSelectionWrapper {
+  flex-grow: 1;
+  height: 100%;
+  width: 100%;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.filterSetWrapper {
+  flex-grow: 1;
+  margin-top: 5px;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-evenly;
   width: 100%;
   background-color: #1c1d1f;
   padding-left: 2%;
@@ -9,9 +19,9 @@
 .filterSetTitle {
   border-bottom: 1px solid #aaa;
   padding-bottom: 5px;
-  padding-top: 5px;
+  padding-top: 10px;
   margin-bottom: 15px;
-  width: 100%;
+  width: 98%;
 }
 .titleText {
   align-items: center;
@@ -19,29 +29,35 @@
   width: 100%;
   height: 25px;
   color: #aaa;
-  font-size: 22px;
-  font-weight: 100;
+  font-size: 95%;
+  font-weight: bolder;
+  text-transform: uppercase;
 }
 
 .subsetWrapper {
   width: 100%;
   margin-bottom: 1.5vh;
   padding-right: 10px;
+  display: flex;
+  flex-direction: column;
 }
 .subsetHeader {
+  flex-grow: 1;
   margin-bottom: 1vh;
-  font-size: 18px;
+  font-size: 95%;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 .subFilter {
-  font-size: 15px;
+  flex-grow: 1;
+  font-size: 95%;
 }
 .subFilterGroup {
-  padding-left: 10px;
+  padding-left: 5px;
 }
 
 .checkBoxWrapper {
   overflow: hidden;
-  font-family: TradeGothicLTStd, sans-serif;
   display: flex;
   align-items: center;
   margin-bottom: 0.7vh;
@@ -49,7 +65,6 @@
 
 .checkBoxWrapper span {
   overflow: hidden;
-  font-family: TradeGothicLTStd, sans-serif;
   float: left;
   width: 90%;
 }

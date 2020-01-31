@@ -10,8 +10,8 @@ import { Route, Redirect, Switch } from "react-router";
 import { history } from "./index";
 import classes from "./App.module.css";
 
-export const menuBarHeight = 100;
-export const appMargin = 10;
+export const menuBarHeight = 65;
+export const appMargin = 5;
 
 class App extends Component {
   render() {

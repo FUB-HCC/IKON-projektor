@@ -219,7 +219,11 @@ const GeoMapView = props => {
       className={style.geoViewWrapper}
       style={{ width: width, height: height }}
     >
-      <div className={style.arcWrapper}>
+      <div
+        className={style.arcWrapper}
+        data-intro="Die Breite eines Bogens zeigt an, wie viele Forschungsprojekte in Kooperation mit Ländern auf den beiden jeweiligen Kontinenten es gibt."
+        data-step="1"
+      >
         <svg width={width} height={arcHeight}>
           {Object.values(continentConnections).map(con => (
             <path
@@ -251,7 +255,11 @@ const GeoMapView = props => {
           );
         })}
       </div>
-      <div className={style.mapsWrapper}>
+      <div
+        className={style.mapsWrapper}
+        data-intro="Die roten Punkte sind Standorte von verschiedenen Instituten, mit denen das Museum für Naturkunde schon kooperiert hat. Einige von diesen scheinen außerhalb der Karte zu liegem, was entweder daher rührt, dass es sich um Inseln handelt oder das die Grenzen zwischen Kontinenten fließend sein können."
+        data-step="2"
+      >
         {continents.map(c => {
           const instititutionsOnContinent = Object.values(
             institutionsInProjects

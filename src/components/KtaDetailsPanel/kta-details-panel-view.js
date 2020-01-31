@@ -2,7 +2,7 @@ import React from "react";
 import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
 import { ReactComponent as KtaIcon } from "../../assets/Icon-WTA.svg";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, shortenString } from "../../util/utility";
 
 const zeitraum = timeframe => {
   if (timeframe[0].getFullYear() > 2000) {
@@ -37,6 +37,11 @@ const KtaDetailsPanel = props => {
       </div>
     );
   }
+  const project = props.kta
+    ? props.categories.map(cat =>
+        cat.connections.find(con => con.id === props.kta.project_id)
+      ).project
+    : [];
   return (
     <div className={style.DetailsWrapper}>
       <div className={style.DetailsTitle}>
@@ -63,6 +68,7 @@ const KtaDetailsPanel = props => {
         {props.categories.map(cat => (
           <span
             href="#"
+            onMouseOver={() => props.showCatDetails(cat.id)}
             onClick={() => props.showCatDetails(cat.id)}
             key={cat.id}
             className={style.DetailsLink}
@@ -97,34 +103,24 @@ const KtaDetailsPanel = props => {
       <div className={style.abstractText}>
         {props.kta.description.split("https://")[0]}
       </div>
-      <span className={style.infoItemTitle}>
-        Assoziierte Forschungsprojekte:
-        <br />
-      </span>
+      {project && (
+        <span className={style.infoItemTitle}>
+          Assoziierte Forschungsprojekte:
+          <br />
+        </span>
+      )}
       <p className={style.infoItems}>
-        {props.kta.project_id && (
+        {project && (
           <span
             href="#"
-            onClick={() => props.showProjectDetails(props.kta.project_id)}
-            key={props.kta.project_id}
+            onClick={() => props.showProjectDetails(project.id)}
+            key={project.id}
             className={style.DetailsLink}
             style={{
-              color: getFieldColor(
-                props.categories.map(
-                  cat =>
-                    cat.connections.find(con => con.id === props.kta.project_id)
-                      .project.forschungsbereich
-                )[0]
-              )
+              color: getFieldColor(project.forschungsbereich)
             }}
           >
-            {
-              props.categories.map(
-                cat =>
-                  cat.connections.find(con => con.id === props.kta.project_id)
-                    .title
-              )[0]
-            }
+            {shortenString(project.title, 60)}
           </span>
         )}
       </p>
@@ -134,7 +130,7 @@ const KtaDetailsPanel = props => {
         target="_blank"
         rel="noopener noreferrer" //got warning otherwise
       >
-        Im VIA-Wiki anschauen
+        Anzeigen im VIA-Wiki
       </a>
     </div>
   );

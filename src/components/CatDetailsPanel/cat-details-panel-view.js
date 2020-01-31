@@ -1,7 +1,7 @@
 import React from "react";
 import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, shortenString } from "../../util/utility";
 
 const CatDetailsPanel = props => {
   if (!props.catData) {
@@ -36,7 +36,8 @@ const CatDetailsPanel = props => {
             key={i + " " + kta.id}
             className={style.DetailsLink}
           >
-            {kta.title}
+            {shortenString(kta.title, 60)}
+            <br />
           </span>
         ))}
       </div>
@@ -46,7 +47,10 @@ const CatDetailsPanel = props => {
         </span>
       )}
       {props.catData.project_ids.length > 0 && (
-        <div className={style.abstractText}>
+        <div
+          className={style.abstractText}
+          style={{ minHeight: props.catData.project_ids.length * 3 + "%" }}
+        >
           {props.catData.project_ids.map(project => (
             <span
               href="#"
@@ -60,7 +64,12 @@ const CatDetailsPanel = props => {
                 )
               }}
             >
-              {props.catData.connections.find(con => con.id === project).title}
+              {shortenString(
+                props.catData.connections.find(con => con.id === project).title,
+                60
+              )}
+
+              <br />
             </span>
           ))}
         </div>
@@ -73,7 +82,7 @@ const CatDetailsPanel = props => {
         target="_blank"
         rel="noopener noreferrer" //got warning otherwise
       >
-        Im VIA-Wiki anschauen
+        Anzeigen im VIA-Wiki
       </a>
     </div>
   );

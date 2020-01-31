@@ -16,7 +16,7 @@ import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import TargetgroupBuckets from "./TargetgroupBuckets";
 
-class TimeLineView extends Component {
+export default class TimeLineView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -106,6 +106,9 @@ class TimeLineView extends Component {
   }
 
   handleCircleClick(evt, circlePoint) {
+    this.props.showYearDetails(
+      circlePoint.year + "|" + circlePoint.forschungsbereich
+    );
     let selectedProjects = circlePoint.projects;
     this.setState({
       projectsPopoverHidden: false,
@@ -117,7 +120,6 @@ class TimeLineView extends Component {
   renderProjectsHover() {
     return (
       this.state.hoveredCircle &&
-      this.state.hoveredCircle.forschungsbereich &&
       this.state.mouseLocation && (
         <HoverPopover
           width={"15em"}
@@ -132,14 +134,17 @@ class TimeLineView extends Component {
               backgroundColor: "#1c1d1f",
               margin: "0",
               fontSize: "10px",
-              color: "#e9e9e9",
+              color: "#afca0b",
+              fontWeight: "500",
               letterSpacing: "1px",
               overflow: "hidden",
               padding: "5px 10px"
             }}
           >
             <label>
-              {`${this.state.hoveredCircle.numberOfActiveProjects} aktive Projekte in ${this.state.hoveredCircle.forschungsbereich} im Jahr  ${this.state.hoveredCircle.year}`}{" "}
+              {this.state.hoveredCircle.forschungsbereich
+                ? `${this.state.hoveredCircle.year}: ${this.state.hoveredCircle.numberOfActiveProjects} aktive Projekte in ${this.state.hoveredCircle.forschungsbereich}`
+                : `${this.state.hoveredCircle.year}: ${this.state.hoveredCircle.count} Wissenstransferaktivitäten mit der Zielgruppe ${this.state.hoveredCircle.targetgroup}`}
             </label>
           </p>
         </HoverPopover>
@@ -158,17 +163,14 @@ class TimeLineView extends Component {
             height: this.props.height,
             width: this.props.width,
             position: "absolute",
-            margin: "0",
-            display: "flex",
-            flexWrap: "wrap",
             zIndex: -95
           }}
         >
           <line
             x1={this.state.hoveredCircle.x + "px"}
-            y1={this.props.height * 0.03 + "px"}
+            y1="0%"
             x2={this.state.hoveredCircle.x + "px"}
-            y2={this.props.height}
+            y2="100%"
             stroke="#afca0b"
           />
         </svg>
@@ -183,18 +185,15 @@ class TimeLineView extends Component {
           height: this.props.height,
           width: this.props.width,
           position: "absolute",
-          margin: "0",
-          display: "flex",
-          flexWrap: "wrap",
           zIndex: -99
         }}
       >
         {lines.map((line, i) => (
           <line
             x1={line + this.state.margin + "px"}
-            y1={this.props.height * 0.03 + "px"}
+            y1="0%"
             x2={line + this.state.margin + "px"}
-            y2={this.props.height}
+            y2="100%"
             stroke="rgba(65,64,65,0.6)"
             fill="none"
             key={i}
@@ -281,90 +280,109 @@ class TimeLineView extends Component {
       )
     );
     return (
-      <div style={{ marginTop: this.props.height * 0.03 }}>
-        {this.renderGridline(lines)}
-
-        {this.highlightGridLine()}
-        <div className={styles.ktasPlot}>
-          <TargetgroupBuckets
-            ktasYearBuckets={this.state.ktasYearBuckets}
-            height={this.state.height * 0.15}
-            width={this.state.width}
-            fullHeight={this.state.height}
-            xScale={year =>
-              xScale(new Date(year.toString()).setHours(0, 0, 0, 0)) +
-              this.state.margin
-            }
-            handleCircleMouseEnter={this.handleCircleMouseEnter}
-            handleCircleMouseLeave={this.handleCircleMouseLeave}
-          />
-        </div>
-        <SVGWithMargin
-          className={styles.timelineContainer}
-          contentContainerBackgroundRectClassName={
-            styles.timelineContentContainerBackgroundRect
-          }
-          contentContainerGroupClassName={styles.timelineContentContainer}
-          height={this.state.height}
-          margin={this.state.margin}
-          width={this.state.width}
+      <div
+        data-intro="In der Ansicht <b>ZEIT</b> wird eine weitere integrative Perspektive auf die Verläufe von Wissenstransferaktivitäten und Drittmittelprojekten über die Jahre dargestellt. Hierdurch können zum Beispiel Trends gefunden werden, welche in der Planung von Wissentransfer berücksichtigt werden könnten."
+        data-step="1"
+        style={{ height: "auto" }}
+      >
+        <div
+          data-intro="Durch diese Ansicht auf <b>Wissenstransferaktivitäten</b> und <b>Drittmittelprojekte</b> wird ermöglicht, beide Elemente des Museums für Naturkunde integrativ und längerfristig zu betrachten."
+          data-step="4"
         >
-          {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
-          <g
-            className={styles.xAxis}
-            ref={node => d3Select(node).call(xAxis)}
-            style={{
-              transform: `translateY(${this.state.height}px)`
-            }}
-          />
-          <g
-            className={styles.yAxis}
-            ref={node => d3Select(node).call(yAxis)}
-          />
-
-          {Object.values(this.state.dataSplitYears).map((line, i) => {
-            if (line.length === 0) {
-              return <g />;
+          {this.renderGridline(lines)}
+          {this.highlightGridLine()}
+          <div
+            data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
+            data-step="2"
+          >
+            <span className={styles.plotTitle}>
+              Wissenstransferaktivitäten <br />
+              <br />
+            </span>
+            <TargetgroupBuckets
+              ktasYearBuckets={this.state.ktasYearBuckets}
+              height={this.state.height * 0.13}
+              width={this.state.width}
+              showYearDetails={this.props.showYearDetails}
+              fullHeight={this.state.height}
+              xScale={year =>
+                xScale(new Date(year.toString()).setHours(0, 0, 0, 0)) +
+                this.state.margin
+              }
+              handleCircleMouseEnter={this.handleCircleMouseEnter}
+              handleCircleMouseLeave={this.handleCircleMouseLeave}
+            />
+          </div>
+          <SVGWithMargin
+            data-intro="Im unteren Teil werden die Anzahl und Laufzeiten von <b>Drittmittelprojekten</b> basierend auf aktuellen Informationen aus dem <a style='color: #afca0b;' href='https://via.museumfuernaturkunde.berlin/wiki/' target='_blank' rel='noopener noreferrer'>VIA-Wiki</a> und gruppiert nach <b>Forschungsgebieten</b> angezeigt. Um die Interpretation von Trend-Entwicklungen zu unterstützen, werden außerdem in grauer Schattierung bisher noch nicht integrierte Daten zu Drittmittelprojekten dargestellt."
+            data-step="3"
+            className={styles.timelineContainer}
+            contentContainerBackgroundRectClassName={
+              styles.timelineContentContainerBackgroundRect
             }
-            return (
-              <g key={line[0].forschungsbereich} className={styles.line}>
-                <path style={{ stroke: line[0].color }} d={sparkLine(line)} />
-              </g>
-            );
-          })}
+            contentContainerGroupClassName={styles.timelineContentContainer}
+            height={this.state.height}
+            margin={this.state.margin}
+            width={this.state.width}
+          >
+            <text fill="#717071" x={-this.state.margin} y="10" fontSize="130%">
+              Forschungsprojekte
+            </text>
+            {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
+            <g
+              className={styles.xAxis}
+              ref={node => d3Select(node).call(xAxis)}
+              style={{
+                transform: `translateY(${this.state.height}px)`
+              }}
+            />
+            <g
+              className={styles.yAxis}
+              ref={node => d3Select(node).call(yAxis)}
+            />
 
-          {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
-          <g className={styles.scatter}>
-            {circlePoints.map(circlePoint => (
-              <circle
-                r="5"
-                cx={circlePoint.x}
-                cy={circlePoint.y}
-                fill={circlePoint.color}
-                stroke={circlePoint.color}
-                style={{
-                  fill: circlePoint.color,
-                  pointerEvents: "fill"
-                }}
-                key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.forschungsbereich}`}
-                onClick={evt => {
-                  this.handleCircleClick(evt, circlePoint);
-                }}
-                onMouseLeave={this.handleCircleMouseLeave}
-                onMouseMove={event => {
-                  this.handleCircleMouseEnter(circlePoint, event);
-                }}
-                onMouseEnter={event => {
-                  this.handleCircleMouseEnter(circlePoint, event);
-                }}
-              />
-            ))}
-          </g>
-        </SVGWithMargin>
-        {this.renderProjectsHover()}
+            {Object.values(this.state.dataSplitYears).map((line, i) => {
+              if (line.length === 0) {
+                return <g />;
+              }
+              return (
+                <g key={line[0].forschungsbereich} className={styles.line}>
+                  <path style={{ stroke: line[0].color }} d={sparkLine(line)} />
+                </g>
+              );
+            })}
+
+            {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
+            <g className={styles.scatter}>
+              {circlePoints.map(circlePoint => (
+                <circle
+                  r="5"
+                  cx={circlePoint.x}
+                  cy={circlePoint.y}
+                  fill={circlePoint.color}
+                  stroke={circlePoint.color}
+                  style={{
+                    fill: circlePoint.color,
+                    pointerEvents: "fill"
+                  }}
+                  key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.forschungsbereich}`}
+                  onClick={evt => {
+                    this.handleCircleClick(evt, circlePoint);
+                  }}
+                  onMouseLeave={this.handleCircleMouseLeave}
+                  onMouseMove={event => {
+                    this.handleCircleMouseEnter(circlePoint, event);
+                  }}
+                  onMouseEnter={event => {
+                    this.handleCircleMouseEnter(circlePoint, event);
+                  }}
+                />
+              ))}
+            </g>
+          </SVGWithMargin>
+          {this.renderProjectsHover()}
+        </div>
       </div>
     );
   }
 }
-
-export default TimeLineView;

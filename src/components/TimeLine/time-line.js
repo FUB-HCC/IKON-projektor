@@ -2,6 +2,12 @@ import React from "react";
 import { connect } from "react-redux";
 import { getFieldColor } from "../../util/utility";
 import TimeLineView from "./time-line-view";
+import {
+  setSelectedYear,
+  setSideBarComponent,
+  deselectItems
+} from "../../store/actions/actions";
+import YearDetailsPanel from "../YearDetailsPanel/year-details-panel";
 
 class TimeLine extends React.Component {
   componentDidMount() {
@@ -36,6 +42,7 @@ class TimeLine extends React.Component {
         ref={node => {
           this.Graph = node;
         }}
+        showYearDetails={this.props.showYearDetails}
         onProjectClick={this.props.onProjectClick}
         width={this.props.width}
         height={this.props.height}
@@ -51,6 +58,16 @@ const graphColors = {
     inactive: "#989aa1",
     background: "#434058"
   }
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    showYearDetails: year => {
+      dispatch(deselectItems());
+      dispatch(setSelectedYear(year));
+      dispatch(setSideBarComponent(<YearDetailsPanel />));
+    }
+  };
 };
 
 const mapStateToProps = state => {
@@ -176,4 +193,7 @@ const processKtas = (ktas, filteredTargetgroups) => {
   return ktasYearBuckets;
 };
 
-export default connect(mapStateToProps)(TimeLine);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TimeLine);
