@@ -50,6 +50,10 @@
   stroke-width: 8;
 }
 
+.timelineWrapper{
+  position: relative;
+}
+
 .projects_list {
   padding-top: 10px;
   font-family: IBM_Plex_Mono;

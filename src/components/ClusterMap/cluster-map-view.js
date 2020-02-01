@@ -9,6 +9,7 @@ import IconExplanation from "./icon-explanation";
 import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import ClusterContoursMap from "./cluster-contours-map";
+import TouchEventHandler from "../../util/touch-event-handler";
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
 const clusterSize = scale => 0.45 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
@@ -135,14 +136,13 @@ export default class ClusterMapView extends React.Component {
     }
   }
 
-  highlightProject(project, evt, title) {
+  highlightProject(project, title) {
     this.setState({
       highlightedCats: this.findCatsByProject(project),
       highlightedLinks: this.findLinksByProject(project),
       highlightedInfs: this.findInfsByProject(project),
       highlightedProjects: [project],
-      hoverText: title,
-      mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
+      hoverText: title
     });
   }
 
@@ -369,57 +369,55 @@ export default class ClusterMapView extends React.Component {
 
               return (
                 <g key={cat.id}>
-                  <g
-                    onMouseOver={() => this.highlightCat(cat)}
-                    onMouseOut={() => {
-                      if (!this.props.selectedCat) {
-                        this.unHighlight();
-                      }
-                    }}
-                    onClick={() => {
+                  <TouchEventHandler
+                    onShortPress={() => this.highlightCat(cat)}
+                    onLongPress={() => {
                       this.highlightCat(cat);
                       this.props.showCatDetails(cat.id);
                     }}
+                    longPressThreshold={400}
                   >
-                    <circle
-                      id={`cat-${cat.id}`}
-                      r={rad}
-                      cx={x}
-                      cy={y}
-                      cursor="POINTER"
-                      stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                      fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                    />
-                    <text
-                      x={lenX}
-                      y={lenY}
-                      textAnchor="middle"
-                      fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                      fontSize={
-                        fontSizeCount(this.scale) * (isHighlighted ? 1.2 : 1)
-                      }
-                      fontWeight="700"
-                      cursor="POINTER"
-                    >
-                      {conLen}
-                    </text>
-                    <text
-                      textAnchor={anchor}
-                      fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                      fontSize={
-                        fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
-                      }
-                      fontWeight="700"
-                      cursor="POINTER"
-                      transform={`rotate(${textRotate} ${textX} ${textY})`}
-                    >
-                      {this.splitLongTitles(cat.title).map((titlePart, i) => (
-                        <tspan x={textX} y={textY + i * 10} key={titlePart}>
-                          {titlePart}
-                        </tspan>
-                      ))}
-                    </text>
-                  </g>
+                    <g>
+                      <circle
+                        id={`cat-${cat.id}`}
+                        r={rad}
+                        cx={x}
+                        cy={y}
+                        cursor="POINTER"
+                        stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                      />
+                      <text
+                        x={lenX}
+                        y={lenY}
+                        textAnchor="middle"
+                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                        fontSize={
+                          fontSizeCount(this.scale) * (isHighlighted ? 1.2 : 1)
+                        }
+                        fontWeight="700"
+                        cursor="POINTER"
+                      >
+                        {conLen}
+                      </text>
+                      <text
+                        textAnchor={anchor}
+                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                        fontSize={
+                          fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                        }
+                        fontWeight="700"
+                        cursor="POINTER"
+                        transform={`rotate(${textRotate} ${textX} ${textY})`}
+                      >
+                        {this.splitLongTitles(cat.title).map((titlePart, i) => (
+                          <tspan x={textX} y={textY + i * 10} key={titlePart}>
+                            {titlePart}
+                          </tspan>
+                        ))}
+                      </text>
+                    </g>
+                  </TouchEventHandler>
                   <g>
                     {lines.map((line, i) => (
                       <g key={i}>
@@ -527,103 +525,104 @@ export default class ClusterMapView extends React.Component {
                   });
                 }
                 return (
-                  <g
-                    key={infrastruktur.name}
-                    onMouseOver={() =>
+                  <TouchEventHandler
+                    onShortPress={() =>
                       this.highlightInfrastructure(infrastruktur)
                     }
-                    onMouseOut={() => {
-                      if (!this.props.selectedInfra) {
-                        this.unHighlight();
-                      }
-                    }}
-                    onClick={() => {
+                    onLongPress={() => {
                       this.highlightInfrastructure(infrastruktur);
                       this.props.showInfraDetails(infrastruktur.name);
                     }}
+                    longPressThreshold={400}
                   >
-                    <g>
+                    <g key={infrastruktur.name}>
                       <g>
-                        {infrastruktur.type === "collection" ? (
-                          <CollectionIcon
-                            style={{ cursor: "POINTER" }}
-                            id={`inf-${infrastruktur.name}`}
-                            x={x}
-                            y={y}
-                            width={fontSizeText(this.scale) * 1.3}
-                            heigth={fontSizeText(this.scale) * 1.3}
-                            fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                            stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                          />
-                        ) : (
-                          <InfrastructureIcon
-                            style={{ cursor: "POINTER" }}
-                            id={`inf-${infrastruktur.name}`}
-                            x={x}
-                            y={y}
-                            width={fontSizeText(this.scale) * 1.3}
-                            heigth={fontSizeText(this.scale) * 1.3}
-                            fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                            stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                          />
-                        )}
-                      </g>
-                      <text
-                        x={textX}
-                        y={textY}
-                        textAnchor={anchor}
-                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                        fontSize={
-                          fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
-                        }
-                        fontWeight="700"
-                        cursor="POINTER"
-                        transform={`rotate(${textRotate} ${textX} ${textY})`}
-                      >
-                        {this.splitLongTitles(infrastruktur.name).map(
-                          (titlePart, j) => (
-                            <tspan x={textX} y={textY + j * 10} key={titlePart}>
-                              {titlePart}
-                            </tspan>
-                          )
-                        )}
-                      </text>
-                    </g>
-                    <g>
-                      {lines.map((line, i) => (
-                        <g key={i}>
-                          <path
-                            pointerEvents="none"
-                            key={i + "a"}
-                            strokeWidth={strokeWidth(scale) * 3}
-                            fill="transparent"
-                            stroke={
-                              this.state.highlightedLinks.find(
-                                hline => hline === line[4]
-                              )
-                                ? "rgba(175, 202, 11, 0.1)"
-                                : "rgba(100,100,100,0.1)"
-                            }
-                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                          />
-                          <path
-                            pointerEvents="none"
-                            key={i + "b"}
-                            strokeWidth={strokeWidth(scale)}
-                            fill="transparent"
-                            stroke={
-                              this.state.highlightedLinks.find(
-                                hline => hline === line[4]
-                              )
-                                ? "rgba(175, 202, 11, 0.5)"
-                                : "rgba(255,255,255,0.1)"
-                            }
-                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                          />
+                        <g>
+                          {infrastruktur.type === "collection" ? (
+                            <CollectionIcon
+                              style={{ cursor: "POINTER" }}
+                              id={`inf-${infrastruktur.name}`}
+                              x={x}
+                              y={y}
+                              width={fontSizeText(this.scale) * 1.3}
+                              heigth={fontSizeText(this.scale) * 1.3}
+                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                            />
+                          ) : (
+                            <InfrastructureIcon
+                              style={{ cursor: "POINTER" }}
+                              id={`inf-${infrastruktur.name}`}
+                              x={x}
+                              y={y}
+                              width={fontSizeText(this.scale) * 1.3}
+                              heigth={fontSizeText(this.scale) * 1.3}
+                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                            />
+                          )}
                         </g>
-                      ))}
+                        <text
+                          x={textX}
+                          y={textY}
+                          textAnchor={anchor}
+                          fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                          fontSize={
+                            fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                          }
+                          fontWeight="700"
+                          cursor="POINTER"
+                          transform={`rotate(${textRotate} ${textX} ${textY})`}
+                        >
+                          {this.splitLongTitles(infrastruktur.name).map(
+                            (titlePart, j) => (
+                              <tspan
+                                x={textX}
+                                y={textY + j * 10}
+                                key={titlePart}
+                              >
+                                {titlePart}
+                              </tspan>
+                            )
+                          )}
+                        </text>
+                      </g>
+                      <g>
+                        {lines.map((line, i) => (
+                          <g key={i}>
+                            <path
+                              pointerEvents="none"
+                              key={i + "a"}
+                              strokeWidth={strokeWidth(scale) * 3}
+                              fill="transparent"
+                              stroke={
+                                this.state.highlightedLinks.find(
+                                  hline => hline === line[4]
+                                )
+                                  ? "rgba(175, 202, 11, 0.1)"
+                                  : "rgba(100,100,100,0.1)"
+                              }
+                              d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                            />
+                            <path
+                              pointerEvents="none"
+                              key={i + "b"}
+                              strokeWidth={strokeWidth(scale)}
+                              fill="transparent"
+                              stroke={
+                                this.state.highlightedLinks.find(
+                                  hline => hline === line[4]
+                                )
+                                  ? "rgba(175, 202, 11, 0.5)"
+                                  : "rgba(255,255,255,0.1)"
+                              }
+                              d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                            />
+                          </g>
+                        ))}
+                      </g>
                     </g>
-                  </g>
+                  </TouchEventHandler>
                 );
               })}
             </g>
