@@ -55,11 +55,11 @@ class GraphView extends React.Component {
         this.margins.top -
         this.margins.bottom,
       width:
-        (window.innerWidth -
-          appMargin * 2 -
-          this.margins.left -
-          this.margins.right) *
-        0.7
+        window.innerWidth -
+        appMargin * 2 -
+        this.margins.left -
+        this.margins.right -
+        380
     });
   }
 
