@@ -14,51 +14,31 @@ const getFilterSets = filters => {
           name: "Naturwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) === "Naturwissenschaften"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         },
         {
           name: "Lebenswissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) === "Lebenswissenschaften"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         },
         {
           name: "Geistes- und Sozialwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) ===
-              "Geistes- und Sozialwissenschaften"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         },
         {
           name: "Ingenieurwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) === "Ingenieurwissenschaften"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         },
         {
           name: "Sonstige",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val => fieldsIntToString(topicToField(val)) === "Sonstige"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         }
       ]
     },

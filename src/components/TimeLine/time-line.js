@@ -75,7 +75,7 @@ const mapStateToProps = state => {
     projects: state.main.filteredProjects,
     colors: graphColors,
     ktasYearBuckets: processedKtas,
-    areKtaRendered: true
+    areKtaRendered: false
   };
 };
 
