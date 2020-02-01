@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import ClusterMap from "../../components/ClusterMap/cluster-map";
-import GeoMap from "../../components/GeoMap/geo-map-view";
 import TimeGraph from "../../components/TimeLine/time-line";
 import classes from "./graph-view.module.css";
 import {
@@ -63,13 +62,6 @@ class GraphView extends React.Component {
   }
 
   render() {
-    const geoMapProps = {
-      width: this.state.width,
-      height: this.state.height,
-      institutions: this.props.institutions,
-      projects: this.props.filteredProjects
-    };
-
     const Graph = (
       <>
         <TimeGraph

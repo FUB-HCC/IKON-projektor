@@ -1,6 +1,6 @@
 .rightPanel {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     color: rgba(100, 100, 100, 0.5);
     list-style: none;
     width: 100%;
