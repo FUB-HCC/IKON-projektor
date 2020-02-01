@@ -273,7 +273,7 @@ export default class ClusterMapView extends React.Component {
           unHighlight={this.unHighlight}
         />
         <UncertaintyExplanation
-          posX={width - 110}
+          posX={width - 190}
           posY={20}
           setHighlightState={this.props.setHighlightState}
           unHighlight={this.unHighlight}
