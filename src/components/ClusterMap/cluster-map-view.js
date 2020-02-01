@@ -9,6 +9,7 @@ import IconExplanation from "./icon-explanation";
 import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import ClusterContoursMap from "./cluster-contours-map";
+import TouchEventHandler from "../../util/touch-event-handler";
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.02 * scale);
 const clusterSize = scale => 0.55 * scale;
@@ -415,7 +416,7 @@ export default class ClusterMapView extends React.Component {
                       onInfraClicked(infrastruktur.name);
                     }}
                   >
-                    <g>
+                    <g key={infrastruktur.name}>
                       <g>
                         {infrastruktur.type === "collection" ? (
                           <CollectionIcon

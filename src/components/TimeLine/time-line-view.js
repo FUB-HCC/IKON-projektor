@@ -15,6 +15,7 @@ import styles from "./time-line-view.module.css";
 import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import TargetgroupBuckets from "./TargetgroupBuckets";
+import TouchEventHandler from "../../util/touch-event-handler";
 
 export default class TimeLineView extends Component {
   constructor(props) {
@@ -105,12 +106,17 @@ export default class TimeLineView extends Component {
     });
   }
 
-  handleCircleClick(evt, circlePoint) {
+  handleCircleClick(circlePoint) {
     this.props.showYearDetails(
       circlePoint.year + "|" + circlePoint.forschungsbereich
     );
     let selectedProjects = circlePoint.projects;
     this.setState({
+      hoveredCircle: circlePoint,
+      mouseLocation: [
+        circlePoint.x + this.state.margin,
+        circlePoint.y + this.state.margin
+      ],
       projectsPopoverHidden: false,
       selectedProjects: selectedProjects,
       detailModal: false
@@ -203,10 +209,13 @@ export default class TimeLineView extends Component {
     );
   }
 
-  handleCircleMouseEnter(circlePoint, evt) {
+  handleCircleMouseEnter(circlePoint) {
     this.setState({
       hoveredCircle: circlePoint,
-      mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
+      mouseLocation: [
+        circlePoint.x + this.state.margin,
+        circlePoint.y + this.state.margin
+      ]
     });
   }
 
@@ -376,28 +385,29 @@ export default class TimeLineView extends Component {
             {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
             <g className={styles.scatter}>
               {circlePoints.map(circlePoint => (
-                <circle
-                  r="5"
-                  cx={circlePoint.x}
-                  cy={circlePoint.y}
-                  fill={circlePoint.color}
-                  stroke={circlePoint.color}
-                  style={{
-                    fill: circlePoint.color,
-                    pointerEvents: "fill"
+                <TouchEventHandler
+                  onShortPress={() => {
+                    console.log(circlePoint);
+                    this.handleCircleMouseEnter(circlePoint);
                   }}
-                  key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.forschungsbereich}`}
-                  onClick={evt => {
-                    this.handleCircleClick(evt, circlePoint);
+                  onLongPress={() => {
+                    this.handleCircleClick(circlePoint);
                   }}
-                  onMouseLeave={this.handleCircleMouseLeave}
-                  onMouseMove={event => {
-                    this.handleCircleMouseEnter(circlePoint, event);
-                  }}
-                  onMouseEnter={event => {
-                    this.handleCircleMouseEnter(circlePoint, event);
-                  }}
-                />
+                  longPressThreshold={400}
+                >
+                  <circle
+                    r="5"
+                    cx={circlePoint.x}
+                    cy={circlePoint.y}
+                    fill={circlePoint.color}
+                    stroke={circlePoint.color}
+                    style={{
+                      fill: circlePoint.color,
+                      pointerEvents: "fill"
+                    }}
+                    key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.forschungsbereich}`}
+                  />
+                </TouchEventHandler>
               ))}
             </g>
           </SVGWithMargin>
