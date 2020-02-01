@@ -1,11 +1,14 @@
 import React from "react";
 import style from "./sidebar.module.css";
 import { appMargin, menuBarHeight } from "../../App";
+import MFNLogo from "../NavigationSubpages/mfn-logo";
+import ActionButtons from "../ActionButtons/action-buttons";
+import SampleStatesList from "../SampleStatesList/sample-states-list";
 
 class SideBarView extends React.Component {
   constructor() {
     super();
-    this.state = { height: window.innerHeight - menuBarHeight - appMargin * 2 };
+    this.state = { height: window.innerHeight };
   }
 
   componentDidMount() {
@@ -21,10 +24,10 @@ class SideBarView extends React.Component {
 
   render() {
     return (
-      <div
-        className={style.sideBarWrapper}
-        style={{ height: this.state.height }}
-      >
+      <div className={style.sideBarWrapper}>
+        <MFNLogo />
+        <SampleStatesList />
+        <ActionButtons />
         {this.props.sideBarComponent}
       </div>
     );

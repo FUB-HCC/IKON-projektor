@@ -74,7 +74,7 @@ class GraphView extends React.Component {
       <>
         <TimeGraph
           id="step2"
-          height={this.state.height * 0.2 * 4}
+          height={this.state.height * 0.2 * 3}
           width={this.state.width}
         />
         <ClusterMap

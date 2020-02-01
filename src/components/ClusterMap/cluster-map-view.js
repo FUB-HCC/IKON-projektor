@@ -268,7 +268,7 @@ export default class ClusterMapView extends React.Component {
       >
         <IconExplanation
           posX={20}
-          posY={20}
+          posY={height - 140}
           setHighlightState={this.props.setHighlightState}
           unHighlight={this.unHighlight}
         />

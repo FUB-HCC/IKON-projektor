@@ -15,10 +15,10 @@ class MFNLogo extends Component {
     return (
       <div
         className={classes.leftElement}
-        style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
+        style={{ backgroundColor: "#1c1d1f", textAlign: "center", height: 160 }}
         onClick={this.startTour}
       >
-        <img src={logo} alt={"The logo should be here!"} />
+        <img src={logo} alt={"The logo should be here!"} height={130} />
       </div>
     );
   }

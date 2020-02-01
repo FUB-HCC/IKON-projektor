@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import introJs from "intro.js";
-import classes from "./navigation-subpages.module.css";
+import introJs from "../../../node_modules/intro.js/intro";
+import style from "./action-buttons.module.css";
 import { Dialog } from "@blueprintjs/core";
 import { ReactComponent as Tutorial } from "../../assets/Icon-Tutorial.svg";
 import { ReactComponent as Teilen } from "../../assets/Icon-Teilen.svg";
@@ -40,8 +40,8 @@ class ActionButtons extends Component {
       tooltipPosition: "auto",
       showStepNumbers: false,
       overlayOpacity: 0.1,
-      tooltipClass: classes.introTooltip,
-      highlightClass: classes.introPageHighlightClass,
+      tooltipClass: style.introTooltip,
+      highlightClass: style.introPageHighlightClass,
       nextLabel: "Weiter",
       prevLabel: "Zurück",
       skipLabel: "Abbrechen",
@@ -94,47 +94,48 @@ class ActionButtons extends Component {
         <Dialog
           isOpen={shareDialogIsOpen}
           onClose={this.dialogClosed}
-          className={classes.bp3Dialog}
+          className={style.bp3Dialog}
         >
-          <div className={classes.shareDialog}>
-            <div className={classes.shareHeader}>
+          <div className={style.shareDialog}>
+            <div className={style.shareHeader}>
               {" "}
               Die aktuelle Auswahl teilen:{" "}
             </div>
             <div>
               <input
                 id={"share_input"}
-                className={classes.shareInput}
+                className={style.shareInput}
                 value={window.location}
                 readOnly={true}
               />
               <span
-                className={classes.shareClipboardLink}
+                className={style.shareClipboardLink}
                 onClick={this.copiedToClipboard}
               >
                 In die Zwischenablage kopieren
               </span>
             </div>
-            <div className={classes.closeShare} onClick={this.dialogClosed}>
+            <div className={style.closeShare} onClick={this.dialogClosed}>
               Fertig
             </div>
           </div>
         </Dialog>
-        <div className={classes.rightPanel} id="step4">
-          <div className={classes.rightElement} onClick={this.startPageTour}>
-            <Tutorial className={classes.buttonIcon} /> <p>Tutorial</p>
+        <div className={style.rightPanel} id="step4">
+          <div className={style.rightElement} onClick={this.startPageTour}>
+            <Tutorial className={style.buttonIcon} /> <p>Tutorial</p>
           </div>
-          <div className={classes.rightElement} onClick={this.dialogOpened}>
-            <Teilen className={classes.buttonIcon} /> <p>Teilen</p>
+          <div className={style.rightElement} onClick={this.dialogOpened}>
+            <Teilen className={style.buttonIcon} /> <p>Teilen</p>
           </div>
 
           <div
-            className={classes.rightElement}
+            className={style.rightElement}
             onClick={() =>
               window.open("http://localhost:3000/explore?", "_self")
             }
+            style={{ marginRight: 0 }}
           >
-            <Reset className={classes.buttonIcon} /> <p>Zurücksetzen</p>
+            <Reset className={style.buttonIcon} /> <p>Zurücksetzen</p>
           </div>
         </div>
       </>
