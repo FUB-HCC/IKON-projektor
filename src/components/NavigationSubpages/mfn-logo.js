@@ -15,7 +15,7 @@ class MFNLogo extends Component {
     return (
       <div
         className={classes.leftElement}
-        style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
+        style={{ backgroundColor: "#1c1d1f", textAlign: "center", height: 160 }}
         onClick={this.startTour}
       >
         <img src={logo} alt={"Museum für Naturkunde Berlin"} />

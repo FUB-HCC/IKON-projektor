@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import GraphView from "./pages/GraphView/graph-view";
-import { default as NavigationSubpages } from "./components/NavigationSubpages/navigation-subpages";
 import Sidebar from "./components/SideBar/sidebar";
 import { ConnectedRouter } from "connected-react-router";
 import { Route, Redirect, Switch } from "react-router";
 import { history } from "./index";
 import classes from "./App.module.css";
 
-export const menuBarHeight = 65;
+export const menuBarHeight = 0;
 export const appMargin = 5;
 
 class App extends Component {

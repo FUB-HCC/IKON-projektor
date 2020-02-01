@@ -1,7 +1,6 @@
 .sideBarWrapper {
   scrollbar-color: #808080 #0e0e0e;
   width: 28vw;
-  overflow-y: auto;
   margin-right: 3px;
   padding-left: 5px;
 }

@@ -5,7 +5,7 @@ import { appMargin, menuBarHeight } from "../../App";
 class SideBarView extends React.Component {
   constructor() {
     super();
-    this.state = { height: window.innerHeight - menuBarHeight - appMargin * 2 };
+    this.state = { height: window.innerHeight };
   }
 
   componentDidMount() {

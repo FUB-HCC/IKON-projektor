@@ -18,8 +18,10 @@
   display: flex;
 }
 .leftElement {
+  margin-top: 5px;
   flex-grow: 1;
   text-decoration: none;
+  width: 100%;
   color: #aaa;
   font-size: 105%;
   text-align: left;
@@ -33,125 +35,10 @@
   color: #1c1d1f;
 }
 
-.rightPanel {
-  display: flex;
-  justify-content: space-between;
-  margin: 0px;
-  color: rgba(100, 100, 100, 0.5);
-  list-style: none;
-  width: 28vw;
-  padding-inline-start: 0px;
-}
-.rightPanel li {
-  width: 100%;
-  cursor: pointer;
-  display: flex;
-}
-.rightElement {
-  flex-basis: 33%;
-  flex-grow: 1;
-  color: #aaa;
-  fill: #aaa;
-  font-size: 90%;
-  text-align: center;
-  background: #1c1d1f;
-  cursor: pointer;
-  display: block;
-  padding-top: 5px;
-  border-right: 3px solid #0e0e0e;
-}
-.buttonIcon {
-  width: 25px;
-  height: width;
-}
-.rightElement:hover {
-  color: #afca0b;
-  fill: #afca0b;
-}
-.rightElement:hover::after {
-  opacity: 1;
-}
-
-.active {
-  background: transparent;
-  color: #afca0b;
-}
-
-.active:after {
-  opacity: 1;
-}
-
 .introTooltip {
   background-color: #1c1d1f;
   color: #e1e1e1;
   min-width: 500px;
 }
 
-.introTooltip h2,
-h3 {
-  color: #afca0b;
-}
 
-.introTooltip p {
-  cursor: pointer;
-}
-
-.introTooltip span {
-  cursor: pointer;
-  color: #afca0b;
-  position: absolute;
-  top: 90%;
-  left: 2%;
-  font-weight: 700;
-}
-
-.introHighlightClass {
-  background-color: #222;
-}
-.introPageHighlightClass {
-  background-color: #222;
-  color: #afca0b;
-}
-.shareDialog {
-  display: flex;
-  text-align: center;
-  flex-direction: column;
-  padding: 30px;
-  padding-bottom: 0;
-}
-
-.shareHeader {
-  font-size: 130%;
-  font-weight: 300;
-  color: #aaa;
-  margin-bottom: 30px;
-}
-
-.closeShare {
-  font-weight: 600;
-  font-size: 100%;
-  color: #afca0b;
-  margin-top: 30px;
-  cursor: pointer;
-}
-
-.shareInput {
-  padding: 10px;
-  font-size: 100%;
-  border: none;
-  background-color: #aaa;
-  width: 50%;
-  text-overflow: ellipsis;
-}
-.shareClipboardLink {
-  color: #afca0b;
-  margin-left: 10px;
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-.bp3Dialog {
-  background-color: #1c1d1f;
-  opacity: 0.85;
-  border-radius: 0;
-}
