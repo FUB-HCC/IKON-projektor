@@ -59,7 +59,7 @@ class GraphView extends React.Component {
         appMargin * 2 -
         this.margins.left -
         this.margins.right -
-        380
+        420
     });
   }
 
