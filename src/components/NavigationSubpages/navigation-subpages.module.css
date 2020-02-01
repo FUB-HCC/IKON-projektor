@@ -48,7 +48,7 @@
   display: flex;
 }
 .rightElement {
-  text-decoration: none;
+  flex-basis: 33%;
   flex-grow: 1;
   color: #aaa;
   fill: #aaa;

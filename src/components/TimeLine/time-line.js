@@ -47,6 +47,7 @@ class TimeLine extends React.Component {
         width={this.props.width}
         height={this.props.height}
         margin={20}
+        areKtaRendered={this.props.areKtaRendered}
       />
     );
   }
@@ -80,7 +81,8 @@ const mapStateToProps = state => {
     dataSplitFbYear: processedData,
     projects: state.main.filteredProjects,
     colors: graphColors,
-    ktasYearBuckets: processedKtas
+    ktasYearBuckets: processedKtas,
+    areKtaRendered: true
   };
 };
 
