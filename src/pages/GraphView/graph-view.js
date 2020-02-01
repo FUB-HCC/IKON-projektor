@@ -20,12 +20,7 @@ class GraphView extends React.Component {
   constructor(props) {
     super(props);
     this.margins = { top: 10, left: 10, bottom: 10, right: 10 };
-    this.state = {
-      activePopover: this.props.selectedProject ? 1 : -1
-    };
-    this.changeModalHandler = this.changeModalHandler.bind(this);
-    this.changeGraphHandler = this.changeGraphHandler.bind(this);
-    this.projectClickHandler = this.projectClickHandler.bind(this);
+    this.state = {};
   }
 
   componentDidMount() {
@@ -67,64 +62,28 @@ class GraphView extends React.Component {
     });
   }
 
-  changeModalHandler(filter) {
-    const newState = filter === this.state.activePopover ? -1 : filter;
-    this.setState({
-      activePopover: newState
-    });
-    if (newState === -1) {
-      this.props.deactivatePopover();
-    }
-  }
-
-  projectClickHandler(project, vis) {
-    this.props.activatePopover(project, vis);
-    this.changeModalHandler(1);
-  }
-
-  changeGraphHandler(graph) {
-    this.props.changeGraph(graph);
-    this.setState({
-      activePopover: -1
-    });
-  }
-
   render() {
     const geoMapProps = {
       width: this.state.width,
       height: this.state.height,
-      onProjectClick: this.projectClickHandler,
       institutions: this.props.institutions,
       projects: this.props.filteredProjects
     };
-    let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
-    switch (this.props.graph) {
-      case "0":
-        Graph = (
-          <ClusterMap
-            id="step1"
-            height={this.state.height}
-            width={this.state.width}
-            onProjectClick={this.projectClickHandler}
-          />
-        );
-        break;
-      case "1":
-        Graph = (
-          <TimeGraph
-            id="step2"
-            height={this.state.height}
-            width={this.state.width}
-            onProjectClick={this.projectClickHandler}
-          />
-        );
-        break;
-      case "2":
-        Graph = <GeoMap id="step3" {...geoMapProps} />;
-        break;
-      default:
-        break;
-    }
+
+    const Graph = (
+      <>
+        <TimeGraph
+          id="step2"
+          height={this.state.height * 0.2 * 4}
+          width={this.state.width}
+        />
+        <ClusterMap
+          id="step1"
+          height={this.state.height * 0.8}
+          width={this.state.width}
+        />
+      </>
+    );
 
     return <div className={classes.OuterDiv}>{Graph}</div>;
   }
@@ -132,9 +91,6 @@ class GraphView extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    graph: state.main.graph,
-    selectedProject: state.main.selectedProject,
-    filter: state.main.filters,
     filteredProjects: state.main.filteredProjects,
     institutions: state.main.institutions
   };

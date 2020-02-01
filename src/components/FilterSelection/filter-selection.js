@@ -14,51 +14,31 @@ const getFilterSets = filters => {
           name: "Naturwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) === "Naturwissenschaften"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         },
         {
           name: "Lebenswissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) === "Lebenswissenschaften"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         },
         {
           name: "Geistes- und Sozialwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) ===
-              "Geistes- und Sozialwissenschaften"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         },
         {
           name: "Ingenieurwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) === "Ingenieurwissenschaften"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         },
         {
           name: "Sonstige",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val => fieldsIntToString(topicToField(val)) === "Sonstige"
-          ),
-          subFilterId: "hauptthema"
+          subFilters: []
         }
       ]
     },
@@ -68,14 +48,12 @@ const getFilterSets = filters => {
         {
           name: "Zielgruppe",
           isTogglable: false,
-          subFilters: filters.targetgroups.uniqueVals,
-          subFilterId: "targetgroups"
+          subFilters: []
         },
         {
           name: "Format",
-          subFilterId: "formats",
           isTogglable: false,
-          subFilters: filters.formats.uniqueVals
+          subFilters: []
         }
       ]
     },
@@ -84,15 +62,13 @@ const getFilterSets = filters => {
       subsets: [
         {
           name: "Sammlungen",
-          subFilters: filters.collections.uniqueVals,
-          subFilterId: "collections",
-          isTogglable: false
+          isTogglable: false,
+          subFilters: []
         },
         {
           name: "Laborgeräte",
-          subFilters: filters.infrastructures.uniqueVals,
-          subFilterId: "infrastructures",
-          isTogglable: false
+          isTogglable: false,
+          subFilters: []
         }
       ]
     }
