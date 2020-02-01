@@ -261,11 +261,14 @@ export default class ClusterMapView extends React.Component {
     return (
       <div
         className={style.clusterMapWrapper}
-        style={{ width: this.props.width, height: this.props.height }}
+        style={{
+          width: this.props.width,
+          height: this.props.height
+        }}
       >
         <IconExplanation
           posX={20}
-          posY={110}
+          posY={20}
           setHighlightState={this.props.setHighlightState}
           unHighlight={this.unHighlight}
         />
