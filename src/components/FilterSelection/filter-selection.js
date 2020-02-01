@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import FilterSet from "./filter-set-view";
 import { checkboxFilterChange } from "../../store/actions/actions";
 import style from "./filter-selection.module.css";
-import { fieldsIntToString, topicToField } from "../../util/utility";
 
 const getFilterSets = filters => {
   return [

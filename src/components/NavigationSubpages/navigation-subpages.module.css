@@ -12,11 +12,6 @@
   list-style: none;
   padding-inline-start: 0px;
 }
-.leftpanel li {
-  width: 100%;
-  cursor: pointer;
-  display: flex;
-}
 .leftElement {
   margin-top: 5px;
   flex-grow: 1;
@@ -29,6 +24,7 @@
   margin-right: 5px;
   padding-top: 8px;
   padding-left: 10px;
+  cursor: pointer;
 }
 .leftElement:hover {
   background: #aaa;

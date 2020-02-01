@@ -64,13 +64,6 @@ class GraphView extends React.Component {
   }
 
   render() {
-    const geoMapProps = {
-      width: this.state.width,
-      height: this.state.height,
-      institutions: this.props.institutions,
-      projects: this.props.filteredProjects
-    };
-
     const Graph = (
       <>
         <TimeGraph
