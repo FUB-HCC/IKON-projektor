@@ -1,0 +1,39 @@
+.active {
+    background: transparent;
+    color: #afca0b;
+}
+.active:after {
+    opacity: 1;
+}
+
+.introTooltip {
+    background-color: #1c1d1f;
+    color: #e1e1e1;
+    min-width: 600px;
+}
+
+.introTooltip h2,
+h3 {
+    color: #afca0b;
+}
+
+.introTooltip p {
+    cursor: pointer;
+}
+
+.introTooltip span {
+    cursor: pointer;
+    color: #afca0b;
+    position: absolute;
+    top: 90%;
+    left: 2%;
+    font-weight: 700;
+}
+
+.introHighlightClass {
+    background-color: #222;
+}
+.introPageHighlightClass {
+    background-color: #222;
+    color: #afca0b;
+}

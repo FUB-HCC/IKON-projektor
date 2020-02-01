@@ -6,7 +6,7 @@ import classes from "./navigation-subpages.module.css";
 import { connect } from "react-redux";
 import { menuBarHeight } from "../../App";
 import { changeGraph } from "../../store/actions/actions";
-import MFNLogo from "./mfn-logo";
+import MFNLogo from "../MfnLogoTour/mfn-logo";
 import ActionButtons from "../ActionButtons/action-buttons";
 
 class NavigationSubpages extends Component {

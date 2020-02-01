@@ -1,6 +1,9 @@
 import React from "react";
 import style from "./sidebar.module.css";
 import { appMargin, menuBarHeight } from "../../App";
+import MFNLogo from "../MfnLogoTour/mfn-logo";
+import ActionButtons from "../ActionButtons/action-buttons";
+import SampleStatesList from "../SampleStatesList/sample-states-list";
 
 class SideBarView extends React.Component {
   constructor() {

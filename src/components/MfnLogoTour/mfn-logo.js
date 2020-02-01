@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import classes from "./navigation-subpages.module.css";
+import classes from "./mfn-logo.module.css";
 import logo from "../../assets/ikon_logo.png";
-import introJs from "intro.js";
+import introJs from "../../../node_modules/intro.js/intro";
 import { changeGraph } from "../../store/actions/actions";
 
 class MFNLogo extends Component {
