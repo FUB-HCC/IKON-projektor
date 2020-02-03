@@ -34,7 +34,7 @@ const TargetgroupBuckets = props => {
                         event
                       );
                     }}
-                    onMouseLeave={props.handleCircleMouseLeave}
+                    onMouseLeave={props.handleMouseLeave}
                   />
                 </g>
               );

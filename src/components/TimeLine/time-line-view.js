@@ -1,17 +1,21 @@
 import React, { Component } from "react";
 import "d3-transition";
-// Import the D3 libraries we'll be using for the spark line.
-import { extent as d3ArrayExtent } from "d3-array";
+// Import the D3 libraries we'll be using for the stacked area chart.
 import {
   scaleLinear as d3ScaleLinear,
   scaleTime as d3ScaleTime
 } from "d3-scale";
-import { line as d3Line } from "d3-shape";
+import {
+  area as d3area,
+  stack as d3stack,
+  stackOrderNone as d3StackOrderNone,
+  stackOffsetNone as d3StackOffsetNone
+} from "d3-shape";
 // Import the D3 libraries we'll use for the axes.
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
-
 import styles from "./time-line-view.module.css";
+import { getFieldColor } from "../../util/utility";
 import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import TargetgroupBuckets from "./TargetgroupBuckets";
@@ -20,106 +24,54 @@ export default class TimeLineView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSplitYears: [],
-      forschungsbereiche: [],
+      dataSplitYears: {
+        areaChartData: [{ Sonstige: 0, year: 2020, projects: [] }],
+        areaChartKeys: ["Sonstige"],
+        years: [2006]
+      },
       ktasYearBuckets: [],
-      height: props.height * 0.25,
+      height: props.height * 0.3,
       width: props.width * 0.95,
       margin: props.margin,
       firstUpdate: true,
-      projectsPopoverHidden: true,
-      detailModal: false,
       project: {},
       title: "",
       year: "",
       counter: 0,
       index: 0
     };
-    this.handleCircleClick = this.handleCircleClick.bind(this);
+    this.handleAreaClick = this.handleAreaClick.bind(this);
     this.renderProjectsHover = this.renderProjectsHover.bind(this);
-    this.handleCircleMouseLeave = this.handleCircleMouseLeave.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+    this.handleAreaMouseEnter = this.handleAreaMouseEnter.bind(this);
     this.handleCircleMouseEnter = this.handleCircleMouseEnter.bind(this);
-    this.onProjectClick = this.onProjectClick.bind(this);
-    this.closeDetailModal = this.closeDetailModal.bind(this);
-    this.zurukhBtnAction = this.zurukhBtnAction.bind(this);
-
-    // this.loadPaths = this.loadPaths.bind(this)
-  }
-  onProjectClick(project) {
-    let selectedProjects = this.state.selectedProjects;
-    let current = project.project;
-    let title = "";
-    let year = "";
-    let counter = 0;
-    let index = 0;
-    if (selectedProjects) {
-      title = selectedProjects[0].research_area;
-      selectedProjects.forEach(project => {
-        counter++;
-        year = project.start_date;
-        if (current.id === project.id) {
-          index = counter;
-        }
-      });
-    }
-    this.setState({
-      detailModal: true,
-      project: project,
-      title,
-      year,
-      counter,
-      index
-    });
-  }
-
-  closeDetailModal() {
-    this.setState({ detailModal: false });
-  }
-
-  zurukhBtnAction() {
-    this.setState({ detailModal: false, projectsPopoverHidden: false });
   }
 
   updateTimeGraph(data, height, width, margin) {
     if (!this.state.firstUpdate) {
       // workaround for first time scaling
       this.setState({
-        height: height * 0.25,
+        height: height * 0.3,
         width: width * 0.95,
         margin: margin
       });
     }
 
-    let forschungsbereiche = this.state.forschungsbereiche;
-    Object.keys(data.dataSplitFbYear).forEach(value => {
-      if (this.state.forschungsbereiche.indexOf(value) === -1)
-        forschungsbereiche = [...forschungsbereiche, value];
-    });
-
     this.setState({
       dataSplitYears: data.dataSplitFbYear,
       ktasYearBuckets: data.ktasYearBuckets,
       projectsData: data.projects,
-      forschungsbereiche: forschungsbereiche,
       firstUpdate: false
     });
   }
 
-  handleCircleClick(evt, circlePoint) {
-    this.props.showYearDetails(
-      circlePoint.year + "|" + circlePoint.forschungsbereich
-    );
-    let selectedProjects = circlePoint.projects;
-    this.setState({
-      projectsPopoverHidden: false,
-      selectedProjects: selectedProjects,
-      detailModal: false
-    });
+  handleAreaClick(year, key) {
+    this.props.showYearDetails(year + "|" + key);
   }
 
   renderProjectsHover() {
     return (
-      this.state.hoveredCircle &&
+      this.state.hoveredArea &&
       this.state.mouseLocation && (
         <HoverPopover
           width={"15em"}
@@ -142,9 +94,9 @@ export default class TimeLineView extends Component {
             }}
           >
             <label>
-              {this.state.hoveredCircle.forschungsbereich
-                ? `${this.state.hoveredCircle.year}: ${this.state.hoveredCircle.numberOfActiveProjects} aktive Projekte in ${this.state.hoveredCircle.forschungsbereich}`
-                : `${this.state.hoveredCircle.year}: ${this.state.hoveredCircle.count} Wissenstransferaktivitäten mit der Zielgruppe ${this.state.hoveredCircle.targetgroup}`}
+              {this.state.hoveredArea.forschungsbereich
+                ? `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} aktive Projekte in ${this.state.hoveredArea.forschungsbereich}`
+                : `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} Wissenstransferaktivitäten mit der Zielgruppe ${this.state.hoveredArea.targetgroup}`}
             </label>
           </p>
         </HoverPopover>
@@ -154,8 +106,8 @@ export default class TimeLineView extends Component {
 
   highlightGridLine() {
     return (
-      this.state.hoveredCircle &&
-      !this.state.hoveredCircle.forschungsbereich &&
+      this.state.hoveredArea &&
+      !this.state.hoveredArea.forschungsbereich &&
       this.state.mouseLocation && (
         <svg
           key="highlightedGridline"
@@ -163,13 +115,13 @@ export default class TimeLineView extends Component {
             height: this.props.height,
             width: this.props.width,
             position: "absolute",
-            zIndex: -95
+            zIndex: -3
           }}
         >
           <line
-            x1={this.state.hoveredCircle.x + "px"}
+            x1={this.state.hoveredArea.x + "px"}
             y1="0%"
-            x2={this.state.hoveredCircle.x + "px"}
+            x2={this.state.hoveredArea.x + "px"}
             y2="100%"
             stroke="#afca0b"
           />
@@ -185,7 +137,7 @@ export default class TimeLineView extends Component {
           height: this.props.height,
           width: this.props.width,
           position: "absolute",
-          zIndex: -99
+          zIndex: -1
         }}
       >
         {lines.map((line, i) => (
@@ -194,7 +146,7 @@ export default class TimeLineView extends Component {
             y1="0%"
             x2={line + this.state.margin + "px"}
             y2="100%"
-            stroke="rgba(65,64,65,0.6)"
+            stroke="#fff2"
             fill="none"
             key={i}
           />
@@ -203,56 +155,80 @@ export default class TimeLineView extends Component {
     );
   }
 
-  handleCircleMouseEnter(circlePoint, evt) {
+  handleAreaMouseEnter(year, area, evt) {
+    let count = area
+      ? area.find(d => d.data.year === year)[1] -
+        area.find(d => d.data.year === year)[0]
+      : 0;
     this.setState({
-      hoveredCircle: circlePoint,
+      hoveredArea: {
+        year: year,
+        forschungsbereich: area.key,
+        count: count
+      },
       mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
     });
   }
 
-  handleCircleMouseLeave(evt) {
-    this.setState({ hoveredCircle: undefined });
+  handleCircleMouseEnter(circle, evt) {
+    this.setState({
+      hoveredArea: circle,
+      mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
+    });
+  }
+
+  handleMouseLeave(evt) {
+    this.setState({ hoveredArea: undefined });
   }
 
   render() {
-    let array = [].concat.apply([], Object.values(this.state.dataSplitYears));
+    let stack = d3stack()
+      .keys(this.state.dataSplitYears.areaChartKeys)
+      .order(d3StackOrderNone)
+      .offset(d3StackOffsetNone);
+    let stackedData = stack(this.state.dataSplitYears.areaChartData);
 
-    const selectY = datum => datum.numberOfActiveProjects;
-    const selectX = datum =>
-      new Date(datum.year.toString()).setHours(0, 0, 0, 0);
+    let color = d => {
+      return getFieldColor(d.key);
+    };
 
-    // Since this is "time series" visualization, our x axis should have a time scale.
-    // Our x domain will be the extent ([min, max]) of x values (Dates) in our data set.
-    // Our x range will be from x=0 to x=width.
-    const xScale = d3ScaleTime()
-      .domain(d3ArrayExtent(array, selectX))
-      .range([0, this.state.width]);
+    let maxProjects = Math.max(
+      ...this.state.dataSplitYears.areaChartData
+        .map(year => year.projects.length)
+        .flat()
+    );
 
-    // Our y axis should just have a linear scale.
-    // Our y domain will be the extent of y values (numbers) in our data set.
-    const yScale = d3ScaleLinear()
-      .domain(d3ArrayExtent(array, selectY))
-      .range([this.state.height, 0]);
+    let x = d3ScaleTime()
+      .range([0, this.state.width])
+      .domain([
+        Math.min(...this.state.dataSplitYears.years),
+        Math.max(...this.state.dataSplitYears.years)
+      ]);
+
+    let y = d3ScaleLinear()
+      .range([20, this.state.height])
+      .domain([maxProjects, 0]);
 
     // Add an axis for our x scale which has half as many ticks as there are rows in the data set.
     const xAxis = d3AxisBottom()
-      .scale(xScale)
-      .ticks(array.length / 4);
+      .scale(x)
+      .ticks(this.state.dataSplitYears.years.length / 4);
 
     // Add an axis for our y scale that has 3 ticks
     const yAxis = d3AxisLeft()
-      .scale(yScale)
+      .scale(y)
       .ticks(3);
 
-    // These two functions select the scaled x and y values (respectively) of our data.
-    const selectScaledX = datum => xScale(selectX(datum));
-    const selectScaledY = datum => yScale(selectY(datum));
-
-    // Create a d3Line factory for our scales.
-    const sparkLine = d3Line()
-      .x(selectScaledX)
-      .y(selectScaledY);
-
+    const area = d3area()
+      .x(d => x(d.data.year))
+      .y0(d => y(d[0]))
+      .y1(d => y(d[1]));
+    const yearsPosX = this.state.dataSplitYears.years.map(year => x(year));
+    const hoveredYear = posX => {
+      return this.state.dataSplitYears.years[
+        yearsPosX.findIndex(x => x >= posX)
+      ];
+    };
     //all years with wta in targetgroup in one array
     const ktasYears = [].concat.apply(
       [],
@@ -260,25 +236,8 @@ export default class TimeLineView extends Component {
     );
 
     //getting all distinct years that have targetgroup Bucket
-    const lines = [
-      ...new Set(
-        ktasYears.map(line =>
-          xScale(new Date(line.year.toString()).setHours(0, 0, 0, 0))
-        )
-      )
-    ];
-    // map our data to scaled points.
-    const circlePoints = array.map(datum =>
-      Object.assign(
-        {
-          x: selectScaledX(datum),
-          y: selectScaledY(datum),
-          color: datum.color,
-          forschungsbereich: datum.forschungsbereich
-        },
-        datum
-      )
-    );
+    const lines = [...new Set(ktasYears.map(line => x(line.year)))];
+
     return (
       <div
         data-intro="In der Ansicht <b>ZEIT</b> wird eine weitere integrative Perspektive auf die Verläufe von Wissenstransferaktivitäten und Drittmittelprojekten über die Jahre dargestellt. Hierdurch können zum Beispiel Trends gefunden werden, welche in der Planung von Wissentransfer berücksichtigt werden könnten."
@@ -305,12 +264,9 @@ export default class TimeLineView extends Component {
               width={this.state.width}
               showYearDetails={this.props.showYearDetails}
               fullHeight={this.state.height}
-              xScale={year =>
-                xScale(new Date(year.toString()).setHours(0, 0, 0, 0)) +
-                this.state.margin
-              }
+              xScale={year => x(year) + this.state.margin}
               handleCircleMouseEnter={this.handleCircleMouseEnter}
-              handleCircleMouseLeave={this.handleCircleMouseLeave}
+              handleMouseLeave={this.handleMouseLeave}
             />
           </div>
           <SVGWithMargin
@@ -341,44 +297,31 @@ export default class TimeLineView extends Component {
               ref={node => d3Select(node).call(yAxis)}
             />
 
-            {Object.values(this.state.dataSplitYears).map((line, i) => {
-              if (line.length === 0) {
-                return <g />;
-              }
-              return (
-                <g key={line[0].forschungsbereich} className={styles.line}>
-                  <path style={{ stroke: line[0].color }} d={sparkLine(line)} />
-                </g>
-              );
-            })}
-
-            {/* a group for our scatter plot, and render a circle at each `circlePoint`. */}
-            <g className={styles.scatter}>
-              {circlePoints.map(circlePoint => (
-                <circle
-                  r="5"
-                  cx={circlePoint.x}
-                  cy={circlePoint.y}
-                  fill={circlePoint.color}
-                  stroke={circlePoint.color}
-                  style={{
-                    fill: circlePoint.color,
-                    pointerEvents: "fill"
-                  }}
-                  key={`circle-${circlePoint.x},${circlePoint.y},${circlePoint.forschungsbereich}`}
-                  onClick={evt => {
-                    this.handleCircleClick(evt, circlePoint);
-                  }}
-                  onMouseLeave={this.handleCircleMouseLeave}
-                  onMouseMove={event => {
-                    this.handleCircleMouseEnter(circlePoint, event);
-                  }}
-                  onMouseEnter={event => {
-                    this.handleCircleMouseEnter(circlePoint, event);
-                  }}
-                />
-              ))}
-            </g>
+            {stackedData &&
+              stackedData.map((d, i) => {
+                return (
+                  <g className={styles.area} key={d.key}>
+                    <path
+                      style={{ fill: color(d) }}
+                      d={area(d)}
+                      onClick={event =>
+                        this.handleAreaClick(
+                          hoveredYear(event.nativeEvent.clientX),
+                          d.key
+                        )
+                      }
+                      onMouseEnter={event =>
+                        this.handleAreaMouseEnter(
+                          hoveredYear(event.nativeEvent.clientX),
+                          d,
+                          event
+                        )
+                      }
+                      onMouseLeave={event => this.handleMouseLeave(event)}
+                    />
+                  </g>
+                );
+              })}
           </SVGWithMargin>
           {this.renderProjectsHover()}
         </div>
