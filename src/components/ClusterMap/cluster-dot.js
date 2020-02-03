@@ -48,9 +48,9 @@ export default class ClusterDot extends React.Component {
         }}
         transform={
           "translate(" +
-          (x - (this.props.radius / 30) * scale) +
+          (x - (this.props.radius / 24) * scale) +
           "," +
-          (y - (this.props.radius / 30) * scale) +
+          (y - (this.props.radius / 24) * scale) +
           ")"
         }
       >
@@ -63,8 +63,8 @@ export default class ClusterDot extends React.Component {
         {isHighlighted ? (
           <g>
             <SelectedIcon
-              width={(this.props.radius / 15) * scale}
-              height={(this.props.radius / 15) * scale}
+              width={(this.props.radius / 12) * scale}
+              height={(this.props.radius / 12) * scale}
               version="1.1"
               xmlns="http://www.w3.org/2000/svg"
               x="0px"
@@ -77,8 +77,8 @@ export default class ClusterDot extends React.Component {
           </g>
         ) : (
           <UnselectedIcon
-            width={(this.props.radius / 15) * scale}
-            height={(this.props.radius / 15) * scale}
+            width={(this.props.radius / 12) * scale}
+            height={(this.props.radius / 12) * scale}
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"
             x="0px"
