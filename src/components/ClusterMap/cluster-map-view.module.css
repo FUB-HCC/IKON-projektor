@@ -6,6 +6,7 @@
 
 .tooltipIcon:hover {
   fill: #afca0b;
+  cursor: pointer;
 }
 .legendRow:hover {
   color: #afca0b;
@@ -17,4 +18,5 @@
   margin-bottom: 10px;
   stroke: #6b6b6b;
   fill: #6b6b6b;
+  color: #6b6b6b;
 }

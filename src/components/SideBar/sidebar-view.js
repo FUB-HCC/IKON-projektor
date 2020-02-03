@@ -24,6 +24,7 @@ class SideBarView extends React.Component {
       <div
         className={style.sideBarWrapper}
         style={{ height: this.state.height }}
+        id="detailsPanelID"
       >
         {this.props.sideBarComponent}
       </div>

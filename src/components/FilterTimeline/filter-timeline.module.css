@@ -1,15 +1,15 @@
 .filterTimelineWrapper {
   background-color: #1c1d1f;
   padding-left: 2%;
-  flex-grow: 1;
-  margin-top: 5px;
+  border-top: 5px solid #0e0e0e;
+  font-family: TradeGothicLTStd, sans-serif;
 }
 .filterTimelineTitle {
   border-bottom: 1px solid #aaa;
   padding-bottom: 5px;
-  padding-top: 5px;
+  padding-top: 10px;
   margin-bottom: 15px;
-  width: 100%;
+  width: 98%;
 }
 .titleText {
   align-items: center;
@@ -17,13 +17,18 @@
   width: 100%;
   height: 25px;
   color: #aaa;
-  font-size: 22px;
-  font-weight: 100;
+  font-size: 95%;
+  font-weight: bolder;
+  text-transform: uppercase;
 }
 .filterTimelineSlider {
-  padding: 25px;
+  padding: 30px;
   color: #fff;
 }
+.RangeSliderStyle .bp3-slider-handle {
+  color: red;
+}
 
-.RangeSliderStyle {
+.RangeSliderStyle .bp3-slider-track .bp3-slider-progress {
+  background-color: #aaa;
 }

@@ -10,14 +10,15 @@ const IconExplanation = props => {
         position: "absolute",
         left: props.posX + "px",
         top: props.posY + "px",
-        height: "130px",
-        width: "15%",
+        height: "auto",
+        width: "auto",
         backgroundColor: "transparent",
         zIndex: 99,
-        color: "#6B6B6B",
         fontFamily: "IBM_Plex_Mono",
         fontSize: "80%"
       }}
+      data-intro="Die interdisziplinäre Perspektive auf Drittmittelforschung wird durch den äußeren Ring bedeutsam erweitert. Projekte werden hier, basierend auf Informationen aus dem VIA-Wiki, mit Wissenstransferaktivitäten und Infrastrukturen wie Sammlungen und Laborgeräten verknüpft. Hierdurch können einerseits Projekte weitergehend nach Gemeinsamkeiten eingeordnet werden, andererseits Potenziale für Wissenstransfer basierend auf Gemeinsamkeiten entdeckt werden."
+      data-step="3"
     >
       <p
         style={{ display: "flex", cursor: "POINTER" }}
@@ -27,13 +28,13 @@ const IconExplanation = props => {
         onMouseEnter={() => props.setHighlightState("categories")}
         onMouseLeave={() => {
           props.unHighlight();
-          props.setHighlightState([]);
+          props.setHighlightState();
         }}
       >
-        <svg width="20" height="20">
-          <circle r="10" cx={10} cy={10} className={style.tooltipIcon} />
+        <svg width="20" height="20" style={{ margin: "0px 5px" }}>
+          <circle r="10" cx={10} cy={10} />
         </svg>
-        <span style={{ marginLeft: "10px" }}>Wissenstransferaktivitäten</span>
+        <span> Wissenstransferaktivitäten</span>
       </p>
       <p
         style={{ display: "flex", cursor: "POINTER" }}
@@ -43,15 +44,16 @@ const IconExplanation = props => {
         onMouseEnter={() => props.setHighlightState("collection")}
         onMouseLeave={() => {
           props.unHighlight();
-          props.setHighlightState([]);
+          props.setHighlightState();
         }}
       >
         <CollectionIcon
           className={style.tooltipIcon}
           width="20px"
           heigth="20px"
+          style={{ margin: "0px 5px" }}
         />
-        <span style={{ marginLeft: "10px" }}>Sammlungen</span>
+        <span>Sammlungen</span>
       </p>
       <p
         style={{ display: "flex", cursor: "POINTER" }}
@@ -61,17 +63,16 @@ const IconExplanation = props => {
         onMouseEnter={() => props.setHighlightState("infrastructure")}
         onMouseLeave={() => {
           props.unHighlight();
-          props.setHighlightState([]);
+          props.setHighlightState();
         }}
       >
         <InfrastructureIcon
-          className={style.tooltipIcon}
           width="20px"
           heigth="20px"
+          style={{ margin: "0px 5px" }}
+          className={style.tooltipIcon}
         />
-        <span style={{ marginLeft: "10px" }}>
-          Laborgeräte und Infrastruktur
-        </span>
+        <span>Laborgeräte und Infrastruktur</span>
       </p>
     </div>
   );
