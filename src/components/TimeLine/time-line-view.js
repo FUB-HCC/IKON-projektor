@@ -30,8 +30,8 @@ export default class TimeLineView extends Component {
         years: [2006]
       },
       ktasYearBuckets: [],
-      height: props.height * 0.3,
-      width: props.width * 0.95,
+      height: props.height,
+      width: props.width,
       margin: props.margin,
       firstUpdate: true,
       project: {},
@@ -51,8 +51,8 @@ export default class TimeLineView extends Component {
     if (!this.state.firstUpdate) {
       // workaround for first time scaling
       this.setState({
-        height: height * 0.3,
-        width: width * 0.95,
+        height: height,
+        width: width,
         margin: margin
       });
     }
@@ -104,7 +104,7 @@ export default class TimeLineView extends Component {
     );
   }
 
-  highlightGridLine() {
+  highlightGridLine(height) {
     return (
       this.state.hoveredArea &&
       !this.state.hoveredArea.forschungsbereich &&
@@ -112,7 +112,7 @@ export default class TimeLineView extends Component {
         <svg
           key="highlightedGridline"
           style={{
-            height: this.props.height,
+            height: height * 0.9,
             width: this.props.width,
             position: "absolute",
             zIndex: -3
@@ -129,12 +129,12 @@ export default class TimeLineView extends Component {
       )
     );
   }
-  renderGridline(lines) {
+  renderGridline(lines, height) {
     return (
       <svg
         key="gridline"
         style={{
-          height: this.props.height,
+          height: this.props.height * 0.9,
           width: this.props.width,
           position: "absolute",
           zIndex: -1
@@ -143,7 +143,7 @@ export default class TimeLineView extends Component {
         {lines.map((line, i) => (
           <line
             x1={line + this.state.margin + "px"}
-            y1="0%"
+            y1="0px"
             x2={line + this.state.margin + "px"}
             y2="100%"
             stroke="#fff2"
@@ -191,28 +191,29 @@ export default class TimeLineView extends Component {
     let color = d => {
       return getFieldColor(d.key);
     };
-
+    let toYear = int => {
+      return new Date(int.toString()).setHours(0, 0, 0, 0);
+    };
     let maxProjects = Math.max(
       ...this.state.dataSplitYears.areaChartData
         .map(year => year.projects.length)
         .flat()
     );
+    let minYear = toYear(Math.min(...this.state.dataSplitYears.years));
+    let maxYear = toYear(Math.max(...this.state.dataSplitYears.years));
 
     let x = d3ScaleTime()
       .range([0, this.state.width])
-      .domain([
-        Math.min(...this.state.dataSplitYears.years),
-        Math.max(...this.state.dataSplitYears.years)
-      ]);
+      .domain([minYear, maxYear]);
 
     let y = d3ScaleLinear()
-      .range([20, this.state.height])
+      .range([20, this.state.height * 0.3])
       .domain([maxProjects, 0]);
 
     // Add an axis for our x scale which has half as many ticks as there are rows in the data set.
     const xAxis = d3AxisBottom()
       .scale(x)
-      .ticks(this.state.dataSplitYears.years.length / 4);
+      .ticks(this.state.dataSplitYears.years.length / 2);
 
     // Add an axis for our y scale that has 3 ticks
     const yAxis = d3AxisLeft()
@@ -220,10 +221,12 @@ export default class TimeLineView extends Component {
       .ticks(3);
 
     const area = d3area()
-      .x(d => x(d.data.year))
+      .x(d => x(toYear(d.data.year)))
       .y0(d => y(d[0]))
       .y1(d => y(d[1]));
-    const yearsPosX = this.state.dataSplitYears.years.map(year => x(year));
+    const yearsPosX = this.state.dataSplitYears.years.map(year =>
+      x(toYear(year))
+    );
     const hoveredYear = posX => {
       return this.state.dataSplitYears.years[
         yearsPosX.findIndex(x => x >= posX)
@@ -236,35 +239,37 @@ export default class TimeLineView extends Component {
     );
 
     //getting all distinct years that have targetgroup Bucket
-    const lines = [...new Set(ktasYears.map(line => x(line.year)))];
+    const lines = [...new Set(ktasYears.map(line => x(toYear(line.year))))];
 
     return (
       <div
         data-intro="In der Ansicht <b>ZEIT</b> wird eine weitere integrative Perspektive auf die Verläufe von Wissenstransferaktivitäten und Drittmittelprojekten über die Jahre dargestellt. Hierdurch können zum Beispiel Trends gefunden werden, welche in der Planung von Wissentransfer berücksichtigt werden könnten."
         data-step="1"
-        style={{ height: "auto" }}
+        style={{ height: "auto", marginLeft: this.state.margin * 0.8 }}
       >
         <div
           data-intro="Durch diese Ansicht auf <b>Wissenstransferaktivitäten</b> und <b>Drittmittelprojekte</b> wird ermöglicht, beide Elemente des Museums für Naturkunde integrativ und längerfristig zu betrachten."
           data-step="4"
         >
-          {this.renderGridline(lines)}
-          {this.highlightGridLine()}
           <div
             data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
             data-step="2"
+            className={styles.ktaBucketsWrapper}
+            style={{ height: this.state.height * 0.6 }}
           >
+            {this.renderGridline(lines, this.state.height)}
+            {this.highlightGridLine(this.state.height)}
             <span className={styles.plotTitle}>
               Wissenstransferaktivitäten <br />
               <br />
             </span>
             <TargetgroupBuckets
               ktasYearBuckets={this.state.ktasYearBuckets}
-              height={this.state.height * 0.13}
+              height={this.state.height * 0.03}
               width={this.state.width}
               showYearDetails={this.props.showYearDetails}
               fullHeight={this.state.height}
-              xScale={year => x(year) + this.state.margin}
+              xScale={year => x(toYear(year)) + this.state.margin}
               handleCircleMouseEnter={this.handleCircleMouseEnter}
               handleMouseLeave={this.handleMouseLeave}
             />
@@ -277,7 +282,7 @@ export default class TimeLineView extends Component {
               styles.timelineContentContainerBackgroundRect
             }
             contentContainerGroupClassName={styles.timelineContentContainer}
-            height={this.state.height}
+            height={this.state.height * 0.3}
             margin={this.state.margin}
             width={this.state.width}
           >
@@ -289,7 +294,7 @@ export default class TimeLineView extends Component {
               className={styles.xAxis}
               ref={node => d3Select(node).call(xAxis)}
               style={{
-                transform: `translateY(${this.state.height}px)`
+                transform: `translateY(${this.state.height * 0.3}px)`
               }}
             />
             <g
