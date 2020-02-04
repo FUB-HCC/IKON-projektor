@@ -30,7 +30,8 @@ export default class ClusterMapView extends React.Component {
       highlightedLinks: [],
       highlightedProjects: [],
       highlightedInfs: [],
-      uncertaintyHighlight: false
+      uncertaintyHighlight: false,
+      showUncertainty: false
     };
 
     this.highlightCat = this.highlightCat.bind(this);
@@ -277,10 +278,16 @@ export default class ClusterMapView extends React.Component {
           unHighlight={this.unHighlight}
         />
         <UncertaintyExplanation
-          posX={width - 110}
+          posX={width - 170}
           posY={20}
           setHighlightState={this.props.setHighlightState}
           unHighlight={this.unHighlight}
+          toggleUncertainty={() => {
+            this.setState({
+              showUncertainty: !this.state.showUncertainty
+            });
+          }}
+          showUncertainty={this.state.showUncertainty}
         />
         <svg
           className="viz-3"
@@ -288,16 +295,18 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
-          <ClusterContoursMap
-            width={this.props.width}
-            height={this.props.height}
-            topography={this.props.topography}
-            contoursSize={contoursSize}
-            clusterSize={clusterSize}
-            clusterX={clusterPosX}
-            clusterY={clusterPosY}
-            isHighlighted={this.state.uncertaintyHighlight}
-          />
+          {this.state.showUncertainty && (
+            <ClusterContoursMap
+              width={this.props.width}
+              height={this.props.height}
+              topography={this.props.topography}
+              contoursSize={contoursSize}
+              clusterSize={clusterSize}
+              clusterX={clusterPosX}
+              clusterY={clusterPosY}
+              isHighlighted={this.state.uncertaintyHighlight}
+            />
+          )}
           <g>
             {sortedTargetgroups.map((cat, i) => {
               const startAngle = each * i - sortedTargetgroups.length * each;
@@ -429,28 +438,16 @@ export default class ClusterMapView extends React.Component {
                       <g key={i}>
                         <path
                           pointerEvents="none"
-                          key={i + "a"}
-                          strokeWidth={strokeWidth(scale) * 3}
-                          fill="transparent"
-                          stroke={
-                            this.state.highlightedLinks.find(
-                              hline => hline === line[4]
-                            )
-                              ? "rgba(175, 202, 11, 0.1)"
-                              : "rgba(100,100,100,0.1)"
-                          }
-                          d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                        />
-                        <path
-                          pointerEvents="none"
                           key={i + "b"}
-                          strokeWidth={strokeWidth(scale)}
+                          strokeWidth={strokeWidth(scale) * 2}
                           fill="transparent"
                           stroke={
                             this.state.highlightedLinks.find(
                               hline => hline === line[4]
                             )
                               ? "rgba(175, 202, 11, 0.5)"
+                              : this.state.showUncertainty
+                              ? "transparent"
                               : "rgba(255,255,255,0.1)"
                           }
                           d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
@@ -599,28 +596,16 @@ export default class ClusterMapView extends React.Component {
                         <g key={i}>
                           <path
                             pointerEvents="none"
-                            key={i + "a"}
-                            strokeWidth={strokeWidth(scale) * 3}
-                            fill="transparent"
-                            stroke={
-                              this.state.highlightedLinks.find(
-                                hline => hline === line[4]
-                              )
-                                ? "rgba(175, 202, 11, 0.1)"
-                                : "rgba(100,100,100,0.1)"
-                            }
-                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                          />
-                          <path
-                            pointerEvents="none"
                             key={i + "b"}
-                            strokeWidth={strokeWidth(scale)}
+                            strokeWidth={strokeWidth(scale) * 2}
                             fill="transparent"
                             stroke={
                               this.state.highlightedLinks.find(
                                 hline => hline === line[4]
                               )
                                 ? "rgba(175, 202, 11, 0.5)"
+                                : this.state.showUncertainty
+                                ? "transparent"
                                 : "rgba(255,255,255,0.1)"
                             }
                             d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
