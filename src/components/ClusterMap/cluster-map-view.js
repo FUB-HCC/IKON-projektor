@@ -13,8 +13,8 @@ const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
 const clusterSize = scale => 0.45 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
-const fontSizeText = scale => 0.014 * scale;
-const fontSizeCount = scale => 0.01 * scale;
+const fontSizeText = scale => 0.012 * scale;
+const fontSizeCount = scale => 0.009 * scale;
 const textOffsetFromArc = scale => 0.04 * scale;
 const countOffsetFromArc = scale => 0.025 * scale;
 const connectionOffsetFromArc = scale => -0.02 * scale;
@@ -193,11 +193,15 @@ export default class ClusterMapView extends React.Component {
     var words = title.split(/[\s-]+/);
     var newtext = [words[0]];
     for (let i = 1; i < words.length; i++) {
-      if (newtext[newtext.length - 1].length < 16) {
+      if (newtext[newtext.length - 1].length <= 12) {
         newtext[newtext.length - 1] += " " + words[i];
       } else {
         newtext.push(words[i]);
       }
+    }
+    if (newtext.length > 2) {
+      newtext[1] += "...";
+      newtext[2] = "";
     }
     return newtext;
   };
@@ -396,7 +400,7 @@ export default class ClusterMapView extends React.Component {
                       textAnchor="middle"
                       fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                       fontSize={
-                        fontSizeCount(this.scale) * (isHighlighted ? 1.2 : 1)
+                        fontSizeCount(this.scale) * (isHighlighted ? 1.3 : 1)
                       }
                       fontWeight="700"
                       cursor="POINTER"
@@ -407,7 +411,7 @@ export default class ClusterMapView extends React.Component {
                       textAnchor={anchor}
                       fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                       fontSize={
-                        fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                        fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
                       }
                       fontWeight="700"
                       cursor="POINTER"
@@ -571,10 +575,11 @@ export default class ClusterMapView extends React.Component {
                       <text
                         x={textX}
                         y={textY}
+                        stroke={"none"}
                         textAnchor={anchor}
                         fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                         fontSize={
-                          fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                          fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
                         }
                         fontWeight="700"
                         cursor="POINTER"

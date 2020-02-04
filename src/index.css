@@ -69,6 +69,8 @@ body {
 .bp3-slider-label {
   background-color: #1c1d1f !important;
   margin-left: 0px !important;
+  color: #717071;
+  font-family: IBM_Plex_Mono;
 }
 
 .bp3-slider-handle > .bp3-slider-label {

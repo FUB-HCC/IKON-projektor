@@ -72,7 +72,7 @@ class FilterSet extends Component {
                     showCheckbox={true}
                     color={getFieldColor(subset.name)}
                     iconSize="16px"
-                    iconMargin="16"
+                    iconMargin="11"
                   />
                 </div>
               ))}
