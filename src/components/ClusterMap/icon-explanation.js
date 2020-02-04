@@ -1,4 +1,5 @@
 import React from "react";
+import { ReactComponent as WtaIcon } from "../../assets/wta.svg";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 import style from "./cluster-map-view.module.css";
@@ -31,9 +32,7 @@ const IconExplanation = props => {
           props.setHighlightState();
         }}
       >
-        <svg width="20" height="20" style={{ margin: "0px 5px" }}>
-          <circle r="10" cx={10} cy={10} />
-        </svg>
+        <WtaIcon className={style.tooltipIcon} />
         <span> Wissenstransferaktivitäten</span>
       </p>
       <p
@@ -47,12 +46,7 @@ const IconExplanation = props => {
           props.setHighlightState();
         }}
       >
-        <CollectionIcon
-          className={style.tooltipIcon}
-          width="20px"
-          heigth="20px"
-          style={{ margin: "0px 5px" }}
-        />
+        <CollectionIcon className={style.tooltipIcon} />
         <span>Sammlungen</span>
       </p>
       <p
@@ -66,12 +60,7 @@ const IconExplanation = props => {
           props.setHighlightState();
         }}
       >
-        <InfrastructureIcon
-          width="20px"
-          heigth="20px"
-          style={{ margin: "0px 5px" }}
-          className={style.tooltipIcon}
-        />
+        <InfrastructureIcon className={style.tooltipIcon} />
         <span>Laborgeräte und Infrastruktur</span>
       </p>
     </div>

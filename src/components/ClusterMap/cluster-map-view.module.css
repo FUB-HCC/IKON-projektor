@@ -3,7 +3,14 @@
   width: 100%;
   position: relative;
 }
-
+.tooltipIcon {
+  width: 20px;
+  heigth: 20px;
+  margin: 0px;
+  margin-right: 5px;
+  position: relative;
+  bottom: 2px;
+}
 .tooltipIcon:hover {
   fill: #afca0b;
   cursor: pointer;
