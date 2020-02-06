@@ -104,7 +104,7 @@ export default class TimeLineView extends Component {
     );
   }
 
-  highlightGridLine(height) {
+  highlightGridLine() {
     return (
       this.state.hoveredArea &&
       !this.state.hoveredArea.forschungsbereich &&
@@ -112,7 +112,7 @@ export default class TimeLineView extends Component {
         <svg
           key="highlightedGridline"
           style={{
-            height: height * 0.9,
+            height: this.props.height * 0.9,
             width: this.props.width,
             position: "absolute",
             zIndex: -3
@@ -129,7 +129,7 @@ export default class TimeLineView extends Component {
       )
     );
   }
-  renderGridline(lines, height) {
+  renderGridline(lines) {
     return (
       <svg
         key="gridline"
@@ -156,7 +156,7 @@ export default class TimeLineView extends Component {
   }
 
   handleAreaMouseEnter(year, area, evt) {
-    let count = area
+    const count = area
       ? area.find(d => d.data.year === year)[1] -
         area.find(d => d.data.year === year)[0]
       : 0;
@@ -182,32 +182,34 @@ export default class TimeLineView extends Component {
   }
 
   render() {
-    let stack = d3stack()
+    const stackedAreaHeight = this.state.height * 0.4;
+    const targetgroupsHeight = this.state.height * 0.5;
+    const stack = d3stack()
       .keys(this.state.dataSplitYears.areaChartKeys)
       .order(d3StackOrderNone)
       .offset(d3StackOffsetNone);
-    let stackedData = stack(this.state.dataSplitYears.areaChartData);
+    const stackedData = stack(this.state.dataSplitYears.areaChartData);
 
-    let color = d => {
+    const color = d => {
       return getFieldColor(d.key);
     };
-    let toYear = int => {
+    const toYear = int => {
       return new Date(int.toString()).setHours(0, 0, 0, 0);
     };
-    let maxProjects = Math.max(
+    const maxProjects = Math.max(
       ...this.state.dataSplitYears.areaChartData
         .map(year => year.projects.length)
         .flat()
     );
-    let minYear = toYear(Math.min(...this.state.dataSplitYears.years));
-    let maxYear = toYear(Math.max(...this.state.dataSplitYears.years));
+    const minYear = toYear(Math.min(...this.state.dataSplitYears.years));
+    const maxYear = toYear(Math.max(...this.state.dataSplitYears.years));
 
-    let x = d3ScaleTime()
+    const x = d3ScaleTime()
       .range([0, this.state.width])
       .domain([minYear, maxYear]);
 
-    let y = d3ScaleLinear()
-      .range([20, this.state.height * 0.3])
+    const y = d3ScaleLinear()
+      .range([20, stackedAreaHeight])
       .domain([maxProjects, 0]);
 
     // Add an axis for our x scale which has half as many ticks as there are rows in the data set.
@@ -255,10 +257,10 @@ export default class TimeLineView extends Component {
             data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
             data-step="2"
             className={styles.ktaBucketsWrapper}
-            style={{ height: this.state.height * 0.6 }}
+            style={{ height: targetgroupsHeight }}
           >
-            {this.renderGridline(lines, this.state.height)}
-            {this.highlightGridLine(this.state.height)}
+            {this.renderGridline(lines)}
+            {this.highlightGridLine()}
             <span className={styles.plotTitle}>
               Wissenstransferaktivitäten <br />
               <br />
@@ -282,7 +284,7 @@ export default class TimeLineView extends Component {
               styles.timelineContentContainerBackgroundRect
             }
             contentContainerGroupClassName={styles.timelineContentContainer}
-            height={this.state.height * 0.3}
+            height={stackedAreaHeight}
             margin={this.state.margin}
             width={this.state.width}
           >
@@ -294,7 +296,7 @@ export default class TimeLineView extends Component {
               className={styles.xAxis}
               ref={node => d3Select(node).call(xAxis)}
               style={{
-                transform: `translateY(${this.state.height * 0.3}px)`
+                transform: `translateY(${stackedAreaHeight}px)`
               }}
             />
             <g
