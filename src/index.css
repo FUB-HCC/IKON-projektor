@@ -53,17 +53,17 @@ body {
   font-family: TradeGothicLTStd, sans-serif !important; /* project default */
 }
 .bp3-slider-progress {
-  background-color: rgba(255, 255, 255, 0.2) !important;
+  background-color: #717071 !important;
 }
 .bp3-intent-primary {
-  background-color: #fff !important;
+  background-color: #aaa !important;
 }
 
 .bp3-slider-handle.bp3-start,
 .bp3-slider-handle.bp3-end {
   border-radius: 50% !important;
-  border: solid #fff 10px;
-  background-color: #fff;
+  border: solid #aaa 10px;
+  color: #aaa !important;
   top: -2px;
 }
 .bp3-slider-label {
@@ -71,10 +71,12 @@ body {
   margin-left: 0px !important;
   color: #717071;
   font-family: IBM_Plex_Mono;
+  font-weight: 700 !important;
 }
 
 .bp3-slider-handle > .bp3-slider-label {
   margin-top: -50px !important;
+  color: #aaa !important;
 }
 
 .introjs-button,
