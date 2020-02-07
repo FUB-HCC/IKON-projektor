@@ -68,6 +68,13 @@ export const initialState = {
       type: "array",
       uniqueVals: [],
       value: []
+    },
+    highlevelFilter: {
+      name: "highlevelFilter",
+      filterKey: "highlevelFilter",
+      type: "array",
+      uniqueVals: [],
+      value: []
     }
   },
   graph: "0",
@@ -299,6 +306,14 @@ const processAllData = state => {
         state.filters.targetgroups.value.length > 0
           ? state.filters.targetgroups.value
           : newState.categories.map(t => t.title)
+    },
+    highlevelFilter: {
+      ...state.filters.highlevelFilter,
+      uniqueVals: ["Formate", "Zielgruppen", "Laborgeräte", "Sammlungen"],
+      value:
+        state.filters.highlevelFilter.value.length > 0
+          ? state.filters.highlevelFilter.value
+          : ["Zielgruppen", "Laborgeräte", "Sammlungen"]
     }
   };
 
@@ -336,17 +351,7 @@ const applyFilters = (data, filter) => {
           newFilteredData[d] = filteredData[d];
         }
       } else if (f.type === "array") {
-        if (
-          !filteredData[d][f.filterKey] ||
-          filteredData[d][f.filterKey].length === 0
-        ) {
-          newFilteredData[d] = filteredData[d];
-        } else {
-          for (const entry of filteredData[d][f.filterKey]) {
-            if (f.value.some(value => value === entry))
-              newFilteredData[d] = filteredData[d];
-          }
-        }
+        newFilteredData[d] = filteredData[d];
       } else {
         if (filteredData[d][f.filterKey].includes(f.value))
           newFilteredData[d] = filteredData[d];
@@ -460,6 +465,32 @@ const changeCheckboxFilter = (state, action) => {
       newFilter,
       action.value
     );
+  } else if (action.id === "highlevelFilter") {
+    if (action.value === "Zielgruppen") {
+      newFilter.targetgroups.value = toggleAllOfSubset(
+        newFilter.targetgroups,
+        newFilter.highlevelFilter,
+        action.value
+      );
+    } else if (action.value === "Formate") {
+      newFilter.formats.value = toggleAllOfSubset(
+        newFilter.formats,
+        newFilter.highlevelFilter,
+        action.value
+      );
+    } else if (action.value === "Sammlungen") {
+      newFilter.collections.value = toggleAllOfSubset(
+        newFilter.collections,
+        newFilter.highlevelFilter,
+        action.value
+      );
+    } else if (action.value === "Laborgeräte") {
+      newFilter.infrastructures.value = toggleAllOfSubset(
+        newFilter.infrastructures,
+        newFilter.highlevelFilter,
+        action.value
+      );
+    }
   }
   return {
     ...state,
@@ -502,6 +533,12 @@ const toggleAllFiltersOfField = (filters, fieldValue) => {
   if (filters.forschungsgebiet.value.includes(fieldValue)) {
     newValue = newValue.concat(subjectsOfField);
   }
+  return newValue;
+};
+
+const toggleAllOfSubset = (subsetFilter, highlevelFilter, actionValue) => {
+  const toggle = highlevelFilter.value.includes(actionValue);
+  let newValue = toggle ? subsetFilter.uniqueVals : [];
   return newValue;
 };
 

@@ -252,7 +252,13 @@ export default class ClusterMapView extends React.Component {
     const { categories, width, height, InfrastrukturSorted } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
-    if (categories.length === 0 || !width || !height || scale <= 0) {
+    if (
+      !categories ||
+      !InfrastrukturSorted ||
+      !width ||
+      !height ||
+      scale <= 0
+    ) {
       return <div />;
     }
     const shiftX = width / 2;

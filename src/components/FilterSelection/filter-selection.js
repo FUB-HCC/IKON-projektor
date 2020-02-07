@@ -66,15 +66,17 @@ const getFilterSets = filters => {
       name: "Wissenstransfer",
       subsets: [
         {
-          name: "Zielgruppe",
-          isTogglable: false,
+          name: "Zielgruppen",
+          filterId: "highlevelFilter",
+          isTogglable: true,
           subFilters: filters.targetgroups.uniqueVals,
           subFilterId: "targetgroups"
         },
         {
-          name: "Format",
+          name: "Formate",
+          filterId: "highlevelFilter",
           subFilterId: "formats",
-          isTogglable: false,
+          isTogglable: true,
           subFilters: filters.formats.uniqueVals
         }
       ]
@@ -84,15 +86,17 @@ const getFilterSets = filters => {
       subsets: [
         {
           name: "Sammlungen",
+          filterId: "highlevelFilter",
           subFilters: filters.collections.uniqueVals,
           subFilterId: "collections",
-          isTogglable: false
+          isTogglable: true
         },
         {
           name: "Laborgeräte",
+          filterId: "highlevelFilter",
           subFilters: filters.infrastructures.uniqueVals,
           subFilterId: "infrastructures",
-          isTogglable: false
+          isTogglable: true
         }
       ]
     }
