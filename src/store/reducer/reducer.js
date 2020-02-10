@@ -323,13 +323,10 @@ const processAllData = state => {
     filters: newFilters,
     filteredProjects: applyFilters(newState.projects, newFilters),
     filteredCategories: applyCategoryFilters(newState.categories, newFilters),
-    filteredCollections: applyInfraFilters(
-      newState.collections,
-      newFilters.collections
-    ),
+    filteredCollections: applyInfraFilters(newState.collections, newFilters),
     filteredInfrastructures: applyInfraFilters(
       newState.infrastructures,
-      newFilters.infrastructures
+      newFilters
     ),
     isDataProcessed: true
   };
@@ -371,7 +368,11 @@ const applyCategoryFilters = (categories, filter) => {
 
 const applyInfraFilters = (infras, filter) => {
   let newInfras = infras;
-  return newInfras.filter(infra => filter.value.includes(infra.name));
+  let specialFilter = filter.infrastructures;
+  if (infras[0].type === "collection") {
+    specialFilter = filter.collections;
+  }
+  return newInfras.filter(infra => specialFilter.value.includes(infra.name));
 };
 
 const compare = (a, b) => {
@@ -495,13 +496,10 @@ const changeCheckboxFilter = (state, action) => {
   return {
     ...state,
     filteredCategories: applyCategoryFilters(state.categories, newFilter),
-    filteredCollections: applyInfraFilters(
-      state.collections,
-      newFilter.collections
-    ),
+    filteredCollections: applyInfraFilters(state.collections, newFilter),
     filteredInfrastructures: applyInfraFilters(
       state.infrastructures,
-      newFilter.infrastructures
+      newFilter
     ),
     filters: newFilter,
     filteredProjects: applyFilters(state.projects, newFilter)

@@ -15,22 +15,6 @@ const UncertaintyExplanation = props => {
         fontSize: "80%"
       }}
     >
-      <label
-        htmlFor="toggleUncertainty"
-        style={{
-          fontWeight: "700",
-          fontSize: "80%"
-        }}
-        className={style.checkboxWrapper}
-      >
-        <input
-          type="checkbox"
-          id="toggleUncertainty"
-          onChange={() => props.toggleUncertainty()}
-        />
-        Unsicherheitslandschaft anzeigen
-        <span className={style.checkmark}></span>
-      </label>
       {props.showUncertainty && (
         <div
           data-intro="Um die thematische Anordnung der Projekte zu qualifizieren,ist als weiteres Element dieser Ansicht die <b>Unsicherheits-Landschaft</b> integriert. Da die Anordnung auf algorithmischen Schätzungen von inhaltlichen Ähnlichkeite basiert, ünterstützt dieses Element die Interpretation der Anordnung. Je heller die Färbung der Landschaft, desto <b>sicherer</b> ist sich der Algorithmus über die Position des jeweiligen Forschungsprojektes, und umgekehrt."
@@ -79,6 +63,21 @@ const UncertaintyExplanation = props => {
           </svg>
         </div>
       )}
+      <label
+        htmlFor="toggleUncertainty"
+        style={{
+          fontWeight: "700"
+        }}
+        className={style.checkboxWrapper}
+      >
+        <input
+          type="checkbox"
+          id="toggleUncertainty"
+          onChange={() => props.toggleUncertainty()}
+        />
+        Unsicherheitslandschaft
+        <span className={style.checkmark}></span>
+      </label>
     </div>
   );
 };

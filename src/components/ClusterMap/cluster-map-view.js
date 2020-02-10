@@ -10,7 +10,7 @@ import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import ClusterContoursMap from "./cluster-contours-map";
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
-const clusterSize = scale => 0.45 * scale;
+const clusterSize = scale => 0.55 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
 const fontSizeText = scale => 0.012 * scale;
@@ -263,7 +263,7 @@ export default class ClusterMapView extends React.Component {
     }
     const shiftX = width / 2;
     const shiftY = height / 2;
-    const radius = scale * 0.5 - arcMarginSides(width, scale);
+    const radius = clusterSize(scale) - arcMarginSides(width, scale);
     const each = 360 / (categories.length + InfrastrukturSorted.length);
     const sortedTargetgroups = categories.sort((a, b) =>
       a.title < b.title ? 1 : -1
@@ -274,7 +274,8 @@ export default class ClusterMapView extends React.Component {
         className={style.clusterMapWrapper}
         style={{
           width: this.props.width,
-          height: this.props.height
+          height: this.props.height,
+          marginTop: "10px"
         }}
       >
         <IconExplanation

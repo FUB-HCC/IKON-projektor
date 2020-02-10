@@ -58,10 +58,7 @@
   width: 18px;
   background-color: #0e0e0e;
   border: 2px solid #6b6b6b;
-}
-
-.checkboxWrapper:hover input ~ .checkmark {
-  background-color: #333;
+  border-radius: 50%;
 }
 
 .checkboxWrapper input:checked ~ .checkmark {

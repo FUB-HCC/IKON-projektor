@@ -42,7 +42,8 @@ const computeInfrastructureSorted = (
   collections,
   clusterData,
   infrastructures,
-  filters
+  filters,
+  filteredProjects
 ) => {
   if (!clusterData) return [];
   return collections
@@ -53,6 +54,15 @@ const computeInfrastructureSorted = (
         !inf.name.includes("Kein") &&
         (filters.collections.value.includes(inf.name) ||
           filters.infrastructures.value.includes(inf.name))
+    )
+    .map(
+      inf =>
+        (inf = {
+          ...inf,
+          connections: inf.connections.filter(con =>
+            filteredProjects.find(p => p.id === con.id)
+          )
+        })
     );
 };
 
@@ -81,15 +91,24 @@ const mapStateToProps = state => {
       filteredProjects,
       categories
     );
-    categoriesForView = categories.filter(
-      c => c.count > 0 && filters.targetgroups.value.includes(c.title)
-    );
+    categoriesForView = categories
+      .filter(c => c.count > 0 && filters.targetgroups.value.includes(c.title))
+      .map(
+        cat =>
+          (cat = {
+            ...cat,
+            connections: cat.connections.filter(con =>
+              filteredProjects.find(p => p.id === con.id)
+            )
+          })
+      );
     topography = clusterData.cluster_topography;
     InfrastrukturSorted = computeInfrastructureSorted(
       collections,
       clusterData,
       infrastructures,
-      filters
+      filters,
+      filteredProjects
     );
   }
 
