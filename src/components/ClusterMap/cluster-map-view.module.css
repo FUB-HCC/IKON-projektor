@@ -4,13 +4,6 @@
   position: relative;
 }
 
-.unClickDiv{
-  height: 100%;
-  width: 100%;
-  background-color: transparent;
-  position: absolute;
-}
-
 .tooltipIcon {
   width: 20px;
   heigth: 20px;
