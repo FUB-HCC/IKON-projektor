@@ -1,18 +1,15 @@
 import { connect } from "react-redux";
-import React from "react";
 import ClusterMapView from "./cluster-map-view";
 import concave from "concaveman";
 import {
-  setSelectedProject,
-  setSelectedCat,
-  setSelectedInfra,
-  setSideBarComponent,
-  deselectItems,
-  setHighlightState
+  setHighlightState,
+  unClicked,
+  catClicked,
+  infraClicked,
+  unHovered,
+  catHovered,
+  infraHovered
 } from "../../store/actions/actions";
-import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
-import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
-import InfraDetailsPanel from "../InfraDetailsPanel/infra-details-panel";
 import { getFieldColor } from "../../util/utility";
 
 const computeClusters = (clusterData, filteredProjects, categories) => {
@@ -51,6 +48,82 @@ const computeInfrastructureSorted = (
     .filter(inf => !inf.name.includes("Kein"));
 };
 
+const extractHiglightedFromState = state => {
+  let highlighted = {
+    projects: [],
+    cats: [],
+    infras: []
+  };
+  highlighted = addExtractedHighlighted(state.isHovered, highlighted, state);
+  highlighted = addExtractedHighlighted(state.isClicked, highlighted, state);
+  return highlighted;
+};
+
+const addExtractedHighlighted = (selectedState, highlighted, state) => {
+  if (selectedState.project) {
+    highlighted = addExtractedHighlightedFromProject(
+      selectedState.project,
+      highlighted,
+      state
+    );
+  }
+  if (selectedState.infra) {
+    highlighted = addExtractedHighlightedFromInfra(
+      selectedState.infra,
+      highlighted,
+      state
+    );
+  }
+  if (selectedState.cat) {
+    highlighted = addExtractedHighlightedFromCat(
+      selectedState.cat,
+      highlighted,
+      state
+    );
+  }
+  return highlighted;
+};
+
+const addExtractedHighlightedFromProject = (projectId, highlighted, state) => {
+  const project = getProjectById(projectId, state);
+  return {
+    ...highlighted,
+    infras: highlighted.infras
+      .concat(project.collections)
+      .concat(project.infrastructures),
+    cats: highlighted.cats.concat(project.cats),
+    projects: highlighted.projects.concat([project.id])
+  };
+};
+
+const addExtractedHighlightedFromInfra = (InfraId, highlighted, state) => {
+  const infra = getInfraByName(InfraId, state);
+  return {
+    ...highlighted,
+    projects: highlighted.projects.concat(infra.connections.map(con => con.id)),
+    infras: highlighted.infras.concat([infra.name])
+  };
+};
+
+const addExtractedHighlightedFromCat = (catId, highlighted, state) => {
+  const cat = getCatById(catId, state);
+  return {
+    ...highlighted,
+    projects: highlighted.projects.concat(cat.connections.map(con => con.id)),
+    cats: highlighted.cats.concat([cat.id])
+  };
+};
+
+const getProjectById = (id, state) =>
+  state.projects.find(project => project.id === id);
+
+const getInfraByName = (name, state) =>
+  state.infrastructures
+    .concat(state.collections)
+    .find(inf => inf.name === name);
+
+const getCatById = (id, state) => state.categories.find(cat => cat.id === id);
+
 const mapStateToProps = state => {
   const {
     clusterData,
@@ -61,16 +134,18 @@ const mapStateToProps = state => {
     filteredInfrastructures,
     filters,
     isDataProcessed,
-    selectedProject,
-    selectedCat,
-    selectedInfra,
-    highlightedGroup
+    highlightedGroup,
+    isClicked
   } = state.main;
 
   let clusterDataForView = [];
   let categoriesForView = [];
   let topography = [];
   let InfrastrukturSorted = [];
+  let highlightedProjects = [];
+  let highlightedCats = [];
+  let highlightedInfra = [];
+  let highlightedLinks = [];
   if (isDataProcessed) {
     clusterDataForView = computeClusters(
       clusterData,
@@ -87,6 +162,10 @@ const mapStateToProps = state => {
       filteredInfrastructures,
       filters
     );
+    const highlighted = extractHiglightedFromState(state.main);
+    highlightedProjects = highlighted.projects;
+    highlightedInfra = highlighted.infras;
+    highlightedCats = highlighted.cats;
   }
 
   return {
@@ -94,29 +173,35 @@ const mapStateToProps = state => {
     categories: categoriesForView,
     topography: topography,
     InfrastrukturSorted: InfrastrukturSorted,
-    selectedCat: selectedCat,
-    selectedProject: selectedProject,
-    selectedInfra: selectedInfra,
+
+    isAnyClicked: !Object.values(isClicked).every(clickState => !clickState),
+    highlightedProjects: highlightedProjects,
+    highlightedCats: highlightedCats,
+    highlightedInfra: highlightedInfra,
+    highlightedLinks: highlightedLinks,
     highlightedGroup: highlightedGroup
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    showProjectDetails: project => {
-      dispatch(deselectItems());
-      dispatch(setSelectedProject(project));
-      dispatch(setSideBarComponent(<ProjectDetailsPanel />));
+    onUnClicked: () => {
+      dispatch(unClicked());
     },
-    showCatDetails: cat => {
-      dispatch(deselectItems());
-      dispatch(setSelectedCat(cat));
-      dispatch(setSideBarComponent(<CatDetailsPanel />));
+    onCatClicked: cat => {
+      dispatch(catClicked(cat));
     },
-    showInfraDetails: infra => {
-      dispatch(deselectItems());
-      dispatch(setSelectedInfra(infra));
-      dispatch(setSideBarComponent(<InfraDetailsPanel />));
+    onInfraClicked: infra => {
+      dispatch(infraClicked(infra));
+    },
+    onUnHovered: () => {
+      dispatch(unHovered());
+    },
+    onCatHovered: cat => {
+      dispatch(catHovered(cat));
+    },
+    onInfraHovered: infra => {
+      dispatch(infraHovered(infra));
     },
     setHighlightState: value => dispatch(setHighlightState(value))
   };

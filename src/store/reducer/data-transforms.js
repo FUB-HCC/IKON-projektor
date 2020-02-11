@@ -43,6 +43,17 @@ export const processProjectsData = state => {
   });
 };
 
+export const linkCatsToProjectsData = (categories, projects) => {
+  return projects.map(project => ({
+    ...project,
+    cats: categories
+      .filter(category =>
+        category.connections.find(conn => conn.id === project.id)
+      )
+      .map(cat => cat.id)
+  }));
+};
+
 export const processClusterData = state => ({
   ...state.clusterData,
   transformedPoints: transformPoints(state)
@@ -53,24 +64,20 @@ const transformPoints = state => {
   const minX = _.min(project_data.map(c => c.mappoint[0]));
   const minY = _.min(project_data.map(c => c.mappoint[1]));
   return project_data.map(p => {
-    const cat = _.sample(state.categories); // TODO: Why are we randomly assigning categories ??
     const project = processProjectsData(state).find(
       project => p.id === project.id
     );
     return {
       ...p,
       location: [-1 * p.mappoint[0] - 0.76 * minX, p.mappoint[1] - minY], // TODO: Why the heck -0.76 * minX ????
-      cat: cat.id,
-      category: [],
       project: project
     };
   });
 };
 
-export const processCategories = state => {
+export const processCategories = (state, clusterData) => {
   const ktaMapping = state.ktaMapping;
   const ktas = processFormats(state);
-  const clusterData = processClusterData(state);
   return state.categories.map(category => {
     const filteredKtas = ktaMapping
       .filter(ktaM => ktaM.targetgroup_id === category.id)
@@ -92,31 +99,25 @@ export const processCategories = state => {
   });
 };
 
-export const processInfrastructures = state => {
-  const clusterData = processClusterData(state);
+export const processInfrastructures = (state, clusterData) => {
   return state.infrastructures.map(infrastructure => ({
     ...infrastructure,
-    connections: clusterData.transformedPoints
-      ? clusterData.transformedPoints.filter(
-          point =>
-            point.project &&
-            point.project.infrastructures.includes(infrastructure.name)
-        )
-      : [],
+    connections: clusterData.transformedPoints.filter(
+      point =>
+        point.project &&
+        point.project.infrastructures.includes(infrastructure.name)
+    ),
     type: "infrastructure"
   }));
 };
 
-export const processCollections = state => {
-  const clusterData = processClusterData(state);
+export const processCollections = (state, clusterData) => {
   return state.collections.map(collection => ({
     ...collection,
-    connections: clusterData.transformedPoints
-      ? clusterData.transformedPoints.filter(
-          point =>
-            point.project && point.project.collections.includes(collection.name)
-        )
-      : [],
+    connections: clusterData.transformedPoints.filter(
+      point =>
+        point.project && point.project.collections.includes(collection.name)
+    ),
     type: "collection"
   }));
 };

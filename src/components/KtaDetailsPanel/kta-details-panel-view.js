@@ -68,7 +68,6 @@ const KtaDetailsPanel = props => {
         {props.categories.map(cat => (
           <span
             href="#"
-            onMouseOver={() => props.showCatDetails(cat.id)}
             onClick={() => props.showCatDetails(cat.id)}
             key={cat.id}
             className={style.DetailsLink}

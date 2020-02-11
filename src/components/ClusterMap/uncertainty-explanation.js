@@ -1,7 +1,10 @@
 import React from "react";
 import style from "./cluster-map-view.module.css";
+import { useDispatch } from "react-redux";
+import { setHighlightState } from "../../store/actions/actions";
 
 const UncertaintyExplanation = props => {
+  const dispatch = useDispatch();
   return (
     <div
       style={{
@@ -20,10 +23,9 @@ const UncertaintyExplanation = props => {
           data-intro="Um die thematische Anordnung der Projekte zu qualifizieren,ist als weiteres Element dieser Ansicht die <b>Unsicherheits-Landschaft</b> integriert. Da die Anordnung auf algorithmischen Schätzungen von inhaltlichen Ähnlichkeite basiert, ünterstützt dieses Element die Interpretation der Anordnung. Je heller die Färbung der Landschaft, desto <b>sicherer</b> ist sich der Algorithmus über die Position des jeweiligen Forschungsprojektes, und umgekehrt."
           data-step="2"
           className={style.legendRow}
-          onMouseEnter={() => props.setHighlightState("uncertainty")}
+          onMouseEnter={() => dispatch(setHighlightState("uncertainty"))}
           onMouseLeave={() => {
-            props.unHighlight();
-            props.setHighlightState();
+            dispatch(setHighlightState());
           }}
           style={{ cursor: "POINTER" }}
         >
