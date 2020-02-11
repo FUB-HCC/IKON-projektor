@@ -6,35 +6,7 @@ import FilterPanel from "../components/FilterPanel/filter-panel";
 import CatDetailsPanel from "../components/CatDetailsPanel/cat-details-panel";
 import KtaDetailsPanel from "../components/KtaDetailsPanel/kta-details-panel";
 import InfraDetailsPanel from "../components/InfraDetailsPanel/infra-details-panel";
-
-export const createNewStateFromUrlData = (state, urlData) => {
-  const filterValues = {
-    forschungsgebiet: urlData.f ? urlData.f.map(f => fieldsIntToString(f)) : [],
-    hauptthema: urlData.t ? urlData.t.map(t => fieldsIntToString(t)) : [],
-    geldgeber: urlData.s ? urlData.s.map(s => fieldsIntToString(s)) : []
-  };
-
-  let newState = {
-    graph: urlData.g ? urlData.g : "0",
-    filters: {
-      ...state.filters,
-      forschungsgebiet: {
-        ...state.filters.forschungsgebiet,
-        value: filterValues.forschungsgebiet
-      },
-      hauptthema: {
-        ...state.filters.hauptthema,
-        value: filterValues.hauptthema
-      },
-      geldgeber: {
-        ...state.filters.geldgeber,
-        value: filterValues.geldgeber
-      }
-    },
-    selectedProject: urlData.sP
-  };
-  return newState;
-};
+import YearDetailsPanel from "../components/YearDetailsPanel/year-details-panel";
 
 const fieldsMapping = [
   { name: "Naturwissenschaften", field: 1, color: "#ad494a" },
@@ -174,7 +146,105 @@ export const shortenString = (string, len) => {
   return string.length > len ? string.substring(0, len) + "..." : string;
 };
 
+const getTupleFromIsClicked = isClicked => {
+  if (isClicked.project) {
+    return ["project", isClicked.project];
+  }
+  if (isClicked.cat) {
+    return ["cat", isClicked.cat];
+  }
+  if (isClicked.infra) {
+    return ["infra", isClicked.infra];
+  }
+  if (isClicked.kta) {
+    return ["kta", isClicked.kta];
+  }
+  if (isClicked.year) {
+    return ["year", isClicked.year];
+  }
+  return ["none", ""];
+};
+
+const getIsClickedFromTuple = tuple => {
+  const [key, value] = tuple;
+  if (key === "project") {
+    return {
+      project: value,
+      infra: null,
+      cat: null,
+      kta: null,
+      year: null
+    };
+  }
+  if (key === "cat") {
+    return {
+      project: null,
+      infra: null,
+      cat: value,
+      kta: null,
+      year: null
+    };
+  }
+  if (key === "infra") {
+    return {
+      project: null,
+      infra: value,
+      cat: null,
+      kta: null,
+      year: null
+    };
+  }
+  if (key === "kta") {
+    return {
+      project: null,
+      infra: null,
+      cat: null,
+      kta: value,
+      year: null
+    };
+  }
+  if (key === "year") {
+    return {
+      project: null,
+      infra: null,
+      cat: null,
+      kta: null,
+      year: value
+    };
+  }
+  return {
+    project: null,
+    infra: null,
+    cat: null,
+    kta: null,
+    year: null
+  };
+};
+
+const getSideBarComponentFromTuple = tuple => {
+  const [key] = tuple;
+  if (key === "project") {
+    return <ProjectDetailsPanel />;
+  }
+  if (key === "cat") {
+    return <CatDetailsPanel />;
+  }
+  if (key === "infra") {
+    return <InfraDetailsPanel />;
+  }
+  if (key === "kta") {
+    return <KtaDetailsPanel />;
+  }
+  if (key === "year") {
+    return <YearDetailsPanel />;
+  }
+  return <FilterPanel />;
+};
+
 export const pushStateToUrl = newState => {
+  if (!newState.isDataProcessed) {
+    return;
+  }
   let newUrlData = {
     g: newState.graph,
     f: newState.filters.forschungsgebiet.value,
@@ -184,10 +254,8 @@ export const pushStateToUrl = newState => {
     in: newState.filters.infrastructures.value,
     ta: newState.filters.targetgroups.value,
     fo: newState.filters.formats.value,
-    sP: newState.selectedProject,
-    sC: newState.selectedCat,
-    sI: newState.selectedInfra,
-    sK: newState.selectedKta
+    hlf: newState.filters.highlevelFilter.value,
+    cl: getTupleFromIsClicked(newState.isClicked)
   };
 
   let minifiedUrlData = {
@@ -213,16 +281,6 @@ export const parseStateFromUrl = urlString => {
     f: urlState.f.map(t => fieldsIntToString(t))
   };
 
-  let sideBarComponent = <FilterPanel />;
-  if (deminifiedUrlState.sP) {
-    sideBarComponent = <ProjectDetailsPanel />;
-  } else if (deminifiedUrlState.sC) {
-    sideBarComponent = <CatDetailsPanel />;
-  } else if (deminifiedUrlState.sI) {
-    sideBarComponent = <InfraDetailsPanel />;
-  } else if (deminifiedUrlState.sK) {
-    sideBarComponent = <KtaDetailsPanel />;
-  }
   return {
     main: {
       ...initialState,
@@ -232,6 +290,10 @@ export const parseStateFromUrl = urlString => {
         forschungsgebiet: {
           ...initialState.filters.forschungsgebiet,
           value: deminifiedUrlState.f
+        },
+        highlevelFilter: {
+          ...initialState.filters.highlevelFilter,
+          value: deminifiedUrlState.hlf
         },
         hauptthema: {
           ...initialState.filters.hauptthema,
@@ -258,11 +320,8 @@ export const parseStateFromUrl = urlString => {
           value: deminifiedUrlState.fo
         }
       },
-      selectedCat: deminifiedUrlState.sC,
-      selectedInfra: deminifiedUrlState.sI,
-      selectedKta: deminifiedUrlState.sK,
-      selectedProject: deminifiedUrlState.sP,
-      sideBarComponent: sideBarComponent
+      isClicked: getIsClickedFromTuple(deminifiedUrlState.cl),
+      sideBarComponent: getSideBarComponentFromTuple(deminifiedUrlState.cl)
     }
   };
 };

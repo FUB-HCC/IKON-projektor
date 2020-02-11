@@ -4,6 +4,15 @@ import { ReactComponent as Exit } from "../../assets/Exit.svg";
 import { getFieldColor, shortenString } from "../../util/utility";
 
 const YearDetailsPanel = props => {
+  if (!props.title) {
+    return (
+      <div className={style.DetailsWrapper}>
+        <div className={style.DetailsExit} onClick={props.returnToFilterView}>
+          <Exit height={35} width={35} />
+        </div>
+      </div>
+    );
+  }
   const color = getFieldColor(props.title);
   return (
     <div className={style.DetailsWrapper}>

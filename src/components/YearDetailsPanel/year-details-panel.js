@@ -7,24 +7,27 @@ import {
 } from "../../store/actions/actions";
 
 const mapStateToProps = state => {
-  const { isClicked, projects, ktas } = state.main;
-  const [year, title] = isClicked.year.split("|");
-  return {
-    year: year,
-    title: title,
-    projects: projects.filter(
-      p =>
-        p.forschungsbereich === title &&
-        p.timeframe[0] <= year &&
-        year <= p.timeframe[1]
-    ),
-    ktas: ktas.filter(
-      kta =>
-        kta.targetgroups.includes(title) &&
-        kta.timeframe[0].getFullYear() <= year &&
-        year <= kta.timeframe[1].getFullYear()
-    )
-  };
+  const { isClicked, projects, ktas, isDataProcessed } = state.main;
+  if (isDataProcessed) {
+    const [year, title] = isClicked.year.split("|");
+    return {
+      year: year,
+      title: title,
+      projects: projects.filter(
+        p =>
+          p.forschungsbereich === title &&
+          p.timeframe[0] <= year &&
+          year <= p.timeframe[1]
+      ),
+      ktas: ktas.filter(
+        kta =>
+          kta.targetgroups.includes(title) &&
+          kta.timeframe[0].getFullYear() <= year &&
+          year <= kta.timeframe[1].getFullYear()
+      )
+    };
+  }
+  return {};
 };
 
 const mapDispatchToProps = dispatch => ({

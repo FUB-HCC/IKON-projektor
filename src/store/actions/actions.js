@@ -108,7 +108,7 @@ export const unClicked = () => {
 
 export const fetchClusterData = () => {
   return dispatch => {
-    axios.get("https://localhost/api/clustering").then(result => {
+    axios.get("./cluster.json").then(result => {
       batch(() => {
         dispatch(updateClusterData(result.data));
         dispatch(processDataIfReady());
