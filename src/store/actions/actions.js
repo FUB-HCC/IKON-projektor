@@ -1,5 +1,6 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
+import { batch } from "react-redux";
 
 export const changeGraph = value => {
   return {
@@ -23,70 +24,95 @@ export const timerangeFilterChange = value => {
   };
 };
 
-export const setSelectedProject = projectId => {
+export const projectHovered = projectId => {
   return {
-    type: actionTypes.SET_SELECTED_PROJECT,
+    type: actionTypes.PROJECT_HOVERED,
     value: projectId
   };
 };
 
-export const setSelectedCat = catId => {
+export const catHovered = catId => {
   return {
-    type: actionTypes.SET_SELECTED_CAT,
+    type: actionTypes.CAT_HOVERED,
     value: catId
   };
 };
 
-export const setSelectedInfra = infraName => {
+export const infraHovered = infraName => {
   return {
-    type: actionTypes.SET_SELECTED_INFRA,
+    type: actionTypes.INFRA_HOVERED,
     value: infraName
   };
 };
 
-export const setSelectedKta = ktaId => {
+export const ktaHovered = ktaId => {
   return {
-    type: actionTypes.SET_SELECTED_KTA,
+    type: actionTypes.KTA_HOVERED,
     value: ktaId
   };
 };
 
-export const setSelectedYear = data => {
+export const yearHovered = data => {
   return {
-    type: actionTypes.SET_SELECTED_YEAR,
+    type: actionTypes.YEAR_HOVERED,
     value: data
   };
 };
 
-export const deselectItems = () => {
+export const unHovered = () => {
   return {
-    type: actionTypes.DESELECT_ITEMS
+    type: actionTypes.UNHOVERED
   };
 };
 
-export const processDataIfReady = () => {
+export const projectClicked = projectId => {
   return {
-    type: actionTypes.PROCESS_DATA_IF_READY
+    type: actionTypes.PROJECT_CLICKED,
+    value: projectId
   };
 };
 
-export const resetSelectedProject = () => {
+export const catClicked = catId => {
   return {
-    type: actionTypes.RESET_SELECTED_PROJECT
+    type: actionTypes.CAT_CLICKED,
+    value: catId
   };
 };
 
-export const deactivatePopover = () => {
+export const infraClicked = infraName => {
   return {
-    type: actionTypes.DEACTIVATE_POPOVER
+    type: actionTypes.INFRA_CLICKED,
+    value: infraName
+  };
+};
+
+export const ktaClicked = ktaId => {
+  return {
+    type: actionTypes.KTA_CLICKED,
+    value: ktaId
+  };
+};
+
+export const yearClicked = data => {
+  return {
+    type: actionTypes.YEAR_CLICKED,
+    value: data
+  };
+};
+
+export const unClicked = () => {
+  return {
+    type: actionTypes.UNCLICKED
   };
 };
 
 export const fetchClusterData = () => {
   return dispatch => {
     axios.get("https://localhost/api/clustering").then(result => {
-      dispatch(updateClusterData(result.data));
-      dispatch(processDataIfReady());
+      batch(() => {
+        dispatch(updateClusterData(result.data));
+        dispatch(processDataIfReady());
+      });
     });
   };
 };
@@ -94,8 +120,10 @@ export const fetchClusterData = () => {
 export const fetchInstitutionsData = () => {
   return dispatch => {
     axios.get("https://localhost/api/institutions").then(result => {
-      dispatch(updateInstitutionsData(result.data));
-      dispatch(processDataIfReady());
+      batch(() => {
+        dispatch(updateInstitutionsData(result.data));
+        dispatch(processDataIfReady());
+      });
     });
   };
 };
@@ -103,8 +131,10 @@ export const fetchInstitutionsData = () => {
 export const fetchProjectsData = () => {
   return dispatch => {
     axios.get("https://localhost/api/projects").then(result => {
-      dispatch(updateProjectsData(result.data));
-      dispatch(processDataIfReady());
+      batch(() => {
+        dispatch(updateProjectsData(result.data));
+        dispatch(processDataIfReady());
+      });
     });
   };
 };
@@ -114,8 +144,10 @@ export const fetchKTAData = () => {
     axios
       .get("https://localhost/api/knowledgeTransferActivities")
       .then(result => {
-        dispatch(updateKTAData(result.data));
-        dispatch(processDataIfReady());
+        batch(() => {
+          dispatch(updateKTAData(result.data));
+          dispatch(processDataIfReady());
+        });
       });
   };
 };
@@ -123,8 +155,10 @@ export const fetchKTAData = () => {
 export const fetchKTAMappingData = () => {
   return dispatch => {
     axios.get("https://localhost/api/ktastargetgroups").then(result => {
-      dispatch(updateKTAMappingData(result.data));
-      dispatch(processDataIfReady());
+      batch(() => {
+        dispatch(updateKTAMappingData(result.data));
+        dispatch(processDataIfReady());
+      });
     });
   };
 };
@@ -132,8 +166,10 @@ export const fetchKTAMappingData = () => {
 export const fetchTargetGroupsData = () => {
   return dispatch => {
     axios.get("https://localhost/api/targetgroups").then(result => {
-      dispatch(updateTargetGroupsData(result.data));
-      dispatch(processDataIfReady());
+      batch(() => {
+        dispatch(updateTargetGroupsData(result.data));
+        dispatch(processDataIfReady());
+      });
     });
   };
 };
@@ -141,8 +177,10 @@ export const fetchTargetGroupsData = () => {
 export const fetchInfrastructureData = () => {
   return dispatch => {
     axios.get("https://localhost/api/infrastructure").then(result => {
-      dispatch(updateInfrastructureData(result.data));
-      dispatch(processDataIfReady());
+      batch(() => {
+        dispatch(updateInfrastructureData(result.data));
+        dispatch(processDataIfReady());
+      });
     });
   };
 };
@@ -150,8 +188,10 @@ export const fetchInfrastructureData = () => {
 export const fetchCollectionsData = () => {
   return dispatch => {
     axios.get("https://localhost/api/collections").then(result => {
-      dispatch(updateCollectionsData(result.data));
-      dispatch(processDataIfReady());
+      batch(() => {
+        dispatch(updateCollectionsData(result.data));
+        dispatch(processDataIfReady());
+      });
     });
   };
 };
@@ -212,16 +252,15 @@ export const updateKTAMappingData = ktaMappingData => {
   };
 };
 
-export const setSideBarComponent = component => {
-  return {
-    type: actionTypes.SET_SIDE_BAR_COMPONENT,
-    value: component
-  };
-};
-
 export const setHighlightState = group => {
   return {
     type: actionTypes.SET_HIGHLIGHT_STATE,
     value: group
+  };
+};
+
+export const processDataIfReady = () => {
+  return {
+    type: actionTypes.PROCESS_DATA_IF_READY
   };
 };

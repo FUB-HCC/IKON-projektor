@@ -23,49 +23,33 @@ const circleScaling = scale => 0.02 * scale;
 const strokeWidth = scale => 0.001 * scale;
 const contoursSize = 600;
 
+const splitLongTitles = title => {
+  var words = title.split(/[\s-]+/);
+  var newtext = [words[0]];
+  for (let i = 1; i < words.length; i++) {
+    if (newtext[newtext.length - 1].length <= 12) {
+      newtext[newtext.length - 1] += " " + words[i];
+    } else {
+      newtext.push(words[i]);
+    }
+  }
+  if (newtext.length > 2) {
+    newtext[1] += "...";
+    newtext[2] = "";
+  }
+  return newtext;
+};
+
 export default class ClusterMapView extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      highlightedCats: [],
-      highlightedLinks: [],
-      highlightedProjects: [],
-      highlightedInfs: [],
       uncertaintyHighlight: false,
       showUncertainty: false
     };
-
-    this.highlightCat = this.highlightCat.bind(this);
-    this.highlightProject = this.highlightProject.bind(this);
-    this.highlightInfrastructure = this.highlightInfrastructure.bind(this);
-    this.unHighlight = this.unHighlight.bind(this);
     this.renderHover = this.renderHover.bind(this);
   }
 
-  static getDerivedStateFromProps(props, state) {
-    if (props.selectedProject) {
-      return {
-        highlightedProjects: state.highlightedProjects.concat([
-          props.selectedProject
-        ])
-      };
-    } else if (props.highlightedGroup) {
-      const g = props.highlightedGroup;
-      return {
-        highlightedCats: g.includes("categories") ? props.categories : [],
-        uncertaintyHighlight: g.includes("uncertainty"),
-        highlightedInfs:
-          g.includes("collection") || g.includes("infrastructure")
-            ? props.InfrastrukturSorted.filter(inf => g.includes(inf.type))
-            : [],
-        highlightedProjects: g.includes("projects")
-          ? props.clusterData.flat().projects.map(p => p.id)
-          : state.highlightedProjects
-      };
-    } else {
-      return null;
-    }
-  }
   get maxX() {
     return Math.max(
       ...this.props.clusterData
@@ -81,132 +65,6 @@ export default class ClusterMapView extends React.Component {
         .flat()
     );
   }
-
-  unHighlight() {
-    this.setState({
-      highlightedCats: [],
-      highlightedLinks: [],
-      highlightedProjects: [],
-      highlightedInfs: [],
-      hoverText: undefined,
-      uncertaintyHighlight: false
-    });
-  }
-
-  highlightCat(category) {
-    if (this.props.selectedCat) {
-      this.setState({
-        highlightedCats: [this.props.selectedCat],
-        highlightedLinks: this.findLinksByCat(
-          this.props.categories.find(cat => cat.id === this.props.selectedCat)
-        ),
-        highlightedProjects: this.findProjectsByCat(
-          this.props.categories.find(cat => cat.id === this.props.selectedCat)
-        )
-      });
-    } else if (!(this.props.selectedInfra || this.props.selectedProject)) {
-      this.setState({
-        highlightedCats: [category],
-        highlightedLinks: this.findLinksByCat(category),
-        highlightedProjects: this.findProjectsByCat(category)
-      });
-    }
-  }
-
-  highlightInfrastructure(inf) {
-    if (this.props.selectedInfra) {
-      this.setState({
-        highlightedLinks: this.findLinksByInf(
-          this.props.InfrastrukturSorted.find(
-            inf => inf.name === this.props.selectedInfra
-          )
-        ),
-        highlightedProjects: this.findProjectsByInf(
-          this.props.InfrastrukturSorted.find(
-            inf => inf.name === this.props.selectedInfra
-          )
-        ),
-        highlightedInfs: [this.props.selectedInfra]
-      });
-    } else if (!(this.props.selectedCat || this.props.selectedProject)) {
-      this.setState({
-        highlightedLinks: this.findLinksByInf(inf),
-        highlightedProjects: this.findProjectsByInf(inf),
-        highlightedInfs: [inf]
-      });
-    }
-  }
-
-  highlightProject(project, evt, title) {
-    this.setState({
-      highlightedCats: this.findCatsByProject(project),
-      highlightedLinks: this.findLinksByProject(project),
-      highlightedInfs: this.findInfsByProject(project),
-      highlightedProjects: [project],
-      hoverText: title,
-      mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
-    });
-  }
-
-  findLinksByCat(category) {
-    return category.connections.map(con => con.id + "|" + category.id);
-  }
-
-  findProjectsByCat(category) {
-    return category.connections.map(con => con.id);
-  }
-
-  findLinksByProject(project) {
-    return this.props.categories
-      .filter(cat => cat.connections.find(con => con.id === project))
-      .map(cat => project + "|" + cat.id)
-      .concat(
-        this.props.InfrastrukturSorted.filter(inf =>
-          inf.connections.find(con => con.id === project)
-        ).map(inf => project + "|" + inf.name)
-      );
-  }
-
-  findCatsByProject(project) {
-    return this.props.categories.filter(cat =>
-      cat.connections.find(con => con.id === project)
-    );
-  }
-
-  findInfsByProject(project) {
-    return this.props.InfrastrukturSorted.filter(inf =>
-      inf.connections.find(con => con.id === project)
-    );
-  }
-
-  findLinksByInf(inf) {
-    return inf.connections.length > 0
-      ? inf.connections.map(con => con.id + "|" + inf.name)
-      : [];
-  }
-
-  findProjectsByInf(inf) {
-    return inf.connections
-      .map(con => con.id)
-      .concat(this.props.selectedProject);
-  }
-
-  splitLongTitles = title => {
-    var words = title.split(/[\s-]+/);
-    var newtext = [words[0]];
-    for (let i = 1; i < words.length; i++) {
-      if (newtext[newtext.length - 1].length <= 12) {
-        newtext[newtext.length - 1] += " " + words[i];
-      } else {
-        newtext.push(words[i]);
-      }
-    }
-    if (newtext.length > 2) {
-      newtext[1] += "...";
-      newtext[2] = "";
-    }
-    return newtext;
-  };
 
   getPointLocation = (pt, width, height) => {
     const [x, y] = pt;
@@ -250,7 +108,23 @@ export default class ClusterMapView extends React.Component {
   }
 
   render() {
-    const { categories, width, height, InfrastrukturSorted } = this.props;
+    const {
+      categories,
+      width,
+      height,
+      InfrastrukturSorted,
+      onCatHovered,
+      onInfraHovered,
+      onUnHovered,
+      onCatClicked,
+      onInfraClicked,
+      onUnClicked,
+      highlightedInfra,
+      highlightedCats,
+      highlightedProjects,
+      clusterData,
+      isAnyClicked
+    } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (
@@ -279,17 +153,10 @@ export default class ClusterMapView extends React.Component {
           marginTop: arcMarginTop(height, scale)
         }}
       >
-        <IconExplanation
-          posX={20}
-          posY={20}
-          setHighlightState={this.props.setHighlightState}
-          unHighlight={this.unHighlight}
-        />
+        <IconExplanation posX={20} posY={20} />
         <UncertaintyExplanation
           posX={width - 170}
           posY={20}
-          setHighlightState={this.props.setHighlightState}
-          unHighlight={this.unHighlight}
           toggleUncertainty={() => {
             this.setState({
               showUncertainty: !this.state.showUncertainty
@@ -302,6 +169,7 @@ export default class ClusterMapView extends React.Component {
           viewBox={"0 0 " + width + " " + height}
           width={width}
           height={height}
+          onClick={isAnyClicked ? onUnClicked : null}
         >
           {this.state.showUncertainty && (
             <ClusterContoursMap
@@ -322,9 +190,7 @@ export default class ClusterMapView extends React.Component {
               const conLen = cat.count;
               const x = shiftX + radius * Math.cos(angle);
               const y = shiftY + radius * Math.sin(angle);
-              const isHighlighted =
-                this.state.highlightedCats.find(hcat => hcat.id === cat.id) ||
-                this.props.selectedCat === cat.id;
+              const isHighlighted = highlightedCats.includes(cat.id);
               const higlightOffset = isHighlighted ? 7 : 0;
               const textX =
                 shiftX +
@@ -365,6 +231,8 @@ export default class ClusterMapView extends React.Component {
                   const midY = shiftY + midRadius * Math.sin(angle);
                   const mid = [midX, midY];
                   const source = [sourceX, sourceY];
+                  const lineHighlighted =
+                    isHighlighted && highlightedProjects.includes(con.id);
 
                   return [
                     {
@@ -383,7 +251,7 @@ export default class ClusterMapView extends React.Component {
                       x: Math.round(target[0]),
                       y: Math.round(target[1])
                     },
-                    con.id + "|" + cat.id
+                    lineHighlighted
                   ];
                 });
               }
@@ -391,15 +259,11 @@ export default class ClusterMapView extends React.Component {
               return (
                 <g key={cat.id}>
                   <g
-                    onMouseOver={() => this.highlightCat(cat)}
-                    onMouseOut={() => {
-                      if (!this.props.selectedCat) {
-                        this.unHighlight();
-                      }
-                    }}
-                    onClick={() => {
-                      this.highlightCat(cat);
-                      this.props.showCatDetails(cat.id);
+                    onMouseOver={() => onCatHovered(cat.id)}
+                    onMouseOut={() => onUnHovered()}
+                    onClick={e => {
+                      e.stopPropagation();
+                      onCatClicked(cat.id);
                     }}
                   >
                     <circle
@@ -434,7 +298,7 @@ export default class ClusterMapView extends React.Component {
                       cursor="POINTER"
                       transform={`rotate(${textRotate} ${textX} ${textY})`}
                     >
-                      {this.splitLongTitles(cat.title).map((titlePart, i) => (
+                      {splitLongTitles(cat.title).map((titlePart, i) => (
                         <tspan x={textX} y={textY + i * 10} key={titlePart}>
                           {titlePart}
                         </tspan>
@@ -450,9 +314,7 @@ export default class ClusterMapView extends React.Component {
                           strokeWidth={strokeWidth(scale) * 2}
                           fill="transparent"
                           stroke={
-                            this.state.highlightedLinks.find(
-                              hline => hline === line[4]
-                            )
+                            line[4]
                               ? "rgba(175, 202, 11, 0.5)"
                               : this.state.showUncertainty
                               ? "transparent"
@@ -473,10 +335,9 @@ export default class ClusterMapView extends React.Component {
                 const angle = startAngle * (Math.PI / 180);
                 const x = shiftX - 6 + radius * Math.cos(angle);
                 const y = radius * Math.sin(angle);
-                const isHighlighted =
-                  this.state.highlightedInfs.find(
-                    hinf => hinf.name === infrastruktur.name
-                  ) || this.props.selectedInfra === infrastruktur.name;
+                const isHighlighted = highlightedInfra.includes(
+                  infrastruktur.name
+                );
                 const higlightOffset = isHighlighted ? 7 : 0;
                 const textX =
                   shiftX +
@@ -513,6 +374,8 @@ export default class ClusterMapView extends React.Component {
                     const midY = shiftY + midRadius * Math.sin(angle);
                     const mid = [midX, midY];
                     const source = [sourceX, sourceY];
+                    const lineHighlighted =
+                      isHighlighted && highlightedProjects.includes(con.id);
 
                     return [
                       {
@@ -531,24 +394,20 @@ export default class ClusterMapView extends React.Component {
                         x: Math.round(target[0]),
                         y: Math.round(target[1])
                       },
-                      con.id + "|" + infrastruktur.name
+                      lineHighlighted
                     ];
                   });
                 }
                 return (
                   <g
                     key={infrastruktur.name}
-                    onMouseOver={() =>
-                      this.highlightInfrastructure(infrastruktur)
-                    }
+                    onMouseOver={() => onInfraHovered(infrastruktur.name)}
                     onMouseOut={() => {
-                      if (!this.props.selectedInfra) {
-                        this.unHighlight();
-                      }
+                      onUnHovered();
                     }}
-                    onClick={() => {
-                      this.highlightInfrastructure(infrastruktur);
-                      this.props.showInfraDetails(infrastruktur.name);
+                    onClick={e => {
+                      e.stopPropagation();
+                      onInfraClicked(infrastruktur.name);
                     }}
                   >
                     <g>
@@ -590,7 +449,7 @@ export default class ClusterMapView extends React.Component {
                         cursor="POINTER"
                         transform={`rotate(${textRotate} ${textX} ${textY})`}
                       >
-                        {this.splitLongTitles(infrastruktur.name).map(
+                        {splitLongTitles(infrastruktur.name).map(
                           (titlePart, j) => (
                             <tspan x={textX} y={textY + j * 10} key={titlePart}>
                               {titlePart}
@@ -608,9 +467,7 @@ export default class ClusterMapView extends React.Component {
                             strokeWidth={strokeWidth(scale) * 2}
                             fill="transparent"
                             stroke={
-                              this.state.highlightedLinks.find(
-                                hline => hline === line[4]
-                              )
+                              line[4]
                                 ? "rgba(175, 202, 11, 0.5)"
                                 : this.state.showUncertainty
                                 ? "transparent"
@@ -629,19 +486,14 @@ export default class ClusterMapView extends React.Component {
               data-step="1"
               data-intro="Das Herzstück der <b>WISSEN</b> Ansicht ist die Cluster-Darstellung von Drittmittelprojekten auf Basis algorithmischer Vergleiche von Projekt-Abstracts. Projekte sind nach ihren jeweiligen <b>Forschungsgebieten</b> eingefärbt um eine interdisziplinäre Perspektive auf die Forschung am Haus zu unterstützen. Hierdurch können Drittmittelprojekte basierend auf thematischen Gemeinsamkeiten interaktiv exploriert werden."
             >
-              {this.props.clusterData.map(cluster => {
+              {clusterData.map(cluster => {
                 return (
                   <Cluster
-                    key={cluster.id}
+                    key={cluster.id + "cluster"}
                     cluster={cluster}
                     getLocation={p => this.getPointLocation(p, width, height)}
                     radius={radius}
-                    highlightProject={this.highlightProject}
-                    highlightedProjects={this.state.highlightedProjects}
-                    unHighlight={this.unHighlight}
-                    showProjectDetails={this.props.showProjectDetails}
-                    splitLongTitles={this.splitLongTitles}
-                    selectedProject={this.props.selectedProject}
+                    highlightedProjects={highlightedProjects}
                   />
                 );
               })}

@@ -6,7 +6,6 @@ import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructur
 import { getFieldColor, shortenString } from "../../util/utility";
 
 const InfraDetailsPanel = props => {
-  console.log(props);
   if (!props.infraData) {
     return (
       <div className={style.DetailsWrapper}>

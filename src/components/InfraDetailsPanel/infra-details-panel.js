@@ -1,13 +1,6 @@
-import React from "react";
 import connect from "react-redux/es/connect/connect";
 import InfraDetailsPanelView from "./infra-details-panel-view";
-import {
-  setSelectedProject,
-  setSideBarComponent,
-  deselectItems
-} from "../../store/actions/actions";
-import FilterPanel from "../FilterPanel/filter-panel";
-import ProjectDetailsPanel from "../ProjectDetailsPanel/project-details-panel";
+import { unClicked, projectClicked } from "../../store/actions/actions";
 
 const filterProjectsByInfra = (infrastructure, projects) =>
   projects.filter(
@@ -17,16 +10,20 @@ const filterProjectsByInfra = (infrastructure, projects) =>
   );
 
 const mapStateToProps = state => {
-  if (state.main.isDataProcessed && state.main.selectedInfra) {
+  const {
+    isDataProcessed,
+    isClicked,
+    collections,
+    infrastructures,
+    projects
+  } = state.main;
+  if (isDataProcessed && isClicked.infra) {
     const selectedInfrastructure =
-      state.main.collections.find(c => c.name === state.main.selectedInfra) ||
-      state.main.infrastructures.find(i => i.name === state.main.selectedInfra);
+      collections.find(c => c.name === isClicked.infra) ||
+      infrastructures.find(i => i.name === isClicked.infra);
     return {
       infraData: selectedInfrastructure,
-      connectedProjects: filterProjectsByInfra(
-        selectedInfrastructure,
-        state.main.projects
-      )
+      connectedProjects: filterProjectsByInfra(selectedInfrastructure, projects)
     };
   } else {
     return {};
@@ -35,13 +32,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   returnToFilterView: () => {
-    dispatch(setSideBarComponent(<FilterPanel />));
-    dispatch(deselectItems());
+    dispatch(unClicked());
   },
   showProjectDetails: project => {
-    dispatch(deselectItems());
-    dispatch(setSelectedProject(project));
-    dispatch(setSideBarComponent(<ProjectDetailsPanel />));
+    dispatch(projectClicked(project));
   }
 });
 

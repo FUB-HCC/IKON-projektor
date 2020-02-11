@@ -2,12 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { getFieldColor } from "../../util/utility";
 import TimeLineView from "./time-line-view";
-import {
-  setSelectedYear,
-  setSideBarComponent,
-  deselectItems
-} from "../../store/actions/actions";
-import YearDetailsPanel from "../YearDetailsPanel/year-details-panel";
+import { setSelectedYear, yearClicked } from "../../store/actions/actions";
 
 class TimeLine extends React.Component {
   componentDidMount() {
@@ -64,9 +59,7 @@ const graphColors = {
 const mapDispatchToProps = dispatch => {
   return {
     showYearDetails: year => {
-      dispatch(deselectItems());
-      dispatch(setSelectedYear(year));
-      dispatch(setSideBarComponent(<YearDetailsPanel />));
+      dispatch(yearClicked(year));
     }
   };
 };

@@ -3,8 +3,11 @@ import { ReactComponent as WtaIcon } from "../../assets/wta.svg";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 import style from "./cluster-map-view.module.css";
+import { useDispatch } from "react-redux";
+import { setHighlightState } from "../../store/actions/actions";
 
 const IconExplanation = props => {
+  const dispatch = useDispatch();
   return (
     <div
       style={{
@@ -26,10 +29,9 @@ const IconExplanation = props => {
         data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
         data-step="4"
         className={style.legendRow}
-        onMouseEnter={() => props.setHighlightState("categories")}
+        onMouseEnter={() => dispatch(setHighlightState("categories"))}
         onMouseLeave={() => {
-          props.unHighlight();
-          props.setHighlightState();
+          dispatch(setHighlightState());
         }}
       >
         <WtaIcon className={style.tooltipIcon} />
@@ -40,10 +42,9 @@ const IconExplanation = props => {
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Sammlungen am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben können."
         data-step="5"
         className={style.legendRow}
-        onMouseEnter={() => props.setHighlightState("collection")}
+        onMouseEnter={() => dispatch(setHighlightState("collection"))}
         onMouseLeave={() => {
-          props.unHighlight();
-          props.setHighlightState();
+          dispatch(setHighlightState());
         }}
       >
         <CollectionIcon className={style.tooltipIcon} />
@@ -54,10 +55,9 @@ const IconExplanation = props => {
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Laborgeräte oder andere Infrastruktur am Museum, die in Forschungsprojekten eingesetzt werden können."
         data-step="6"
         className={style.legendRow}
-        onMouseEnter={() => props.setHighlightState("infrastructure")}
+        onMouseEnter={() => dispatch(setHighlightState("infrastructure"))}
         onMouseLeave={() => {
-          props.unHighlight();
-          props.setHighlightState();
+          dispatch(setHighlightState());
         }}
       >
         <InfrastructureIcon className={style.tooltipIcon} />

@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
+import { connect, batch } from "react-redux";
 import ClusterMap from "../../components/ClusterMap/cluster-map";
 import GeoMap from "../../components/GeoMap/geo-map-view";
 import TimeGraph from "../../components/TimeLine/time-line";
@@ -40,14 +40,16 @@ class GraphView extends React.Component {
     });
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
-    this.props.fetchClusterData();
-    this.props.fetchProjectsData();
-    this.props.fetchInstitutionsData();
-    this.props.fetchKtaData();
-    this.props.fetchKtaMappingData();
-    this.props.fetchTargetGroupsData();
-    this.props.fetchCollectionsData();
-    this.props.fetchInfrastructureData();
+    batch(() => {
+      this.props.fetchClusterData();
+      this.props.fetchProjectsData();
+      this.props.fetchInstitutionsData();
+      this.props.fetchKtaData();
+      this.props.fetchKtaMappingData();
+      this.props.fetchTargetGroupsData();
+      this.props.fetchCollectionsData();
+      this.props.fetchInfrastructureData();
+    });
   }
 
   resize() {
@@ -133,8 +135,6 @@ class GraphView extends React.Component {
 const mapStateToProps = state => {
   return {
     graph: state.main.graph,
-    selectedProject: state.main.selectedProject,
-    filter: state.main.filters,
     filteredProjects: state.main.filteredProjects,
     institutions: state.main.institutions
   };
