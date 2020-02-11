@@ -121,7 +121,6 @@ export default class ClusterMapView extends React.Component {
       onUnClicked,
       highlightedInfra,
       highlightedCats,
-      highlightedLinks,
       highlightedProjects,
       clusterData,
       isAnyClicked

@@ -145,7 +145,6 @@ const mapStateToProps = state => {
   let highlightedProjects = [];
   let highlightedCats = [];
   let highlightedInfra = [];
-  let highlightedLinks = [];
   if (isDataProcessed) {
     clusterDataForView = computeClusters(
       clusterData,
@@ -178,7 +177,6 @@ const mapStateToProps = state => {
     highlightedProjects: highlightedProjects,
     highlightedCats: highlightedCats,
     highlightedInfra: highlightedInfra,
-    highlightedLinks: highlightedLinks,
     highlightedGroup: highlightedGroup
   };
 };

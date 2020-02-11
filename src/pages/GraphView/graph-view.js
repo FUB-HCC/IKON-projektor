@@ -12,8 +12,7 @@ import {
   fetchKTAMappingData,
   fetchTargetGroupsData,
   fetchCollectionsData,
-  fetchInfrastructureData,
-  unClicked
+  fetchInfrastructureData
 } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
 
