@@ -43,7 +43,7 @@ class FilterSet extends Component {
                 toggleState={this.state.toggleState}
                 toggledFilterList={this.toggledFilterList}
                 iconSize="20px"
-                iconMargin="8"
+                iconMargin="9"
                 icon={
                   this.state.toggleState.includes(subset.name) ? (
                     <ArrowDown
@@ -72,7 +72,7 @@ class FilterSet extends Component {
                     showCheckbox={true}
                     color={getFieldColor(subset.name)}
                     iconSize="16px"
-                    iconMargin="16"
+                    iconMargin="12"
                   />
                 </div>
               ))}
@@ -118,10 +118,10 @@ const CheckBox = props => (
           border: props.color + " 2px solid",
           borderRadius: "50%",
           backgroundColor: props.checked ? props.color : "rgba(0,0,0,0)",
-          width: props.iconSize,
-          height: props.iconSize,
           marginRight: props.iconMargin + "px",
-          marginLeft: props.iconMargin * 0.5 + "px"
+          marginLeft: props.iconMargin * 0.5 + "px",
+          width: props.iconSize,
+          height: props.iconSize
         }}
       />
     )}

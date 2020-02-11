@@ -55,7 +55,7 @@ class GraphView extends React.Component {
       height:
         window.innerHeight -
         menuBarHeight -
-        appMargin * 2 -
+        appMargin * 4 -
         this.margins.top -
         this.margins.bottom,
       width:

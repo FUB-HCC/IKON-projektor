@@ -130,9 +130,7 @@ class ActionButtons extends Component {
 
           <div
             className={classes.rightElement}
-            onClick={() =>
-              window.open("http://localhost:3000/explore?", "_self")
-            }
+            onClick={() => window.open(window.location.origin, "_self")}
           >
             <Reset className={classes.buttonIcon} /> <p>Zurücksetzen</p>
           </div>

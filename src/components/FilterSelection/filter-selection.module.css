@@ -60,16 +60,15 @@
   overflow: hidden;
   display: flex;
   align-items: center;
-  margin-bottom: 0.7vh;
 }
 
 .checkBoxWrapper span {
   overflow: hidden;
   float: left;
   width: 90%;
+  margin-top: 4px;
 }
 .checkBoxWrapper svg {
-  width: 10%;
   float: right;
 }
 
@@ -79,6 +78,7 @@
 
 .checkBoxLabel {
   cursor: pointer;
+  box-shadow: inset 0px 0px 1px 3px #1c1d1f;
 }
 
 .checkBoxLabel:before {

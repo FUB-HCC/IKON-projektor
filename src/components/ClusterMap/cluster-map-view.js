@@ -10,11 +10,12 @@ import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import ClusterContoursMap from "./cluster-contours-map";
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
-const clusterSize = scale => 0.45 * scale;
+const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.02 * scale);
+const clusterSize = scale => 0.55 * scale;
 const clusterPosX = (width, scale) => 0.5 * width - clusterSize(scale) / 2;
 const clusterPosY = (height, scale) => 0.5 * height - clusterSize(scale) / 2;
-const fontSizeText = scale => 0.014 * scale;
-const fontSizeCount = scale => 0.01 * scale;
+const fontSizeText = scale => 0.012 * scale;
+const fontSizeCount = scale => 0.009 * scale;
 const textOffsetFromArc = scale => 0.04 * scale;
 const countOffsetFromArc = scale => 0.025 * scale;
 const connectionOffsetFromArc = scale => -0.02 * scale;
@@ -30,7 +31,8 @@ export default class ClusterMapView extends React.Component {
       highlightedLinks: [],
       highlightedProjects: [],
       highlightedInfs: [],
-      uncertaintyHighlight: false
+      uncertaintyHighlight: false,
+      showUncertainty: false
     };
 
     this.highlightCat = this.highlightCat.bind(this);
@@ -193,11 +195,15 @@ export default class ClusterMapView extends React.Component {
     var words = title.split(/[\s-]+/);
     var newtext = [words[0]];
     for (let i = 1; i < words.length; i++) {
-      if (newtext[newtext.length - 1].length < 16) {
+      if (newtext[newtext.length - 1].length <= 12) {
         newtext[newtext.length - 1] += " " + words[i];
       } else {
         newtext.push(words[i]);
       }
+    }
+    if (newtext.length > 2) {
+      newtext[1] += "...";
+      newtext[2] = "";
     }
     return newtext;
   };
@@ -247,12 +253,18 @@ export default class ClusterMapView extends React.Component {
     const { categories, width, height, InfrastrukturSorted } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
-    if (categories.length === 0 || !width || !height || scale <= 0) {
+    if (
+      !categories ||
+      !InfrastrukturSorted ||
+      !width ||
+      !height ||
+      scale <= 0
+    ) {
       return <div />;
     }
     const shiftX = width / 2;
     const shiftY = height / 2;
-    const radius = scale * 0.5 - arcMarginSides(width, scale);
+    const radius = clusterSize(scale) - arcMarginSides(width, scale);
     const each = 360 / (categories.length + InfrastrukturSorted.length);
     const sortedTargetgroups = categories.sort((a, b) =>
       a.title < b.title ? 1 : -1
@@ -263,7 +275,8 @@ export default class ClusterMapView extends React.Component {
         className={style.clusterMapWrapper}
         style={{
           width: this.props.width,
-          height: this.props.height
+          height: this.props.height,
+          marginTop: arcMarginTop(height, scale)
         }}
       >
         <IconExplanation
@@ -273,10 +286,16 @@ export default class ClusterMapView extends React.Component {
           unHighlight={this.unHighlight}
         />
         <UncertaintyExplanation
-          posX={width - 110}
+          posX={width - 170}
           posY={20}
           setHighlightState={this.props.setHighlightState}
           unHighlight={this.unHighlight}
+          toggleUncertainty={() => {
+            this.setState({
+              showUncertainty: !this.state.showUncertainty
+            });
+          }}
+          showUncertainty={this.state.showUncertainty}
         />
         <svg
           className="viz-3"
@@ -284,16 +303,18 @@ export default class ClusterMapView extends React.Component {
           width={width}
           height={height}
         >
-          <ClusterContoursMap
-            width={this.props.width}
-            height={this.props.height}
-            topography={this.props.topography}
-            contoursSize={contoursSize}
-            clusterSize={clusterSize}
-            clusterX={clusterPosX}
-            clusterY={clusterPosY}
-            isHighlighted={this.state.uncertaintyHighlight}
-          />
+          {this.state.showUncertainty && (
+            <ClusterContoursMap
+              width={this.props.width}
+              height={this.props.height}
+              topography={this.props.topography}
+              contoursSize={contoursSize}
+              clusterSize={clusterSize}
+              clusterX={clusterPosX}
+              clusterY={clusterPosY}
+              isHighlighted={this.state.uncertaintyHighlight}
+            />
+          )}
           <g>
             {sortedTargetgroups.map((cat, i) => {
               const startAngle = each * i - sortedTargetgroups.length * each;
@@ -396,7 +417,7 @@ export default class ClusterMapView extends React.Component {
                       textAnchor="middle"
                       fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                       fontSize={
-                        fontSizeCount(this.scale) * (isHighlighted ? 1.2 : 1)
+                        fontSizeCount(this.scale) * (isHighlighted ? 1.3 : 1)
                       }
                       fontWeight="700"
                       cursor="POINTER"
@@ -407,7 +428,7 @@ export default class ClusterMapView extends React.Component {
                       textAnchor={anchor}
                       fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                       fontSize={
-                        fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                        fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
                       }
                       fontWeight="700"
                       cursor="POINTER"
@@ -425,28 +446,16 @@ export default class ClusterMapView extends React.Component {
                       <g key={i}>
                         <path
                           pointerEvents="none"
-                          key={i + "a"}
-                          strokeWidth={strokeWidth(scale) * 3}
-                          fill="transparent"
-                          stroke={
-                            this.state.highlightedLinks.find(
-                              hline => hline === line[4]
-                            )
-                              ? "rgba(175, 202, 11, 0.1)"
-                              : "rgba(100,100,100,0.1)"
-                          }
-                          d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                        />
-                        <path
-                          pointerEvents="none"
                           key={i + "b"}
-                          strokeWidth={strokeWidth(scale)}
+                          strokeWidth={strokeWidth(scale) * 2}
                           fill="transparent"
                           stroke={
                             this.state.highlightedLinks.find(
                               hline => hline === line[4]
                             )
                               ? "rgba(175, 202, 11, 0.5)"
+                              : this.state.showUncertainty
+                              ? "transparent"
                               : "rgba(255,255,255,0.1)"
                           }
                           d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
@@ -571,10 +580,11 @@ export default class ClusterMapView extends React.Component {
                       <text
                         x={textX}
                         y={textY}
+                        stroke={"none"}
                         textAnchor={anchor}
                         fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
                         fontSize={
-                          fontSizeText(this.scale) * (isHighlighted ? 1.2 : 1)
+                          fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
                         }
                         fontWeight="700"
                         cursor="POINTER"
@@ -594,28 +604,16 @@ export default class ClusterMapView extends React.Component {
                         <g key={i}>
                           <path
                             pointerEvents="none"
-                            key={i + "a"}
-                            strokeWidth={strokeWidth(scale) * 3}
-                            fill="transparent"
-                            stroke={
-                              this.state.highlightedLinks.find(
-                                hline => hline === line[4]
-                              )
-                                ? "rgba(175, 202, 11, 0.1)"
-                                : "rgba(100,100,100,0.1)"
-                            }
-                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                          />
-                          <path
-                            pointerEvents="none"
                             key={i + "b"}
-                            strokeWidth={strokeWidth(scale)}
+                            strokeWidth={strokeWidth(scale) * 2}
                             fill="transparent"
                             stroke={
                               this.state.highlightedLinks.find(
                                 hline => hline === line[4]
                               )
                                 ? "rgba(175, 202, 11, 0.5)"
+                                : this.state.showUncertainty
+                                ? "transparent"
                                 : "rgba(255,255,255,0.1)"
                             }
                             d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}

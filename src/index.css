@@ -1,54 +1,112 @@
 @font-face {
-    font-family: CooperHewitt-Light;
-    src: url(./assets/CooperHewitt-Light.otf);
-    font-weight:300;
+  font-family: CooperHewitt-Light;
+  src: url(./assets/CooperHewitt-Light.otf);
+  font-weight: 300;
 }
 @font-face {
-    font-family: CooperHewitt-LightItalic;
-    src: url(./assets/CooperHewitt-LightItalic.otf);
-    font-weight:300;
-    font-style: italic;
+  font-family: CooperHewitt-LightItalic;
+  src: url(./assets/CooperHewitt-LightItalic.otf);
+  font-weight: 300;
+  font-style: italic;
 }
 @font-face {
-    font-family: CooperHewitt-Book;
-    src: url(./assets/CooperHewitt-Book.otf);
-    font-weight:400;
+  font-family: CooperHewitt-Book;
+  src: url(./assets/CooperHewitt-Book.otf);
+  font-weight: 400;
 }
 @font-face {
-    font-family: CooperHewitt-Medium;
-    src: url(./assets/CooperHewitt-Medium.otf);
-    font-weight:500;
+  font-family: CooperHewitt-Medium;
+  src: url(./assets/CooperHewitt-Medium.otf);
+  font-weight: 500;
 }
 @font-face {
-    font-family: CooperHewitt-MediumItalic;
-    src: url(./assets/CooperHewitt-MediumItalic.otf);
-    font-weight:500;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: IBM_Plex_Mono;
-    src: url(./assets/IBMPlexMono-Regular.ttf);
-    font-weight:500;
-    font-style: italic;
+  font-family: CooperHewitt-MediumItalic;
+  src: url(./assets/CooperHewitt-MediumItalic.otf);
+  font-weight: 500;
+  font-style: italic;
 }
 
 @font-face {
-    font-family: TradeGothicLTStd;
-    src: url(./assets/TradeGothicLTStd.otf);
-    font-weight:500;
-    font-style: italic;
+  font-family: IBM_Plex_Mono;
+  src: url(./assets/IBMPlexMono-Regular.ttf);
+  font-weight: 500;
+  font-style: italic;
 }
 
 @font-face {
-    font-family: Roboto;
-    src: url(./assets/Roboto-Regular.ttf);
-    font-weight:500;
-    font-style: italic;
+  font-family: TradeGothicLTStd;
+  src: url(./assets/TradeGothicLTStd.otf);
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: Roboto;
+  src: url(./assets/Roboto-Regular.ttf);
+  font-weight: 500;
+  font-style: italic;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: CooperHewitt-Medium, sans-serif; /* project default */
+  font-family: TradeGothicLTStd, sans-serif !important; /* project default */
+}
+.bp3-slider-progress {
+  background-color: #717071 !important;
+}
+.bp3-intent-primary {
+  background-color: #aaa !important;
+}
+
+.bp3-slider-handle.bp3-start,
+.bp3-slider-handle.bp3-end {
+  border-radius: 50% !important;
+  border: solid #aaa 10px;
+  color: #aaa !important;
+  top: -2px;
+}
+.bp3-slider-label {
+  background-color: #1c1d1f !important;
+  margin-left: 0px !important;
+  color: #717071;
+  font-family: IBM_Plex_Mono;
+  font-weight: 700 !important;
+}
+
+.bp3-slider-handle > .bp3-slider-label {
+  margin-top: -50px !important;
+  color: #aaa !important;
+}
+
+.introjs-button,
+.introjs-button:hover,
+.introjs-button:focus,
+.introjs-button:active {
+  color: #afca0b !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+}
+
+.introjs-button:hover,
+.introjs-button:focus,
+.introjs-button:active {
+  border: 1px solid #afca0b !important;
+}
+
+.introjs-skipbutton {
+  color: #aaa !important;
+}
+.introjs-donebutton {
+  color: #afca0b !important;
+  border: 1px solid #afca0b !important;
+}
+.introjs-disabled {
+  color: #aaa !important;
+}
+
+.introjs-tooltipbuttons {
+  text-align: center !important;
+  display: flex;
+  justify-content: space-between !important;
 }

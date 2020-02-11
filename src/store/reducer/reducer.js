@@ -68,6 +68,13 @@ export const initialState = {
       type: "array",
       uniqueVals: [],
       value: []
+    },
+    highlevelFilter: {
+      name: "highlevelFilter",
+      filterKey: "highlevelFilter",
+      type: "array",
+      uniqueVals: [],
+      value: []
     }
   },
   graph: "0",
@@ -299,6 +306,14 @@ const processAllData = state => {
         state.filters.targetgroups.value.length > 0
           ? state.filters.targetgroups.value
           : newState.categories.map(t => t.title)
+    },
+    highlevelFilter: {
+      ...state.filters.highlevelFilter,
+      uniqueVals: ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"],
+      value:
+        state.filters.highlevelFilter.value.length > 0
+          ? state.filters.highlevelFilter.value
+          : ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"]
     }
   };
 
@@ -308,13 +323,10 @@ const processAllData = state => {
     filters: newFilters,
     filteredProjects: applyFilters(newState.projects, newFilters),
     filteredCategories: applyCategoryFilters(newState.categories, newFilters),
-    filteredCollections: applyInfraFilters(
-      newState.collections,
-      newFilters.collections
-    ),
+    filteredCollections: applyInfraFilters(newState.collections, newFilters),
     filteredInfrastructures: applyInfraFilters(
       newState.infrastructures,
-      newFilters.infrastructures
+      newFilters
     ),
     isDataProcessed: true
   };
@@ -336,17 +348,7 @@ const applyFilters = (data, filter) => {
           newFilteredData[d] = filteredData[d];
         }
       } else if (f.type === "array") {
-        if (
-          !filteredData[d][f.filterKey] ||
-          filteredData[d][f.filterKey].length === 0
-        ) {
-          newFilteredData[d] = filteredData[d];
-        } else {
-          for (const entry of filteredData[d][f.filterKey]) {
-            if (f.value.some(value => value === entry))
-              newFilteredData[d] = filteredData[d];
-          }
-        }
+        newFilteredData[d] = filteredData[d];
       } else {
         if (filteredData[d][f.filterKey].includes(f.value))
           newFilteredData[d] = filteredData[d];
@@ -358,15 +360,29 @@ const applyFilters = (data, filter) => {
 };
 
 const applyCategoryFilters = (categories, filter) => {
-  let newCategories = categories;
+  let newCategories = categories.map(cat => ({
+    ...cat,
+    connections: cat.connections.filter(con =>
+      filter.hauptthema.value.includes(con.project.hauptthema)
+    )
+  }));
   return newCategories.filter(cat =>
     filter.targetgroups.value.includes(cat.title)
   );
 };
 
 const applyInfraFilters = (infras, filter) => {
-  let newInfras = infras;
-  return newInfras.filter(infra => filter.value.includes(infra.name));
+  let newInfras = infras.map(inf => ({
+    ...inf,
+    connections: inf.connections.filter(con =>
+      filter.hauptthema.value.includes(con.project.hauptthema)
+    )
+  }));
+  let specialFilter = filter.infrastructures;
+  if (infras[0].type === "collection") {
+    specialFilter = filter.collections;
+  }
+  return newInfras.filter(infra => specialFilter.value.includes(infra.name));
 };
 
 const compare = (a, b) => {
@@ -460,17 +476,40 @@ const changeCheckboxFilter = (state, action) => {
       newFilter,
       action.value
     );
+  } else if (action.id === "highlevelFilter") {
+    if (action.value === "Zielgruppen") {
+      newFilter.targetgroups.value = toggleAllOfSubset(
+        newFilter.targetgroups,
+        newFilter.highlevelFilter,
+        action.value
+      );
+    } else if (action.value === "Formate") {
+      newFilter.formats.value = toggleAllOfSubset(
+        newFilter.formats,
+        newFilter.highlevelFilter,
+        action.value
+      );
+    } else if (action.value === "Sammlungen") {
+      newFilter.collections.value = toggleAllOfSubset(
+        newFilter.collections,
+        newFilter.highlevelFilter,
+        action.value
+      );
+    } else if (action.value === "Laborgeräte") {
+      newFilter.infrastructures.value = toggleAllOfSubset(
+        newFilter.infrastructures,
+        newFilter.highlevelFilter,
+        action.value
+      );
+    }
   }
   return {
     ...state,
     filteredCategories: applyCategoryFilters(state.categories, newFilter),
-    filteredCollections: applyInfraFilters(
-      state.collections,
-      newFilter.collections
-    ),
+    filteredCollections: applyInfraFilters(state.collections, newFilter),
     filteredInfrastructures: applyInfraFilters(
       state.infrastructures,
-      newFilter.infrastructures
+      newFilter
     ),
     filters: newFilter,
     filteredProjects: applyFilters(state.projects, newFilter)
@@ -502,6 +541,12 @@ const toggleAllFiltersOfField = (filters, fieldValue) => {
   if (filters.forschungsgebiet.value.includes(fieldValue)) {
     newValue = newValue.concat(subjectsOfField);
   }
+  return newValue;
+};
+
+const toggleAllOfSubset = (subsetFilter, highlevelFilter, actionValue) => {
+  const toggle = highlevelFilter.value.includes(actionValue);
+  let newValue = toggle ? subsetFilter.uniqueVals : [];
   return newValue;
 };
 
