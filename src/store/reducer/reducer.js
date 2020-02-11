@@ -309,11 +309,11 @@ const processAllData = state => {
     },
     highlevelFilter: {
       ...state.filters.highlevelFilter,
-      uniqueVals: ["Formate", "Zielgruppen", "Laborgeräte", "Sammlungen"],
+      uniqueVals: ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"],
       value:
         state.filters.highlevelFilter.value.length > 0
           ? state.filters.highlevelFilter.value
-          : ["Zielgruppen", "Laborgeräte", "Sammlungen"]
+          : ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"]
     }
   };
 
@@ -360,14 +360,24 @@ const applyFilters = (data, filter) => {
 };
 
 const applyCategoryFilters = (categories, filter) => {
-  let newCategories = categories;
+  let newCategories = categories.map(cat => ({
+    ...cat,
+    connections: cat.connections.filter(con =>
+      filter.hauptthema.value.includes(con.project.hauptthema)
+    )
+  }));
   return newCategories.filter(cat =>
     filter.targetgroups.value.includes(cat.title)
   );
 };
 
 const applyInfraFilters = (infras, filter) => {
-  let newInfras = infras;
+  let newInfras = infras.map(inf => ({
+    ...inf,
+    connections: inf.connections.filter(con =>
+      filter.hauptthema.value.includes(con.project.hauptthema)
+    )
+  }));
   let specialFilter = filter.infrastructures;
   if (infras[0].type === "collection") {
     specialFilter = filter.collections;
