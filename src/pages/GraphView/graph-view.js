@@ -97,7 +97,8 @@ class GraphView extends React.Component {
       height: this.state.height,
       onProjectClick: this.projectClickHandler,
       institutions: this.props.institutions,
-      projects: this.props.filteredProjects
+      projects: this.props.filteredProjects,
+      ktas: this.props.ktas
     };
     let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
@@ -136,7 +137,8 @@ const mapStateToProps = state => {
   return {
     graph: state.main.graph,
     filteredProjects: state.main.filteredProjects,
-    institutions: state.main.institutions
+    institutions: state.main.institutions,
+    ktas: state.main.ktas
   };
 };
 

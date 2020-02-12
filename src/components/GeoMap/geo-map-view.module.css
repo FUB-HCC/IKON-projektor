@@ -1,36 +1,94 @@
-
-.geoViewWrapper{
-    display: flex;
-    flex-direction: column;
+.geoViewWrapper {
+  display: flex;
+  flex-direction: column;
 }
 
-.arcWrapper{
-    width: 100%;
-    height:50%;
-    padding-bottom: 10px;
+.arcWrapper {
+  width: 100%;
 }
 
-.labelWrapper{
-    width: 100%;
-    height: 5%;
-    align-content: center;
+.labelWrapper {
+  width: 100%;
+  height: 2%;
+  align-content: center;
 }
 
-.continentLabel{
-    position: absolute;
-    transform: translate(-50%, 0);
-    font-size: 1vw;
-    color: white;
+.continentLabel {
+  position: absolute;
+  transform: translate(-50%, 0);
+  font-size: 1vw;
+  color: #aaa;
 }
 
-.mapsWrapper{
-    width: 100%;
-    height: 15%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+td {
+  border-bottom: dotted #717071 1px;
 }
 
-.continentWrapper{
-    width: 16.666%;
+td,
+th:nth-child(1) {
+  width: 55%;
+  text-align: left;
+}
+td:nth-child(2) {
+  text-align: center;
+}
+td:nth-child(1):hover {
+  color: #afca0b;
+  cursor: pointer;
+}
+
+.ktaCountCircle {
+  fill: #aaa;
+}
+
+.ktaCountCircle:hover {
+  fill: #afca0b;
+  cursor: pointer;
+}
+
+.mapsWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.continentWrapper {
+  width: 16.666%;
+}
+.plotTitle {
+  color: #717071;
+  font-size: 130%;
+  padding-top: 10px;
+}
+.tableWrapper {
+  flex-grow: 1;
+  padding: 10px;
+  background: linear-gradient(transparent 90%, #0a0a0a);
+  color: #aaa;
+  overflow-y: scroll;
+  width: 100%;
+}
+.mfnCircle {
+  border: solid #afca0b 1px;
+  background-color: #afca0b;
+  color: transparent;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  margin-left: 45%;
+  text-align: center;
+}
+
+.mfnCircle:hover {
+  color: #afca0b;
+  border: none;
+  font-size: 11px;
+  background-color: transparent;
+}
+.description {
+  font-size: 80%;
+  color: #717071;
+  font-family: IBM_Plex_Mono;
+  margin-left: 50px;
 }
