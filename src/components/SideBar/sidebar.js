@@ -3,7 +3,8 @@ import SideBarView from "./sidebar-view";
 
 const mapStateToProps = state => {
   return {
-    sideBarComponent: state.main.sideBarComponent
+    sideBarComponent: state.main.sideBarComponent,
+    isDataProcessed: state.main.isDataProcessed
   };
 };
 

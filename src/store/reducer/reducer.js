@@ -24,63 +24,63 @@ export const initialState = {
       filterKey: "forschungsbereichstr",
       type: "string",
       uniqueVals: [],
-      value: []
+      value: null
     },
     hauptthema: {
       name: "Hauptthema",
       filterKey: "hauptthema",
       type: "string",
       uniqueVals: [],
-      value: []
+      value: null
     },
     geldgeber: {
       name: "Geldgeber",
       filterKey: "geldgeber",
       type: "string",
       uniqueVals: [],
-      value: []
+      value: null
     },
     time: {
       name: "Zeitraum",
       filterKey: "timeframe",
       type: "timeframe",
       uniqueVals: [],
-      value: []
+      value: null
     },
     collections: {
       name: "Sammlungen",
       filterKey: "collections",
       type: "array",
       uniqueVals: [],
-      value: []
+      value: null
     },
     infrastructures: {
       name: "Laborgeräte",
       filterKey: "infrastructure",
       type: "array",
       uniqueVals: [],
-      value: []
+      value: null
     },
     targetgroups: {
       name: "Zielgruppen",
       filterKey: "targetgroups",
       type: "array",
       uniqueVals: [],
-      value: []
+      value: null
     },
     formats: {
       name: "Formate",
       filterKey: "formats",
       type: "array",
       uniqueVals: [],
-      value: []
+      value: null
     },
     highlevelFilter: {
       name: "highlevelFilter",
       filterKey: "highlevelFilter",
       type: "array",
-      uniqueVals: [],
-      value: []
+      uniqueVals: ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"],
+      value: ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"]
     }
   },
   graph: "0",
@@ -491,83 +491,66 @@ const processAllData = state => {
   });
 
   const newFilters = {
+    ...state.filters,
     forschungsgebiet: {
       ...state.filters.forschungsgebiet,
       uniqueVals: uniqueFields.sort(compare),
-      value:
-        state.filters.forschungsgebiet.value.length > 0
-          ? state.filters.forschungsgebiet.value
-          : uniqueFields
+      value: state.filters.forschungsgebiet.value
+        ? state.filters.forschungsgebiet.value
+        : uniqueFields
     },
     hauptthema: {
       ...state.filters.hauptthema,
       uniqueVals: uniqueTopics.sort(compare),
-      value:
-        state.filters.hauptthema.value.length > 0
-          ? state.filters.hauptthema.value
-          : uniqueTopics
+      value: state.filters.hauptthema.value
+        ? state.filters.hauptthema.value
+        : uniqueTopics
     },
     geldgeber: {
       ...state.filters.geldgeber,
       uniqueVals: uniqueSponsors.sort(compare),
-      value:
-        state.filters.geldgeber.value.length > 0
-          ? state.filters.geldgeber.value
-          : uniqueSponsors
+      value: state.filters.geldgeber.value
+        ? state.filters.geldgeber.value
+        : uniqueSponsors
     },
     time: {
       ...state.filters.time,
       uniqueVals: maxDateRange,
-      value:
-        state.filters.time.value.length > 0
-          ? state.filters.time.value
-          : maxDateRange
+      value: state.filters.time.value ? state.filters.time.value : maxDateRange
     },
     collections: {
       ...state.filters.collections,
       uniqueVals: uniqueCollections.sort((a, b) => a.localeCompare(b)),
-      value:
-        state.filters.collections.value.length > 0
-          ? state.filters.collections.value
-          : uniqueCollections
+      value: state.filters.collections.value
+        ? state.filters.collections.value
+        : uniqueCollections
     },
     formats: {
       ...state.filters.formats,
       uniqueVals: [
         ...new Set(newState.ktas.map(kta => kta.format).filter(f => f != null))
       ],
-      value:
-        state.filters.formats.value.length > 0
-          ? state.filters.formats.value
-          : [
-              ...new Set(
-                newState.ktas.map(kta => kta.format).filter(f => f != null)
-              )
-            ]
+      value: state.filters.formats.value
+        ? state.filters.formats.value
+        : [
+            ...new Set(
+              newState.ktas.map(kta => kta.format).filter(f => f != null)
+            )
+          ]
     },
     infrastructures: {
       ...state.filters.infrastructures,
       uniqueVals: uniqueInfrastructures.sort((a, b) => a.localeCompare(b)),
-      value:
-        state.filters.infrastructures.value.length > 0
-          ? state.filters.infrastructures.value
-          : uniqueInfrastructures
+      value: state.filters.infrastructures.value
+        ? state.filters.infrastructures.value
+        : uniqueInfrastructures
     },
     targetgroups: {
       ...state.filters.targetgroups,
       uniqueVals: newState.categories.map(t => t.title),
-      value:
-        state.filters.targetgroups.value.length > 0
-          ? state.filters.targetgroups.value
-          : newState.categories.map(t => t.title)
-    },
-    highlevelFilter: {
-      ...state.filters.highlevelFilter,
-      uniqueVals: ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"],
-      value:
-        state.filters.highlevelFilter.value.length > 0
-          ? state.filters.highlevelFilter.value
-          : ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"]
+      value: state.filters.targetgroups.value
+        ? state.filters.targetgroups.value
+        : newState.categories.map(t => t.title)
     }
   };
 

@@ -26,7 +26,7 @@ class SideBarView extends React.Component {
         style={{ height: this.state.height }}
         id="detailsPanelID"
       >
-        {this.props.sideBarComponent}
+        {this.props.isDataProcessed && this.props.sideBarComponent}
       </div>
     );
   }

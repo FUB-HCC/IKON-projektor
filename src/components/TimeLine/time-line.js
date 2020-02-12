@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { getFieldColor } from "../../util/utility";
 import TimeLineView from "./time-line-view";
-import { setSelectedYear, yearClicked } from "../../store/actions/actions";
+import { yearClicked } from "../../store/actions/actions";
 
 class TimeLine extends React.Component {
   componentDidMount() {
