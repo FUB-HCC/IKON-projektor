@@ -270,7 +270,13 @@
   font-size: 130%;
 }
 
-.subScriptLargeScreen{
+.subScriptLargeScreen {
   margin-left: 10px;
-  color: #717071
+  color: #717071;
+}
+
+.ktaBucketsWrapper {
+  margin-top: 20px;
+  overflow-y: scroll;
+  background: linear-gradient(transparent 80%, #090909);
 }
