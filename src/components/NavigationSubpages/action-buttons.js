@@ -6,10 +6,15 @@ import { Dialog } from "@blueprintjs/core";
 import { ReactComponent as Tutorial } from "../../assets/Icon-Tutorial.svg";
 import { ReactComponent as Teilen } from "../../assets/Icon-Teilen.svg";
 import { ReactComponent as Reset } from "../../assets/Icon-Reset.svg";
-import { setHighlightState } from "../../store/actions/actions";
-
+import {
+  infraHovered,
+  catHovered,
+  unHovered,
+  highlightUncertainty,
+  showUncertainty
+} from "../../store/actions/actions";
 class ActionButtons extends Component {
-  constructor() {
+  constructor(props) {
     super();
     this.startPageTour = this.startPageTour.bind(this);
     this.dialogOpened = this.dialogOpened.bind(this);
@@ -48,42 +53,37 @@ class ActionButtons extends Component {
       doneLabel: "Fertig"
     });
     tour
-      .onchange(() => {
-        if (
-          this.state.active === "WISSEN" &&
-          tour._introItems[1].element !== "g"
-        )
-          switch (tour._currentStep) {
-            case 1: {
-              this.props.setHighlightState(["uncertainty"]);
-              break;
-            }
-            case 2: {
-              this.props.setHighlightState([
-                "infrastructure",
-                "collection",
-                "categories"
-              ]);
-              break;
-            }
-            case 3: {
-              this.props.setHighlightState(["categories"]);
-              break;
-            }
-            case 4: {
-              this.props.setHighlightState(["infrastructure"]);
-              break;
-            }
-            case 5: {
-              this.props.setHighlightState(["collection"]);
-              break;
-            }
-            default: {
-              break;
-            }
+      .onbeforechange(() => {
+        switch (tour._currentStep) {
+          case 1: {
+            this.props.onShowUncertainty(true);
+            this.props.onHighlightUncertainty(true);
+            break;
           }
+          case 2: {
+            this.props.onHighlightUncertainty(false);
+            this.props.onShowUncertainty(false);
+            this.props.onCatHovered(23);
+            break;
+          }
+          case 3: {
+            this.props.onCatHovered(19);
+            break;
+          }
+          case 4: {
+            this.props.onInfraHovered("Meteorite");
+            break;
+          }
+          case 5: {
+            this.props.onInfraHovered("Hochleistungsrechner");
+            break;
+          }
+          default: {
+            break;
+          }
+        }
       })
-      .onexit(() => this.props.setHighlightState([]));
+      .onexit(() => this.props.onUnHovered());
     tour.start();
   }
 
@@ -139,10 +139,21 @@ class ActionButtons extends Component {
     );
   }
 }
-
 const mapDispatchToProps = dispatch => ({
-  setHighlightState: value => {
-    dispatch(setHighlightState(value));
+  onUnHovered: value => {
+    dispatch(unHovered());
+  },
+  onCatHovered: value => {
+    dispatch(catHovered(value));
+  },
+  onInfraHovered: value => {
+    dispatch(infraHovered(value));
+  },
+  onHighlightUncertainty: value => {
+    dispatch(highlightUncertainty(value));
+  },
+  onShowUncertainty: value => {
+    dispatch(showUncertainty(value));
   }
 });
 

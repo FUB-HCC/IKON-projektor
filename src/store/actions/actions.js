@@ -106,6 +106,20 @@ export const unClicked = () => {
   };
 };
 
+export const showUncertainty = data => {
+  return {
+    type: actionTypes.SHOW_UNCERTAINTY,
+    value: data
+  };
+};
+
+export const highlightUncertainty = data => {
+  return {
+    type: actionTypes.HIGHLIGHT_UNCERTAINTY,
+    value: data
+  };
+};
+
 export const fetchClusterData = () => {
   return dispatch => {
     axios.get("https://localhost/api/clustering").then(result => {
@@ -249,13 +263,6 @@ export const updateKTAMappingData = ktaMappingData => {
   return {
     type: actionTypes.UPDATE_KTA_MAPPING_DATA,
     value: ktaMappingData
-  };
-};
-
-export const setHighlightState = group => {
-  return {
-    type: actionTypes.SET_HIGHLIGHT_STATE,
-    value: group
   };
 };
 

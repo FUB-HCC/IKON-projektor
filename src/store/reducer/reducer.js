@@ -109,8 +109,10 @@ export const initialState = {
     kta: null,
     year: null
   },
+
+  uncertaintyOn: false,
+  uncertaintyHighlighted: false,
   clusterData: undefined,
-  highlightedGroup: null,
   isDataLoaded: {
     projects: false,
     institutions: false,
@@ -204,8 +206,11 @@ const reducer = (state = initialState, action) => {
     case actionTypes.UNCLICKED:
       return unClicked(state);
 
-    case actionTypes.SET_HIGHLIGHT_STATE:
-      return setHighlightState(state, action);
+    case actionTypes.SHOW_UNCERTAINTY:
+      return showUncertainty(state, action);
+
+    case actionTypes.HIGHLIGHT_UNCERTAINTY:
+      return highlightUncertainty(state, action);
 
     default:
       return state;
@@ -707,9 +712,14 @@ const unClicked = state => ({
   sideBarComponent: <FilterPanel />
 });
 
-const setHighlightState = (state, action) => ({
+const showUncertainty = (state, action) => ({
   ...state,
-  highlightedGroup: action.value
+  uncertaintyOn: action.value
+});
+
+const highlightUncertainty = (state, action) => ({
+  ...state,
+  uncertaintyHighlighted: action.value
 });
 
 export default reducer;
