@@ -2,7 +2,6 @@ import { connect } from "react-redux";
 import ClusterMapView from "./cluster-map-view";
 import concave from "concaveman";
 import {
-  setHighlightState,
   unClicked,
   catClicked,
   infraClicked,
@@ -141,7 +140,7 @@ const mapStateToProps = state => {
   let clusterDataForView = [];
   let categoriesForView = [];
   let topography = [];
-  let InfrastrukturSorted = [];
+  let infrastrukturSorted = [];
   let highlightedProjects = [];
   let highlightedCats = [];
   let highlightedInfra = [];
@@ -155,7 +154,7 @@ const mapStateToProps = state => {
       c => c.count > 0 && filters.targetgroups.value.includes(c.title)
     );
     topography = clusterData.cluster_topography;
-    InfrastrukturSorted = computeInfrastructureSorted(
+    infrastrukturSorted = computeInfrastructureSorted(
       filteredCollections,
       clusterData,
       filteredInfrastructures,
@@ -171,13 +170,15 @@ const mapStateToProps = state => {
     clusterData: clusterDataForView,
     categories: categoriesForView,
     topography: topography,
-    InfrastrukturSorted: InfrastrukturSorted,
+    infrastrukturSorted: infrastrukturSorted,
 
     isAnyClicked: !Object.values(isClicked).every(clickState => !clickState),
     highlightedProjects: highlightedProjects,
     highlightedCats: highlightedCats,
     highlightedInfra: highlightedInfra,
-    highlightedGroup: highlightedGroup
+    highlightedGroup: highlightedGroup,
+    uncertaintyOn: state.main.uncertaintyOn,
+    uncertaintyHighlighted: state.main.uncertaintyHighlighted
   };
 };
 
@@ -200,8 +201,7 @@ const mapDispatchToProps = dispatch => {
     },
     onInfraHovered: infra => {
       dispatch(infraHovered(infra));
-    },
-    setHighlightState: value => dispatch(setHighlightState(value))
+    }
   };
 };
 

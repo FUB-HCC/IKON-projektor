@@ -44,8 +44,7 @@ export default class ClusterMapView extends React.Component {
   constructor(props) {
     super();
     this.state = {
-      uncertaintyHighlight: false,
-      showUncertainty: false
+      hoverText: false
     };
     this.renderHover = this.renderHover.bind(this);
   }
@@ -112,7 +111,7 @@ export default class ClusterMapView extends React.Component {
       categories,
       width,
       height,
-      InfrastrukturSorted,
+      infrastrukturSorted,
       onCatHovered,
       onInfraHovered,
       onUnHovered,
@@ -123,13 +122,15 @@ export default class ClusterMapView extends React.Component {
       highlightedCats,
       highlightedProjects,
       clusterData,
-      isAnyClicked
+      isAnyClicked,
+      uncertaintyOn,
+      uncertaintyHighlighted
     } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (
       !categories ||
-      !InfrastrukturSorted ||
+      !infrastrukturSorted ||
       !width ||
       !height ||
       scale <= 0
@@ -139,7 +140,7 @@ export default class ClusterMapView extends React.Component {
     const shiftX = width / 2;
     const shiftY = height / 2;
     const radius = clusterSize(scale) - arcMarginSides(width, scale);
-    const each = 360 / (categories.length + InfrastrukturSorted.length);
+    const each = 360 / (categories.length + infrastrukturSorted.length);
     const sortedTargetgroups = categories.sort((a, b) =>
       a.title < b.title ? 1 : -1
     );
@@ -153,16 +154,19 @@ export default class ClusterMapView extends React.Component {
           marginTop: arcMarginTop(height, scale)
         }}
       >
-        <IconExplanation posX={20} posY={20} />
+        <IconExplanation
+          posX={20}
+          posY={20}
+          category={categories[0]}
+          infrastructure={infrastrukturSorted.find(
+            i => i.type === "infrastructure"
+          )}
+          collection={infrastrukturSorted.find(i => i.type === "collection")}
+        />
         <UncertaintyExplanation
           posX={width - 170}
           posY={20}
-          toggleUncertainty={() => {
-            this.setState({
-              showUncertainty: !this.state.showUncertainty
-            });
-          }}
-          showUncertainty={this.state.showUncertainty}
+          uncertaintyOn={uncertaintyOn}
         />
         <svg
           className="viz-3"
@@ -171,7 +175,7 @@ export default class ClusterMapView extends React.Component {
           height={height}
           onClick={isAnyClicked ? onUnClicked : null}
         >
-          {this.state.showUncertainty && (
+          {uncertaintyOn && (
             <ClusterContoursMap
               width={this.props.width}
               height={this.props.height}
@@ -180,7 +184,7 @@ export default class ClusterMapView extends React.Component {
               clusterSize={clusterSize}
               clusterX={clusterPosX}
               clusterY={clusterPosY}
-              isHighlighted={this.state.uncertaintyHighlight}
+              uncertaintyHighlighted={uncertaintyHighlighted}
             />
           )}
           <g>
@@ -330,7 +334,7 @@ export default class ClusterMapView extends React.Component {
             })}
 
             <g>
-              {InfrastrukturSorted.map((infrastruktur, i) => {
+              {infrastrukturSorted.map((infrastruktur, i) => {
                 const startAngle = each * i;
                 const angle = startAngle * (Math.PI / 180);
                 const x = shiftX - 6 + radius * Math.cos(angle);

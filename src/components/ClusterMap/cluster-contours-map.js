@@ -49,7 +49,7 @@ class ClusterContoursMap extends React.Component {
       this.props.width !== nextProps.width ||
       this.props.height !== nextProps.height ||
       this.props.topography.length !== nextProps.topography.length ||
-      this.props.isHighlighted !== nextProps.isHighlighted
+      this.props.uncertaintyHighlighted !== nextProps.uncertaintyHighlighted
     );
   }
 
@@ -98,7 +98,7 @@ class ClusterContoursMap extends React.Component {
           cx={clusterX(width, scale) + 0.5 * clusterSize(scale)}
           cy={clusterY(height, scale) + 0.5 * clusterSize(scale)}
           r={clusterSize(scale) * 0.58}
-          fill={this.props.isHighlighted ? "#afca0b22" : "none"}
+          fill={this.props.uncertaintyHighlighted ? "#afca0b22" : "none"}
         />
       </g>
     );

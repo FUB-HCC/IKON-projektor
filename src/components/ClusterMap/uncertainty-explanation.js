@@ -1,12 +1,17 @@
 import React from "react";
 import style from "./cluster-map-view.module.css";
 import { useDispatch } from "react-redux";
-import { setHighlightState } from "../../store/actions/actions";
+import {
+  showUncertainty,
+  highlightUncertainty
+} from "../../store/actions/actions";
 
 const UncertaintyExplanation = props => {
   const dispatch = useDispatch();
   return (
     <div
+      data-intro="Als weiteres Element dieser Ansicht kann die Unsicherheits-Landschaft aktiviert werden. Da die Anordnung auf algorithmischen Schätzungen von inhaltlichen Ähnlichkeiten basiert, unterstützt dieses Element die Interpretation der Anordnung. Je heller die Färbung der Landschaft, desto sicherer ist sich der Algorithmus über die Position des jeweiligen Forschungsprojektes, und umgekehrt."
+      data-step="2"
       style={{
         position: "absolute",
         left: props.posX + "px",
@@ -18,15 +23,11 @@ const UncertaintyExplanation = props => {
         fontSize: "80%"
       }}
     >
-      {props.showUncertainty && (
+      {props.uncertaintyOn && (
         <div
-          data-intro="Um die thematische Anordnung der Projekte zu qualifizieren,ist als weiteres Element dieser Ansicht die <b>Unsicherheits-Landschaft</b> integriert. Da die Anordnung auf algorithmischen Schätzungen von inhaltlichen Ähnlichkeite basiert, ünterstützt dieses Element die Interpretation der Anordnung. Je heller die Färbung der Landschaft, desto <b>sicherer</b> ist sich der Algorithmus über die Position des jeweiligen Forschungsprojektes, und umgekehrt."
-          data-step="2"
           className={style.legendRow}
-          onMouseEnter={() => dispatch(setHighlightState("uncertainty"))}
-          onMouseLeave={() => {
-            dispatch(setHighlightState());
-          }}
+          onMouseEnter={() => dispatch(highlightUncertainty(true))}
+          onMouseLeave={() => dispatch(highlightUncertainty(false))}
           style={{ cursor: "POINTER" }}
         >
           <p
@@ -75,7 +76,8 @@ const UncertaintyExplanation = props => {
         <input
           type="checkbox"
           id="toggleUncertainty"
-          onChange={() => props.toggleUncertainty()}
+          checked={props.uncertaintyOn}
+          onChange={() => dispatch(showUncertainty(!props.uncertaintyOn))}
         />
         Unsicherheitslandschaft
         <span className={style.checkmark}></span>

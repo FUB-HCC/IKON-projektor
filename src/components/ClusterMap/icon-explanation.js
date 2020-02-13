@@ -4,7 +4,11 @@ import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 import style from "./cluster-map-view.module.css";
 import { useDispatch } from "react-redux";
-import { setHighlightState } from "../../store/actions/actions";
+import {
+  infraHovered,
+  catHovered,
+  unHovered
+} from "../../store/actions/actions";
 
 const IconExplanation = props => {
   const dispatch = useDispatch();
@@ -29,9 +33,11 @@ const IconExplanation = props => {
         data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
         data-step="4"
         className={style.legendRow}
-        onMouseEnter={() => dispatch(setHighlightState("categories"))}
+        onMouseEnter={() =>
+          props.category ? dispatch(catHovered(props.category.id)) : 0
+        }
         onMouseLeave={() => {
-          dispatch(setHighlightState());
+          dispatch(unHovered());
         }}
       >
         <WtaIcon className={style.tooltipIcon} />
@@ -42,9 +48,11 @@ const IconExplanation = props => {
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Sammlungen am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben können."
         data-step="5"
         className={style.legendRow}
-        onMouseEnter={() => dispatch(setHighlightState("collection"))}
+        onMouseEnter={() =>
+          props.collection ? dispatch(infraHovered(props.collection.name)) : ""
+        }
         onMouseLeave={() => {
-          dispatch(setHighlightState());
+          dispatch(unHovered());
         }}
       >
         <CollectionIcon className={style.tooltipIcon} />
@@ -55,9 +63,13 @@ const IconExplanation = props => {
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Laborgeräte oder andere Infrastruktur am Museum, die in Forschungsprojekten eingesetzt werden können."
         data-step="6"
         className={style.legendRow}
-        onMouseEnter={() => dispatch(setHighlightState("infrastructure"))}
+        onMouseEnter={() =>
+          props.infrastructure
+            ? dispatch(infraHovered(props.infrastructure.name))
+            : 0
+        }
         onMouseLeave={() => {
-          dispatch(setHighlightState());
+          dispatch(unHovered());
         }}
       >
         <InfrastructureIcon className={style.tooltipIcon} />
