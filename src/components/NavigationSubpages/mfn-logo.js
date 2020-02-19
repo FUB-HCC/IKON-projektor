@@ -18,7 +18,7 @@ class MFNLogo extends Component {
         style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
         onClick={this.startTour}
       >
-        <img src={logo} alt={"The logo should be here!"} />
+        <img src={logo} alt={"Museum für Naturkunde Berlin"} />
       </div>
     );
   }
@@ -46,7 +46,7 @@ class MFNLogo extends Component {
       steps: [
         {
           intro:
-            "<h2>Willkommen im MfN.projektor</h2>In dieser Visualisierungs-Software werden Drittmittelprojekte, Infrastrukturen und Wissenstransferaktivitäten am Museum für Naturkunde in Verbindung gesetzt. Entdecken Sie strategische Möglichkeiten für Austausch und Transfer!<h3>Beispiele explorieren:</h3><p onClick='window.alert(`Zielgruppe für Wissenstransfer finden`)'>› Zielgruppe für Wissenstransfer finden</p><p onClick=' window.alert(`Fehlende Informationen hinzufügen`)'>› Fehlende Informationen hinzufügen</p><p onClick=' window.alert(`Visualisierungszustand teilen`)'>› Visualisierungszustand teilen</p>",
+            "<h2>Willkommen im MfN.projektor</h2>In dieser Visualisierungs-Software werden Drittmittelprojekte, Infrastrukturen und Wissenstransferaktivitäten am Museum für Naturkunde in Verbindung gesetzt. Entdecken Sie strategische Möglichkeiten für Austausch und Transfer!",
           element: "step1"
         },
         {
