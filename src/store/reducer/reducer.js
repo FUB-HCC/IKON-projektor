@@ -109,7 +109,7 @@ export const initialState = {
     kta: null,
     year: null
   },
-
+  legendHovered: "none",
   uncertaintyOn: false,
   uncertaintyHighlighted: false,
   clusterData: undefined,
@@ -211,6 +211,9 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.HIGHLIGHT_UNCERTAINTY:
       return highlightUncertainty(state, action);
+
+    case actionTypes.LEGEND_HOVERED:
+      return legendHovered(state, action);
 
     default:
       return state;
@@ -710,6 +713,11 @@ const unClicked = state => ({
     year: null
   },
   sideBarComponent: <FilterPanel />
+});
+
+const legendHovered = (state, action) => ({
+  ...state,
+  legendHovered: action.value
 });
 
 const showUncertainty = (state, action) => ({

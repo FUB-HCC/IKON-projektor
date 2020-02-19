@@ -4,11 +4,7 @@ import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 import style from "./cluster-map-view.module.css";
 import { useDispatch } from "react-redux";
-import {
-  infraHovered,
-  catHovered,
-  unHovered
-} from "../../store/actions/actions";
+import { legendHovered } from "../../store/actions/actions";
 
 const IconExplanation = props => {
   const dispatch = useDispatch();
@@ -33,11 +29,9 @@ const IconExplanation = props => {
         data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
         data-step="4"
         className={style.legendRow}
-        onMouseEnter={() =>
-          props.category ? dispatch(catHovered(props.category.id)) : 0
-        }
+        onMouseEnter={() => dispatch(legendHovered("kta"))}
         onMouseLeave={() => {
-          dispatch(unHovered());
+          dispatch(legendHovered(null));
         }}
       >
         <WtaIcon className={style.tooltipIcon} />
@@ -48,11 +42,9 @@ const IconExplanation = props => {
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Sammlungen am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben können."
         data-step="5"
         className={style.legendRow}
-        onMouseEnter={() =>
-          props.collection ? dispatch(infraHovered(props.collection.name)) : ""
-        }
+        onMouseEnter={() => dispatch(legendHovered("collections"))}
         onMouseLeave={() => {
-          dispatch(unHovered());
+          dispatch(legendHovered(null));
         }}
       >
         <CollectionIcon className={style.tooltipIcon} />
@@ -63,13 +55,9 @@ const IconExplanation = props => {
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Laborgeräte oder andere Infrastruktur am Museum, die in Forschungsprojekten eingesetzt werden können."
         data-step="6"
         className={style.legendRow}
-        onMouseEnter={() =>
-          props.infrastructure
-            ? dispatch(infraHovered(props.infrastructure.name))
-            : 0
-        }
+        onMouseEnter={() => dispatch(legendHovered("infrastructures"))}
         onMouseLeave={() => {
-          dispatch(unHovered());
+          dispatch(legendHovered(null));
         }}
       >
         <InfrastructureIcon className={style.tooltipIcon} />
