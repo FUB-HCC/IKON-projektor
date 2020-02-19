@@ -120,6 +120,11 @@ export const highlightUncertainty = data => {
   };
 };
 
+export const legendHovered = legendKey => ({
+  type: actionTypes.LEGEND_HOVERED,
+  value: legendKey
+});
+
 export const fetchClusterData = () => {
   return dispatch => {
     axios.get("https://localhost/api/clustering").then(result => {

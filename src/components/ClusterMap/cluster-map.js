@@ -37,8 +37,7 @@ const computeClusters = (clusterData, filteredProjects, categories) => {
 const computeInfrastructureSorted = (
   collections,
   clusterData,
-  infrastructures,
-  filters
+  infrastructures
 ) => {
   if (!clusterData) return [];
   return collections
@@ -47,7 +46,7 @@ const computeInfrastructureSorted = (
     .filter(inf => !inf.name.includes("Kein"));
 };
 
-const extractHiglightedFromState = state => {
+const extractHighlightedFromState = state => {
   let highlighted = {
     projects: [],
     cats: [],
@@ -55,7 +54,34 @@ const extractHiglightedFromState = state => {
   };
   highlighted = addExtractedHighlighted(state.isHovered, highlighted, state);
   highlighted = addExtractedHighlighted(state.isClicked, highlighted, state);
+  highlighted = addHighlightedFromLegend(highlighted, state);
   return highlighted;
+};
+
+const addHighlightedFromLegend = (highlighted, state) => {
+  switch (state.legendHovered) {
+    case "kta":
+      return {
+        ...highlighted,
+        cats: highlighted.cats.concat(state.categories.map(cat => cat.id))
+      };
+    case "collections":
+      return {
+        ...highlighted,
+        infras: highlighted.infras.concat(
+          state.collections.map(col => col.name)
+        )
+      };
+    case "infrastructures":
+      return {
+        ...highlighted,
+        infras: highlighted.infras.concat(
+          state.infrastructures.map(inf => inf.name)
+        )
+      };
+    default:
+      return highlighted;
+  }
 };
 
 const addExtractedHighlighted = (selectedState, highlighted, state) => {
@@ -160,7 +186,7 @@ const mapStateToProps = state => {
       filteredInfrastructures,
       filters
     );
-    const highlighted = extractHiglightedFromState(state.main);
+    const highlighted = extractHighlightedFromState(state.main);
     highlightedProjects = highlighted.projects;
     highlightedInfra = highlighted.infras;
     highlightedCats = highlighted.cats;
