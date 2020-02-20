@@ -260,7 +260,7 @@ const GeoMapView = props => {
             {ktaInstitutions.map((inst, i) => {
               return (
                 <tr>
-                  <td className={style.instText}>{i + 1 + ". " + inst.name}</td>
+                  <td className={style.instText}>{inst.name}</td>
                   <td>
                     <svg
                       height={maxCircle * 2}
