@@ -310,8 +310,7 @@ export default class ClusterMapView extends React.Component {
                     </text>
                   </g>
                   <g>
-                    {!uncertaintyOn &&
-                      lines.map((line, i) => (
+                    {lines.map((line, i) => (
                         <g key={i}>
                           <path
                             pointerEvents="none"
@@ -321,7 +320,7 @@ export default class ClusterMapView extends React.Component {
                             stroke={
                               line[4]
                                 ? "rgba(175, 202, 11, 0.5)"
-                                : this.state.showUncertainty
+                                : uncertaintyOn
                                 ? "transparent"
                                 : "rgba(255,255,255,0.1)"
                             }
@@ -464,8 +463,7 @@ export default class ClusterMapView extends React.Component {
                       </text>
                     </g>
                     <g>
-                      {!uncertaintyOn &&
-                        lines.map((line, i) => (
+                      {lines.map((line, i) => (
                           <g key={i}>
                             <path
                               pointerEvents="none"
@@ -475,7 +473,7 @@ export default class ClusterMapView extends React.Component {
                               stroke={
                                 line[4]
                                   ? "rgba(175, 202, 11, 0.5)"
-                                  : this.state.showUncertainty
+                                  : uncertaintyOn
                                   ? "transparent"
                                   : "rgba(255,255,255,0.1)"
                               }

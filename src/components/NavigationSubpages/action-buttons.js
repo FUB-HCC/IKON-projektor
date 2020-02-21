@@ -11,7 +11,7 @@ import {
   catHovered,
   unHovered,
   highlightUncertainty,
-  showUncertainty
+  showUncertainty, legendHovered
 } from "../../store/actions/actions";
 class ActionButtons extends Component {
   constructor(props) {
@@ -63,19 +63,18 @@ class ActionButtons extends Component {
           case 2: {
             this.props.onHighlightUncertainty(false);
             this.props.onShowUncertainty(false);
-            this.props.onCatHovered(23);
             break;
           }
           case 3: {
-            this.props.onCatHovered(19);
+            this.props.legendHovered('kta');
             break;
           }
           case 4: {
-            this.props.onInfraHovered("Meteorite");
+            this.props.legendHovered("collections");
             break;
           }
           case 5: {
-            this.props.onInfraHovered("Hochleistungsrechner");
+            this.props.legendHovered("infrastructures");
             break;
           }
           default: {
@@ -83,7 +82,7 @@ class ActionButtons extends Component {
           }
         }
       })
-      .onexit(() => this.props.onUnHovered());
+      .onexit(() => this.props.legendHovered(null));
     tour.start();
   }
 
@@ -140,14 +139,8 @@ class ActionButtons extends Component {
   }
 }
 const mapDispatchToProps = dispatch => ({
-  onUnHovered: value => {
-    dispatch(unHovered());
-  },
-  onCatHovered: value => {
-    dispatch(catHovered(value));
-  },
-  onInfraHovered: value => {
-    dispatch(infraHovered(value));
+  legendHovered: legendKey => {
+    dispatch(legendHovered(legendKey));
   },
   onHighlightUncertainty: value => {
     dispatch(highlightUncertainty(value));
