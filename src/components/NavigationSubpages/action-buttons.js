@@ -7,11 +7,9 @@ import { ReactComponent as Tutorial } from "../../assets/Icon-Tutorial.svg";
 import { ReactComponent as Teilen } from "../../assets/Icon-Teilen.svg";
 import { ReactComponent as Reset } from "../../assets/Icon-Reset.svg";
 import {
-  infraHovered,
-  catHovered,
-  unHovered,
   highlightUncertainty,
-  showUncertainty, legendHovered
+  showUncertainty,
+  legendHovered
 } from "../../store/actions/actions";
 class ActionButtons extends Component {
   constructor(props) {
@@ -66,7 +64,7 @@ class ActionButtons extends Component {
             break;
           }
           case 3: {
-            this.props.legendHovered('kta');
+            this.props.legendHovered("kta");
             break;
           }
           case 4: {

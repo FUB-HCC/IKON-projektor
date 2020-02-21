@@ -104,7 +104,8 @@ class MFNLogo extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  changeGraph: key => dispatch(changeGraph(key))
+  changeGraph: key => dispatch(changeGraph(key)),
+  tourStarted:
 });
 
 export default connect(
