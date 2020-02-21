@@ -1,8 +1,6 @@
 import { pushStateToUrl } from "../../util/url-utils";
 import * as actionTypes from "../actions/actionTypes";
 import axios from "axios";
-import { batch } from "react-redux";
-import { processDataIfReady, updateKTAData } from "../actions/actions";
 
 export const updateUrl = store => next => action => {
   const result = next(action);
@@ -43,6 +41,10 @@ const createLogMsgIfNecessary = (state, action) => {
       case actionTypes.YEAR_CLICKED:
       case actionTypes.SHOW_UNCERTAINTY:
       case actionTypes.LEGEND_HOVERED:
+      case actionTypes.TUTORIAL_STARTED:
+      case actionTypes.PAGE_RESET:
+      case actionTypes.TOUR_STARTED:
+      case actionTypes.SHARE_DIALOG_OPENED:
         sendEvtDataToLogService(state.main.user, action.type, {
           key: "null",
           value: action.value

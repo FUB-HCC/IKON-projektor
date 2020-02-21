@@ -9,7 +9,10 @@ import { ReactComponent as Reset } from "../../assets/Icon-Reset.svg";
 import {
   highlightUncertainty,
   showUncertainty,
-  legendHovered
+  legendHovered,
+  tutorialStarted,
+  pageReset,
+  shareDialogOpened
 } from "../../store/actions/actions";
 class ActionButtons extends Component {
   constructor(props) {
@@ -23,6 +26,7 @@ class ActionButtons extends Component {
   }
 
   dialogOpened() {
+    this.props.shareDialogOpened();
     this.setState({ shareDialogIsOpen: true });
   }
   dialogClosed() {
@@ -38,6 +42,7 @@ class ActionButtons extends Component {
   }
 
   startPageTour() {
+    this.props.tutorialStarted();
     var tour = introJs();
     tour.setOptions({
       tooltipPosition: "auto",
@@ -127,7 +132,10 @@ class ActionButtons extends Component {
 
           <div
             className={classes.rightElement}
-            onClick={() => window.open(window.location.origin, "_self")}
+            onClick={() => {
+              this.props.pageReset();
+              window.open(window.location.origin, "_self");
+            }}
           >
             <Reset className={classes.buttonIcon} /> <p>Zurücksetzen</p>
           </div>
@@ -144,7 +152,16 @@ const mapDispatchToProps = dispatch => ({
     dispatch(highlightUncertainty(value));
   },
   onShowUncertainty: value => {
-    dispatch(showUncertainty(value));
+    dispatch(showUncertainty());
+  },
+  tutorialStarted: () => {
+    dispatch(tutorialStarted());
+  },
+  pageReset: () => {
+    dispatch(pageReset());
+  },
+  shareDialogOpened: () => {
+    dispatch(shareDialogOpened());
   }
 });
 

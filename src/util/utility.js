@@ -1,4 +1,3 @@
-
 const fieldsMapping = [
   { name: "Naturwissenschaften", field: 1, color: "#ad494a" },
   { name: "Lebenswissenschaften", field: 2, color: "#e69e57" },
@@ -140,12 +139,11 @@ export const shortenString = (string, len) => {
 export const getQueryStringParams = query => {
   return query
     ? (/^[?#]/.test(query) ? query.slice(1) : query)
-      .split('&')
-      .reduce((params, param) => {
-          let [key, value] = param.split('=');
-          params[key] = value ? value : '';
+        .split("&")
+        .reduce((params, param) => {
+          let [key, value] = param.split("=");
+          params[key] = value ? value : "";
           return params;
-        }, {}
-      )
-    : {}
+        }, {})
+    : {};
 };
