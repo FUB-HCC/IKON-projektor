@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import GraphView from "./pages/GraphView/graph-view";
+import GraphViewTouch from "./pages/GraphViewTouch/graph-view-touch";
 import { default as NavigationSubpages } from "./components/NavigationSubpages/navigation-subpages";
 import Sidebar from "./components/SideBar/sidebar";
 import { ConnectedRouter } from "connected-react-router";
@@ -7,6 +8,7 @@ import { Route, Redirect, Switch } from "react-router";
 import { history } from "./index";
 import classes from "./App.module.css";
 
+export const sideBarWidth = 450;
 export const menuBarHeight = 65;
 export const appMargin = 5;
 
@@ -31,7 +33,7 @@ const AppBodyTouch = () => (
         <Sidebar />
       </div>
       <div className={classes.contentWindow}>
-        <GraphView />
+        <GraphViewTouch />
       </div>
     </div>
   </>

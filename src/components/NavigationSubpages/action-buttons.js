@@ -14,6 +14,7 @@ import {
   pageReset,
   shareDialogOpened
 } from "../../store/actions/actions";
+import { sideBarWidth } from "../../App";
 class ActionButtons extends Component {
   constructor(props) {
     super();
@@ -122,7 +123,11 @@ class ActionButtons extends Component {
             </div>
           </div>
         </Dialog>
-        <div className={classes.rightPanel} id="step4">
+        <div
+          className={classes.rightPanel}
+          id="step4"
+          style={{ width: sideBarWidth }}
+        >
           <div className={classes.rightElement} onClick={this.startPageTour}>
             <Tutorial className={classes.buttonIcon} /> <p>Tutorial</p>
           </div>
@@ -134,8 +139,7 @@ class ActionButtons extends Component {
             className={classes.rightElement}
             onClick={() => {
               this.props.pageReset();
-            }}
-          >
+            }}>
             <Reset className={classes.buttonIcon} /> <p>Zurücksetzen</p>
           </div>
         </div>

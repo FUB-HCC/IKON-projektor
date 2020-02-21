@@ -14,22 +14,24 @@ import {
   fetchInfrastructureData
 } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
+import { sideBarWidth } from "../../App";
 
 class GraphViewTouch extends React.Component {
   constructor(props) {
     super(props);
-    this.margins = { top: 10, left: 10, bottom: 10, right: 10 };
+    this.margins = { top: 10, left: 10, bottom: 10, right: 30 };
+    this.state = {};
   }
 
   componentDidMount() {
     this.setState({
       height: window.innerHeight - menuBarHeight - appMargin * 2,
       width:
-        (window.innerWidth -
-          appMargin * 2 -
-          this.margins.left -
-          this.margins.right) *
-        0.75
+        window.innerWidth -
+        appMargin * 2 -
+        this.margins.left -
+        this.margins.right -
+        sideBarWidth
     });
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
@@ -58,7 +60,7 @@ class GraphViewTouch extends React.Component {
         appMargin * 2 -
         this.margins.left -
         this.margins.right -
-        420
+        sideBarWidth
     });
   }
 
@@ -67,7 +69,7 @@ class GraphViewTouch extends React.Component {
       <>
         <TimeGraph
           id="step2"
-          height={this.state.height * 0.2 * 3}
+          height={this.state.height * 0.2 * 2.5}
           width={this.state.width}
         />
         <ClusterMap

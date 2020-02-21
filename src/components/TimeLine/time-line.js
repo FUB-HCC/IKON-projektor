@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, isTouchMode } from "../../util/utility";
 import TimeLineView from "./time-line-view";
 import { yearClicked } from "../../store/actions/actions";
 
@@ -75,7 +75,7 @@ const mapStateToProps = state => {
     projects: state.main.filteredProjects,
     colors: graphColors,
     ktasYearBuckets: processedKtas,
-    areKtaRendered: true
+    areKtaRendered: !isTouchMode(state)
   };
 };
 
