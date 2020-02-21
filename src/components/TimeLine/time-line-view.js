@@ -402,7 +402,13 @@ export default class TimeLineView extends Component {
           </SVGWithMargin>
           {this.renderProjectsHover()}
           {!areKtaRendered && (
-            <div className={styles.subScriptLargeScreen}>
+            <div
+              className={styles.subScriptLargeScreen}
+              style={{
+                marginLeft: this.state.margin,
+                marginBottom: this.state.margin / 2
+              }}
+            >
               Anzahl Projekte je Forschungsgebiet pro Jahr
             </div>
           )}

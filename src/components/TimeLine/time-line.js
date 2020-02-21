@@ -79,6 +79,8 @@ const mapStateToProps = state => {
   };
 };
 
+//TODO: make conditional
+
 const processData = (data, colors) => {
   /*
    Private

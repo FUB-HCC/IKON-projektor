@@ -4,7 +4,6 @@ import { getFieldColor } from "../../util/utility";
 import { ReactComponent as ArrowUp } from "../../assets/collapse-up.svg";
 import { ReactComponent as ArrowDown } from "../../assets/collapse-down.svg";
 
-//const FilterSet = props => {
 class FilterSet extends Component {
   constructor(props) {
     super(props);
@@ -45,16 +44,20 @@ class FilterSet extends Component {
                 iconSize="20px"
                 iconMargin="9"
                 icon={
-                  this.state.toggleState.includes(subset.name) ? (
-                    <ArrowDown
-                      stroke={getFieldColor(subset.name)}
-                      className={style.arrowIcon}
-                    />
+                  subset.subFilters.length > 0 ? (
+                    this.state.toggleState.includes(subset.name) ? (
+                      <ArrowDown
+                        stroke={getFieldColor(subset.name)}
+                        className={style.arrowIcon}
+                      />
+                    ) : (
+                      <ArrowUp
+                        className={style.arrowIcon}
+                        stroke={getFieldColor(subset.name)}
+                      />
+                    )
                   ) : (
-                    <ArrowUp
-                      className={style.arrowIcon}
-                      stroke={getFieldColor(subset.name)}
-                    />
+                    <div />
                   )
                 }
               />

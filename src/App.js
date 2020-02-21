@@ -44,7 +44,7 @@ class App extends Component {
         <>
           <div className={classes.offsetWrapper} style={{ padding: appMargin }}>
             <Switch>
-              <Route exact path="/" render={() => <Redirect to="/touch" />} />
+              <Route exact path="/" render={() => <Redirect to="/explore" />} />
               <Route path="/explore" component={AppBodyStandard} />
               <Route path="/touch" component={AppBodyTouch} />
             </Switch>
