@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import classes from "./navigation-subpages.module.css";
 import logo from "../../assets/ikon_logo.png";
 import introJs from "intro.js";
-import { changeGraph } from "../../store/actions/actions";
+import { changeGraph, tourStarted } from "../../store/actions/actions";
 
 class MFNLogo extends Component {
   constructor() {
@@ -31,6 +31,7 @@ class MFNLogo extends Component {
   }
 
   startTour() {
+    this.props.tourStarted();
     var tour = introJs();
     tour.setOptions({
       tooltipPosition: "auto",
@@ -104,7 +105,8 @@ class MFNLogo extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  changeGraph: key => dispatch(changeGraph(key))
+  changeGraph: key => dispatch(changeGraph(key)),
+  tourStarted: () => dispatch(tourStarted())
 });
 
 export default connect(

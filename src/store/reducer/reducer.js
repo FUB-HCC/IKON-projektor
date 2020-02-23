@@ -215,6 +215,12 @@ const reducer = (state = initialState, action) => {
     case actionTypes.LEGEND_HOVERED:
       return legendHovered(state, action);
 
+    case actionTypes.PAGE_RESET:
+      return resetPage(state);
+
+    case actionTypes.SHOW_VIA_WIKI_REQUESTED:
+      return showViaWikiRequested(state, action);
+
     default:
       return state;
   }
@@ -729,5 +735,18 @@ const highlightUncertainty = (state, action) => ({
   ...state,
   uncertaintyHighlighted: action.value
 });
+
+const resetPage = state => {
+  if (state.user) {
+    window.open(window.location.pathname + "?uid=" + state.user, "_self");
+  } else {
+    window.open(window.location.pathname, "_self");
+  }
+};
+
+const showViaWikiRequested = (state, action) => {
+  window.open(action.value, "_blank");
+  return state;
+};
 
 export default reducer;

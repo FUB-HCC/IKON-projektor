@@ -276,3 +276,32 @@ export const processDataIfReady = () => {
     type: actionTypes.PROCESS_DATA_IF_READY
   };
 };
+
+export const tourStarted = () => {
+  return {
+    type: actionTypes.TOUR_STARTED
+  };
+};
+
+export const tutorialStarted = () => {
+  return {
+    type: actionTypes.TUTORIAL_STARTED
+  };
+};
+
+export const shareDialogOpened = () => {
+  return {
+    type: actionTypes.SHARE_DIALOG_OPENED
+  };
+};
+
+export const pageReset = () => {
+  return {
+    type: actionTypes.PAGE_RESET
+  };
+};
+
+export const showViaWikiRequested = url => ({
+  type: actionTypes.SHOW_VIA_WIKI_REQUESTED,
+  value: url
+});

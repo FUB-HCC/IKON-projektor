@@ -1,6 +1,10 @@
 import connect from "react-redux/es/connect/connect";
 import InfraDetailsPanelView from "./infra-details-panel-view";
-import { unClicked, projectClicked } from "../../store/actions/actions";
+import {
+  unClicked,
+  projectClicked,
+  showViaWikiRequested
+} from "../../store/actions/actions";
 
 const filterProjectsByInfra = (infrastructure, projects) =>
   projects.filter(
@@ -36,6 +40,9 @@ const mapDispatchToProps = dispatch => ({
   },
   showProjectDetails: project => {
     dispatch(projectClicked(project));
+  },
+  openViaWiki: url => {
+    dispatch(showViaWikiRequested(url));
   }
 });
 

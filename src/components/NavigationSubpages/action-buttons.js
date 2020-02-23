@@ -7,11 +7,12 @@ import { ReactComponent as Tutorial } from "../../assets/Icon-Tutorial.svg";
 import { ReactComponent as Teilen } from "../../assets/Icon-Teilen.svg";
 import { ReactComponent as Reset } from "../../assets/Icon-Reset.svg";
 import {
-  infraHovered,
-  catHovered,
-  unHovered,
   highlightUncertainty,
-  showUncertainty
+  showUncertainty,
+  legendHovered,
+  tutorialStarted,
+  pageReset,
+  shareDialogOpened
 } from "../../store/actions/actions";
 class ActionButtons extends Component {
   constructor(props) {
@@ -25,6 +26,7 @@ class ActionButtons extends Component {
   }
 
   dialogOpened() {
+    this.props.shareDialogOpened();
     this.setState({ shareDialogIsOpen: true });
   }
   dialogClosed() {
@@ -40,6 +42,7 @@ class ActionButtons extends Component {
   }
 
   startPageTour() {
+    this.props.tutorialStarted();
     var tour = introJs();
     tour.setOptions({
       tooltipPosition: "auto",
@@ -63,19 +66,18 @@ class ActionButtons extends Component {
           case 2: {
             this.props.onHighlightUncertainty(false);
             this.props.onShowUncertainty(false);
-            this.props.onCatHovered(23);
             break;
           }
           case 3: {
-            this.props.onCatHovered(19);
+            this.props.legendHovered("kta");
             break;
           }
           case 4: {
-            this.props.onInfraHovered("Meteorite");
+            this.props.legendHovered("collections");
             break;
           }
           case 5: {
-            this.props.onInfraHovered("Hochleistungsrechner");
+            this.props.legendHovered("infrastructures");
             break;
           }
           default: {
@@ -83,7 +85,7 @@ class ActionButtons extends Component {
           }
         }
       })
-      .onexit(() => this.props.onUnHovered());
+      .onexit(() => this.props.legendHovered(null));
     tour.start();
   }
 
@@ -130,7 +132,9 @@ class ActionButtons extends Component {
 
           <div
             className={classes.rightElement}
-            onClick={() => window.open(window.location.origin, "_self")}
+            onClick={() => {
+              this.props.pageReset();
+            }}
           >
             <Reset className={classes.buttonIcon} /> <p>Zurücksetzen</p>
           </div>
@@ -140,20 +144,23 @@ class ActionButtons extends Component {
   }
 }
 const mapDispatchToProps = dispatch => ({
-  onUnHovered: value => {
-    dispatch(unHovered());
-  },
-  onCatHovered: value => {
-    dispatch(catHovered(value));
-  },
-  onInfraHovered: value => {
-    dispatch(infraHovered(value));
+  legendHovered: legendKey => {
+    dispatch(legendHovered(legendKey));
   },
   onHighlightUncertainty: value => {
     dispatch(highlightUncertainty(value));
   },
   onShowUncertainty: value => {
-    dispatch(showUncertainty(value));
+    dispatch(showUncertainty());
+  },
+  tutorialStarted: () => {
+    dispatch(tutorialStarted());
+  },
+  pageReset: () => {
+    dispatch(pageReset());
+  },
+  shareDialogOpened: () => {
+    dispatch(shareDialogOpened());
   }
 });
 

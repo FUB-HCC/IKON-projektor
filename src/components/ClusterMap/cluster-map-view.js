@@ -310,25 +310,24 @@ export default class ClusterMapView extends React.Component {
                     </text>
                   </g>
                   <g>
-                    {!uncertaintyOn &&
-                      lines.map((line, i) => (
-                        <g key={i}>
-                          <path
-                            pointerEvents="none"
-                            key={i + "b"}
-                            strokeWidth={strokeWidth(scale) * 2}
-                            fill="transparent"
-                            stroke={
-                              line[4]
-                                ? "rgba(175, 202, 11, 0.5)"
-                                : this.state.showUncertainty
-                                ? "transparent"
-                                : "rgba(255,255,255,0.1)"
-                            }
-                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                          />
-                        </g>
-                      ))}
+                    {lines.map((line, i) => (
+                      <g key={i}>
+                        <path
+                          pointerEvents="none"
+                          key={i + "b"}
+                          strokeWidth={strokeWidth(scale) * 2}
+                          fill="transparent"
+                          stroke={
+                            line[4]
+                              ? "rgba(175, 202, 11, 0.5)"
+                              : uncertaintyOn
+                              ? "transparent"
+                              : "rgba(255,255,255,0.1)"
+                          }
+                          d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                        />
+                      </g>
+                    ))}
                   </g>
                 </g>
               );
@@ -464,25 +463,24 @@ export default class ClusterMapView extends React.Component {
                       </text>
                     </g>
                     <g>
-                      {!uncertaintyOn &&
-                        lines.map((line, i) => (
-                          <g key={i}>
-                            <path
-                              pointerEvents="none"
-                              key={i + "b"}
-                              strokeWidth={strokeWidth(scale) * 2}
-                              fill="transparent"
-                              stroke={
-                                line[4]
-                                  ? "rgba(175, 202, 11, 0.5)"
-                                  : this.state.showUncertainty
-                                  ? "transparent"
-                                  : "rgba(255,255,255,0.1)"
-                              }
-                              d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                            />
-                          </g>
-                        ))}
+                      {lines.map((line, i) => (
+                        <g key={i}>
+                          <path
+                            pointerEvents="none"
+                            key={i + "b"}
+                            strokeWidth={strokeWidth(scale) * 2}
+                            fill="transparent"
+                            stroke={
+                              line[4]
+                                ? "rgba(175, 202, 11, 0.5)"
+                                : uncertaintyOn
+                                ? "transparent"
+                                : "rgba(255,255,255,0.1)"
+                            }
+                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                          />
+                        </g>
+                      ))}
                     </g>
                   </g>
                 );
