@@ -71,5 +71,5 @@ const sendEvtDataToLogService = (user, evtType, evtData) => {
     event: evtType,
     eventData: JSON.stringify(evtData)
   };
-  axios.post("https://localhost/api/logging", logMsg);
+  axios.post("/api/logging", logMsg);
 };
