@@ -66,7 +66,7 @@ const sendEvtDataToLogService = (user, evtType, evtData) => {
   const logMsg = {
     user: user,
     event: evtType,
-    evtData: evtData
+    eventData: evtData
   };
   axios.post("https://localhost/api/logging", logMsg);
 };
