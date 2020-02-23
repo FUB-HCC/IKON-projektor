@@ -4,7 +4,8 @@ import {
   unClicked,
   infraClicked,
   ktaClicked,
-  catClicked
+  catClicked,
+  showViaWikiRequested
 } from "../../store/actions/actions";
 
 const findKtasForProject = state => {
@@ -36,6 +37,9 @@ const mapDispatchToProps = dispatch => ({
   },
   showCatDetails: cat => {
     dispatch(catClicked(cat));
+  },
+  openViaWiki: url => {
+    dispatch(showViaWikiRequested(url));
   }
 });
 

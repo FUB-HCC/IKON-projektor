@@ -300,3 +300,8 @@ export const pageReset = () => {
     type: actionTypes.PAGE_RESET
   };
 };
+
+export const showViaWikiRequested = url => ({
+  type: actionTypes.SHOW_VIA_WIKI_REQUESTED,
+  value: url
+});

@@ -134,7 +134,6 @@ class ActionButtons extends Component {
             className={classes.rightElement}
             onClick={() => {
               this.props.pageReset();
-              window.open(window.location.origin, "_self");
             }}
           >
             <Reset className={classes.buttonIcon} /> <p>Zurücksetzen</p>

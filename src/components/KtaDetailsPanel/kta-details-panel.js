@@ -3,7 +3,8 @@ import KtaDetailsPanelView from "./kta-details-panel-view";
 import {
   unClicked,
   projectClicked,
-  catClicked
+  catClicked,
+  showViaWikiRequested
 } from "../../store/actions/actions";
 
 const findCategoriesForKta = state => {
@@ -36,6 +37,9 @@ const mapDispatchToProps = dispatch => ({
   },
   showCatDetails: cat => {
     dispatch(catClicked(cat));
+  },
+  openViaWiki: url => {
+    dispatch(showViaWikiRequested(url));
   }
 });
 

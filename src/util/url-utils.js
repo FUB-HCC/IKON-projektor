@@ -148,7 +148,13 @@ export const parseStateFromUrl = urlParams => {
   const userId = urlParams.uid;
   if (stateString == null) {
     console.log("No URL params");
-    return {};
+    console.log("User ID found = " + urlParams.uid);
+    return {
+      main: {
+        ...initialState,
+        user: userId
+      }
+    };
   }
   const urlState = JSON.parse(atob(stateString));
   const deminifiedUrlState = {

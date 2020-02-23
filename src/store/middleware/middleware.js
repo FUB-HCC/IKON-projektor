@@ -45,15 +45,18 @@ const createLogMsgIfNecessary = (state, action) => {
       case actionTypes.PAGE_RESET:
       case actionTypes.TOUR_STARTED:
       case actionTypes.SHARE_DIALOG_OPENED:
+      case actionTypes.SHOW_VIA_WIKI_REQUESTED:
         sendEvtDataToLogService(state.main.user, action.type, {
           key: "null",
-          value: action.value
+          value: action.value,
+          view: state.main.graph
         });
         break;
       case actionTypes.CHECKBOX_FILTER_CHANGE:
         sendEvtDataToLogService(state.main.user, action.type, {
           key: action.id,
-          value: action.value
+          value: action.value,
+          view: state.main.graph
         });
         break;
       default:
@@ -66,7 +69,7 @@ const sendEvtDataToLogService = (user, evtType, evtData) => {
   const logMsg = {
     user: user,
     event: evtType,
-    eventData: evtData
+    eventData: JSON.stringify(evtData)
   };
   axios.post("https://localhost/api/logging", logMsg);
 };
