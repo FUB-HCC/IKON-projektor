@@ -124,7 +124,8 @@ export default class ClusterMapView extends React.Component {
       clusterData,
       isAnyClicked,
       uncertaintyOn,
-      uncertaintyHighlighted
+      uncertaintyHighlighted,
+      isTouch
     } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
@@ -156,7 +157,7 @@ export default class ClusterMapView extends React.Component {
       >
         <IconExplanation
           posX={20}
-          posY={20}
+          posY={isTouch ? height - 120 : 20}
           category={categories[0]}
           infrastructure={infrastrukturSorted.find(
             i => i.type === "infrastructure"

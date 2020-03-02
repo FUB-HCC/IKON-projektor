@@ -4,6 +4,7 @@ import classes from "./navigation-subpages.module.css";
 import logo from "../../assets/ikon_logo.png";
 import introJs from "intro.js";
 import { changeGraph, tourStarted } from "../../store/actions/actions";
+import { isTouchMode } from "../../util/utility";
 
 class MFNLogo extends Component {
   constructor() {
@@ -14,11 +15,17 @@ class MFNLogo extends Component {
   render() {
     return (
       <div
-        className={classes.leftElement}
+        className={
+          this.props.isTouch ? classes.mfnLogoTouch : classes.leftElement
+        }
         style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
         onClick={this.startTour}
       >
-        <img src={logo} alt={"Museum für Naturkunde Berlin"} />
+        <img
+          src={logo}
+          alt={"Museum für Naturkunde Berlin"}
+          height={this.props.isTouch ? 120 : ""}
+        />
       </div>
     );
   }
@@ -103,6 +110,9 @@ class MFNLogo extends Component {
     tour.start();
   }
 }
+const mapStateToProps = state => ({
+  isTouch: isTouchMode(state)
+});
 
 const mapDispatchToProps = dispatch => ({
   changeGraph: key => dispatch(changeGraph(key)),
@@ -110,6 +120,6 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(MFNLogo);

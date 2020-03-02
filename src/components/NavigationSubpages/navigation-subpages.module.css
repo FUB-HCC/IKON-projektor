@@ -4,6 +4,7 @@
 }
 
 .leftpanel {
+  flex-grow: 1;
   width: 72vw;
   display: flex;
   justify-content: space-evenly;
@@ -36,10 +37,9 @@
 .rightPanel {
   display: flex;
   justify-content: space-between;
-  margin: 0px;
+  margin: 0;
   color: rgba(100, 100, 100, 0.5);
   list-style: none;
-  width: 28vw;
   padding-inline-start: 0px;
 }
 .rightPanel li {
@@ -154,4 +154,8 @@ h3 {
   background-color: #1c1d1f;
   opacity: 0.85;
   border-radius: 0;
+}
+
+.mfnLogoTouch{
+  padding: 10px;
 }

@@ -9,7 +9,7 @@ import {
   catHovered,
   infraHovered
 } from "../../store/actions/actions";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, isTouchMode } from "../../util/utility";
 
 const computeClusters = (clusterData, filteredProjects, categories) => {
   if (!clusterData || categories.length === 0) return [];
@@ -204,7 +204,8 @@ const mapStateToProps = state => {
     highlightedInfra: highlightedInfra,
     highlightedGroup: highlightedGroup,
     uncertaintyOn: state.main.uncertaintyOn,
-    uncertaintyHighlighted: state.main.uncertaintyHighlighted
+    uncertaintyHighlighted: state.main.uncertaintyHighlighted,
+    isTouch: isTouchMode(state)
   };
 };
 

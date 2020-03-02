@@ -147,3 +147,6 @@ export const getQueryStringParams = query => {
         }, {})
     : {};
 };
+
+export const isTouchMode = state =>
+  state.router.location.pathname.includes("touch");

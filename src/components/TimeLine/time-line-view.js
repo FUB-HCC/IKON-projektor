@@ -24,7 +24,7 @@ export default class TimeLineView extends Component {
       forschungsbereiche: [],
       ktasYearBuckets: [],
       height: props.height,
-      width: props.width,
+      width: props.width - 15,
       margin: props.margin,
       firstUpdate: true,
       projectsPopoverHidden: true,
@@ -85,7 +85,7 @@ export default class TimeLineView extends Component {
       // workaround for first time scaling
       this.setState({
         height: height,
-        width: width,
+        width: width - 15,
         margin: margin
       });
     }
@@ -296,16 +296,13 @@ export default class TimeLineView extends Component {
             <>
               {this.renderGridline(lines)}
               {this.highlightGridLine()}
-            </>
-          )}
-          <div
-            data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
-            data-step="2"
-            className={styles.ktaBucketsWrapper}
-            style={{ height: targetgroupsHeight }}
-          >
-            {areKtaRendered && (
-              <>
+
+              <div
+                data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
+                data-step="2"
+                className={styles.ktaBucketsWrapper}
+                style={{ height: targetgroupsHeight }}
+              >
                 <span className={styles.plotTitle}>
                   Wissenstransferaktivitäten <br />
                   <br />
@@ -323,9 +320,10 @@ export default class TimeLineView extends Component {
                   handleCircleMouseEnter={this.handleCircleMouseEnter}
                   handleCircleMouseLeave={this.handleCircleMouseLeave}
                 />
-              </>
-            )}
-          </div>
+              </div>
+            </>
+          )}
+
           <SVGWithMargin
             data-intro="Im unteren Teil werden die Anzahl und Laufzeiten von <b>Drittmittelprojekten</b> basierend auf aktuellen Informationen aus dem <a style='color: #afca0b;' href='https://via.museumfuernaturkunde.berlin/wiki/' target='_blank' rel='noopener noreferrer'>VIA-Wiki</a> und gruppiert nach <b>Forschungsgebieten</b> angezeigt. Um die Interpretation von Trend-Entwicklungen zu unterstützen, werden außerdem in grauer Schattierung bisher noch nicht integrierte Daten zu Drittmittelprojekten dargestellt."
             data-step="3"
@@ -402,7 +400,13 @@ export default class TimeLineView extends Component {
           </SVGWithMargin>
           {this.renderProjectsHover()}
           {!areKtaRendered && (
-            <div className={styles.subScriptLargeScreen}>
+            <div
+              className={styles.subScriptLargeScreen}
+              style={{
+                marginLeft: this.state.margin,
+                marginBottom: this.state.margin / 2
+              }}
+            >
               Anzahl Projekte je Forschungsgebiet pro Jahr
             </div>
           )}
