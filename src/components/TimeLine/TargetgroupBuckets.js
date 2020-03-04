@@ -41,7 +41,7 @@ const TargetgroupBuckets = props => {
                       event
                     );
                   }}
-                  onMouseLeave={props.handleMouseLeave}
+                  onMouseLeave={()=>props.handleCircleMouseLeave()}
                   onClick={() => {
                     year.targetgroup = targetgroup;
                     props.showYearDetails(year.year + "|" + targetgroup);
