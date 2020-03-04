@@ -2,7 +2,7 @@ import React from "react";
 import ClusterDot from "./cluster-dot";
 
 const Cluster = props => {
-  const { cluster, getLocation, radius, highlightedProjects } = props;
+  const { cluster, getLocation, radius, highlightedProjects, isTouchMode } = props;
   const projects = cluster.projects.map(project => ({
     point: getLocation(project.location),
     color: project.color,
@@ -23,6 +23,7 @@ const Cluster = props => {
           x={project.point[0]}
           y={project.point[1]}
           isHighlighted={highlightedProjects.includes(project.id)}
+          isTouchMode={isTouchMode}
         />
       ))}
     </g>

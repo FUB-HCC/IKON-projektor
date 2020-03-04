@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./time-line-view.module.css";
+import InteractionHandler from "../../util/interaction-handler";
 
 const TargetgroupBuckets = props => {
   let maxNumberWtas = Math.max(
@@ -26,18 +27,8 @@ const TargetgroupBuckets = props => {
           {props.ktasYearBuckets[targetgroup].map(year => {
             return (
               <g key={targetgroup + year.year}>
-                <circle
-                  cx={props.xScale(year.year)}
-                  cy={props.height * 0.5}
-                  r={Math.max(
-                    (year.numberOfWtas * props.height * 0.49) / maxNumberWtas,
-                    2
-                  )}
-                  className={styles.wtaBucketCircle}
-                  onClick={() => {
-                    year.targetgroup = targetgroup;
-                    props.showYearDetails(year.year + "|" + targetgroup);
-                  }}
+                <InteractionHandler
+                  isInTouchMode={false}
                   onMouseOver={event => {
                     props.handleCircleMouseEnter(
                       {
@@ -51,7 +42,22 @@ const TargetgroupBuckets = props => {
                     );
                   }}
                   onMouseLeave={props.handleMouseLeave}
-                />
+                  onClick={() => {
+                    year.targetgroup = targetgroup;
+                    props.showYearDetails(year.year + "|" + targetgroup);
+                  }}
+                  longPressThreshold={300}
+                >
+                  <circle
+                    cx={props.xScale(year.year)}
+                    cy={props.height * 0.5}
+                    r={Math.max(
+                      (year.numberOfWtas * props.height * 0.49) / maxNumberWtas,
+                      2
+                    )}
+                    className={styles.wtaBucketCircle}
+                  />
+                </InteractionHandler>
               </g>
             );
           })}

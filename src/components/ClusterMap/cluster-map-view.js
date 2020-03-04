@@ -9,6 +9,7 @@ import IconExplanation from "./icon-explanation";
 import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import ClusterContoursMap from "./cluster-contours-map";
+import InteractionHandler from "../../util/interaction-handler";
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.02 * scale);
 const clusterSize = scale => 0.55 * scale;
@@ -263,53 +264,56 @@ export default class ClusterMapView extends React.Component {
 
               return (
                 <g key={cat.id}>
-                  <g
+                  <InteractionHandler
+                    isInTouchMode={isTouch}
                     onMouseOver={() => onCatHovered(cat.id)}
-                    onMouseOut={() => onUnHovered()}
-                    onClick={e => {
-                      e.stopPropagation();
+                    onMouseLeave={() => onUnHovered()}
+                    onClick={() => {
                       onCatClicked(cat.id);
                     }}
+                    longPressThreshold={300}
                   >
-                    <circle
-                      id={`cat-${cat.id}`}
-                      r={rad}
-                      cx={x}
-                      cy={y}
-                      cursor="POINTER"
-                      stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                      fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                    />
-                    <text
-                      x={lenX}
-                      y={lenY}
-                      textAnchor="middle"
-                      fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                      fontSize={
-                        fontSizeCount(this.scale) * (isHighlighted ? 1.3 : 1)
-                      }
-                      fontWeight="700"
-                      cursor="POINTER"
-                    >
-                      {conLen}
-                    </text>
-                    <text
-                      textAnchor={anchor}
-                      fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                      fontSize={
-                        fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
-                      }
-                      fontWeight="700"
-                      cursor="POINTER"
-                      transform={`rotate(${textRotate} ${textX} ${textY})`}
-                    >
-                      {splitLongTitles(cat.title).map((titlePart, i) => (
-                        <tspan x={textX} y={textY + i * 10} key={titlePart}>
-                          {titlePart}
-                        </tspan>
-                      ))}
-                    </text>
-                  </g>
+                    <g>
+                      <circle
+                        id={`cat-${cat.id}`}
+                        r={rad}
+                        cx={x}
+                        cy={y}
+                        cursor="POINTER"
+                        stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                      />
+                      <text
+                        x={lenX}
+                        y={lenY}
+                        textAnchor="middle"
+                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                        fontSize={
+                          fontSizeCount(this.scale) * (isHighlighted ? 1.3 : 1)
+                        }
+                        fontWeight="700"
+                        cursor="POINTER"
+                      >
+                        {conLen}
+                      </text>
+                      <text
+                        textAnchor={anchor}
+                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                        fontSize={
+                          fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
+                        }
+                        fontWeight="700"
+                        cursor="POINTER"
+                        transform={`rotate(${textRotate} ${textX} ${textY})`}
+                      >
+                        {splitLongTitles(cat.title).map((titlePart, i) => (
+                          <tspan x={textX} y={textY + i * 10} key={titlePart}>
+                            {titlePart}
+                          </tspan>
+                        ))}
+                      </text>
+                    </g>
+                  </InteractionHandler>
                   <g>
                     {lines.map((line, i) => (
                       <g key={i}>
@@ -406,15 +410,16 @@ export default class ClusterMapView extends React.Component {
                 return (
                   <g
                     key={infrastruktur.name}
-                    onMouseOver={() => onInfraHovered(infrastruktur.name)}
-                    onMouseOut={() => {
-                      onUnHovered();
-                    }}
-                    onClick={e => {
-                      e.stopPropagation();
-                      onInfraClicked(infrastruktur.name);
-                    }}
                   >
+                    <InteractionHandler
+                      isInTouchMode={isTouch}
+                      onMouseOver={() => onInfraHovered(infrastruktur.name)}
+                      onMouseLeave={() => onUnHovered()}
+                      onClick={() => {
+                        onInfraClicked(infrastruktur.name);
+                      }}
+                      longPressThreshold={300}
+                    >
                     <g>
                       <g>
                         {infrastruktur.type === "collection" ? (
@@ -463,6 +468,7 @@ export default class ClusterMapView extends React.Component {
                         )}
                       </text>
                     </g>
+                    </InteractionHandler>
                     <g>
                       {lines.map((line, i) => (
                         <g key={i}>
@@ -494,6 +500,7 @@ export default class ClusterMapView extends React.Component {
               {clusterData.map(cluster => {
                 return (
                   <Cluster
+                    isTouchMode={isTouch}
                     key={cluster.id + "cluster"}
                     cluster={cluster}
                     getLocation={p => this.getPointLocation(p, width, height)}
