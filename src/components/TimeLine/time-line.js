@@ -43,6 +43,7 @@ class TimeLine extends React.Component {
         height={this.props.height}
         margin={20}
         areKtaRendered={this.props.areKtaRendered}
+        isTouchMode={this.props.isTouchMode}
       />
     );
   }
@@ -75,7 +76,8 @@ const mapStateToProps = state => {
     projects: state.main.filteredProjects,
     colors: graphColors,
     ktasYearBuckets: processedKtas,
-    areKtaRendered: !isTouchMode(state)
+    areKtaRendered: !isTouchMode(state),
+    isTouchMode: isTouchMode(state)
   };
 };
 

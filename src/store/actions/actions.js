@@ -127,7 +127,7 @@ export const legendHovered = legendKey => ({
 
 export const fetchClusterData = () => {
   return dispatch => {
-    axios.get("/api/clustering").then(result => {
+    axios.get("https://localhost/api/clustering").then(result => {
       batch(() => {
         dispatch(updateClusterData(result.data));
         dispatch(processDataIfReady());
@@ -138,7 +138,7 @@ export const fetchClusterData = () => {
 
 export const fetchInstitutionsData = () => {
   return dispatch => {
-    axios.get("/api/institutions").then(result => {
+    axios.get("https://localhost/api/institutions").then(result => {
       batch(() => {
         dispatch(updateInstitutionsData(result.data));
         dispatch(processDataIfReady());
@@ -149,7 +149,7 @@ export const fetchInstitutionsData = () => {
 
 export const fetchProjectsData = () => {
   return dispatch => {
-    axios.get("/api/projects").then(result => {
+    axios.get("https://localhost/api/projects").then(result => {
       batch(() => {
         dispatch(updateProjectsData(result.data));
         dispatch(processDataIfReady());
@@ -161,7 +161,7 @@ export const fetchProjectsData = () => {
 export const fetchKTAData = () => {
   return dispatch => {
     axios
-      .get("/api/knowledgeTransferActivities")
+      .get("https://localhost/api/knowledgeTransferActivities")
       .then(result => {
         batch(() => {
           dispatch(updateKTAData(result.data));
@@ -173,7 +173,7 @@ export const fetchKTAData = () => {
 
 export const fetchKTAMappingData = () => {
   return dispatch => {
-    axios.get("/api/ktastargetgroups").then(result => {
+    axios.get("https://localhost/api/ktastargetgroups").then(result => {
       batch(() => {
         dispatch(updateKTAMappingData(result.data));
         dispatch(processDataIfReady());
@@ -184,7 +184,7 @@ export const fetchKTAMappingData = () => {
 
 export const fetchTargetGroupsData = () => {
   return dispatch => {
-    axios.get("/api/targetgroups").then(result => {
+    axios.get("https://localhost/api/targetgroups").then(result => {
       batch(() => {
         dispatch(updateTargetGroupsData(result.data));
         dispatch(processDataIfReady());
@@ -195,7 +195,7 @@ export const fetchTargetGroupsData = () => {
 
 export const fetchInfrastructureData = () => {
   return dispatch => {
-    axios.get("/api/infrastructure").then(result => {
+    axios.get("https://localhost/api/infrastructure").then(result => {
       batch(() => {
         dispatch(updateInfrastructureData(result.data));
         dispatch(processDataIfReady());
@@ -206,7 +206,7 @@ export const fetchInfrastructureData = () => {
 
 export const fetchCollectionsData = () => {
   return dispatch => {
-    axios.get("/api/collections").then(result => {
+    axios.get("https://localhost/api/collections").then(result => {
       batch(() => {
         dispatch(updateCollectionsData(result.data));
         dispatch(processDataIfReady());
