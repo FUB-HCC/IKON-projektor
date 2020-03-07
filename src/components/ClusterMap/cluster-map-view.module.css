@@ -12,6 +12,11 @@
   position: relative;
   bottom: 2px;
 }
+
+.tooltipIconText{
+  stroke: #0e0e0e;
+  font-size: 11px;
+}
 .tooltipIcon:hover {
   fill: #afca0b;
   cursor: pointer;
