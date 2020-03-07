@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import classes from "./navigation-subpages.module.css";
-import logo from "../../assets/ikon_logo.png";
+import {ReactComponent as Logo } from "../../assets/mfn_logo.svg";
 import introJs from "intro.js";
 import { changeGraph, tourStarted } from "../../store/actions/actions";
 import { isTouchMode } from "../../util/utility";
+import {menuBarHeight, menuBarHeightTouch} from "../../App";
 
 class MFNLogo extends Component {
   constructor() {
@@ -16,15 +17,14 @@ class MFNLogo extends Component {
     return (
       <div
         className={
-          this.props.isTouch ? classes.mfnLogoTouch : classes.leftElement
+          this.props.isTouch ? classes.mfnLogoTouch : classes.mfnLogo
         }
-        style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
         onClick={this.startTour}
       >
-        <img
-          src={logo}
+        <Logo
           alt={"Museum für Naturkunde Berlin"}
-          height={this.props.isTouch ? 120 : ""}
+          height={this.props.isTouch ? menuBarHeightTouch : menuBarHeight }
+          style={{marginBottom: -7, marginLeft: -15, marginRight: -15}}
         />
       </div>
     );

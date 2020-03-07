@@ -10,6 +10,7 @@ import classes from "./App.module.css";
 
 export const sideBarWidth = 450;
 export const menuBarHeight = 65;
+export const menuBarHeightTouch = 120;
 export const appMargin = 5;
 
 const AppBodyStandard = () => (
