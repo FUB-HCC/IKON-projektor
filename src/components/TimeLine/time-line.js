@@ -1,12 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
+import { getFieldColor, isTouchMode } from "../../util/utility";
 import TimeLineView from "./time-line-view";
-import {
-  setSelectedYear,
-  setSideBarComponent,
-  deselectItems
-} from "../../store/actions/actions";
-import YearDetailsPanel from "../YearDetailsPanel/year-details-panel";
+import { yearClicked } from "../../store/actions/actions";
 
 class TimeLine extends React.Component {
   componentDidMount() {
@@ -46,6 +42,8 @@ class TimeLine extends React.Component {
         width={this.props.width}
         height={this.props.height}
         margin={20}
+        areKtaRendered={this.props.areKtaRendered}
+        isTouchMode={this.props.isTouchMode}
       />
     );
   }
@@ -62,9 +60,7 @@ const graphColors = {
 const mapDispatchToProps = dispatch => {
   return {
     showYearDetails: year => {
-      dispatch(deselectItems());
-      dispatch(setSelectedYear(year));
-      dispatch(setSideBarComponent(<YearDetailsPanel />));
+      dispatch(yearClicked(year));
     }
   };
 };
@@ -79,7 +75,9 @@ const mapStateToProps = state => {
     dataSplitFbYear: processedData,
     projects: state.main.filteredProjects,
     colors: graphColors,
-    ktasYearBuckets: processedKtas
+    ktasYearBuckets: processedKtas,
+    areKtaRendered: !isTouchMode(state),
+    isTouchMode: isTouchMode(state)
   };
 };
 // TODO move to datatransforms?

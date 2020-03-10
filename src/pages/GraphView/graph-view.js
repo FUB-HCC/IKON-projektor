@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "react-redux";
+import { connect, batch } from "react-redux";
 import ClusterMap from "../../components/ClusterMap/cluster-map";
 import GeoMap from "../../components/GeoMap/geo-map-view";
 import TimeGraph from "../../components/TimeLine/time-line";
@@ -15,11 +15,12 @@ import {
   fetchInfrastructureData
 } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
+import { sideBarWidth } from "../../App";
 
 class GraphView extends React.Component {
   constructor(props) {
     super(props);
-    this.margins = { top: 10, left: 10, bottom: 10, right: 10 };
+    this.margins = { top: 10, left: 10, bottom: 10, right: 30 };
     this.state = {
       activePopover: this.props.selectedProject ? 1 : -1
     };
@@ -32,22 +33,24 @@ class GraphView extends React.Component {
     this.setState({
       height: window.innerHeight - menuBarHeight - appMargin * 2,
       width:
-        (window.innerWidth -
-          appMargin * 2 -
-          this.margins.left -
-          this.margins.right) *
-        0.75
+        window.innerWidth -
+        appMargin * 2 -
+        this.margins.left -
+        this.margins.right -
+        sideBarWidth
     });
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
-    this.props.fetchClusterData();
-    this.props.fetchProjectsData();
-    this.props.fetchInstitutionsData();
-    this.props.fetchKtaData();
-    this.props.fetchKtaMappingData();
-    this.props.fetchTargetGroupsData();
-    this.props.fetchCollectionsData();
-    this.props.fetchInfrastructureData();
+    batch(() => {
+      this.props.fetchClusterData();
+      this.props.fetchProjectsData();
+      this.props.fetchInstitutionsData();
+      this.props.fetchKtaData();
+      this.props.fetchKtaMappingData();
+      this.props.fetchTargetGroupsData();
+      this.props.fetchCollectionsData();
+      this.props.fetchInfrastructureData();
+    });
   }
 
   resize() {
@@ -55,15 +58,15 @@ class GraphView extends React.Component {
       height:
         window.innerHeight -
         menuBarHeight -
-        appMargin * 2 -
+        appMargin * 4 -
         this.margins.top -
         this.margins.bottom,
       width:
-        (window.innerWidth -
-          appMargin * 2 -
-          this.margins.left -
-          this.margins.right) *
-        0.7
+        window.innerWidth -
+        appMargin * 2 -
+        this.margins.left -
+        this.margins.right -
+        sideBarWidth
     });
   }
 
@@ -95,7 +98,8 @@ class GraphView extends React.Component {
       height: this.state.height,
       onProjectClick: this.projectClickHandler,
       institutions: this.props.institutions,
-      projects: this.props.filteredProjects
+      projects: this.props.filteredProjects,
+      ktas: this.props.ktas
     };
     let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
@@ -133,10 +137,9 @@ class GraphView extends React.Component {
 const mapStateToProps = state => {
   return {
     graph: state.main.graph,
-    selectedProject: state.main.selectedProject,
-    filter: state.main.filters,
     filteredProjects: state.main.filteredProjects,
-    institutions: state.main.institutions
+    institutions: state.main.institutions,
+    ktas: state.main.ktas
   };
 };
 

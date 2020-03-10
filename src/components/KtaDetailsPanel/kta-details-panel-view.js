@@ -68,7 +68,6 @@ const KtaDetailsPanel = props => {
         {props.categories.map(cat => (
           <span
             href="#"
-            onMouseOver={() => props.showCatDetails(cat.id)}
             onClick={() => props.showCatDetails(cat.id)}
             key={cat.id}
             className={style.DetailsLink}
@@ -124,14 +123,12 @@ const KtaDetailsPanel = props => {
           </span>
         )}
       </p>
-      <a
+      <div
         className={style.DetailsViaLink}
-        href={props.kta.href}
-        target="_blank"
-        rel="noopener noreferrer" //got warning otherwise
+        onClick={() => props.openViaWiki(props.kta.href)}
       >
         Anzeigen im VIA-Wiki
-      </a>
+      </div>
     </div>
   );
 };

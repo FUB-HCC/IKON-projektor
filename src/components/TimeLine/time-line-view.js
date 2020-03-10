@@ -19,6 +19,7 @@ import { getFieldColor } from "../../util/utility";
 import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import TargetgroupBuckets from "./TargetgroupBuckets";
+import InteractionHandler from "../../util/interaction-handler";
 
 export default class TimeLineView extends Component {
   constructor(props) {
@@ -31,7 +32,7 @@ export default class TimeLineView extends Component {
       },
       ktasYearBuckets: [],
       height: props.height,
-      width: props.width,
+      width: props.width - 15,
       margin: props.margin,
       firstUpdate: true,
       project: {},
@@ -52,7 +53,7 @@ export default class TimeLineView extends Component {
       // workaround for first time scaling
       this.setState({
         height: height,
-        width: width,
+        width: width - 15,
         margin: margin
       });
     }
@@ -189,6 +190,7 @@ export default class TimeLineView extends Component {
       .order(d3StackOrderNone)
       .offset(d3StackOffsetNone);
     const stackedData = stack(this.state.dataSplitYears.areaChartData);
+    const { areKtaRendered, isTouchMode } = this.props;
 
     const color = d => {
       return getFieldColor(d.key);
@@ -253,29 +255,38 @@ export default class TimeLineView extends Component {
           data-intro="Durch diese Ansicht auf <b>Wissenstransferaktivitäten</b> und <b>Drittmittelprojekte</b> wird ermöglicht, beide Elemente des Museums für Naturkunde integrativ und längerfristig zu betrachten."
           data-step="4"
         >
-          <div
-            data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
-            data-step="2"
-            className={styles.ktaBucketsWrapper}
-            style={{ height: targetgroupsHeight }}
-          >
-            {this.renderGridline(lines)}
-            {this.highlightGridLine()}
-            <span className={styles.plotTitle}>
-              Wissenstransferaktivitäten <br />
-              <br />
-            </span>
-            <TargetgroupBuckets
-              ktasYearBuckets={this.state.ktasYearBuckets}
-              height={this.state.height * 0.03}
-              width={this.state.width}
-              showYearDetails={this.props.showYearDetails}
-              fullHeight={this.state.height}
-              xScale={year => x(toYear(year)) + this.state.margin}
-              handleCircleMouseEnter={this.handleCircleMouseEnter}
-              handleMouseLeave={this.handleMouseLeave}
-            />
-          </div>
+          {areKtaRendered && (
+            <>
+              {this.renderGridline(lines)}
+              {this.highlightGridLine()}
+
+              <div
+                data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
+                data-step="2"
+                className={styles.ktaBucketsWrapper}
+                style={{ height: targetgroupsHeight }}
+              >
+                <span className={styles.plotTitle}>
+                  Wissenstransferaktivitäten <br />
+                  <br />
+                </span>
+                <TargetgroupBuckets
+                  ktasYearBuckets={this.state.ktasYearBuckets}
+                  height={this.state.height * 0.03}
+                  width={this.state.width}
+                  showYearDetails={this.props.showYearDetails}
+                  fullHeight={this.state.height}
+                  xScale={year =>
+                    x(new Date(year.toString()).setHours(0, 0, 0, 0)) +
+                    this.state.margin
+                  }
+                  handleCircleMouseEnter={this.handleCircleMouseEnter}
+                  handleCircleMouseLeave={this.handleCircleMouseLeave}
+                />
+              </div>
+            </>
+          )}
+
           <SVGWithMargin
             data-intro="Im unteren Teil werden die Anzahl und Laufzeiten von <b>Drittmittelprojekten</b> basierend auf aktuellen Informationen aus dem <a style='color: #afca0b;' href='https://via.museumfuernaturkunde.berlin/wiki/' target='_blank' rel='noopener noreferrer'>VIA-Wiki</a> und gruppiert nach <b>Forschungsgebieten</b> angezeigt. Um die Interpretation von Trend-Entwicklungen zu unterstützen, werden außerdem in grauer Schattierung bisher noch nicht integrierte Daten zu Drittmittelprojekten dargestellt."
             data-step="3"
@@ -288,9 +299,16 @@ export default class TimeLineView extends Component {
             margin={this.state.margin}
             width={this.state.width}
           >
-            <text fill="#717071" x={-this.state.margin} y="10" fontSize="130%">
-              Forschungsprojekte
-            </text>
+            {areKtaRendered && (
+              <text
+                fill="#717071"
+                x={-this.state.margin}
+                y="10px"
+                fontSize="130%"
+              >
+                Forschungsprojekte
+              </text>
+            )}
             {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
             <g
               className={styles.xAxis}
@@ -331,6 +349,17 @@ export default class TimeLineView extends Component {
               })}
           </SVGWithMargin>
           {this.renderProjectsHover()}
+          {!areKtaRendered && (
+            <div
+              className={styles.subScriptLargeScreen}
+              style={{
+                marginLeft: this.state.margin,
+                marginBottom: this.state.margin / 2
+              }}
+            >
+              Anzahl Projekte je Forschungsgebiet pro Jahr
+            </div>
+          )}
         </div>
       </div>
     );

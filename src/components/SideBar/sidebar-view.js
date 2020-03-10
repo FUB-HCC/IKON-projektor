@@ -1,12 +1,20 @@
 import React from "react";
 import style from "./sidebar.module.css";
-import { appMargin, menuBarHeight } from "../../App";
+import { appMargin, menuBarHeight, sideBarWidth } from "../../App";
+import MFNLogo from "../NavigationSubpages/mfn-logo";
+import ActionButtons from "../NavigationSubpages/action-buttons";
+import SampleStatesList from "../SampleStatesList/sample-states-list";
 
 class SideBarView extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
-    this.state = { height: window.innerHeight - menuBarHeight - appMargin * 2 };
+    this.state = {
+      height: props.isTouch ? this.heightTouch : this.heightStandard
+    };
   }
+
+  heightStandard = window.innerHeight - menuBarHeight - appMargin * 2;
+  heightTouch = window.innerHeight - menuBarHeight - appMargin * 2 - 120 - 136;
 
   componentDidMount() {
     window.addEventListener("resize", this.resize.bind(this));
@@ -15,7 +23,7 @@ class SideBarView extends React.Component {
 
   resize() {
     this.setState({
-      height: window.innerHeight - menuBarHeight - appMargin * 2
+      height: this.props.isTouch ? this.heightTouch : this.heightStandard
     });
   }
 
@@ -23,9 +31,17 @@ class SideBarView extends React.Component {
     return (
       <div
         className={style.sideBarWrapper}
-        style={{ height: this.state.height }}
+        style={{ height: this.state.height, width: sideBarWidth }}
+        id="detailsPanelID"
       >
-        {this.props.sideBarComponent}
+        {this.props.isTouch && (
+          <>
+            <MFNLogo />
+            <SampleStatesList />
+            <ActionButtons />
+          </>
+        )}
+        {this.props.isDataProcessed && this.props.sideBarComponent}
       </div>
     );
   }

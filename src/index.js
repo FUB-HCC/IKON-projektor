@@ -9,10 +9,12 @@ import { createBrowserHistory } from "history";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import reducer from "./store/reducer/reducer";
 import { updateUrl, logger, thunk } from "./store/middleware/middleware";
-import { parseStateFromUrl } from "./util/utility";
+import { parseStateFromUrl } from "./util/url-utils";
+import { getQueryStringParams } from "./util/utility";
 
 const getPreloadedState = () => {
-  return parseStateFromUrl(window.location.search.slice(7)); // 7 -> ?state=... needs to be removed
+  const urlParams = getQueryStringParams(window.location.search);
+  return parseStateFromUrl(urlParams);
 };
 
 export const history = createBrowserHistory();

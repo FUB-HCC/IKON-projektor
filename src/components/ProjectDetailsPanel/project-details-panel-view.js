@@ -157,14 +157,12 @@ const ProjectDetailsPanel = props => {
         </span>
         {props.projectData.projektleiter}
       </p>
-      <a
+      <div
         className={style.DetailsViaLink}
-        href={props.projectData.href}
-        target="_blank"
-        rel="noopener noreferrer" //got warning otherwise
+        onClick={() => props.openViaWiki(props.projectData.href)}
       >
         Anzeigen im VIA-Wiki
-      </a>
+      </div>
     </div>
   );
 };

@@ -4,7 +4,6 @@ import { getFieldColor } from "../../util/utility";
 import { ReactComponent as ArrowUp } from "../../assets/collapse-up.svg";
 import { ReactComponent as ArrowDown } from "../../assets/collapse-down.svg";
 
-//const FilterSet = props => {
 class FilterSet extends Component {
   constructor(props) {
     super(props);
@@ -43,18 +42,22 @@ class FilterSet extends Component {
                 toggleState={this.state.toggleState}
                 toggledFilterList={this.toggledFilterList}
                 iconSize="20px"
-                iconMargin="8"
+                iconMargin="9"
                 icon={
-                  this.state.toggleState.includes(subset.name) ? (
-                    <ArrowDown
-                      stroke={getFieldColor(subset.name)}
-                      className={style.arrowIcon}
-                    />
+                  subset.subFilters.length > 0 ? (
+                    this.state.toggleState.includes(subset.name) ? (
+                      <ArrowDown
+                        stroke={getFieldColor(subset.name)}
+                        className={style.arrowIcon}
+                      />
+                    ) : (
+                      <ArrowUp
+                        className={style.arrowIcon}
+                        stroke={getFieldColor(subset.name)}
+                      />
+                    )
                   ) : (
-                    <ArrowUp
-                      className={style.arrowIcon}
-                      stroke={getFieldColor(subset.name)}
-                    />
+                    <div />
                   )
                 }
               />
@@ -72,7 +75,7 @@ class FilterSet extends Component {
                     showCheckbox={true}
                     color={getFieldColor(subset.name)}
                     iconSize="16px"
-                    iconMargin="16"
+                    iconMargin="12"
                   />
                 </div>
               ))}
@@ -118,10 +121,10 @@ const CheckBox = props => (
           border: props.color + " 2px solid",
           borderRadius: "50%",
           backgroundColor: props.checked ? props.color : "rgba(0,0,0,0)",
-          width: props.iconSize,
-          height: props.iconSize,
           marginRight: props.iconMargin + "px",
-          marginLeft: props.iconMargin * 0.5 + "px"
+          marginLeft: props.iconMargin * 0.5 + "px",
+          width: props.iconSize,
+          height: props.iconSize
         }}
       />
     )}

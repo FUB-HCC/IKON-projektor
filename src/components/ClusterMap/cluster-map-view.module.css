@@ -4,8 +4,17 @@
   position: relative;
 }
 
+.tooltipIcon {
+  width: 20px;
+  heigth: 20px;
+  margin: 0px;
+  margin-right: 5px;
+  position: relative;
+  bottom: 2px;
+}
 .tooltipIcon:hover {
   fill: #afca0b;
+  cursor: pointer;
 }
 .legendRow:hover {
   color: #afca0b;
@@ -17,4 +26,48 @@
   margin-bottom: 10px;
   stroke: #6b6b6b;
   fill: #6b6b6b;
+  color: #6b6b6b;
+}
+
+/* Customize the label (the checkboxWrapper) */
+.checkboxWrapper {
+  display: block;
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.checkboxWrapper input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #0e0e0e;
+  border: 2px solid #6b6b6b;
+  border-radius: 50%;
+}
+
+.checkboxWrapper input:checked ~ .checkmark {
+  background-color: #6b6b6b;
+  box-shadow: inset 0px 0px 0px 3px #0e0e0e;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  display: none;
 }

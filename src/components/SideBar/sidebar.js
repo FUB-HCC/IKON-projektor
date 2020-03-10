@@ -1,20 +1,13 @@
-import { setSideBarComponent } from "../../store/actions/actions";
 import connect from "react-redux/es/connect/connect";
 import SideBarView from "./sidebar-view";
+import { isTouchMode } from "../../util/utility";
 
 const mapStateToProps = state => {
   return {
-    sideBarComponent: state.main.sideBarComponent
+    sideBarComponent: state.main.sideBarComponent,
+    isDataProcessed: state.main.isDataProcessed,
+    isTouch: isTouchMode(state)
   };
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    setSideBarComponent: component => dispatch(setSideBarComponent(component))
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SideBarView);
+export default connect(mapStateToProps)(SideBarView);

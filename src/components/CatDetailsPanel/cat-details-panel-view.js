@@ -74,16 +74,17 @@ const CatDetailsPanel = props => {
           ))}
         </div>
       )}
-      <a
+      <div
         className={style.DetailsViaLink}
-        href={
-          "https://via.museumfuernaturkunde.berlin/wiki/" + props.catData.title
+        onClick={() =>
+          props.openViaWiki(
+            "https://via.museumfuernaturkunde.berlin/wiki/" +
+              props.catData.title
+          )
         }
-        target="_blank"
-        rel="noopener noreferrer" //got warning otherwise
       >
         Anzeigen im VIA-Wiki
-      </a>
+      </div>
     </div>
   );
 };

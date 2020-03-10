@@ -2,9 +2,10 @@ import React from "react";
 import { contours as d3Contours } from "d3-contour";
 import { scaleLinear as d3ScaleLinear } from "d3-scale";
 import { extent as d3extent } from "d3-array";
+import {geoPath as d3GeoPath} from 'd3-geo';
 
 const scaleContours = (
-  coords,
+  cont,
   width,
   height,
   contoursSize,
@@ -12,21 +13,28 @@ const scaleContours = (
   clusterX,
   clusterY
 ) => {
+  const coords = cont.coordinates
   const factor = clusterSize(Math.min(height, width));
   const ClusterPosX = clusterX(width, Math.min(height, width));
   const ClusterPosY = clusterY(height, Math.min(height, width));
-  return coords.map(c =>
-    c.map(point => [
-      (point[0] / contoursSize) * factor + ClusterPosX,
-      (point[1] / contoursSize) * factor + ClusterPosY
-    ])
-  );
+  const scaledCoords = coords.map(cGroup =>
+      cGroup.map(c => c.map(point => [
+        (point[0] / contoursSize) * factor + ClusterPosX,
+        (point[1] / contoursSize) * factor + ClusterPosY
+      ]))
+    )
+  return {
+    ...cont,
+    coordinates: scaledCoords
+  }
 };
 
 const constructContours = (topography, contoursSize) =>
   d3Contours()
     .size([contoursSize, contoursSize])
-    .smooth([true])(topography);
+    .smooth([true])
+    .thresholds(10)(topography);
+
 
 const computeColorMap = topography =>
   d3ScaleLinear()
@@ -49,7 +57,7 @@ class ClusterContoursMap extends React.Component {
       this.props.width !== nextProps.width ||
       this.props.height !== nextProps.height ||
       this.props.topography.length !== nextProps.topography.length ||
-      this.props.isHighlighted !== nextProps.isHighlighted
+      this.props.uncertaintyHighlighted !== nextProps.uncertaintyHighlighted
     );
   }
 
@@ -70,26 +78,17 @@ class ClusterContoursMap extends React.Component {
         topography: topography
       });
     }
+    const lineFunction = d3GeoPath()
     const scale = Math.min(height, width);
     return (
       <g fill="none">
         {this.contours.map(cont => {
+          const scaledContours = scaleContours(cont, width, height, contoursSize, clusterSize, clusterX, clusterY);
           return (
             <path
               className="isoline"
               key={cont.value}
-              d={cont.coordinates.map(coord => {
-                var coords = scaleContours(
-                  coord,
-                  width,
-                  height,
-                  contoursSize,
-                  clusterSize,
-                  clusterX,
-                  clusterY
-                );
-                return "M" + coords[0] + "L" + coords;
-              })}
+              d={lineFunction(scaledContours)}
               fill={this.colorMap(cont.value)}
             />
           );
@@ -98,7 +97,7 @@ class ClusterContoursMap extends React.Component {
           cx={clusterX(width, scale) + 0.5 * clusterSize(scale)}
           cy={clusterY(height, scale) + 0.5 * clusterSize(scale)}
           r={clusterSize(scale) * 0.58}
-          fill={this.props.isHighlighted ? "#afca0b22" : "none"}
+          fill={this.props.uncertaintyHighlighted ? "#afca0b22" : "none"}
         />
       </g>
     );

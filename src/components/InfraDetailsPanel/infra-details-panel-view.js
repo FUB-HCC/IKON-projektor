@@ -6,7 +6,6 @@ import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructur
 import { getFieldColor, shortenString } from "../../util/utility";
 
 const InfraDetailsPanel = props => {
-  console.log(props);
   if (!props.infraData) {
     return (
       <div className={style.DetailsWrapper}>
@@ -81,16 +80,17 @@ const InfraDetailsPanel = props => {
           ))}
         </p>
       )}
-      <a
+      <div
         className={style.DetailsViaLink}
-        href={
-          "https://via.museumfuernaturkunde.berlin/wiki/" + props.infraData.name
+        onClick={() =>
+          props.openViaWiki(
+            "https://via.museumfuernaturkunde.berlin/wiki/" +
+              props.infraData.name
+          )
         }
-        target="_blank"
-        rel="noopener noreferrer" //got warning otherwise
       >
         Anzeigen im VIA-Wiki
-      </a>
+      </div>
     </div>
   );
 };

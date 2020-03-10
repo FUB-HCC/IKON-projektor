@@ -1,30 +1,23 @@
-import React from "react";
 import connect from "react-redux/es/connect/connect";
 import ProjectDetailsPanelView from "./project-details-panel-view";
 import {
-  setSideBarComponent,
-  setSelectedInfra,
-  setSelectedKta,
-  setSelectedCat,
-  deselectItems
+  unClicked,
+  infraClicked,
+  ktaClicked,
+  catClicked,
+  showViaWikiRequested
 } from "../../store/actions/actions";
-import FilterPanel from "../FilterPanel/filter-panel";
-import CatDetailsPanel from "../CatDetailsPanel/cat-details-panel";
-import KtaDetailsPanel from "../KtaDetailsPanel/kta-details-panel";
-import InfraDetailsPanel from "../InfraDetailsPanel/infra-details-panel";
 
 const findKtasForProject = state => {
-  return state.main.ktas.filter(
-    kta => kta.project_id === state.main.selectedProject
-  );
+  const { isClicked, ktas } = state.main;
+  return ktas.filter(kta => kta.project_id === isClicked.project);
 };
 
 const mapStateToProps = state => {
-  if (state.main.isDataProcessed) {
+  const { isDataProcessed, isClicked, projects } = state.main;
+  if (isDataProcessed) {
     return {
-      projectData: state.main.projects.find(
-        p => p.id === state.main.selectedProject
-      ),
+      projectData: projects.find(p => p.id === isClicked.project),
       ktas: findKtasForProject(state)
     };
   } else {
@@ -34,23 +27,19 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   returnToFilterView: () => {
-    dispatch(setSideBarComponent(<FilterPanel />));
-    dispatch(deselectItems());
+    dispatch(unClicked());
   },
   showInfraDetails: infra => {
-    dispatch(deselectItems());
-    dispatch(setSelectedInfra(infra));
-    dispatch(setSideBarComponent(<InfraDetailsPanel />));
+    dispatch(infraClicked(infra));
   },
   showKtaDetails: kta => {
-    dispatch(deselectItems());
-    dispatch(setSelectedKta(kta));
-    dispatch(setSideBarComponent(<KtaDetailsPanel />));
+    dispatch(ktaClicked(kta));
   },
   showCatDetails: cat => {
-    dispatch(deselectItems());
-    dispatch(setSelectedCat(cat));
-    dispatch(setSideBarComponent(<CatDetailsPanel />));
+    dispatch(catClicked(cat));
+  },
+  openViaWiki: url => {
+    dispatch(showViaWikiRequested(url));
   }
 });
 

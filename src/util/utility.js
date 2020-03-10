@@ -1,41 +1,3 @@
-import React from "react";
-import { history } from "../index";
-import { initialState } from "../store/reducer/reducer";
-import ProjectDetailsPanel from "../components/ProjectDetailsPanel/project-details-panel";
-import FilterPanel from "../components/FilterPanel/filter-panel";
-import CatDetailsPanel from "../components/CatDetailsPanel/cat-details-panel";
-import KtaDetailsPanel from "../components/KtaDetailsPanel/kta-details-panel";
-import InfraDetailsPanel from "../components/InfraDetailsPanel/infra-details-panel";
-
-export const createNewStateFromUrlData = (state, urlData) => {
-  const filterValues = {
-    forschungsgebiet: urlData.f ? urlData.f.map(f => fieldsIntToString(f)) : [],
-    hauptthema: urlData.t ? urlData.t.map(t => fieldsIntToString(t)) : [],
-    geldgeber: urlData.s ? urlData.s.map(s => fieldsIntToString(s)) : []
-  };
-
-  let newState = {
-    graph: urlData.g ? urlData.g : "0",
-    filters: {
-      ...state.filters,
-      forschungsgebiet: {
-        ...state.filters.forschungsgebiet,
-        value: filterValues.forschungsgebiet
-      },
-      hauptthema: {
-        ...state.filters.hauptthema,
-        value: filterValues.hauptthema
-      },
-      geldgeber: {
-        ...state.filters.geldgeber,
-        value: filterValues.geldgeber
-      }
-    },
-    selectedProject: urlData.sP
-  };
-  return newState;
-};
-
 const fieldsMapping = [
   { name: "Naturwissenschaften", field: 1, color: "#ad494a" },
   { name: "Lebenswissenschaften", field: 2, color: "#e69e57" },
@@ -174,95 +136,17 @@ export const shortenString = (string, len) => {
   return string.length > len ? string.substring(0, len) + "..." : string;
 };
 
-export const pushStateToUrl = newState => {
-  let newUrlData = {
-    g: newState.graph,
-    f: newState.filters.forschungsgebiet.value,
-    t: newState.filters.hauptthema.value,
-    ti: newState.filters.time.value,
-    c: newState.filters.collections.value,
-    in: newState.filters.infrastructures.value,
-    ta: newState.filters.targetgroups.value,
-    fo: newState.filters.formats.value,
-    sP: newState.selectedProject,
-    sC: newState.selectedCat,
-    sI: newState.selectedInfra,
-    sK: newState.selectedKta
-  };
-
-  let minifiedUrlData = {
-    ...newUrlData,
-    t: newUrlData.t.map(f => topicStringToInt(f)),
-    f: newUrlData.f.map(t => fieldsStringToInt(t))
-  };
-  const newUrl = "?state=" + btoa(JSON.stringify(minifiedUrlData));
-  if (newUrl !== window.location.search) {
-    history.push(newUrl);
-  }
+export const getQueryStringParams = query => {
+  return query
+    ? (/^[?#]/.test(query) ? query.slice(1) : query)
+        .split("&")
+        .reduce((params, param) => {
+          let [key, value] = param.split("=");
+          params[key] = value ? value : "";
+          return params;
+        }, {})
+    : {};
 };
 
-export const parseStateFromUrl = urlString => {
-  if (urlString === "") {
-    console.log("No URL params");
-    return {};
-  }
-  const urlState = JSON.parse(atob(urlString));
-  const deminifiedUrlState = {
-    ...urlState,
-    t: urlState.t.map(f => topicIntToString(f)),
-    f: urlState.f.map(t => fieldsIntToString(t))
-  };
-
-  let sideBarComponent = <FilterPanel />;
-  if (deminifiedUrlState.sP) {
-    sideBarComponent = <ProjectDetailsPanel />;
-  } else if (deminifiedUrlState.sC) {
-    sideBarComponent = <CatDetailsPanel />;
-  } else if (deminifiedUrlState.sI) {
-    sideBarComponent = <InfraDetailsPanel />;
-  } else if (deminifiedUrlState.sK) {
-    sideBarComponent = <KtaDetailsPanel />;
-  }
-  return {
-    main: {
-      ...initialState,
-      graph: deminifiedUrlState.g,
-      filters: {
-        ...initialState.filters,
-        forschungsgebiet: {
-          ...initialState.filters.forschungsgebiet,
-          value: deminifiedUrlState.f
-        },
-        hauptthema: {
-          ...initialState.filters.hauptthema,
-          value: deminifiedUrlState.t
-        },
-        time: {
-          ...initialState.filters.time,
-          value: deminifiedUrlState.ti
-        },
-        collections: {
-          ...initialState.filters.collections,
-          value: deminifiedUrlState.c
-        },
-        infrastructures: {
-          ...initialState.filters.infrastructures,
-          value: deminifiedUrlState.in
-        },
-        targetgroups: {
-          ...initialState.filters.targetgroups,
-          value: deminifiedUrlState.ta
-        },
-        formats: {
-          ...initialState.filters.formats,
-          value: deminifiedUrlState.fo
-        }
-      },
-      selectedCat: deminifiedUrlState.sC,
-      selectedInfra: deminifiedUrlState.sI,
-      selectedKta: deminifiedUrlState.sK,
-      selectedProject: deminifiedUrlState.sP,
-      sideBarComponent: sideBarComponent
-    }
-  };
-};
+export const isTouchMode = state =>
+  state.router.location.pathname.includes("touch");

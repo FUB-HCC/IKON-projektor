@@ -3,7 +3,11 @@ import { connect } from "react-redux";
 import FilterSet from "./filter-set-view";
 import { checkboxFilterChange } from "../../store/actions/actions";
 import style from "./filter-selection.module.css";
-import { fieldsIntToString, topicToField } from "../../util/utility";
+import {
+  fieldsIntToString,
+  isTouchMode,
+  topicToField
+} from "../../util/utility";
 
 const getFilterSets = filters => {
   return [
@@ -66,15 +70,17 @@ const getFilterSets = filters => {
       name: "Wissenstransfer",
       subsets: [
         {
-          name: "Zielgruppe",
-          isTogglable: false,
+          name: "Zielgruppen",
+          filterId: "highlevelFilter",
+          isTogglable: true,
           subFilters: filters.targetgroups.uniqueVals,
           subFilterId: "targetgroups"
         },
         {
-          name: "Format",
+          name: "Formate",
+          filterId: "highlevelFilter",
           subFilterId: "formats",
-          isTogglable: false,
+          isTogglable: true,
           subFilters: filters.formats.uniqueVals
         }
       ]
@@ -84,15 +90,91 @@ const getFilterSets = filters => {
       subsets: [
         {
           name: "Sammlungen",
+          filterId: "highlevelFilter",
           subFilters: filters.collections.uniqueVals,
           subFilterId: "collections",
-          isTogglable: false
+          isTogglable: true
         },
         {
           name: "Laborgeräte",
+          filterId: "highlevelFilter",
           subFilters: filters.infrastructures.uniqueVals,
           subFilterId: "infrastructures",
-          isTogglable: false
+          isTogglable: true
+        }
+      ]
+    }
+  ];
+};
+
+const getFilterSetsTouch = filters => {
+  return [
+    {
+      name: "Forschungsgebiet",
+      subsets: [
+        {
+          name: "Naturwissenschaften",
+          filterId: "forschungsgebiet",
+          isTogglable: true,
+          subFilters: []
+        },
+        {
+          name: "Lebenswissenschaften",
+          filterId: "forschungsgebiet",
+          isTogglable: true,
+          subFilters: []
+        },
+        {
+          name: "Geistes- und Sozialwissenschaften",
+          filterId: "forschungsgebiet",
+          isTogglable: true,
+          subFilters: []
+        },
+        {
+          name: "Ingenieurwissenschaften",
+          filterId: "forschungsgebiet",
+          isTogglable: true,
+          subFilters: []
+        },
+        {
+          name: "Sonstige",
+          filterId: "forschungsgebiet",
+          isTogglable: true,
+          subFilters: []
+        }
+      ]
+    },
+    {
+      name: "Wissenstransfer",
+      subsets: [
+        {
+          name: "Zielgruppen",
+          filterId: "highlevelFilter",
+          isTogglable: true,
+          subFilters: []
+        },
+        {
+          name: "Formate",
+          filterId: "highlevelFilter",
+          isTogglable: true,
+          subFilters: []
+        }
+      ]
+    },
+    {
+      name: "Infrastruktur",
+      subsets: [
+        {
+          name: "Sammlungen",
+          filterId: "highlevelFilter",
+          isTogglable: true,
+          subFilters: []
+        },
+        {
+          name: "Laborgeräte",
+          filterId: "highlevelFilter",
+          isTogglable: true,
+          subFilters: []
         }
       ]
     }
@@ -120,8 +202,11 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
+  const isTouch = isTouchMode(state);
   return {
-    filterSets: getFilterSets(state.main.filters),
+    filterSets: isTouch
+      ? getFilterSetsTouch(state.main.filters)
+      : getFilterSets(state.main.filters),
     filters: state.main.filters
   };
 };
