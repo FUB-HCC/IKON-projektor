@@ -292,7 +292,7 @@ export default class TimeLineView extends Component {
               <text
                 fill="#717071"
                 x={-this.state.margin}
-                y="10px"
+                y="5px"
                 fontSize="130%"
               >
                 Forschungsprojekte

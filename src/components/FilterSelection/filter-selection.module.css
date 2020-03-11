@@ -4,11 +4,12 @@
   width: 100%;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .filterSetWrapper {
   flex-grow: 1;
-  margin-top: 5px;
+  margin-top: 4px;
   display: flex;
   flex-flow: column;
   justify-content: space-evenly;
@@ -20,7 +21,7 @@
   border-bottom: 1px solid #aaa;
   padding-bottom: 5px;
   padding-top: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   width: 98%;
 }
 .titleText {
@@ -78,7 +79,7 @@
 
 .checkBoxLabel {
   cursor: pointer;
-  box-shadow: inset 0px 0px 1px 3px #1c1d1f;
+  box-shadow: inset 0px 0px 0px 3px #1c1d1f;
 }
 
 .checkBoxLabel:before {

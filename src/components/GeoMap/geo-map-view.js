@@ -237,7 +237,6 @@ const GeoMapView = props => {
     .sort((a, b) => b.ktaCount - a.ktaCount)
     .slice(0, 10);
   let maxCircle = 15;
-  console.log(maxCircle);
   const arcHeight = height * 0.4;
   return (
     <div
@@ -257,27 +256,29 @@ const GeoMapView = props => {
           data-step="2"
         >
           <table>
-            {ktaInstitutions.map((inst, i) => {
-              return (
-                <tr>
-                  <td className={style.instText}>{inst.name}</td>
-                  <td>
-                    <svg
-                      height={maxCircle * 2}
-                      fill="transparent"
-                      width={maxCircle * 2}
-                    >
-                      <circle
-                        className={style.ktaCountCircle}
-                        cx={maxCircle}
-                        cy={maxCircle}
-                        r={inst.ktaCount}
-                      />
-                    </svg>
-                  </td>
-                </tr>
-              );
-            })}
+            <tbody>
+              {ktaInstitutions.map((inst, i) => {
+                return (
+                  <tr key={inst.name}>
+                    <td className={style.instText}>{inst.name}</td>
+                    <td>
+                      <svg
+                        height={maxCircle * 2}
+                        fill="transparent"
+                        width={maxCircle * 2}
+                      >
+                        <circle
+                          className={style.ktaCountCircle}
+                          cx={maxCircle}
+                          cy={maxCircle}
+                          r={inst.ktaCount}
+                        />
+                      </svg>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
           </table>
         </div>
 
@@ -294,9 +295,9 @@ const GeoMapView = props => {
             {Object.values(continentConnections).map(con => (
               <path
                 d={`M${con.end},${arcHeight} C${con.end},${arcHeight -
-                  Math.abs(con.end - con.start) * 0.63} ${
+                  Math.abs(con.end - con.start) * 0.57} ${
                   con.start
-                },${arcHeight - Math.abs(con.end - con.start) * 0.63} ${
+                },${arcHeight - Math.abs(con.end - con.start) * 0.57} ${
                   con.start
                 },${arcHeight}`}
                 stroke="white"
@@ -319,7 +320,7 @@ const GeoMapView = props => {
                 <div
                   className={style.continentLabel}
                   key={c.name}
-                  style={{ left: c.anchorPoint }}
+                  style={{ left: c.anchorPoint - 30 - c.name.length }}
                 >
                   {c.name + " "}({instititutionsOnContinent.length})
                   {c.name === "Europa" && (
