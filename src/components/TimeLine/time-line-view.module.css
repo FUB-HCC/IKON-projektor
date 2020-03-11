@@ -31,15 +31,21 @@
 .timelineContainer > .timelineContentContainer .yAxis path {
   stroke: transparent !important;
 }
-
-.timelineContainer > .timelineContentContainer .area:hover {
-  stroke: #5555;
-  stroke-width: 7;
+.stackedAreaHover {
+  stroke: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  stroke-width: 8;
+  transition: stroke-width, stroke 1s;
+}
+.stackedAreaHover:hover {
+  stroke: #0003;
+  stroke-width: 12;
 }
 
 .wtaBucketCircle {
   fill: #fff;
-  stroke: #fff;
+  stroke: none;
+  transition: fill 1s;
 }
 
 .wtaBucketCircle:hover {

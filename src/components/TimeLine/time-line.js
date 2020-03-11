@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getFieldColor, isTouchMode } from "../../util/utility";
+import { isTouchMode } from "../../util/utility";
 import TimeLineView from "./time-line-view";
 import { yearClicked } from "../../store/actions/actions";
 

@@ -69,7 +69,7 @@ class GraphViewTouch extends React.Component {
       <>
         <TimeGraph
           id="step2"
-          height={this.state.height * 0.2 * 2.5}
+          height={this.state.height * 0.5}
           width={this.state.width}
         />
         <ClusterMap

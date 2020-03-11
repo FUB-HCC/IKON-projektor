@@ -156,15 +156,11 @@ export default class TimeLineView extends Component {
     );
   }
 
-  handleAreaMouseEnter(year, area, evt) {
-    const count = area
-      ? area.find(d => d.data.year === year)[1] -
-        area.find(d => d.data.year === year)[0]
-      : 0;
+  handleAreaMouseEnter(year, count, fb, evt) {
     this.setState({
       hoveredArea: {
         year: year,
-        forschungsbereich: area.key,
+        forschungsbereich: fb,
         count: count
       },
       mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
@@ -178,7 +174,7 @@ export default class TimeLineView extends Component {
     });
   }
 
-  handleMouseLeave(evt) {
+  handleMouseLeave() {
     this.setState({ hoveredArea: undefined });
   }
 
@@ -228,14 +224,7 @@ export default class TimeLineView extends Component {
       .x(d => x(toYear(d.data.year)))
       .y0(d => y(d[0]))
       .y1(d => y(d[1]));
-    const yearsPosX = this.state.dataSplitYears.years.map(year =>
-      x(toYear(year))
-    );
-    const hoveredYear = posX => {
-      return this.state.dataSplitYears.years[
-        yearsPosX.findIndex(x => x >= posX)
-      ];
-    };
+
     //all years with wta in targetgroup in one array
     const ktasYears = [].concat.apply(
       [],
@@ -281,7 +270,7 @@ export default class TimeLineView extends Component {
                     this.state.margin
                   }
                   handleCircleMouseEnter={this.handleCircleMouseEnter}
-                  handleCircleMouseLeave={this.handleCircleMouseLeave}
+                  handleMouseLeave={this.handleMouseLeave}
                 />
               </div>
             </>
@@ -325,25 +314,39 @@ export default class TimeLineView extends Component {
             {stackedData &&
               stackedData.map((d, i) => {
                 return (
-                  <g className={styles.area} key={d.key}>
-                    <path
-                      style={{ fill: color(d) }}
-                      d={area(d)}
-                      onClick={event =>
-                        this.handleAreaClick(
-                          hoveredYear(event.nativeEvent.clientX),
-                          d.key
+                  <g key={d.key}>
+                    <path style={{ fill: color(d) }} d={area(d)} />
+                    {d.map(datum => {
+                      return (
+                        y(datum[1]) && (
+                          <InteractionHandler
+                            isInTouchMode={isTouchMode}
+                            onClick={event =>
+                              this.handleAreaClick(datum.data.year, d.key)
+                            }
+                            onMouseOver={event =>
+                              this.handleAreaMouseEnter(
+                                datum.data.year,
+                                datum[1] - datum[0],
+                                d.key,
+                                event
+                              )
+                            }
+                            onMouseLeave={() => this.handleMouseLeave()}
+                            longPressThreshold={300}
+                            key={datum.data.year + " " + d.key}
+                          >
+                            <line
+                              className={styles.stackedAreaHover}
+                              x1={x(toYear(datum.data.year))}
+                              y1={y(datum[0])}
+                              x2={x(toYear(datum.data.year))}
+                              y2={y(datum[1])}
+                            />
+                          </InteractionHandler>
                         )
-                      }
-                      onMouseEnter={event =>
-                        this.handleAreaMouseEnter(
-                          hoveredYear(event.nativeEvent.clientX),
-                          d,
-                          event
-                        )
-                      }
-                      onMouseLeave={event => this.handleMouseLeave(event)}
-                    />
+                      );
+                    })}
                   </g>
                 );
               })}
