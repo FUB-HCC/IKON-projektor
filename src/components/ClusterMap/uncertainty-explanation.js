@@ -60,7 +60,11 @@ const UncertaintyExplanation = props => {
             }
           >
             <circle className={style.tooltipIcon} r="6" cx={6} cy={6} />
-            <text x="3" y="10" style={{ cursor: "POINTER", stroke: "0e0e0e" }}>
+            <text
+              x="3"
+              y="10"
+              style={{ cursor: "POINTER", stroke: "0e0e0e", fill: "#0e0e0e" }}
+            >
               ?
             </text>
           </svg>

@@ -1,27 +1,36 @@
 body {
-    background-color: #0e0e0e;
+  background-color: #0e0e0e;
 }
 
 .offsetWrapper {
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
-.appBody{
-    flex-grow: 1;
-    display: flex;
-    flex-direction: row;
+.appBody {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
 }
 
 .contentWindow {
-    overflow: hidden;
-    display: flex;
-    flex-grow: 1;
-    justify-content: center;
-    align-items: center;
-    float: left;
+  overflow: hidden;
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: center;
+  float: left;
 }
-.sidebar{
-    flex-grow: 0;
+.sidebar {
+  flex-grow: 0;
+}
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }

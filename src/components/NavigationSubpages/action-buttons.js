@@ -50,7 +50,7 @@ class ActionButtons extends Component {
       showStepNumbers: false,
       overlayOpacity: 0.1,
       tooltipClass: classes.introTooltip,
-      highlightClass: classes.introPageHighlightClass,
+      highlightClass: classes.introHighlightClass,
       nextLabel: "Weiter",
       prevLabel: "Zurück",
       skipLabel: "Abbrechen",
@@ -139,7 +139,8 @@ class ActionButtons extends Component {
             className={classes.rightElement}
             onClick={() => {
               this.props.pageReset();
-            }}>
+            }}
+          >
             <Reset className={classes.buttonIcon} /> <p>Zurücksetzen</p>
           </div>
         </div>
@@ -155,7 +156,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(highlightUncertainty(value));
   },
   onShowUncertainty: value => {
-    dispatch(showUncertainty());
+    dispatch(showUncertainty(value));
   },
   tutorialStarted: () => {
     dispatch(tutorialStarted());

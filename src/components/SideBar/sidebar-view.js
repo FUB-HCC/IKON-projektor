@@ -14,7 +14,7 @@ class SideBarView extends React.Component {
   }
 
   heightStandard = window.innerHeight - menuBarHeight - appMargin * 2;
-  heightTouch = window.innerHeight - menuBarHeight - appMargin * 2 - 120 - 136;
+  heightTouch = window.innerHeight - appMargin * 2;
 
   componentDidMount() {
     window.addEventListener("resize", this.resize.bind(this));
@@ -31,7 +31,12 @@ class SideBarView extends React.Component {
     return (
       <div
         className={style.sideBarWrapper}
-        style={{ height: this.state.height, width: sideBarWidth }}
+        style={{
+          height: this.state.height,
+          width: sideBarWidth,
+          overflowY: this.props.isTouch ? "auto" : "inherit",
+          overflowX: "hidden"
+        }}
         id="detailsPanelID"
       >
         {this.props.isTouch && (

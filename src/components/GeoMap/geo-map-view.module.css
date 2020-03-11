@@ -5,7 +5,7 @@
 
 .arcWrapper {
   width: 100%;
-  margin-left: 10%;
+  height: 100%;
 }
 
 .labelWrapper {
@@ -18,10 +18,8 @@
 
 .continentLabel {
   position: absolute;
-  transform: translate(-50%, 0);
   font-size: 1vw;
   color: #aaa;
-  margin-left: 7.5%;
 }
 
 td {
@@ -52,7 +50,6 @@ td:nth-child(1):hover {
 
 .mapsWrapper {
   width: 100%;
-  margin-left: 10%;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -65,7 +62,7 @@ td:nth-child(1):hover {
 .plotTitle {
   color: #717071;
   font-size: 130%;
-  padding-top: 10px;    
+  padding-top: 10px;
   margin-top: 20px;
   margin-left: 10px;
 }
