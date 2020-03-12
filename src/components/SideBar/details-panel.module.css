@@ -6,7 +6,7 @@
   border-top: 5px solid #0e0e0e;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .DetailsExit {
@@ -72,6 +72,14 @@
 }
 .DetailsLink:hover {
   color: #afca0b;
+}
+
+.SampleLink {
+  margin-right: 3px;
+  cursor: pointer;
+  line-height: 200%;
+  color: #afca0b;
+  display: block;
 }
 
 .DetailsViaLink {

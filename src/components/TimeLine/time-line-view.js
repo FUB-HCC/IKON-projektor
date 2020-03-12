@@ -298,6 +298,16 @@ export default class TimeLineView extends Component {
                 Forschungsprojekte
               </text>
             )}
+            {!areKtaRendered && (
+              <text
+                fill="#717071"
+                x={this.state.margin}
+                y="5px"
+                fontSize="130%"
+              >
+                Anzahl Projekte je Forschungsgebiet pro Jahr
+              </text>
+            )}
             {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
             <g
               className={styles.xAxis}
@@ -352,17 +362,6 @@ export default class TimeLineView extends Component {
               })}
           </SVGWithMargin>
           {this.renderProjectsHover()}
-          {!areKtaRendered && (
-            <div
-              className={styles.subScriptLargeScreen}
-              style={{
-                marginLeft: this.state.margin,
-                marginBottom: this.state.margin / 2
-              }}
-            >
-              Anzahl Projekte je Forschungsgebiet pro Jahr
-            </div>
-          )}
         </div>
       </div>
     );

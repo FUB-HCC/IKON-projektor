@@ -4,6 +4,7 @@ import introJs from "intro.js";
 import classes from "./navigation-subpages.module.css";
 import { Dialog } from "@blueprintjs/core";
 import { ReactComponent as Tutorial } from "../../assets/Icon-Tutorial.svg";
+import { ReactComponent as Download } from "../../assets/Icon-Download.svg";
 import { ReactComponent as Teilen } from "../../assets/Icon-Teilen.svg";
 import { ReactComponent as Reset } from "../../assets/Icon-Reset.svg";
 import {
@@ -12,7 +13,8 @@ import {
   legendHovered,
   tutorialStarted,
   pageReset,
-  shareDialogOpened
+  shareDialogOpened,
+  showSampleList
 } from "../../store/actions/actions";
 import { sideBarWidth } from "../../App";
 class ActionButtons extends Component {
@@ -40,6 +42,16 @@ class ActionButtons extends Component {
     input.setSelectionRange(0, 99999);
     document.execCommand("copy");
     window.alert("Copied link: \n" + input.value);
+  }
+
+  sendToTouchscreen() {
+    const input = document.getElementById("share_input");
+    input.select();
+    input.setSelectionRange(0, 99999);
+    var today = new Date();
+    var date =
+      today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
+    console.log(JSON.stringify({ datum: date, link: input.value }));
   }
 
   startPageTour() {
@@ -92,6 +104,7 @@ class ActionButtons extends Component {
 
   render() {
     const { shareDialogIsOpen } = this.state;
+    const isTouch = window.location.pathname.includes("touch");
     return (
       <>
         <Dialog
@@ -111,11 +124,19 @@ class ActionButtons extends Component {
                 value={window.location}
                 readOnly={true}
               />
+            </div>
+            <div className={classes.shareButtons}>
               <span
                 className={classes.shareClipboardLink}
                 onClick={this.copiedToClipboard}
               >
                 In die Zwischenablage kopieren
+              </span>
+              <span
+                className={classes.shareClipboardLink}
+                onClick={this.sendToTouchscreen}
+              >
+                An den Touchscreen schicken
               </span>
             </div>
             <div className={classes.closeShare} onClick={this.dialogClosed}>
@@ -126,14 +147,32 @@ class ActionButtons extends Component {
         <div
           className={classes.rightPanel}
           id="step4"
-          style={{ width: sideBarWidth }}
+          style={{
+            maxWidth: sideBarWidth,
+            minWidth: sideBarWidth,
+            borderTop: isTouch ? "4px solid #0e0e0e" : "none"
+          }}
         >
           <div className={classes.rightElement} onClick={this.startPageTour}>
             <Tutorial className={classes.buttonIcon} /> <p>Tutorial</p>
           </div>
-          <div className={classes.rightElement} onClick={this.dialogOpened}>
-            <Teilen className={classes.buttonIcon} /> <p>Teilen</p>
-          </div>
+
+          {isTouch && (
+            <div
+              className={classes.rightElement}
+              onClick={this.props.showSampleList}
+            >
+              <Download className={classes.buttonIcon} />
+              <p>Geteilte Ansichten</p>
+            </div>
+          )}
+
+          {!isTouch && (
+            <div className={classes.rightElement} onClick={this.dialogOpened}>
+              <Teilen className={classes.buttonIcon} />
+              <p>Teilen</p>
+            </div>
+          )}
 
           <div
             className={classes.rightElement}
@@ -166,6 +205,9 @@ const mapDispatchToProps = dispatch => ({
   },
   shareDialogOpened: () => {
     dispatch(shareDialogOpened());
+  },
+  showSampleList: () => {
+    dispatch(showSampleList());
   }
 });
 

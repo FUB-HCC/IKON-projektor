@@ -3,7 +3,6 @@ import style from "./sidebar.module.css";
 import { appMargin, menuBarHeight, sideBarWidth } from "../../App";
 import MFNLogo from "../NavigationSubpages/mfn-logo";
 import ActionButtons from "../NavigationSubpages/action-buttons";
-import SampleStatesList from "../SampleStatesList/sample-states-list";
 
 class SideBarView extends React.Component {
   constructor(props) {
@@ -13,7 +12,7 @@ class SideBarView extends React.Component {
     };
   }
 
-  heightStandard = window.innerHeight - menuBarHeight - appMargin * 2;
+  heightStandard = window.innerHeight - menuBarHeight - appMargin * 2 - 10;
   heightTouch = window.innerHeight - appMargin * 2;
 
   componentDidMount() {
@@ -42,7 +41,6 @@ class SideBarView extends React.Component {
         {this.props.isTouch && (
           <>
             <MFNLogo />
-            <SampleStatesList />
             <ActionButtons />
           </>
         )}

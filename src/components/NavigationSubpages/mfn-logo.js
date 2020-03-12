@@ -16,7 +16,7 @@ class MFNLogo extends Component {
     return (
       <div
         className={
-          this.props.isTouch ? classes.mfnLogoTouch : classes.leftElement
+          this.props.isTouch ? classes.mfnLogoTouch : classes.mfnLogoNoTouch
         }
         style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
         onClick={this.startTour}
@@ -24,7 +24,7 @@ class MFNLogo extends Component {
         <img
           src={logo}
           alt={"Museum für Naturkunde Berlin"}
-          height={this.props.isTouch ? 70 : 50}
+          height={this.props.isTouch ? 80 : 65}
         />
       </div>
     );
