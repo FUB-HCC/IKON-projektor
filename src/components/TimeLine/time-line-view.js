@@ -189,7 +189,7 @@ export default class TimeLineView extends Component {
     const { areKtaRendered, isTouchMode } = this.props;
 
     const color = d => {
-      return getFieldColor(d.key);
+      return d.key === "Unveröffentlicht" ? "#555" : getFieldColor(d.key);
     };
     const toYear = int => {
       return new Date(int.toString()).setHours(0, 0, 0, 0);

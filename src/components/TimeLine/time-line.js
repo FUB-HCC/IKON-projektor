@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { isTouchMode } from "../../util/utility";
 import TimeLineView from "./time-line-view";
 import { yearClicked } from "../../store/actions/actions";
+import missingProjects from "../../assets/missingProjects.json";
 
 class TimeLine extends React.Component {
   componentDidMount() {
@@ -94,9 +95,12 @@ const processData = data => {
 
   if (!data || data === []) return [];
 
-  let keys = [...new Set(data.map(b => b.forschungsbereich))];
+  let keys = [...new Set(data.map(b => b.forschungsbereich))].concat(
+    "Unveröffentlicht"
+  );
   let map = [],
     years = [];
+  data = data.concat(missingProjects);
   let projects = data.map(project => {
     let startDate = project.timeframe[0];
     let endDate = project.timeframe[1];
