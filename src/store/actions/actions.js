@@ -306,6 +306,11 @@ export const showViaWikiRequested = url => ({
   value: url
 });
 
+export const sampleClicked = url => ({
+  type: actionTypes.SAMPLE_CLICKED,
+  value: url
+});
+
 export const showSampleList = () => ({
   type: actionTypes.SHOW_SAMPLE_LIST
 });
