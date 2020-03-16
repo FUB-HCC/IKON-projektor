@@ -231,9 +231,10 @@ const GeoMapView = props => {
                 con.start
               },${arcHeight}`}
               stroke="white"
-              strokeWidth={con.weight * 0.5}
+              strokeWidth={Math.max(3, con.weight * 0.5)}
               fill="none"
               opacity={0.4}
+              className={style.arcHover}
               key={JSON.stringify([con.start, con.end])}
             />
           ))}
@@ -248,27 +249,17 @@ const GeoMapView = props => {
             ).filter(ins => ins.continent === c.name);
             return (
               <div className={style.continentWrapper} key={c.name}>
-                <svg viewBox={"0 0 500 150"}>
+                <svg viewBox={"0 0 500 120"}>
                   <text
                     fill="#aaa"
                     x="50%"
-                    y="130"
+                    y="100"
                     fontSize="400%"
                     key={c.name}
                     textAnchor="middle"
                   >
-                    {c.name + " (" + instititutionsOnContinent.length + ")"}
+                    {c.name}
                   </text>
-                  {c.name === "Europa" && (
-                    <circle
-                      cx="50%"
-                      cy="40"
-                      fill="#afca0b"
-                      stroke="#afca0b"
-                      r="20"
-                      className={style.circle}
-                    />
-                  )}
                 </svg>
                 <svg viewBox={"0 0 500 500"}>
                   <g fill={"#aaa"}>{c.svg}</g>

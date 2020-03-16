@@ -27,3 +27,12 @@
 .circle:hover {
   stroke-width: 15px;
 }
+
+.arcHover {
+  opacity: 0.4;
+  transition: opacity 1s;
+  cursor: pointer;
+}
+.arcHover:hover {
+  opacity: 1;
+}
