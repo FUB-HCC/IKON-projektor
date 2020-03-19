@@ -3,11 +3,11 @@ import React from "react";
 import { topicToField, fieldsIntToString } from "../../util/utility";
 import {
   processProjectsData,
-  processClusterData,
-  processCategories,
+  processTargetgroups,
   processCollections,
   processInfrastructures,
-  processFormats,
+  processKtas,
+  processMissingProjects,
   linkCatsToProjectsData
 } from "./data-transforms";
 import FilterPanel from "../../components/FilterPanel/filter-panel";
@@ -22,7 +22,7 @@ export const initialState = {
   filters: {
     forschungsgebiet: {
       name: "Forschungsgebiet",
-      filterKey: "forschungsbereichstr",
+      filterKey: "forschungsbereich",
       type: "string",
       uniqueVals: [],
       value: null
@@ -30,13 +30,6 @@ export const initialState = {
     hauptthema: {
       name: "Hauptthema",
       filterKey: "hauptthema",
-      type: "string",
-      uniqueVals: [],
-      value: null
-    },
-    geldgeber: {
-      name: "Geldgeber",
-      filterKey: "geldgeber",
       type: "string",
       uniqueVals: [],
       value: null
@@ -86,16 +79,12 @@ export const initialState = {
   },
   graph: "0",
   projects: [],
-  filteredProjects: [],
-  filteredCategories: [],
-  filteredCollections: [],
-  filteredInfrastructures: [],
   institutions: [],
   ktas: [],
-  ktaMapping: [],
-  categories: [],
+  targetgroups: [],
   infrastructures: [],
   collections: [],
+  missingprojects: [],
   isHovered: {
     project: null,
     infra: null,
@@ -114,16 +103,7 @@ export const initialState = {
   uncertaintyOn: false,
   uncertaintyHighlighted: false,
   clusterData: undefined,
-  isDataLoaded: {
-    projects: false,
-    institutions: false,
-    cluster: false,
-    ktas: false,
-    targetgroups: false,
-    ktaMapping: false,
-    collections: false,
-    infrastructures: false
-  },
+  isDataLoaded: false,
   isDataProcessed: false,
   sideBarComponent: <FilterPanel />
 };
@@ -135,7 +115,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         graph: action.value,
-        filteredProjects: applyFilters(state.projects, state.filters)
+        projects: applyFilters(state.projects, state.filters)
       };
 
     case actionTypes.CHECKBOX_FILTER_CHANGE:
@@ -144,29 +124,8 @@ const reducer = (state = initialState, action) => {
     case actionTypes.TIMERANGE_FILTER_CHANGE:
       return changeTimeRangeFilter(state, action);
 
-    case actionTypes.UPDATE_CLUSTER_DATA:
-      return updateClusterData(state, action);
-
-    case actionTypes.UPDATE_INSTITUTIONS_DATA:
-      return updateInstitutionsData(state, action);
-
-    case actionTypes.UPDATE_PROJECTS_DATA:
-      return updateProjectsData(state, action);
-
-    case actionTypes.UPDATE_KTA_DATA:
-      return updateKtaData(state, action);
-
-    case actionTypes.UPDATE_TARGETGROUPS_DATA:
-      return updateTargetGroupsData(state, action);
-
-    case actionTypes.UPDATE_COLLECTIONS_DATA:
-      return updateCollectionsData(state, action);
-
-    case actionTypes.UPDATE_INFRASTRUCTURE_DATA:
-      return updateInfrastructureData(state, action);
-
-    case actionTypes.UPDATE_KTA_MAPPING_DATA:
-      return updateKtaMappingData(state, action);
+    case actionTypes.UPDATE_DATA:
+      return updateData(state, action);
 
     case actionTypes.PROCESS_DATA_IF_READY:
       return processDataWhenReady(state);
@@ -276,14 +235,8 @@ const changeCheckboxFilter = (state, action) => {
   }
   return {
     ...state,
-    filteredCategories: applyCategoryFilters(state.categories, newFilter),
-    filteredCollections: applyInfraFilters(state.collections, newFilter),
-    filteredInfrastructures: applyInfraFilters(
-      state.infrastructures,
-      newFilter
-    ),
     filters: newFilter,
-    filteredProjects: applyFilters(state.projects, newFilter)
+    projects: applyFilters(state.projects, newFilter)
   };
 };
 
@@ -298,7 +251,7 @@ const changeTimeRangeFilter = (state, action) => {
   return {
     ...state,
     filters: newFilter,
-    filteredProjects: applyFilters(state.projects, newFilter)
+    projects: applyFilters(state.projects, newFilter)
   };
 };
 
@@ -348,169 +301,67 @@ const applyFilters = (data, filter) => {
   return Object.values(filteredData);
 };
 
-const applyCategoryFilters = (categories, filter) => {
-  let newCategories = categories.map(cat => ({
-    ...cat,
-    connections: cat.connections.filter(con =>
-      filter.hauptthema.value.includes(con.project.hauptthema)
-    )
-  }));
-  return newCategories.filter(cat =>
-    filter.targetgroups.value.includes(cat.title)
-  );
-};
-
-const applyInfraFilters = (infras, filter) => {
-  let newInfras = infras.map(inf => ({
-    ...inf,
-    connections: inf.connections.filter(con =>
-      filter.hauptthema.value.includes(con.project.hauptthema)
-    )
-  }));
-  let specialFilter = filter.infrastructures;
-  if (infras[0].type === "collection") {
-    specialFilter = filter.collections;
-  }
-  return newInfras.filter(infra => specialFilter.value.includes(infra.name));
-};
-
 const compare = (a, b) => {
   if (topicToField(a) < topicToField(b)) return -1;
   else return 1;
 };
 
-const updateClusterData = (state, action) => ({
+const updateData = (state, action) => ({
   ...state,
-  clusterData: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    cluster: true
-  }
+  projects: action.value.projects,
+  ktas: action.value.ktas,
+  infrastructures: action.value.infrastructure,
+  collections: action.value.collections,
+  targetgroups: action.value.targetgroups,
+  institutions: action.value.institutions,
+  missingprojects: action.value.missingprojects,
+  clusterData: action.value.cluster_topography,
+  isDataLoaded: true
 });
-
-const updateInstitutionsData = (state, action) => ({
-  ...state,
-  institutions: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    institutions: true
-  }
-});
-
-const updateKtaData = (state, action) => ({
-  ...state,
-  ktas: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    ktas: true
-  }
-});
-
-const updateTargetGroupsData = (state, action) => ({
-  ...state,
-  categories: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    targetgroups: true
-  }
-});
-
-const updateCollectionsData = (state, action) => ({
-  ...state,
-  collections: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    collections: true
-  }
-});
-
-const updateInfrastructureData = (state, action) => ({
-  ...state,
-  infrastructures: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    infrastructures: true
-  }
-});
-
-const updateKtaMappingData = (state, action) => ({
-  ...state,
-  ktaMapping: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    ktaMapping: true
-  }
-});
-
-const updateProjectsData = (state, action) => ({
-  ...state,
-  projects: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    projects: true
-  }
-});
-
-export const isAllDataLoaded = state =>
-  Object.values(state.isDataLoaded).every(loaded => loaded);
 
 const processDataWhenReady = state =>
-  isAllDataLoaded(state) ? processAllData(state) : state;
+  state.isDataLoaded ? processAllData(state) : state;
 
 const processAllData = state => {
-  const preprocessedClusterData = processClusterData(state);
-  const processedInfrastructures = processInfrastructures(
-    state,
-    preprocessedClusterData
-  );
-  const processedCollections = processCollections(
-    state,
-    preprocessedClusterData
-  );
-  const processedCategories = processCategories(state, preprocessedClusterData);
   const processedProjects = processProjectsData(state);
+  const processedKtas = processKtas(state.ktas);
+  const processedTargetgroups = processTargetgroups(state);
+  const processedInfrastructures = processInfrastructures(state);
+  const processedCollections = processCollections(state);
+  const processedMissingProjects = processMissingProjects(state);
+  //  const preprocessedClusterData = processClusterData(state);
   const newState = {
-    projects: linkCatsToProjectsData(processedCategories, processedProjects),
-    ktas: processFormats(state),
-    categories: processedCategories,
+    projects: linkCatsToProjectsData(processedProjects, processedTargetgroups),
+    ktas: processedKtas,
+    targetgroups: processedTargetgroups,
     infrastructures: processedInfrastructures,
     collections: processedCollections,
-    clusterData: preprocessedClusterData
+    clusterData: state.clusterData,
+    missingprojects: processedMissingProjects,
+    institutions: state.institutions.filter(ins => ins.lon && ins.lat)
   };
 
   const uniqueFields = [];
   const uniqueTopics = [];
-  const uniqueSponsors = [];
-  const uniqueInfrastructures = [];
-  const uniqueCollections = [];
+  const uniqueInfrastructures = newState.infrastructures.map(inf => inf.id);
+  const uniqueCollections = newState.collections.map(col => col.id);
   const maxDateRange = [5000, 0];
 
   Object.values(newState.projects).forEach(project => {
     Object.keys(project).forEach(property => {
       const value = project[property];
-      if (property === "forschungsbereichstr") {
+      if (property === "forschungsbereich") {
         if (!uniqueFields.some(e => e === value)) uniqueFields.push(value);
       } else if (property === "hauptthema") {
         if (!uniqueTopics.some(e => e === value)) uniqueTopics.push(value);
-      } else if (property === "geldgeber") {
-        if (!uniqueSponsors.some(e => e === value)) uniqueSponsors.push(value);
       } else if (property === "timeframe") {
         maxDateRange[0] =
           maxDateRange[0] < value[0] ? maxDateRange[0] : value[0];
         maxDateRange[1] =
           maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
-      } else if (property === "collections") {
-        for (const sammlung of Object.values(value))
-          if (!uniqueCollections.some(e => e === sammlung))
-            uniqueCollections.push(sammlung);
-      } else if (property === "infrastructures") {
-        for (const infrastruktur of Object.values(value))
-          if (!uniqueInfrastructures.some(e => e === infrastruktur))
-            uniqueInfrastructures.push(infrastruktur);
       }
     });
   });
-
   const newFilters = {
     ...state.filters,
     forschungsgebiet: {
@@ -527,13 +378,6 @@ const processAllData = state => {
         ? state.filters.hauptthema.value
         : uniqueTopics
     },
-    geldgeber: {
-      ...state.filters.geldgeber,
-      uniqueVals: uniqueSponsors.sort(compare),
-      value: state.filters.geldgeber.value
-        ? state.filters.geldgeber.value
-        : uniqueSponsors
-    },
     time: {
       ...state.filters.time,
       uniqueVals: maxDateRange,
@@ -541,7 +385,7 @@ const processAllData = state => {
     },
     collections: {
       ...state.filters.collections,
-      uniqueVals: uniqueCollections.sort((a, b) => a.localeCompare(b)),
+      uniqueVals: uniqueCollections,
       value: state.filters.collections.value
         ? state.filters.collections.value
         : uniqueCollections
@@ -549,29 +393,31 @@ const processAllData = state => {
     formats: {
       ...state.filters.formats,
       uniqueVals: [
-        ...new Set(newState.ktas.map(kta => kta.format).filter(f => f != null))
+        ...new Set(
+          newState.ktas.map(kta => kta.Format[0]).filter(f => f != null)
+        )
       ],
       value: state.filters.formats.value
         ? state.filters.formats.value
         : [
             ...new Set(
-              newState.ktas.map(kta => kta.format).filter(f => f != null)
+              newState.ktas.map(kta => kta.Format[0]).filter(f => f != null)
             )
           ]
     },
     infrastructures: {
       ...state.filters.infrastructures,
-      uniqueVals: uniqueInfrastructures.sort((a, b) => a.localeCompare(b)),
+      uniqueVals: uniqueInfrastructures,
       value: state.filters.infrastructures.value
         ? state.filters.infrastructures.value
         : uniqueInfrastructures
     },
     targetgroups: {
       ...state.filters.targetgroups,
-      uniqueVals: newState.categories.map(t => t.title),
+      uniqueVals: newState.targetgroups.map(t => t.id),
       value: state.filters.targetgroups.value
         ? state.filters.targetgroups.value
-        : newState.categories.map(t => t.title)
+        : newState.targetgroups.map(t => t.id)
     }
   };
 
@@ -579,13 +425,6 @@ const processAllData = state => {
     ...state,
     ...newState,
     filters: newFilters,
-    filteredProjects: applyFilters(newState.projects, newFilters),
-    filteredCategories: applyCategoryFilters(newState.categories, newFilters),
-    filteredCollections: applyInfraFilters(newState.collections, newFilters),
-    filteredInfrastructures: applyInfraFilters(
-      newState.infrastructures,
-      newFilters
-    ),
     isDataProcessed: true
   };
 };

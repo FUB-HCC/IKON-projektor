@@ -46,7 +46,7 @@ const YearDetailsPanel = props => {
               key={i + " " + kta.id}
               className={style.DetailsLink}
             >
-              {shortenString(kta.title, 60)}
+              {shortenString(kta.fulltext, 60)}
               <br />
             </span>
           ))}
@@ -64,7 +64,7 @@ const YearDetailsPanel = props => {
                 color: color
               }}
             >
-              {shortenString(project.title, 60)}
+              {shortenString(project.displaytitle, 60)}
               <br />
             </span>
           ))}

@@ -4,16 +4,7 @@ import ClusterMap from "../../components/ClusterMap/cluster-map";
 import GeoMap from "../../components/GeoMap/geo-map-view";
 import TimeGraph from "../../components/TimeLine/time-line";
 import classes from "./graph-view.module.css";
-import {
-  fetchClusterData,
-  fetchInstitutionsData,
-  fetchProjectsData,
-  fetchKTAData,
-  fetchKTAMappingData,
-  fetchTargetGroupsData,
-  fetchCollectionsData,
-  fetchInfrastructureData
-} from "../../store/actions/actions";
+import { fetchData } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
 import { sideBarWidth } from "../../App";
 
@@ -42,14 +33,7 @@ class GraphView extends React.Component {
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
     batch(() => {
-      this.props.fetchClusterData();
-      this.props.fetchProjectsData();
-      this.props.fetchInstitutionsData();
-      this.props.fetchKtaData();
-      this.props.fetchKtaMappingData();
-      this.props.fetchTargetGroupsData();
-      this.props.fetchCollectionsData();
-      this.props.fetchInfrastructureData();
+      this.props.fetchData();
     });
   }
 
@@ -95,7 +79,7 @@ class GraphView extends React.Component {
   render() {
     const geoMapProps = {
       institutions: this.props.institutions,
-      projects: this.props.filteredProjects
+      projects: this.props.projects
     };
     let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
@@ -138,7 +122,7 @@ class GraphView extends React.Component {
 const mapStateToProps = state => {
   return {
     graph: state.main.graph,
-    filteredProjects: state.main.filteredProjects,
+    projects: state.main.projects,
     institutions: state.main.institutions,
     ktas: state.main.ktas
   };
@@ -146,14 +130,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchClusterData: () => dispatch(fetchClusterData()),
-    fetchProjectsData: () => dispatch(fetchProjectsData()),
-    fetchInstitutionsData: () => dispatch(fetchInstitutionsData()),
-    fetchKtaData: () => dispatch(fetchKTAData()),
-    fetchKtaMappingData: () => dispatch(fetchKTAMappingData()),
-    fetchTargetGroupsData: () => dispatch(fetchTargetGroupsData()),
-    fetchCollectionsData: () => dispatch(fetchCollectionsData()),
-    fetchInfrastructureData: () => dispatch(fetchInfrastructureData())
+    fetchData: () => dispatch(fetchData())
   };
 };
 

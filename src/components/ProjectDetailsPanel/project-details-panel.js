@@ -10,12 +10,17 @@ import {
 
 const findKtasForProject = state => {
   const { isClicked, ktas } = state.main;
-  return ktas.filter(kta => kta.project_id === isClicked.project);
+  return ktas.filter(
+    kta =>
+      kta.Drittmittelprojekt[0] &&
+      kta.Drittmittelprojekt[0].id === isClicked.project
+  );
 };
 
 const mapStateToProps = state => {
   const { isDataProcessed, isClicked, projects } = state.main;
   if (isDataProcessed) {
+    console.log(projects.find(p => p.id === isClicked.project));
     return {
       projectData: projects.find(p => p.id === isClicked.project),
       ktas: findKtasForProject(state)

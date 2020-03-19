@@ -23,17 +23,7 @@ const InfraDetailsPanel = props => {
         <div className={style.DetailsExit} onClick={props.returnToFilterView}>
           <Exit height={35} width={35} />
         </div>
-        {props.infraData.type === "collection" ? (
-          <CollectionIcon
-            className={style.TitleIcon}
-            version="1.1"
-            xmlns="http://www.w3.org/2000/svg"
-            x="0px"
-            y="0px"
-            viewBox="0 0 100 100"
-            fill="#aaa"
-          />
-        ) : (
+        {props.type === "Labor" ? (
           <InfrastructureIcon
             className={style.TitleIcon}
             version="1.1"
@@ -43,38 +33,48 @@ const InfraDetailsPanel = props => {
             viewBox="0 0 100 100"
             fill="#aaa"
           />
+        ) : (
+          <CollectionIcon
+            className={style.TitleIcon}
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            viewBox="0 0 100 100"
+            fill="#aaa"
+          />
         )}
-        <span className={style.titleTopic}>
-          {props.infraData.type === "collection"
-            ? "Sammlung "
-            : "Labor/Infrastruktur "}
-        </span>
+        <span className={style.titleTopic}>{props.type + " "}</span>
         <br />
-        <span className={style.titleText}>{props.infraData.name}</span>
+        <span className={style.titleText}>{props.infraData.fulltext}</span>
       </div>
       <span className={style.infoItemTitle}>
         Beschreibung:
         <br />
       </span>
-      <div className={style.abstractText}>{props.infraData.description}</div>
+      <div className={style.abstractText}>
+        {props.type === "Labor"
+          ? props.infraData.Einleitung
+          : props.infraData["Beschreibung der Sammlung"]}
+      </div>
       <span className={style.infoItemTitle}>
         <br />
         Forschungsprojekte, die diese Infrastruktur nutzen:
         <br />
       </span>
-      {props.connectedProjects.length > 0 && (
+      {props.infraData.projects.length > 0 && (
         <p className={style.abstractText}>
-          {props.connectedProjects.map((project, i) => (
+          {props.infraData.projects.map(project => (
             <span
               href="#"
               onClick={() => props.showProjectDetails(project.id)}
-              key={i + " " + project.id}
+              key={project.id}
               className={style.DetailsLink}
               style={{
                 color: getFieldColor(project.forschungsbereich)
               }}
             >
-              {shortenString(project.title, 60)}
+              {shortenString(project.displaytitle, 60)}
               <br />
             </span>
           ))}
@@ -82,12 +82,7 @@ const InfraDetailsPanel = props => {
       )}
       <div
         className={style.DetailsViaLink}
-        onClick={() =>
-          props.openViaWiki(
-            "https://via.museumfuernaturkunde.berlin/wiki/" +
-              props.infraData.name
-          )
-        }
+        onClick={() => props.openViaWiki(props.infraData.fullurl)}
       >
         Anzeigen im VIA-Wiki
       </div>

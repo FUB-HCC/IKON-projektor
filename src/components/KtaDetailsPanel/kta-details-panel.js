@@ -7,21 +7,13 @@ import {
   showViaWikiRequested
 } from "../../store/actions/actions";
 
-const findCategoriesForKta = state => {
-  const { isClicked, categories, ktaMapping } = state.main;
-  return categories.filter(cat =>
-    ktaMapping.find(
-      map => map.kta_id === isClicked.kta && map.targetgroup_id === cat.id
-    )
-  );
-};
-
 const mapStateToProps = state => {
-  const { isDataProcessed, isClicked, ktas } = state.main;
+  const { isDataProcessed, isClicked, ktas, targetgroups } = state.main;
   if (isDataProcessed) {
+    const kta = ktas.find(kta => kta.id === isClicked.kta);
     return {
-      kta: ktas.find(kta => kta.id === isClicked.kta),
-      categories: findCategoriesForKta(state)
+      kta: kta,
+      targetgroups: targetgroups.filter(tg => kta.Zielgruppe.includes(tg.name))
     };
   } else {
     return {};

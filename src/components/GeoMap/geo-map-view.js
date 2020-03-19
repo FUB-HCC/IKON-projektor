@@ -91,10 +91,10 @@ const continents = [
 const getInstitutionFromId = (institutionsList, id) =>
   institutionsList.find(institution => institution.id === id);
 
-const distance = (continent, instiution) =>
+const distance = (continent, institution) =>
   Math.sqrt(
-    Math.pow(continent.centroidX - instiution.long, 2) +
-      Math.pow(continent.centroidY - instiution.lat, 2)
+    Math.pow(continent.centroidX - institution.long, 2) +
+      Math.pow(continent.centroidY - institution.lat, 2)
   );
 const disambiguateContinents = (candidates, institution) =>
   candidates.sort(
@@ -123,9 +123,13 @@ const getContinentOfInstitution = (continentList, institution) => {
   return institution.continent;
 };
 
-const mapLongToWidth = (width, continent, long) =>
-  ((-continent.longMin + long) * width) /
-  (continent.longMax - continent.longMin);
+const mapLongToWidth = (width, continent, lon) => {
+  return (
+    ((lon - continent.longMin) * width) /
+    (continent.longMax - continent.longMin)
+  );
+};
+
 const distanceToEquator = lat => Math.asinh(Math.tan(lat * (Math.PI / 180)));
 const mapLatToHeight = (height, continent, lat) =>
   ((distanceToEquator(lat) - distanceToEquator(continent.latMin)) * height) /
@@ -145,15 +149,12 @@ const edgesFromClique = clique => {
 
 //EXPECTS: institutions, projects, width, height
 const GeoMapView = props => {
-  const { projects, height } = props;
+  const { projects, height, institutions } = props;
   if (isNaN(height) || projects == null) {
     return <div />;
   }
-  let institutions = props.institutions;
-  institutions = institutions.map(ins => Object.assign(ins));
-  institutions = institutions.filter(ins => ins.lon && ins.lat);
   const width = props.width ? props.width : 1000;
-  const institution = id => getInstitutionFromId(institutions, id);
+
   continents.forEach((c, i) => {
     c.anchorPoint = (width / 12) * (i * 2 + 1);
     c.centroidX = (c.longMax + c.longMin) / 2;
@@ -162,41 +163,25 @@ const GeoMapView = props => {
   const continent = inst => getContinentOfInstitution(continents, inst);
 
   let connections = [];
-  let institutionsInProjects = {};
-  const appendInstitutionsInProjects = ins => {
-    if (ins && !institutionsInProjects[ins.id]) {
-      institutionsInProjects[ins.id] = Object.assign(ins);
-    }
-  };
-
+  const mfn = institutions.find(inst =>
+    inst.name.includes("Museum für Naturkunde Berlin")
+  );
+  continent(mfn);
   projects.forEach(project => {
-    if (!institution(project.institution_id)) {
-      return;
-    }
-    appendInstitutionsInProjects(institution(project.institution_id));
-    const cooperatingInstitutions = project.cooperating_institutions.filter(
-      ins => ins
-    );
-    cooperatingInstitutions.forEach(id =>
-      appendInstitutionsInProjects(institution(id))
-    );
-    if (cooperatingInstitutions.length > 0) {
+    if (project.Kooperationspartner.length > 0) {
       connections = connections.concat(
-        edgesFromClique(
-          cooperatingInstitutions.concat([project.institution_id])
-        )
+        edgesFromClique(project.Kooperationspartner.concat([mfn]))
       );
     }
-    continent(institution(project.institution_id));
-    cooperatingInstitutions.forEach(c => continent(institution(c)));
+    project.Kooperationspartner.forEach(c => continent(c));
   });
   let continentConnections = {};
   connections.forEach(con => {
-    if (!institution(con[0]) || !institution(con[1])) {
+    if (!con[0] || !con[1]) {
       return;
     }
-    const continent1 = institution(con[0]).continent;
-    const continent2 = institution(con[1]).continent;
+    const continent1 = con[0].continent;
+    const continent2 = con[1].continent;
     if (continent1 && continent2 && continent1 !== continent2) {
       const key = JSON.stringify([continent1, continent2].sort());
       if (!continentConnections[key]) {
@@ -211,7 +196,6 @@ const GeoMapView = props => {
     }
   });
   const arcHeight = height * 0.5;
-  const mfnId = projects[0] ? projects[0].institution_id : 224;
   return (
     <div
       style={{ width: width, height: height }}
@@ -245,7 +229,7 @@ const GeoMapView = props => {
           .filter(c => c.institutionCount > 0)
           .map(c => {
             const instititutionsOnContinent = Object.values(
-              institutionsInProjects
+              institutions
             ).filter(ins => ins.continent === c.name);
             return (
               <div className={style.continentWrapper} key={c.name}>
@@ -269,7 +253,7 @@ const GeoMapView = props => {
                   >
                     {instititutionsOnContinent.map(ins => (
                       <circle
-                        fill={ins.id === mfnId ? "#afca0b" : "red"}
+                        fill={ins.id === mfn.id ? "#afca0b" : "red"}
                         stroke="red"
                         cx={mapLongToWidth(c.mapWidth, c, ins.lon)}
                         cy={

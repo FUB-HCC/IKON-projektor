@@ -15,5 +15,5 @@ const FilterPanel = props => (
     <FilterSelection />
   </div>
 );
-
+//
 export default FilterPanel;

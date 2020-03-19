@@ -82,7 +82,7 @@ class ActionButtons extends Component {
             break;
           }
           case 3: {
-            this.props.legendHovered("kta");
+            this.props.legendHovered("ktas");
             break;
           }
           case 4: {

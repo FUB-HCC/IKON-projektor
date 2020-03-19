@@ -29,7 +29,7 @@ const IconExplanation = props => {
         data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
         data-step="4"
         className={style.legendRow}
-        onMouseEnter={() => dispatch(legendHovered("kta"))}
+        onMouseEnter={() => dispatch(legendHovered("ktas"))}
         onMouseLeave={() => {
           dispatch(legendHovered(null));
         }}

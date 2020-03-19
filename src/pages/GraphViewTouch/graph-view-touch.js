@@ -3,16 +3,7 @@ import { connect, batch } from "react-redux";
 import ClusterMap from "../../components/ClusterMap/cluster-map";
 import TimeGraph from "../../components/TimeLine/time-line";
 import classes from "./graph-view-touch.module.css";
-import {
-  fetchClusterData,
-  fetchInstitutionsData,
-  fetchProjectsData,
-  fetchKTAData,
-  fetchKTAMappingData,
-  fetchTargetGroupsData,
-  fetchCollectionsData,
-  fetchInfrastructureData
-} from "../../store/actions/actions";
+import { fetchData } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
 import { sideBarWidth } from "../../App";
 
@@ -36,14 +27,7 @@ class GraphViewTouch extends React.Component {
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
     batch(() => {
-      this.props.fetchClusterData();
-      this.props.fetchProjectsData();
-      this.props.fetchInstitutionsData();
-      this.props.fetchKtaData();
-      this.props.fetchKtaMappingData();
-      this.props.fetchTargetGroupsData();
-      this.props.fetchCollectionsData();
-      this.props.fetchInfrastructureData();
+      this.props.fetchData();
     });
   }
 
@@ -87,21 +71,14 @@ class GraphViewTouch extends React.Component {
 const mapStateToProps = state => {
   return {
     graph: state.main.graph,
-    filteredProjects: state.main.filteredProjects,
+    projects: state.main.projects,
     institutions: state.main.institutions
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchClusterData: () => dispatch(fetchClusterData()),
-    fetchProjectsData: () => dispatch(fetchProjectsData()),
-    fetchInstitutionsData: () => dispatch(fetchInstitutionsData()),
-    fetchKtaData: () => dispatch(fetchKTAData()),
-    fetchKtaMappingData: () => dispatch(fetchKTAMappingData()),
-    fetchTargetGroupsData: () => dispatch(fetchTargetGroupsData()),
-    fetchCollectionsData: () => dispatch(fetchCollectionsData()),
-    fetchInfrastructureData: () => dispatch(fetchInfrastructureData())
+    fetchData: () => dispatch(fetchData())
   };
 };
 

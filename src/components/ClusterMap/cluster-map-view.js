@@ -22,7 +22,7 @@ const countOffsetFromArc = scale => 0.025 * scale;
 const connectionOffsetFromArc = scale => -0.02 * scale;
 const circleScaling = scale => 0.02 * scale;
 const strokeWidth = scale => 0.001 * scale;
-const contoursSize = 600;
+const contoursSize = 200;
 
 const splitLongTitles = title => {
   var words = title.split(/[\s-]+/);
@@ -53,7 +53,7 @@ export default class ClusterMapView extends React.Component {
   get maxX() {
     return Math.max(
       ...this.props.clusterData
-        .map(c => c.projects.map(p => p.location[0]))
+        .map(c => c.projects.map(p => p.mappoint[0]))
         .flat()
     );
   }
@@ -61,7 +61,7 @@ export default class ClusterMapView extends React.Component {
   get maxY() {
     return Math.max(
       ...this.props.clusterData
-        .map(c => c.projects.map(p => p.location[1]))
+        .map(c => c.projects.map(p => p.mappoint[1]))
         .flat()
     );
   }
@@ -109,10 +109,11 @@ export default class ClusterMapView extends React.Component {
 
   render() {
     const {
-      categories,
+      targetgroups,
       width,
       height,
-      infrastrukturSorted,
+      collections,
+      infrastructures,
       onCatHovered,
       onInfraHovered,
       onUnHovered,
@@ -131,8 +132,9 @@ export default class ClusterMapView extends React.Component {
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (
-      !categories ||
-      !infrastrukturSorted ||
+      !targetgroups ||
+      !collections ||
+      !infrastructures ||
       !width ||
       !height ||
       scale <= 0
@@ -142,11 +144,9 @@ export default class ClusterMapView extends React.Component {
     const shiftX = width / 2;
     const shiftY = height / 2;
     const radius = clusterSize(scale) - arcMarginSides(width, scale);
-    const each = 360 / (categories.length + infrastrukturSorted.length);
-    const sortedTargetgroups = categories.sort((a, b) =>
-      a.title < b.title ? 1 : -1
-    );
-    const conMax = Math.max(...categories.map(o => o.count), 0);
+    const each =
+      360 / (targetgroups.length + collections.length + infrastructures.length);
+    const conMax = Math.max(...targetgroups.map(o => o.count), 0);
     return (
       <div
         className={style.clusterMapWrapper}
@@ -159,11 +159,9 @@ export default class ClusterMapView extends React.Component {
         <IconExplanation
           posX={20}
           posY={isTouch ? height - 100 : 20}
-          category={categories[0]}
-          infrastructure={infrastrukturSorted.find(
-            i => i.type === "infrastructure"
-          )}
-          collection={infrastrukturSorted.find(i => i.type === "collection")}
+          category={targetgroups[0]}
+          infrastructure={infrastructures}
+          collection={collections}
         />
         <UncertaintyExplanation
           posX={width - 170}
@@ -190,13 +188,13 @@ export default class ClusterMapView extends React.Component {
             />
           )}
           <g>
-            {sortedTargetgroups.map((cat, i) => {
-              const startAngle = each * i - sortedTargetgroups.length * each;
+            {targetgroups.map((targetgroup, i) => {
+              const startAngle = each * i - targetgroups.length * each;
               const angle = startAngle * (Math.PI / 180);
-              const conLen = cat.count;
+              const conLen = targetgroup.count;
               const x = shiftX + radius * Math.cos(angle);
               const y = shiftY + radius * Math.sin(angle);
-              const isHighlighted = highlightedCats.includes(cat.id);
+              const isHighlighted = highlightedCats.includes(targetgroup.id);
               const higlightOffset = isHighlighted ? 7 : 0;
               const textX =
                 shiftX +
@@ -217,10 +215,10 @@ export default class ClusterMapView extends React.Component {
               const area = (conLen * 1.2) / conMax;
               const rad = Math.sqrt(area / Math.PI) * circleScaling(scale) || 1;
               let lines = [];
-              if (cat.connections.length > 0) {
-                lines = cat.connections.map(con => {
+              if (targetgroup.projects.length > 0) {
+                lines = targetgroup.projects.map(project => {
                   const target = this.getPointLocation(
-                    con.location,
+                    project.mappoint,
                     width,
                     height
                   );
@@ -238,7 +236,7 @@ export default class ClusterMapView extends React.Component {
                   const mid = [midX, midY];
                   const source = [sourceX, sourceY];
                   const lineHighlighted =
-                    isHighlighted && highlightedProjects.includes(con.id);
+                    isHighlighted && highlightedProjects.includes(project.id);
 
                   return [
                     {
@@ -263,19 +261,19 @@ export default class ClusterMapView extends React.Component {
               }
 
               return (
-                <g key={cat.id}>
+                <g key={targetgroup.id}>
                   <InteractionHandler
                     isInTouchMode={isTouch}
-                    onMouseOver={() => onCatHovered(cat.id)}
+                    onMouseOver={() => onCatHovered(targetgroup.id)}
                     onMouseLeave={() => onUnHovered()}
                     onClick={() => {
-                      onCatClicked(cat.id);
+                      onCatClicked(targetgroup.id);
                     }}
                     longPressThreshold={300}
                   >
                     <g>
                       <circle
-                        id={`cat-${cat.id}`}
+                        id={`targetgroup-${targetgroup.id}`}
                         r={rad}
                         cx={x}
                         cy={y}
@@ -306,11 +304,13 @@ export default class ClusterMapView extends React.Component {
                         cursor="POINTER"
                         transform={`rotate(${textRotate} ${textX} ${textY})`}
                       >
-                        {splitLongTitles(cat.title).map((titlePart, i) => (
-                          <tspan x={textX} y={textY + i * 10} key={titlePart}>
-                            {titlePart}
-                          </tspan>
-                        ))}
+                        {splitLongTitles(targetgroup.name).map(
+                          (titlePart, i) => (
+                            <tspan x={textX} y={textY + i * 10} key={titlePart}>
+                              {titlePart}
+                            </tspan>
+                          )
+                        )}
                       </text>
                     </g>
                   </InteractionHandler>
@@ -339,13 +339,13 @@ export default class ClusterMapView extends React.Component {
             })}
 
             <g>
-              {infrastrukturSorted.map((infrastruktur, i) => {
+              {collections.concat(infrastructures).map((infrastruktur, i) => {
                 const startAngle = each * i;
                 const angle = startAngle * (Math.PI / 180);
                 const x = shiftX - 6 + radius * Math.cos(angle);
                 const y = radius * Math.sin(angle);
                 const isHighlighted = highlightedInfra.includes(
-                  infrastruktur.name
+                  infrastruktur.id
                 );
                 const higlightOffset = isHighlighted ? 7 : 0;
                 const textX =
@@ -361,10 +361,10 @@ export default class ClusterMapView extends React.Component {
                   startAngle > 90 ? startAngle + 180 : startAngle;
 
                 let lines = [];
-                if (infrastruktur.connections) {
-                  lines = infrastruktur.connections.map(con => {
+                if (infrastruktur.projects.length > 0) {
+                  lines = infrastruktur.projects.map(project => {
                     const target = this.getPointLocation(
-                      con.location,
+                      project.mappoint,
                       width,
                       height
                     );
@@ -384,7 +384,7 @@ export default class ClusterMapView extends React.Component {
                     const mid = [midX, midY];
                     const source = [sourceX, sourceY];
                     const lineHighlighted =
-                      isHighlighted && highlightedProjects.includes(con.id);
+                      isHighlighted && highlightedProjects.includes(project.id);
 
                     return [
                       {
@@ -408,22 +408,22 @@ export default class ClusterMapView extends React.Component {
                   });
                 }
                 return (
-                  <g key={infrastruktur.name}>
+                  <g key={infrastruktur.id}>
                     <InteractionHandler
                       isInTouchMode={isTouch}
-                      onMouseOver={() => onInfraHovered(infrastruktur.name)}
+                      onMouseOver={() => onInfraHovered(infrastruktur.id)}
                       onMouseLeave={() => onUnHovered()}
                       onClick={() => {
-                        onInfraClicked(infrastruktur.name);
+                        onInfraClicked(infrastruktur.id);
                       }}
                       longPressThreshold={300}
                     >
                       <g>
                         <g>
-                          {infrastruktur.type === "collection" ? (
-                            <CollectionIcon
+                          {infrastruktur.Einleitung ? (
+                            <InfrastructureIcon
                               style={{ cursor: "POINTER" }}
-                              id={`inf-${infrastruktur.name}`}
+                              id={`inf-${infrastruktur.id}`}
                               x={x}
                               y={y}
                               width={fontSizeText(this.scale) * 1.3}
@@ -432,9 +432,9 @@ export default class ClusterMapView extends React.Component {
                               stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
                             />
                           ) : (
-                            <InfrastructureIcon
+                            <CollectionIcon
                               style={{ cursor: "POINTER" }}
-                              id={`inf-${infrastruktur.name}`}
+                              id={`inf-${infrastruktur.id}`}
                               x={x}
                               y={y}
                               width={fontSizeText(this.scale) * 1.3}
@@ -457,7 +457,7 @@ export default class ClusterMapView extends React.Component {
                           cursor="POINTER"
                           transform={`rotate(${textRotate} ${textX} ${textY})`}
                         >
-                          {splitLongTitles(infrastruktur.name).map(
+                          {splitLongTitles(infrastruktur.fulltext).map(
                             (titlePart, j) => (
                               <tspan
                                 x={textX}

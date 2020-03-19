@@ -21,7 +21,7 @@ const mapStateToProps = state => {
       ),
       ktas: ktas.filter(
         kta =>
-          kta.targetgroups.includes(title) &&
+          kta.Zielgruppe.includes(title) &&
           kta.timeframe[0].getFullYear() <= year &&
           year <= kta.timeframe[1].getFullYear()
       )

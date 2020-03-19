@@ -2,135 +2,117 @@ import { fieldsStringToInt } from "../../util/utility";
 import _ from "lodash";
 
 export const processProjectsData = state => {
-  const projectData = state.projects;
-  return Object.values(projectData).map(project => {
+  const projectData = transformPoints(state.projects);
+  return projectData.map(project => {
     project.hauptthema =
-      project.participating_subject_areas &&
-      project.participating_subject_areas.split("/")[1]
-        ? project.participating_subject_areas.split("/")[1]
+      project["Forschungsthema, Expertise, Kompetenzen"][0] &&
+      project["Forschungsthema, Expertise, Kompetenzen"][0].split("/")[1]
+        ? project["Forschungsthema, Expertise, Kompetenzen"][0].split("/")[1]
         : "Sonstige";
-    project.geldgeber = project.sponsor;
-    project.timeframe = [
-      new Date(project.funding_start_year).getFullYear(),
-      new Date(project.funding_end_year).getFullYear()
-    ];
-    project.collections =
-      project.sammlungen && project.sammlungen[0] ? project.sammlungen : [];
-    project.infrastructures =
-      project.infrastruktur && project.infrastruktur[0]
-        ? project.infrastruktur
-        : [];
+
+    project.timeframe = project.timeframe.map(d =>
+      d && d.raw ? new Date(d.timestamp * 1000).getFullYear() : d
+    );
     if (
-      project.participating_subject_areas &&
-      project.participating_subject_areas.split("/")[0]
+      project["Forschungsthema, Expertise, Kompetenzen"][0] &&
+      project["Forschungsthema, Expertise, Kompetenzen"][0].split("/")[0]
     ) {
       return {
         ...project,
-        forschungsbereich: project.participating_subject_areas.split("/")[0],
-        forschungsbereichstr: project.participating_subject_areas.split("/")[0], // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereich: project[
+          "Forschungsthema, Expertise, Kompetenzen"
+        ][0].split("/")[0],
         forschungsbereichNumber: fieldsStringToInt(
-          project.participating_subject_areas.split("/")[0]
+          project["Forschungsthema, Expertise, Kompetenzen"][0].split("/")[0]
         )
       };
     } else {
       return {
         ...project,
         forschungsbereich: "Sonstige",
-        forschungsbereichstr: "Sonstige", // TODO please change API so it does not contain "(# Mitglieder)"
+        forschungsbereich: "Sonstige", // TODO please change API so it does not contain "(# Mitglieder)"
         forschungsbereichNumber: fieldsStringToInt("Sonstige")
       };
     }
   });
 };
 
-export const linkCatsToProjectsData = (categories, projects) => {
-  return projects.map(project => ({
-    ...project,
-    cats: categories
-      .filter(category =>
-        category.connections.find(conn => conn.id === project.id)
-      )
-      .map(cat => cat.id)
+export const processMissingProjects = state => {
+  return state.missingprojects.map(mproject => ({
+    ...mproject,
+    forschungsbereich: "Unveröffentlicht",
+    timeframe: mproject.timeframe.map(d =>
+      d && d.raw ? new Date(d.timestamp * 1000).getFullYear() : 2000
+    )
   }));
 };
 
-export const processClusterData = state => ({
-  ...state.clusterData,
-  transformedPoints: transformPoints(state)
-});
-
-const transformPoints = state => {
-  const project_data = state.clusterData.project_data;
-  const minX = _.min(project_data.map(c => c.mappoint[0]));
-  const minY = _.min(project_data.map(c => c.mappoint[1]));
-  return project_data.map(p => {
-    const project = processProjectsData(state).find(
-      project => p.id === project.id
-    );
-    return {
-      ...p,
-      location: [-1 * p.mappoint[0] - 0.76 * minX, p.mappoint[1] - minY], // TODO: Why the heck -0.76 * minX ????
-      project: project
-    };
-  });
-};
-
-export const processCategories = (state, clusterData) => {
-  const ktaMapping = state.ktaMapping;
-  const ktas = processFormats(state);
-  return state.categories.map(category => {
-    const filteredKtas = ktaMapping
-      .filter(ktaM => ktaM.targetgroup_id === category.id)
-      .map(filteredKtaM => ktas.find(kta => filteredKtaM.kta_id === kta.id));
-    const connections = filteredKtas
-      .filter(kta => kta.project_id !== null)
-      .map(kta =>
-        clusterData.transformedPoints.find(
-          point => point.project.id === kta.project_id
+export const linkCatsToProjectsData = (projects, targetgroups) => {
+  return projects.map(project => ({
+    ...project,
+    targetgroups: targetgroups
+      .filter(targetgroup =>
+        targetgroup.ktas.find(
+          kta =>
+            kta.Drittmittelprojekt[0] &&
+            kta.Drittmittelprojekt[0].id === project.id
         )
       )
-      .filter(connection => connection);
+      .map(targetgroup => targetgroup.id)
+  }));
+};
+
+// export const processClusterData = state => ({
+//   ...state.clusterData,
+//   transformedPoints: transformPoints(state)
+// });
+
+const transformPoints = projects => {
+  const minX = _.min(projects.map(c => c.mappoint[0]));
+  const minY = _.min(projects.map(c => c.mappoint[1]));
+  return projects.map(p => {
     return {
-      ...category,
-      connections: connections,
-      count: filteredKtas.length,
-      project_ids: [...new Set(connections.map(c => c.id))]
+      ...p,
+      mappoint: [p.mappoint[0] - minX, p.mappoint[1] - minY]
     };
   });
 };
 
-export const processInfrastructures = (state, clusterData) => {
+export const processTargetgroups = state => {
+  return state.targetgroups.map(targetgroup => {
+    const projects = targetgroup.ktas
+      .filter(kta => kta.Drittmittelprojekt && kta.Drittmittelprojekt[0])
+      .map(kta => kta.Drittmittelprojekt[0]);
+    return {
+      ...targetgroup,
+      projects: [...new Set(projects)]
+    };
+  });
+};
+
+export const processInfrastructures = state => {
   return state.infrastructures.map(infrastructure => ({
     ...infrastructure,
-    connections: clusterData.transformedPoints.filter(
-      point =>
-        point.project &&
-        point.project.infrastructures.includes(infrastructure.name)
-    ),
     type: "infrastructure"
   }));
 };
 
-export const processCollections = (state, clusterData) => {
+export const processCollections = state => {
   return state.collections.map(collection => ({
     ...collection,
-    connections: clusterData.transformedPoints.filter(
-      point =>
-        point.project && point.project.collections.includes(collection.name)
-    ),
     type: "collection"
   }));
 };
 
-export const processFormats = state =>
-  state.ktas.map(kta => ({
+export const processKtas = ktas =>
+  ktas.map(kta => ({
     ...kta,
     timeframe: [
-      new Date(kta.start_date).getFullYear() === 1970
-        ? new Date(kta.end_date)
-        : new Date(kta.start_date),
-      new Date(kta.end_date).getFullYear() === 1970
-        ? new Date(kta.start_date)
-        : new Date(kta.end_date)
+      kta["Gestartet am"] && kta["Gestartet am"].length > 0
+        ? new Date(kta["Gestartet am"][0].timestamp * 1000)
+        : new Date(0),
+      kta["Endet am"] && kta["Endet am"].length > 0
+        ? new Date(kta["Endet am"][0].timestamp * 1000)
+        : new Date(0)
     ]
   }));
