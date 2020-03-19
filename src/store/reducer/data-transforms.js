@@ -30,7 +30,6 @@ export const processProjectsData = state => {
       return {
         ...project,
         forschungsbereich: "Sonstige",
-        forschungsbereich: "Sonstige", // TODO please change API so it does not contain "(# Mitglieder)"
         forschungsbereichNumber: fieldsStringToInt("Sonstige")
       };
     }

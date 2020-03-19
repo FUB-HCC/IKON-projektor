@@ -114,8 +114,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.CHANGE_GRAPH:
       return {
         ...state,
-        graph: action.value,
-        projects: applyFilters(state.projects, state.filters)
+        graph: action.value
       };
 
     case actionTypes.CHECKBOX_FILTER_CHANGE:
@@ -235,23 +234,20 @@ const changeCheckboxFilter = (state, action) => {
   }
   return {
     ...state,
-    filters: newFilter,
-    projects: applyFilters(state.projects, newFilter)
+    filters: newFilter
   };
 };
 
 const changeTimeRangeFilter = (state, action) => {
-  const newFilter = {
-    ...state.filters,
-    time: {
-      ...state.filters.time,
-      value: action.value
-    }
-  };
   return {
     ...state,
-    filters: newFilter,
-    projects: applyFilters(state.projects, newFilter)
+    filters: {
+      ...state.filters,
+      time: {
+        ...state.filters.time,
+        value: action.value
+      }
+    }
   };
 };
 
@@ -272,33 +268,6 @@ const toggleAllOfSubset = (subsetFilter, highlevelFilter, actionValue) => {
   const toggle = highlevelFilter.value.includes(actionValue);
   let newValue = toggle ? subsetFilter.uniqueVals : [];
   return newValue;
-};
-
-const applyFilters = (data, filter) => {
-  let filteredData = data;
-  Object.values(filter).forEach(f => {
-    let newFilteredData = {};
-    filteredData = Object.keys(filteredData).forEach(d => {
-      if (f.type === "string") {
-        if (f.value.some(value => value === filteredData[d][f.filterKey]))
-          newFilteredData[d] = filteredData[d];
-      } else if (f.type === "timeframe") {
-        if (
-          f.value[0] <= filteredData[d][f.filterKey][0] &&
-          f.value[1] >= filteredData[d][f.filterKey][1]
-        ) {
-          newFilteredData[d] = filteredData[d];
-        }
-      } else if (f.type === "array") {
-        newFilteredData[d] = filteredData[d];
-      } else {
-        if (filteredData[d][f.filterKey].includes(f.value))
-          newFilteredData[d] = filteredData[d];
-      }
-    });
-    filteredData = newFilteredData;
-  });
-  return Object.values(filteredData);
 };
 
 const compare = (a, b) => {

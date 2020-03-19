@@ -88,9 +88,6 @@ const continents = [
   }
 ];
 
-const getInstitutionFromId = (institutionsList, id) =>
-  institutionsList.find(institution => institution.id === id);
-
 const distance = (continent, institution) =>
   Math.sqrt(
     Math.pow(continent.centroidX - institution.long, 2) +

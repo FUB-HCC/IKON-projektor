@@ -2,7 +2,7 @@ import React from "react";
 import { contours as d3Contours } from "d3-contour";
 import { scaleLinear as d3ScaleLinear } from "d3-scale";
 import { extent as d3extent } from "d3-array";
-import {geoPath as d3GeoPath} from 'd3-geo';
+import { geoPath as d3GeoPath } from "d3-geo";
 
 const scaleContours = (
   cont,
@@ -13,33 +13,34 @@ const scaleContours = (
   clusterX,
   clusterY
 ) => {
-  const coords = cont.coordinates
+  const coords = cont.coordinates;
   const factor = clusterSize(Math.min(height, width));
   const ClusterPosX = clusterX(width, Math.min(height, width));
   const ClusterPosY = clusterY(height, Math.min(height, width));
   const scaledCoords = coords.map(cGroup =>
-      cGroup.map(c => c.map(point => [
+    cGroup.map(c =>
+      c.map(point => [
         (point[0] / contoursSize) * factor + ClusterPosX,
         (point[1] / contoursSize) * factor + ClusterPosY
-      ]))
+      ])
     )
+  );
   return {
     ...cont,
     coordinates: scaledCoords
-  }
+  };
 };
 
 const constructContours = (topography, contoursSize) =>
   d3Contours()
     .size([contoursSize, contoursSize])
-    .smooth([true])
-    .thresholds(10)(topography);
-
+    .smooth([false])
+    .thresholds(20)(topography);
 
 const computeColorMap = topography =>
   d3ScaleLinear()
     .domain(d3extent(topography))
-    .range(["#0e0e0e", "#888"]);
+    .range(["#000", "#888"]);
 
 class ClusterContoursMap extends React.Component {
   constructor(props) {
@@ -48,6 +49,7 @@ class ClusterContoursMap extends React.Component {
     this.state = {
       topography: topography
     };
+    console.log(Math.min(...topography));
     this.contours = constructContours(topography, contoursSize);
     this.colorMap = computeColorMap(topography);
   }
@@ -78,12 +80,20 @@ class ClusterContoursMap extends React.Component {
         topography: topography
       });
     }
-    const lineFunction = d3GeoPath()
+    const lineFunction = d3GeoPath();
     const scale = Math.min(height, width);
     return (
-      <g fill="none">
+      <g fill="transparent">
         {this.contours.map(cont => {
-          const scaledContours = scaleContours(cont, width, height, contoursSize, clusterSize, clusterX, clusterY);
+          const scaledContours = scaleContours(
+            cont,
+            width,
+            height,
+            contoursSize,
+            clusterSize,
+            clusterX,
+            clusterY
+          );
           return (
             <path
               className="isoline"

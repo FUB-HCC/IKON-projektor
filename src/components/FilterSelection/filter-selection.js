@@ -9,7 +9,7 @@ import {
   topicToField
 } from "../../util/utility";
 
-const getFilterSets = filters => {
+const getFilterSets = state => {
   return [
     {
       name: "Forschungsgebiet",
@@ -18,7 +18,7 @@ const getFilterSets = filters => {
           name: "Naturwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
             val =>
               fieldsIntToString(topicToField(val)) === "Naturwissenschaften"
           ),
@@ -28,7 +28,7 @@ const getFilterSets = filters => {
           name: "Lebenswissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
             val =>
               fieldsIntToString(topicToField(val)) === "Lebenswissenschaften"
           ),
@@ -38,7 +38,7 @@ const getFilterSets = filters => {
           name: "Geistes- und Sozialwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
             val =>
               fieldsIntToString(topicToField(val)) ===
               "Geistes- und Sozialwissenschaften"
@@ -49,7 +49,7 @@ const getFilterSets = filters => {
           name: "Ingenieurwissenschaften",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
             val =>
               fieldsIntToString(topicToField(val)) === "Ingenieurwissenschaften"
           ),
@@ -59,7 +59,7 @@ const getFilterSets = filters => {
           name: "Sonstige",
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
             val => fieldsIntToString(topicToField(val)) === "Sonstige"
           ),
           subFilterId: "hauptthema"
@@ -73,15 +73,19 @@ const getFilterSets = filters => {
           name: "Zielgruppen",
           filterId: "highlevelFilter",
           isTogglable: true,
-          subFilters: filters.targetgroups.uniqueVals,
+          subFilters: state.main.targetgroups,
           subFilterId: "targetgroups"
         },
+        // .map(tg => [
+        //   tg,
+        //   state.main.targetgroups.find(targetgroup => targetgroup.id === tg)
+        // ])
         {
           name: "Formate",
           filterId: "highlevelFilter",
           subFilterId: "formats",
           isTogglable: true,
-          subFilters: filters.formats.uniqueVals
+          subFilters: state.main.filters.formats.uniqueVals
         }
       ]
     },
@@ -91,14 +95,14 @@ const getFilterSets = filters => {
         {
           name: "Sammlungen",
           filterId: "highlevelFilter",
-          subFilters: filters.collections.uniqueVals,
+          subFilters: state.main.collections,
           subFilterId: "collections",
           isTogglable: true
         },
         {
           name: "Laborgeräte",
           filterId: "highlevelFilter",
-          subFilters: filters.infrastructures.uniqueVals,
+          subFilters: state.main.infrastructures,
           subFilterId: "infrastructures",
           isTogglable: true
         }
@@ -206,7 +210,7 @@ const mapStateToProps = state => {
   return {
     filterSets: isTouch
       ? getFilterSetsTouch(state.main.filters)
-      : getFilterSets(state.main.filters),
+      : getFilterSets(state),
     filters: state.main.filters
   };
 };

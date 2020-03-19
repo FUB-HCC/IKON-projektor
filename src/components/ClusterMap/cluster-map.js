@@ -8,7 +8,7 @@ import {
   catHovered,
   infraHovered
 } from "../../store/actions/actions";
-import { getFieldColor, isTouchMode } from "../../util/utility";
+import { getFieldColor, isTouchMode, applyFilters } from "../../util/utility";
 
 const computeClusters = (clusterData, projects, targetgroups) => {
   if (
@@ -19,7 +19,6 @@ const computeClusters = (clusterData, projects, targetgroups) => {
     targetgroups.length === 0
   )
     return [];
-  const { cluster_data } = clusterData;
   const clusterIds = [...new Set(projects.map(p => p.cluster))];
   return clusterIds.map(id => ({
     id: id,
@@ -146,15 +145,29 @@ const mapStateToProps = state => {
 
   let clusterDataForView = [];
   let targetgroupsForView = [];
+  let collectionsForView = [];
+  let infrastructuresForView = [];
   let topography = [];
   let highlightedProjects = [];
   let highlightedCats = [];
   let highlightedInfra = [];
   if (isDataProcessed) {
-    clusterDataForView = computeClusters(clusterData, projects, targetgroups);
+    let projectsForView = applyFilters(projects, filters);
+    clusterDataForView = computeClusters(
+      clusterData,
+      projectsForView,
+      targetgroups
+    );
     targetgroupsForView = targetgroups
-      .filter(c => filters.targetgroups.value.includes(c.id))
+      .filter(tg => filters.targetgroups.value.includes(tg.id))
       .sort((a, b) => (a.name < b.name ? 1 : -1));
+
+    collectionsForView = collections.filter(col =>
+      filters.collections.value.includes(col.id)
+    );
+    infrastructuresForView = infrastructures.filter(inf =>
+      filters.infrastructures.value.includes(inf.id)
+    );
     topography = clusterData;
     const highlighted = extractHighlightedFromState(state.main);
     highlightedProjects = highlighted.projects;
@@ -166,8 +179,8 @@ const mapStateToProps = state => {
     clusterData: clusterDataForView,
     targetgroups: targetgroupsForView,
     topography: topography,
-    collections: collections,
-    infrastructures: infrastructures,
+    collections: collectionsForView,
+    infrastructures: infrastructuresForView,
     isAnyClicked: !Object.values(isClicked).every(clickState => !clickState),
     highlightedProjects: highlightedProjects,
     highlightedCats: highlightedCats,

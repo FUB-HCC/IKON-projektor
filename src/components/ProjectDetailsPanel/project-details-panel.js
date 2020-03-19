@@ -20,7 +20,6 @@ const findKtasForProject = state => {
 const mapStateToProps = state => {
   const { isDataProcessed, isClicked, projects } = state.main;
   if (isDataProcessed) {
-    console.log(projects.find(p => p.id === isClicked.project));
     return {
       projectData: projects.find(p => p.id === isClicked.project),
       ktas: findKtasForProject(state)

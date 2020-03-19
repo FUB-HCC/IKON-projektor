@@ -1,6 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
-import { isTouchMode } from "../../util/utility";
+import {
+  isTouchMode,
+  applyFilters,
+  applyMissingFilters
+} from "../../util/utility";
 import TimeLineView from "./time-line-view";
 import { yearClicked } from "../../store/actions/actions";
 
@@ -66,14 +70,19 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  const processedKtas = processKtas(state.main.ktas, state.main.targetgroups);
-  const processedData = processData(
-    state.main.projects,
-    state.main.missingprojects
+  let projectsForView = applyFilters(state.main.projects, state.main.filters);
+  let missingProjectsForView = applyMissingFilters(
+    state.main.missingprojects,
+    state.main.filters
   );
+  let targetgroupsForView = state.main.targetgroups.filter(tg =>
+    state.main.filters.targetgroups.value.includes(tg.id)
+  );
+  const processedKtas = processKtas(state.main.ktas, targetgroupsForView);
+  const processedData = processData(projectsForView, missingProjectsForView);
   return {
     dataSplitFbYear: processedData,
-    projects: state.main.projects,
+    projects: projectsForView,
     colors: graphColors,
     ktasYearBuckets: processedKtas,
     areKtaRendered: !isTouchMode(state),

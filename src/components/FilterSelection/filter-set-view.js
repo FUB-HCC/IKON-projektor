@@ -28,6 +28,7 @@ class FilterSet extends Component {
             <div className={style.subsetHeader}>
               <CheckBox
                 name={subset.name}
+                nameId={subset.name}
                 id={subset.filterId}
                 checked={
                   !this.props.filters[subset.filterId]
@@ -44,7 +45,7 @@ class FilterSet extends Component {
                 iconSize="20px"
                 iconMargin="9"
                 icon={
-                  subset.subFilters.length > 0 ? (
+                  subset.subFilters && subset.subFilters.length > 0 ? (
                     this.state.toggleState.includes(subset.name) ? (
                       <ArrowDown
                         stroke={getFieldColor(subset.name)}
@@ -66,11 +67,17 @@ class FilterSet extends Component {
               subset.subFilters.map((filter, i) => (
                 <div className={style.subFilter} key={subset.name + i}>
                   <CheckBox
-                    name={filter}
+                    name={filter.name || filter.fulltext || filter}
+                    nameId={filter.id ? filter.id : filter}
                     id={subset.subFilterId}
-                    checked={this.props.filters[
-                      subset.subFilterId
-                    ].value.includes(filter)}
+                    checked={
+                      this.props.filters[subset.subFilterId].value.includes(
+                        filter.id
+                      ) ||
+                      this.props.filters[subset.subFilterId].value.includes(
+                        filter
+                      )
+                    }
                     onChange={this.props.changeFilter}
                     showCheckbox={true}
                     color={getFieldColor(subset.name)}
@@ -102,7 +109,7 @@ const CheckBox = props => (
     className={style.checkBoxWrapper}
     onClick={() => {
       if (props.icon) {
-        props.toggledFilterList(props.name, props.toggleState);
+        props.toggledFilterList(props.nameId, props.toggleState);
       }
     }}
   >
@@ -110,13 +117,13 @@ const CheckBox = props => (
       checked={props.checked}
       className={style.checkBox}
       type="checkbox"
-      id={props.name}
-      onChange={() => props.onChange(props.id, props.name)}
+      id={props.nameId}
+      onChange={() => props.onChange(props.id, props.nameId)}
     />
     {props.showCheckbox && (
       <label
         className={style.checkBoxLabel}
-        htmlFor={props.name}
+        htmlFor={props.nameId}
         style={{
           border: props.color + " 2px solid",
           borderRadius: "50%",
