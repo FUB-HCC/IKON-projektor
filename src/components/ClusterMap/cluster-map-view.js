@@ -50,26 +50,10 @@ export default class ClusterMapView extends React.Component {
     this.renderHover = this.renderHover.bind(this);
   }
 
-  get maxX() {
-    return Math.max(
-      ...this.props.clusterData
-        .map(c => c.projects.map(p => p.mappoint[0]))
-        .flat()
-    );
-  }
-
-  get maxY() {
-    return Math.max(
-      ...this.props.clusterData
-        .map(c => c.projects.map(p => p.mappoint[1]))
-        .flat()
-    );
-  }
-
   getPointLocation = (pt, width, height) => {
     const [x, y] = pt;
-    const normalizedX = x / this.maxX;
-    const normalizedY = y / this.maxY;
+    const normalizedX = x / this.props.projectsMaxSizing[0];
+    const normalizedY = y / this.props.projectsMaxSizing[1];
 
     return [
       normalizedX * clusterSize(this.scale) + clusterPosX(width, this.scale),

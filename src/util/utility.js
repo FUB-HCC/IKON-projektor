@@ -9,58 +9,65 @@ const fieldsMapping = [
 const topicMapping = [
   {
     name: "Agrar-, Forstwissenschaften und Tiermedizin",
-    num: "19",
+    num: 19,
     field: 2,
     color: "#989aa1"
   },
-  { name: "Geologie und Paläontologie", num: "22", field: 1, color: "#989aa1" },
+  { name: "Geologie und Paläontologie", num: 22, field: 1, color: "#989aa1" },
   {
     name: "Geochemie, Mineralogie und Kristallographie",
-    num: "23",
+    num: 23,
     field: 1,
     color: "#7d913c"
   },
-  { name: "Geophysik und Geodäsie", num: "24", field: 1, color: "#989aa1" },
+  { name: "Geophysik und Geodäsie", num: 24, field: 1, color: "#989aa1" },
   {
     name: "Atmosphären-, Meeres- und Klimaforschung",
-    num: "25",
+    num: 25,
     field: 1,
     color: "#989aa1"
   },
   {
     name: "Kunst-, Musik-, Theater- und Medienwissenschaften",
-    num: "26",
+    num: 26,
     field: 3,
     color: "#989aa1"
   },
   {
     name: "Sozialwissenschaften",
-    num: "1",
+    num: 1,
     field: 3,
     color: "#989aa1"
   },
   {
     name: "Informatik",
-    num: "2",
+    num: 2,
     field: 4,
     color: "#989aa1"
   },
   {
     name: "Erziehungswissenschaft und Bildungsforschung",
-    num: "3",
+    num: 3,
     field: 3,
     color: "#989aa1"
   },
   {
     name: "Mathematik",
-    num: "4",
+    num: 4,
     field: 1,
     color: "#989aa1"
   },
-  { name: "Geschichtswissenschaften", num: "27", field: 3, color: "#989aa1" },
-  { name: "Zoologie", num: "28", field: 2, color: "#989aa1" },
-  { name: "Pflanzenwissenschaften", num: "29", field: 2, color: "#989aa1" },
-  { name: "Sonstige", num: "30", field: 5, color: "#989aa1" }
+  { name: "Geschichtswissenschaften", num: 27, field: 3, color: "#989aa1" },
+  { name: "Zoologie", num: 28, field: 2, color: "#989aa1" },
+  { name: "Pflanzenwissenschaften", num: 29, field: 2, color: "#989aa1" },
+  { name: "Sonstige", num: 30, field: 5, color: "#989aa1" },
+  { name: "Astrophysik und Astronomie", num: 31, field: 1, color: "#7d913c" },
+  {
+    name: "Grundlagen der Biologie und Medizin",
+    num: 32,
+    field: 2,
+    color: "#989aa1"
+  }
 ];
 
 export const fieldsIntToString = number => {
@@ -72,14 +79,14 @@ export const fieldsIntToString = number => {
 
 export const fieldsStringToInt = str => {
   return fieldsMapping.find(e => e.name === str)
-    ? fieldsMapping.find(e => e.name === str).field + ""
+    ? fieldsMapping.find(e => e.name === str).field
     : str;
 };
 
 export const topicIntToString = number => {
   return topicMapping.find(e => e.num === number)
     ? topicMapping.find(e => e.num === number).name
-    : "Other";
+    : "Sonstige";
 };
 
 export const topicStringToInt = str => {
@@ -95,8 +102,8 @@ export const topicToField = topic => {
 };
 
 export const getFieldColor = field => {
-  return fieldsMapping.find(e => e.name === field)
-    ? fieldsMapping.find(e => e.name === field).color
+  return fieldsMapping.find(e => e.field === field)
+    ? fieldsMapping.find(e => e.field === field).color
     : "#989aa1"; // default color field
 };
 

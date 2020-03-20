@@ -49,7 +49,6 @@ class ClusterContoursMap extends React.Component {
     this.state = {
       topography: topography
     };
-    console.log(Math.min(...topography));
     this.contours = constructContours(topography, contoursSize);
     this.colorMap = computeColorMap(topography);
   }

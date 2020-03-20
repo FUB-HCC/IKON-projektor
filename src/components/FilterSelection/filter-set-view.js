@@ -9,7 +9,7 @@ class FilterSet extends Component {
     super(props);
     this.props = props;
     this.state = {
-      toggleState: this.props.set.subsets.map(s => s.name)
+      toggleState: this.props.set.subsets.map(s => s.nameId)
     };
     this.toggledFilterList = this.toggledFilterList.bind(this);
   }
@@ -22,39 +22,39 @@ class FilterSet extends Component {
         {this.props.set.subsets.map(subset => (
           <div
             className={style.subsetWrapper}
-            style={{ color: getFieldColor(subset.name) }}
+            style={{ color: getFieldColor(subset.nameId) }}
             key={subset.name}
           >
             <div className={style.subsetHeader}>
               <CheckBox
                 name={subset.name}
-                nameId={subset.name}
+                nameId={subset.nameId}
                 id={subset.filterId}
                 checked={
                   !this.props.filters[subset.filterId]
                     ? false
                     : this.props.filters[subset.filterId].value.includes(
-                        subset.name
+                        subset.nameId
                       )
                 }
                 onChange={this.props.changeFilter}
                 showCheckbox={subset.isTogglable}
-                color={getFieldColor(subset.name)}
+                color={getFieldColor(subset.nameId)}
                 toggleState={this.state.toggleState}
                 toggledFilterList={this.toggledFilterList}
                 iconSize="20px"
                 iconMargin="9"
                 icon={
                   subset.subFilters && subset.subFilters.length > 0 ? (
-                    this.state.toggleState.includes(subset.name) ? (
+                    this.state.toggleState.includes(subset.nameId) ? (
                       <ArrowDown
-                        stroke={getFieldColor(subset.name)}
+                        stroke={getFieldColor(subset.nameId)}
                         className={style.arrowIcon}
                       />
                     ) : (
                       <ArrowUp
                         className={style.arrowIcon}
-                        stroke={getFieldColor(subset.name)}
+                        stroke={getFieldColor(subset.nameId)}
                       />
                     )
                   ) : (
@@ -63,9 +63,9 @@ class FilterSet extends Component {
                 }
               />
             </div>
-            {!this.state.toggleState.includes(subset.name) &&
+            {!this.state.toggleState.includes(subset.nameId) &&
               subset.subFilters.map((filter, i) => (
-                <div className={style.subFilter} key={subset.name + i}>
+                <div className={style.subFilter} key={subset.nameId + i}>
                   <CheckBox
                     name={filter.name || filter.fulltext || filter}
                     nameId={filter.id ? filter.id : filter}
@@ -80,7 +80,7 @@ class FilterSet extends Component {
                     }
                     onChange={this.props.changeFilter}
                     showCheckbox={true}
-                    color={getFieldColor(subset.name)}
+                    color={getFieldColor(subset.nameId)}
                     iconSize="16px"
                     iconMargin="12"
                   />
@@ -92,11 +92,11 @@ class FilterSet extends Component {
     );
   }
 
-  toggledFilterList(name, state, change) {
-    if (state.find(e => e === name)) {
-      state.splice(state.indexOf(name), 1);
+  toggledFilterList(nameId, state, change) {
+    if (state.find(e => e === nameId)) {
+      state.splice(state.indexOf(nameId), 1);
     } else {
-      state.push(name);
+      state.push(nameId);
     }
     this.setState({ toggleState: state });
   }

@@ -140,7 +140,8 @@ const mapStateToProps = state => {
     filters,
     isDataProcessed,
     highlightedGroup,
-    isClicked
+    isClicked,
+    projectsMaxSizing
   } = state.main;
 
   let clusterDataForView = [];
@@ -188,7 +189,8 @@ const mapStateToProps = state => {
     highlightedGroup: highlightedGroup,
     uncertaintyOn: state.main.uncertaintyOn,
     uncertaintyHighlighted: state.main.uncertaintyHighlighted,
-    isTouch: isTouchMode(state)
+    isTouch: isTouchMode(state),
+    projectsMaxSizing: projectsMaxSizing
   };
 };
 

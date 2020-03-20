@@ -7,35 +7,30 @@ import FilterPanel from "../components/FilterPanel/filter-panel";
 import { history } from "../index";
 import { initialState } from "../store/reducer/reducer";
 import React from "react";
-import {
-  fieldsIntToString,
-  fieldsStringToInt,
-  topicIntToString,
-  topicStringToInt
-} from "./utility";
+import { topicIntToString, topicStringToInt } from "./utility";
 
 const getTupleFromIsClicked = isClicked => {
   if (isClicked.project) {
-    return ["project", isClicked.project];
+    return [1, isClicked.project];
   }
   if (isClicked.cat) {
-    return ["cat", isClicked.cat];
+    return [2, isClicked.cat];
   }
   if (isClicked.infra) {
-    return ["infra", isClicked.infra];
+    return [3, isClicked.infra];
   }
   if (isClicked.kta) {
-    return ["kta", isClicked.kta];
+    return [4, isClicked.kta];
   }
   if (isClicked.year) {
-    return ["year", isClicked.year];
+    return [5, isClicked.year];
   }
-  return ["none", ""];
+  return [0, null];
 };
 
 const getIsClickedFromTuple = tuple => {
   const [key, value] = tuple;
-  if (key === "project") {
+  if (key === 1) {
     return {
       project: value,
       infra: null,
@@ -44,7 +39,7 @@ const getIsClickedFromTuple = tuple => {
       year: null
     };
   }
-  if (key === "cat") {
+  if (key === 2) {
     return {
       project: null,
       infra: null,
@@ -53,7 +48,7 @@ const getIsClickedFromTuple = tuple => {
       year: null
     };
   }
-  if (key === "infra") {
+  if (key === 3) {
     return {
       project: null,
       infra: value,
@@ -62,7 +57,7 @@ const getIsClickedFromTuple = tuple => {
       year: null
     };
   }
-  if (key === "kta") {
+  if (key === 4) {
     return {
       project: null,
       infra: null,
@@ -71,7 +66,7 @@ const getIsClickedFromTuple = tuple => {
       year: null
     };
   }
-  if (key === "year") {
+  if (key === 5) {
     return {
       project: null,
       infra: null,
@@ -91,19 +86,19 @@ const getIsClickedFromTuple = tuple => {
 
 const getSideBarComponentFromTuple = tuple => {
   const [key] = tuple;
-  if (key === "project") {
+  if (key === 1) {
     return <ProjectDetailsPanel />;
   }
-  if (key === "cat") {
+  if (key === 2) {
     return <CatDetailsPanel />;
   }
-  if (key === "infra") {
+  if (key === 3) {
     return <InfraDetailsPanel />;
   }
-  if (key === "kta") {
+  if (key === 4) {
     return <KtaDetailsPanel />;
   }
-  if (key === "year") {
+  if (key === 5) {
     return <YearDetailsPanel />;
   }
   return <FilterPanel />;
@@ -121,22 +116,22 @@ export const pushStateToUrl = newState => {
     c: newState.filters.collections.value,
     in: newState.filters.infrastructures.value,
     ta: newState.filters.targetgroups.value,
-    fo: newState.filters.formats.value,
     hlf: newState.filters.highlevelFilter.value,
-    cl: getTupleFromIsClicked(newState.isClicked)
+    cl: getTupleFromIsClicked(newState.isClicked),
+    un: newState.uncertaintyOn ? 1 : 0
   };
 
   let minifiedUrlData = {
     ...newUrlData,
     t: newUrlData.t.map(f => topicStringToInt(f)),
-    f: newUrlData.f.map(t => fieldsStringToInt(t))
+    f: newUrlData.f
   };
   var newQueryString = "?";
   if (newState.user) {
     newQueryString = newQueryString.concat("uid=" + newState.user + "&");
   }
   newQueryString = newQueryString.concat(
-    "state=" + btoa(JSON.stringify(minifiedUrlData))
+    "state=" + encodeURI(JSON.stringify(minifiedUrlData))
   );
   if (newQueryString !== window.location.search) {
     history.push(newQueryString);
@@ -156,13 +151,12 @@ export const parseStateFromUrl = urlParams => {
       }
     };
   }
-  const urlState = JSON.parse(atob(stateString));
+  const urlState = JSON.parse(decodeURI(stateString));
   const deminifiedUrlState = {
     ...urlState,
     t: urlState.t.map(f => topicIntToString(f)),
-    f: urlState.f.map(t => fieldsIntToString(t))
+    f: urlState.f
   };
-
   return {
     main: {
       ...initialState,
@@ -198,10 +192,10 @@ export const parseStateFromUrl = urlParams => {
           value: deminifiedUrlState.ta
         },
         formats: {
-          ...initialState.filters.formats,
-          value: deminifiedUrlState.fo
+          ...initialState.filters.formats
         }
       },
+      uncertaintyOn: deminifiedUrlState.un === 1 ? true : false,
       isClicked: getIsClickedFromTuple(deminifiedUrlState.cl),
       sideBarComponent: getSideBarComponentFromTuple(deminifiedUrlState.cl),
       user: userId

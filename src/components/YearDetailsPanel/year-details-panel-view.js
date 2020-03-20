@@ -52,7 +52,7 @@ const YearDetailsPanel = props => {
           ))}
         </div>
       )}
-      {props.projects.length > 0 && (
+      {props.projects.length > 0 && props.title !== "Unveröffentlicht" && (
         <div className={style.abstractText}>
           {props.projects.map((project, i) => (
             <span
@@ -64,6 +64,16 @@ const YearDetailsPanel = props => {
                 color: color
               }}
             >
+              {shortenString(project.displaytitle, 60)}
+              <br />
+            </span>
+          ))}
+        </div>
+      )}
+      {props.projects.length > 0 && props.title === "Unveröffentlicht" && (
+        <div className={style.abstractText}>
+          {props.projects.map((project, i) => (
+            <span key={i + " " + project.id} className={style.DetailsLink}>
               {shortenString(project.displaytitle, 60)}
               <br />
             </span>

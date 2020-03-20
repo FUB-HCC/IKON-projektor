@@ -19,18 +19,18 @@ export const processProjectsData = state => {
     ) {
       return {
         ...project,
-        forschungsbereich: project[
+        forschungsbereichStr: project[
           "Forschungsthema, Expertise, Kompetenzen"
         ][0].split("/")[0],
-        forschungsbereichNumber: fieldsStringToInt(
+        forschungsbereich: fieldsStringToInt(
           project["Forschungsthema, Expertise, Kompetenzen"][0].split("/")[0]
         )
       };
     } else {
       return {
         ...project,
-        forschungsbereich: "Sonstige",
-        forschungsbereichNumber: fieldsStringToInt("Sonstige")
+        forschungsbereichStr: "Sonstige",
+        forschungsbereich: fieldsStringToInt("Sonstige")
       };
     }
   });

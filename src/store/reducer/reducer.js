@@ -1,6 +1,6 @@
 import * as actionTypes from "../actions/actionTypes";
 import React from "react";
-import { topicToField, fieldsIntToString } from "../../util/utility";
+import { topicToField } from "../../util/utility";
 import {
   processProjectsData,
   processTargetgroups,
@@ -73,8 +73,8 @@ export const initialState = {
       name: "highlevelFilter",
       filterKey: "highlevelFilter",
       type: "array",
-      uniqueVals: ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"],
-      value: ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"]
+      uniqueVals: [6, 7, 8, 9],
+      value: [6, 7, 8, 9]
     }
   },
   graph: "0",
@@ -99,6 +99,7 @@ export const initialState = {
     kta: null,
     year: null
   },
+  projectsMaxSizing: [0, 0],
   legendHovered: "none",
   uncertaintyOn: false,
   uncertaintyHighlighted: false,
@@ -206,25 +207,25 @@ const changeCheckboxFilter = (state, action) => {
       action.value
     );
   } else if (action.id === "highlevelFilter") {
-    if (action.value === "Zielgruppen") {
+    if (action.value === 6) {
       newFilter.targetgroups.value = toggleAllOfSubset(
         newFilter.targetgroups,
         newFilter.highlevelFilter,
         action.value
       );
-    } else if (action.value === "Formate") {
+    } else if (action.value === 7) {
       newFilter.formats.value = toggleAllOfSubset(
         newFilter.formats,
         newFilter.highlevelFilter,
         action.value
       );
-    } else if (action.value === "Sammlungen") {
+    } else if (action.value === 8) {
       newFilter.collections.value = toggleAllOfSubset(
         newFilter.collections,
         newFilter.highlevelFilter,
         action.value
       );
-    } else if (action.value === "Laborgeräte") {
+    } else if (action.value === 9) {
       newFilter.infrastructures.value = toggleAllOfSubset(
         newFilter.infrastructures,
         newFilter.highlevelFilter,
@@ -252,8 +253,9 @@ const changeTimeRangeFilter = (state, action) => {
 };
 
 const toggleAllFiltersOfField = (filters, fieldValue) => {
+  console.log(fieldValue);
   const subjectsOfField = filters.hauptthema.uniqueVals.filter(
-    val => fieldsIntToString(topicToField(val)) === fieldValue
+    val => topicToField(val) === fieldValue
   );
   let newValue = filters.hauptthema.value.filter(
     val => !subjectsOfField.includes(val)
@@ -307,13 +309,20 @@ const processAllData = state => {
     collections: processedCollections,
     clusterData: state.clusterData,
     missingprojects: processedMissingProjects,
-    institutions: state.institutions.filter(ins => ins.lon && ins.lat)
+    institutions: state.institutions.filter(ins => ins.lon && ins.lat),
+    projectsMaxSizing: [
+      Math.max(...processedProjects.map(p => p.mappoint[0])),
+      Math.max(...processedProjects.map(p => p.mappoint[1]))
+    ]
   };
 
   const uniqueFields = [];
   const uniqueTopics = [];
   const uniqueInfrastructures = newState.infrastructures.map(inf => inf.id);
   const uniqueCollections = newState.collections.map(col => col.id);
+  const uniqueFormats = [
+    ...new Set(newState.ktas.map(kta => kta.Format[0]).filter(f => f != null))
+  ].sort((a, b) => a.localeCompare(b));
   const maxDateRange = [5000, 0];
 
   Object.values(newState.projects).forEach(project => {
@@ -331,11 +340,12 @@ const processAllData = state => {
       }
     });
   });
+
   const newFilters = {
     ...state.filters,
     forschungsgebiet: {
       ...state.filters.forschungsgebiet,
-      uniqueVals: uniqueFields.sort(compare),
+      uniqueVals: uniqueFields,
       value: state.filters.forschungsgebiet.value
         ? state.filters.forschungsgebiet.value
         : uniqueFields
@@ -361,18 +371,10 @@ const processAllData = state => {
     },
     formats: {
       ...state.filters.formats,
-      uniqueVals: [
-        ...new Set(
-          newState.ktas.map(kta => kta.Format[0]).filter(f => f != null)
-        )
-      ],
+      uniqueVals: uniqueFormats,
       value: state.filters.formats.value
         ? state.filters.formats.value
-        : [
-            ...new Set(
-              newState.ktas.map(kta => kta.Format[0]).filter(f => f != null)
-            )
-          ]
+        : uniqueFormats
     },
     infrastructures: {
       ...state.filters.infrastructures,
