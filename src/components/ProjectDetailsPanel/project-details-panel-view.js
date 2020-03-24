@@ -70,6 +70,12 @@ const ProjectDetailsPanel = props => {
       </p>
       <p className={style.infoItems}>
         <span className={style.infoItemTitle}>
+          Kooperierende Institutionen: <br />
+        </span>
+        {props.projectData.Kooperationspartner.map(k => k.name).join(", ")}
+      </p>
+      <p className={style.infoItems}>
+        <span className={style.infoItemTitle}>
           Antragsteller: <br />
         </span>
         {props.projectData["Antragstellende Person"]}

@@ -100,6 +100,13 @@ export const yearClicked = data => {
   };
 };
 
+export const instClicked = data => {
+  return {
+    type: actionTypes.INST_CLICKED,
+    value: data
+  };
+};
+
 export const unClicked = () => {
   return {
     type: actionTypes.UNCLICKED
@@ -132,6 +139,7 @@ export const fetchData = () => {
         transformResponse: res => Flatted.parse(res)
       })
       .then(result => {
+        console.log(result.data);
         batch(() => {
           dispatch(updateData(result.data));
           dispatch(processDataIfReady());

@@ -1,6 +1,6 @@
 import * as actionTypes from "../actions/actionTypes";
 import React from "react";
-import { topicToField } from "../../util/utility";
+import { topicToField, continents } from "../../util/utility";
 import {
   processProjectsData,
   processTargetgroups,
@@ -8,6 +8,7 @@ import {
   processInfrastructures,
   processKtas,
   processMissingProjects,
+  processInstitutions,
   linkCatsToProjectsData
 } from "./data-transforms";
 import FilterPanel from "../../components/FilterPanel/filter-panel";
@@ -16,6 +17,7 @@ import YearDetailsPanel from "../../components/YearDetailsPanel/year-details-pan
 import KtaDetailsPanel from "../../components/KtaDetailsPanel/kta-details-panel";
 import CatDetailsPanel from "../../components/CatDetailsPanel/cat-details-panel";
 import InfraDetailsPanel from "../../components/InfraDetailsPanel/infra-details-panel";
+import InstDetailsPanel from "../../components/InstDetailsPanel/inst-details-panel";
 import SampleStatesList from "../../components/SampleStatesList/sample-states-list";
 
 export const initialState = {
@@ -80,6 +82,7 @@ export const initialState = {
   graph: "0",
   projects: [],
   institutions: [],
+  continents: [],
   ktas: [],
   targetgroups: [],
   infrastructures: [],
@@ -162,6 +165,9 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.YEAR_CLICKED:
       return yearClicked(state, action);
+
+    case actionTypes.INST_CLICKED:
+      return instClicked(state, action);
 
     case actionTypes.UNCLICKED:
       return unClicked(state);
@@ -253,7 +259,6 @@ const changeTimeRangeFilter = (state, action) => {
 };
 
 const toggleAllFiltersOfField = (filters, fieldValue) => {
-  console.log(fieldValue);
   const subjectsOfField = filters.hauptthema.uniqueVals.filter(
     val => topicToField(val) === fieldValue
   );
@@ -285,6 +290,7 @@ const updateData = (state, action) => ({
   collections: action.value.collections,
   targetgroups: action.value.targetgroups,
   institutions: action.value.institutions,
+  continents: continents,
   missingprojects: action.value.missingprojects,
   clusterData: action.value.cluster_topography,
   isDataLoaded: true
@@ -300,6 +306,7 @@ const processAllData = state => {
   const processedInfrastructures = processInfrastructures(state);
   const processedCollections = processCollections(state);
   const processedMissingProjects = processMissingProjects(state);
+  const processedInstState = processInstitutions(state);
   //  const preprocessedClusterData = processClusterData(state);
   const newState = {
     projects: linkCatsToProjectsData(processedProjects, processedTargetgroups),
@@ -309,13 +316,13 @@ const processAllData = state => {
     collections: processedCollections,
     clusterData: state.clusterData,
     missingprojects: processedMissingProjects,
-    institutions: state.institutions.filter(ins => ins.lon && ins.lat),
+    institutions: processedInstState.institutions,
+    continents: processedInstState.continents,
     projectsMaxSizing: [
       Math.max(...processedProjects.map(p => p.mappoint[0])),
       Math.max(...processedProjects.map(p => p.mappoint[1]))
     ]
   };
-
   const uniqueFields = [];
   const uniqueTopics = [];
   const uniqueInfrastructures = newState.infrastructures.map(inf => inf.id);
@@ -473,7 +480,8 @@ const projectClicked = (state, action) => ({
     infra: null,
     cat: null,
     kta: null,
-    year: null
+    year: null,
+    inst: null
   },
   sideBarComponent: <ProjectDetailsPanel />
 });
@@ -485,7 +493,8 @@ const catClicked = (state, action) => ({
     infra: null,
     cat: action.value,
     kta: null,
-    year: null
+    year: null,
+    inst: null
   },
   sideBarComponent: <CatDetailsPanel />
 });
@@ -497,7 +506,8 @@ const infraClicked = (state, action) => ({
     infra: action.value,
     cat: null,
     kta: null,
-    year: null
+    year: null,
+    inst: null
   },
   sideBarComponent: <InfraDetailsPanel />
 });
@@ -509,7 +519,8 @@ const ktaClicked = (state, action) => ({
     infra: null,
     cat: null,
     kta: action.value,
-    year: null
+    year: null,
+    inst: null
   },
   sideBarComponent: <KtaDetailsPanel />
 });
@@ -521,9 +532,23 @@ const yearClicked = (state, action) => ({
     infra: null,
     cat: null,
     kta: null,
-    year: action.value
+    year: action.value,
+    inst: null
   },
   sideBarComponent: <YearDetailsPanel />
+});
+
+const instClicked = (state, action) => ({
+  ...state,
+  isClicked: {
+    project: null,
+    infra: null,
+    cat: null,
+    kta: null,
+    year: null,
+    inst: action.value
+  },
+  sideBarComponent: <InstDetailsPanel />
 });
 
 const unClicked = state => ({

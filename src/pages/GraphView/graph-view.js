@@ -1,7 +1,7 @@
 import React from "react";
 import { connect, batch } from "react-redux";
 import ClusterMap from "../../components/ClusterMap/cluster-map";
-import GeoMap from "../../components/GeoMap/geo-map-view";
+import GeoMap from "../../components/GeoMap/geo-map";
 import TimeGraph from "../../components/TimeLine/time-line";
 import classes from "./graph-view.module.css";
 import { fetchData } from "../../store/actions/actions";
@@ -77,10 +77,6 @@ class GraphView extends React.Component {
   }
 
   render() {
-    const geoMapProps = {
-      institutions: this.props.institutions,
-      projects: this.props.projects
-    };
     let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
       case "0":
@@ -107,7 +103,6 @@ class GraphView extends React.Component {
             id="step3"
             height={this.state.height}
             width={this.state.width}
-            {...geoMapProps}
           />
         );
         break;
@@ -121,10 +116,7 @@ class GraphView extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    graph: state.main.graph,
-    projects: state.main.projects,
-    institutions: state.main.institutions,
-    ktas: state.main.ktas
+    graph: state.main.graph
   };
 };
 

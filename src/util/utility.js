@@ -70,6 +70,99 @@ const topicMapping = [
   }
 ];
 
+export const continents = [
+  {
+    name: "Nordamerika",
+    xOffset: 61.4,
+    yOffset: 53.1,
+    mapWidth: 378,
+    mapHeight: 384,
+    longMin: -168.1311,
+    longMax: -11.39,
+    latMin: 7.322,
+    latMax: 83.5702,
+    institutionCount: 0,
+    anchorPoint: 1 / 12,
+    centroidX: -89.76055,
+    centroidY: 45.4461
+  },
+  {
+    name: "Südamerika",
+    xOffset: 97.8,
+    yOffset: 96,
+    mapWidth: 330,
+    mapHeight: 384,
+    longMin: -81.2897,
+    longMax: -26.2463,
+    latMin: -59.473,
+    latMax: 12.6286,
+    institutionCount: 0,
+    anchorPoint: 3 / 12,
+    centroidX: -53.768,
+    centroidY: -23.4222
+  },
+  {
+    name: "Europa",
+    xOffset: 97.8,
+    yOffset: 48.4,
+    mapWidth: 292,
+    mapHeight: 384,
+    longMin: -10.6,
+    longMax: 40.166,
+    latMin: 34.8888,
+    latMax: 71.27,
+    institutionCount: 0,
+    anchorPoint: 5 / 12,
+    centroidX: 14.783,
+    centroidY: 53.0794
+  },
+  {
+    name: "Asien",
+    xOffset: 63.1,
+    yOffset: 55.4,
+    mapWidth: 383,
+    mapHeight: 387,
+    longMin: 20.01,
+    longMax: 189.82,
+    latMin: -22.147,
+    latMax: 81.328,
+    institutionCount: 0,
+    anchorPoint: 7 / 12,
+    centroidX: 104.915,
+    centroidY: 29.5905
+  },
+  {
+    name: "Afrika",
+    xOffset: 75.8,
+    yOffset: 61.2,
+    mapWidth: 348,
+    mapHeight: 394,
+    longMin: -17.537,
+    longMax: 51.412,
+    latMin: -34.822,
+    latMax: 37.34,
+    institutionCount: 0,
+    anchorPoint: 9 / 12,
+    centroidX: 16.9375,
+    centroidY: 1.259
+  },
+  {
+    name: "Australien",
+    xOffset: 97.8,
+    yOffset: 96,
+    mapWidth: 330,
+    mapHeight: 384,
+    longMin: 112.9511,
+    longMax: 159.1019,
+    latMin: -54.749,
+    latMax: -10.0516,
+    institutionCount: 0,
+    anchorPoint: 11 / 12,
+    centroidX: 136.0265,
+    centroidY: -32.4003
+  }
+];
+
 export const fieldsIntToString = number => {
   number = parseInt(number, 10); // pls fix
   return fieldsMapping.find(e => e.field === number)

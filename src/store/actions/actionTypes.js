@@ -15,6 +15,7 @@ export const CAT_CLICKED = "CAT_CLICKED";
 export const INFRA_CLICKED = "INFRA_CLICKED";
 export const KTA_CLICKED = "KTA_CLICKED";
 export const YEAR_CLICKED = "YEAR_CLICKED";
+export const INST_CLICKED = "INST_CLICKED";
 export const UNCLICKED = "UNCLICKED";
 
 export const SHOW_UNCERTAINTY = "SHOW_UNCERTAINTY";

@@ -1,6 +1,10 @@
+.geoMapWrapper {
+  padding-left: 20px;
+}
+
 .arcWrapper {
   width: 100%;
-  height: 50%;
+  height: 45%;
 }
 
 .mapsWrapper {
@@ -16,7 +20,7 @@
 
 .plotTitle {
   color: #717071;
-  font-size: 130%;
+  font-size: 110%;
 }
 
 .circle {

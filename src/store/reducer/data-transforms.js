@@ -115,3 +115,46 @@ export const processKtas = ktas =>
         : new Date(0)
     ]
   }));
+
+const distance = (continent, institution) =>
+  Math.sqrt(
+    Math.pow(continent.centroidX - institution.long, 2) +
+      Math.pow(continent.centroidY - institution.lat, 2)
+  );
+const disambiguateContinents = (candidates, institution) =>
+  candidates.sort(
+    (a, b) => distance(a, institution) - distance(b, institution)
+  );
+const getContinentOfInstitution = (continentList, institution) => {
+  if (!institution) return null;
+  const candidates = continentList.filter(
+    con =>
+      con.longMin < institution.lon &&
+      con.longMax > institution.lon &&
+      con.latMin < institution.lat &&
+      con.latMax > institution.lat
+  );
+  if (candidates.length === 0) {
+    return "";
+  }
+  if (candidates.length > 1) {
+    disambiguateContinents(candidates, institution);
+  }
+  institution.continent = candidates[0].name;
+  candidates[0].institutionCount += 1;
+  return institution.continent;
+};
+
+export const processInstitutions = state => {
+  let newContinents = state.continents;
+  return {
+    ...state,
+    institutions: state.institutions
+      .map(inst => ({
+        ...inst,
+        continent: getContinentOfInstitution(newContinents, inst)
+      }))
+      .filter(inst => inst.lon && inst.lat),
+    continents: newContinents
+  };
+};
