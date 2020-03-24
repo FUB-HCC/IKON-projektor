@@ -107,7 +107,7 @@ export const initialState = {
   uncertaintyOn: false,
   uncertaintyHighlighted: false,
   clusterData: undefined,
-  isDataLoaded: false,
+  isDataLoaded: { data: false, samples: false },
   isDataProcessed: false,
   sideBarComponent: <FilterPanel />
 };
@@ -129,6 +129,9 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_DATA:
       return updateData(state, action);
+
+    case actionTypes.UPDATE_SAMPLE_LIST:
+      return updateSampleList(state, action);
 
     case actionTypes.PROCESS_DATA_IF_READY:
       return processDataWhenReady(state);
@@ -293,18 +296,30 @@ const updateData = (state, action) => ({
   continents: continents,
   missingprojects: action.value.missingprojects,
   clusterData: action.value.cluster_topography,
-  isDataLoaded: true
+  isDataLoaded: { ...state.isDataLoaded, data: true }
 });
 
+const updateSampleList = (state, action) => ({
+  ...state,
+  sampleList: action.value,
+  isDataLoaded: { ...state.isDataLoaded, samples: true }
+});
+
+export const isAllDataLoaded = state =>
+  Object.values(state.isDataLoaded).every(loaded => loaded);
+
 const processDataWhenReady = state =>
-  state.isDataLoaded ? processAllData(state) : state;
+  isAllDataLoaded(state) ? processAllData(state) : state;
 
 const processAllData = state => {
   const processedProjects = processProjectsData(state);
   const processedKtas = processKtas(state.ktas);
-  const processedTargetgroups = processTargetgroups(state);
-  const processedInfrastructures = processInfrastructures(state);
-  const processedCollections = processCollections(state);
+  const processedTargetgroups = processTargetgroups(processedProjects, state);
+  const processedInfrastructures = processInfrastructures(
+    processedProjects,
+    state
+  );
+  const processedCollections = processCollections(processedProjects, state);
   const processedMissingProjects = processMissingProjects(state);
   const processedInstState = processInstitutions(state);
   //  const preprocessedClusterData = processClusterData(state);

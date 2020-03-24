@@ -5,7 +5,6 @@ import {
   projectClicked,
   ktaClicked
 } from "../../store/actions/actions";
-
 const mapStateToProps = state => {
   const {
     isClicked,
@@ -14,7 +13,7 @@ const mapStateToProps = state => {
     isDataProcessed,
     missingprojects
   } = state.main;
-  if (isDataProcessed) {
+  if (isDataProcessed && projects) {
     const [year, title] = isClicked.year.split("|");
     if (title === "Unveröffentlicht") {
       return {
@@ -31,7 +30,7 @@ const mapStateToProps = state => {
       title: title,
       projects: projects.filter(
         p =>
-          p.forschungsbereich === title &&
+          p.forschungsbereich == title &&
           p.timeframe[0] <= year &&
           year <= p.timeframe[1]
       ),
@@ -43,7 +42,6 @@ const mapStateToProps = state => {
       )
     };
   }
-  return {};
 };
 
 const mapDispatchToProps = dispatch => ({

@@ -70,7 +70,7 @@ class MFNLogo extends Component {
         {
           element: "#step3",
           intro:
-            "In der Ansicht <b>RAUM</b> rückt die internationale Seite der Forschung am MfN in den Vordergrund. Die Bögen zwischen Kontinenten drücken die durch Projekte verbundenen Partnerinstitutionen aus. Langfristig findet man hier folgende Eindrücke."
+            "In der Ansicht <b>RAUM</b> rückt die internationale Seite der Forschung am MfN in den Vordergrund. Die Bögen zwischen Kontinenten drücken die durch Projekte verbundenen Partnerinstitutionen aus. In den Karten ist angedeutet, wie sich diese geographisch verteilen. In der untersten Zeile werden die Forschungsprojekte nach Forschungsregionen aufgeteilt."
         },
         {
           element: "#step4",

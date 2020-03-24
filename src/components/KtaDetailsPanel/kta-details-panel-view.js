@@ -115,7 +115,7 @@ const KtaDetailsPanel = props => {
               color: getFieldColor(project.forschungsbereich)
             }}
           >
-            {shortenString(project.displaytitle, 60)}
+            {shortenString(project.displaytitle, 58)}
           </span>
         )}
       </p>

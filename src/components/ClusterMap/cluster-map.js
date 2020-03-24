@@ -97,9 +97,9 @@ const addExtractedHighlightedFromProject = (projectId, highlighted, state) => {
   return {
     ...highlighted,
     infras: highlighted.infras
-      .concat(project.collections)
-      .concat(project.infrastructures),
-    cats: highlighted.cats.concat(project.cats),
+      .concat(project.Sammlungsbezug.map(col => (col ? col.id : 127)))
+      .concat(project.Forschungsinfrastruktur.map(inf => inf.id)),
+    cats: highlighted.cats.concat(project.targetgroups),
     projects: highlighted.projects.concat([project.id])
   };
 };

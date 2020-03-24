@@ -19,12 +19,13 @@ const InstDetailsPanel = props => {
         <div className={style.DetailsExit} onClick={props.returnToFilterView}>
           <Exit height={35} width={35} />
         </div>
-        <span className={style.titleTopic}>Kooperation zwischen</span> <br />
         <span className={style.titleText}>{props.title}</span>
       </div>
 
       <span className={style.infoItemTitle}>
-        {"Forschungsprojekte mit Kooperationen zwischen diesen Kontinenten:"}
+        {props.title.includes("Kooperation")
+          ? "Forschungsprojekte mit Kooperationen zwischen diesen Kontinenten:"
+          : "Forschungsprojekte  mit dieser Forschungsregion"}
         <br />
       </span>
       {props.projects.length > 0 && (
@@ -39,7 +40,7 @@ const InstDetailsPanel = props => {
                 color: getFieldColor(project.forschungsbereich)
               }}
             >
-              {shortenString(project.displaytitle, 60)}
+              {shortenString(project.displaytitle, 58)}
               <br />
             </span>
           ))}

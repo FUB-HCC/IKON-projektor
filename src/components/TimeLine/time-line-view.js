@@ -179,6 +179,9 @@ export default class TimeLineView extends Component {
   }
 
   render() {
+    if (this.state.dataSplitYears.length === 0) {
+      return <div />;
+    }
     const stackedAreaHeight = this.state.height * 0.4;
     const targetgroupsHeight = this.state.height * 0.5;
     const stack = d3stack()

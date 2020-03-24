@@ -38,7 +38,7 @@ const CatDetailsPanel = props => {
               key={kta.id}
               className={style.DetailsLink}
             >
-              {shortenString(kta.fulltext, 60)}
+              {shortenString(kta.fulltext, 58)}
               <br />
             </span>
           ))}
@@ -64,8 +64,7 @@ const CatDetailsPanel = props => {
                 color: getFieldColor(project.forschungsbereich)
               }}
             >
-              {shortenString(project.displaytitle, 60)}
-
+              {shortenString(project.displaytitle, 58)}
               <br />
             </span>
           ))}

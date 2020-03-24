@@ -77,28 +77,36 @@ const transformPoints = projects => {
   });
 };
 
-export const processTargetgroups = state => {
+export const processTargetgroups = (processedProjects, state) => {
   return state.targetgroups.map(targetgroup => {
-    const projects = targetgroup.ktas
+    const projectIds = targetgroup.ktas
       .filter(kta => kta.Drittmittelprojekt && kta.Drittmittelprojekt[0])
-      .map(kta => kta.Drittmittelprojekt[0]);
+      .map(kta => kta.Drittmittelprojekt[0].id);
     return {
       ...targetgroup,
-      projects: [...new Set(projects)]
+      projects: [
+        ...new Set(processedProjects.filter(p => projectIds.includes(p.id)))
+      ]
     };
   });
 };
 
-export const processInfrastructures = state => {
+export const processInfrastructures = (processedProjects, state) => {
   return state.infrastructures.map(infrastructure => ({
     ...infrastructure,
+    projects: processedProjects.filter(project =>
+      infrastructure.projects.find(p => p.id === project.id)
+    ),
     type: "infrastructure"
   }));
 };
 
-export const processCollections = state => {
+export const processCollections = (processedProjects, state) => {
   return state.collections.map(collection => ({
     ...collection,
+    projects: processedProjects.filter(project =>
+      collection.projects.find(p => p.id === project.id)
+    ),
     type: "collection"
   }));
 };

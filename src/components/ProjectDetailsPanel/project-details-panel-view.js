@@ -122,7 +122,7 @@ const ProjectDetailsPanel = props => {
           Bezug zu Sammlung: <br />
         </span>
       )}
-      {props.projectData.Sammlungsbezug !== [] && (
+      {props.projectData.Sammlungsbezug.length > 0 && (
         <p className={style.abstractText}>
           {props.projectData.Sammlungsbezug.map((con, i) => {
             return (
@@ -155,7 +155,7 @@ const ProjectDetailsPanel = props => {
               key={kta.id}
               className={style.DetailsLink}
             >
-              {shortenString(kta.fulltext, 60)}
+              {shortenString(kta.fulltext, 58)}
               <br />
             </span>
           ))}

@@ -14,7 +14,7 @@ const mapStateToProps = state => {
         .filter(inst => inst.continent === continent2)
         .map(inst => inst.id);
       return {
-        title: continent1 + " und " + continent2,
+        title: "Kooperation zwischen " + continent1 + " und " + continent2,
         projects: projects.filter(
           p =>
             p.Kooperationspartner.length > 1 &&
@@ -26,7 +26,7 @@ const mapStateToProps = state => {
       };
     } else {
       return {
-        title: isClicked.inst,
+        title: "Forschungsregion " + isClicked.inst,
         projects: projects.filter(p => p.Forschungsregion === isClicked.inst)
       };
     }

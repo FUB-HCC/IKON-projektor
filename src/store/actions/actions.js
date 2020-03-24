@@ -148,9 +148,38 @@ export const fetchData = () => {
   };
 };
 
+export const fetchSampleList = () => {
+  return dispatch => {
+    axios.get("https://localhost/api/sharing").then(result => {
+      console.log(result.data);
+      batch(() => {
+        dispatch(updateSampleList(result.data));
+        dispatch(processDataIfReady());
+      });
+    });
+  };
+};
+
+export const shareUrl = name => {
+  axios({
+    method: "post",
+    url: encodeURI("https://localhost/api/sharing/" + name),
+    data: JSON.stringify(window.location.search)
+  }).then(function(response) {
+    console.log(response);
+  });
+};
+
 export const updateData = data => {
   return {
     type: actionTypes.UPDATE_DATA,
+    value: data
+  };
+};
+
+export const updateSampleList = data => {
+  return {
+    type: actionTypes.UPDATE_SAMPLE_LIST,
     value: data
   };
 };

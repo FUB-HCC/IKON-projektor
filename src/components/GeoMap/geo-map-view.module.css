@@ -31,7 +31,14 @@
 .circle:hover {
   stroke-width: 15px;
 }
-
+.countCircle {
+  cursor: pointer;
+  fill: #aaa;
+}
+.countCircle:hover {
+  fill: #fff;
+  transition: fill 1s;
+}
 .arcHover {
   opacity: 0.4;
   transition: opacity 1s;

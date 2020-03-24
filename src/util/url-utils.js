@@ -3,6 +3,7 @@ import CatDetailsPanel from "../components/CatDetailsPanel/cat-details-panel";
 import InfraDetailsPanel from "../components/InfraDetailsPanel/infra-details-panel";
 import KtaDetailsPanel from "../components/KtaDetailsPanel/kta-details-panel";
 import YearDetailsPanel from "../components/YearDetailsPanel/year-details-panel";
+import InstDetailsPanel from "../components/InstDetailsPanel/inst-details-panel";
 import FilterPanel from "../components/FilterPanel/filter-panel";
 import { history } from "../index";
 import { initialState } from "../store/reducer/reducer";
@@ -25,6 +26,9 @@ const getTupleFromIsClicked = isClicked => {
   if (isClicked.year) {
     return [5, isClicked.year];
   }
+  if (isClicked.inst) {
+    return [6, isClicked.inst];
+  }
   return [0, null];
 };
 
@@ -36,7 +40,8 @@ const getIsClickedFromTuple = tuple => {
       infra: null,
       cat: null,
       kta: null,
-      year: null
+      year: null,
+      inst: null
     };
   }
   if (key === 2) {
@@ -45,7 +50,8 @@ const getIsClickedFromTuple = tuple => {
       infra: null,
       cat: value,
       kta: null,
-      year: null
+      year: null,
+      inst: null
     };
   }
   if (key === 3) {
@@ -54,7 +60,8 @@ const getIsClickedFromTuple = tuple => {
       infra: value,
       cat: null,
       kta: null,
-      year: null
+      year: null,
+      inst: null
     };
   }
   if (key === 4) {
@@ -63,7 +70,8 @@ const getIsClickedFromTuple = tuple => {
       infra: null,
       cat: null,
       kta: value,
-      year: null
+      year: null,
+      inst: null
     };
   }
   if (key === 5) {
@@ -72,7 +80,18 @@ const getIsClickedFromTuple = tuple => {
       infra: null,
       cat: null,
       kta: null,
-      year: value
+      year: value,
+      inst: null
+    };
+  }
+  if (key === 6) {
+    return {
+      project: null,
+      infra: null,
+      cat: null,
+      kta: null,
+      year: null,
+      inst: value
     };
   }
   return {
@@ -101,11 +120,14 @@ const getSideBarComponentFromTuple = tuple => {
   if (key === 5) {
     return <YearDetailsPanel />;
   }
+  if (key === 6) {
+    return <InstDetailsPanel />;
+  }
   return <FilterPanel />;
 };
 
 export const pushStateToUrl = newState => {
-  if (!newState.isDataProcessed) {
+  if (!newState.isDataProcessed || !newState.isDataLoaded.data) {
     return;
   }
   let newUrlData = {
@@ -131,7 +153,7 @@ export const pushStateToUrl = newState => {
     newQueryString = newQueryString.concat("uid=" + newState.user + "&");
   }
   newQueryString = newQueryString.concat(
-    "state=" + encodeURI(JSON.stringify(minifiedUrlData))
+    "state=" + btoa(JSON.stringify(minifiedUrlData))
   );
   if (newQueryString !== window.location.search) {
     history.push(newQueryString);
@@ -151,7 +173,7 @@ export const parseStateFromUrl = urlParams => {
       }
     };
   }
-  const urlState = JSON.parse(decodeURI(stateString));
+  const urlState = JSON.parse(atob(stateString));
   const deminifiedUrlState = {
     ...urlState,
     t: urlState.t.map(f => topicIntToString(f)),

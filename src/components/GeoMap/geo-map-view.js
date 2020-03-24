@@ -68,13 +68,17 @@ export default class GeoMapView extends React.Component {
       <div
         className={style.geoMapWrapper}
         style={{ width: width, height: height }}
-        data-intro="In der Ansicht <b>RAUM</b> wird eine weitere internationale Perspektive auf Drittmittelprojekte ermöglicht. <b>Forschungsprojekte </b> werden als <b>Bögen</b> zwischen Kontinenten visualisiert. Hierdurch tritt die internationale Kooperation, die in vielen Projekten stattfindet, in den Vordergrund. Der grüne Punkt repräsentiert hier das Museum für Naturkunde, welches den Ausgang für jedes Projekt bildet."
+        data-intro="In der Ansicht <b>RAUM</b> wird eine weitere internationale Perspektive auf Drittmittelprojekte ermöglicht. So können neue Potentiale aufgedeckt werden."
         data-step="1"
       >
         <span className={style.plotTitle}>
           <br /> Forschungsprojekte nach Kooperationen
         </span>
-        <div className={style.arcWrapper}>
+        <div
+          className={style.arcWrapper}
+          data-step="2"
+          data-intro=" <b>Forschungsprojekte </b> werden als <b>Bögen</b> zwischen Kontinenten visualisiert. Hierdurch tritt die internationale Kooperation, die in vielen Projekten stattfindet, in den Vordergrund. Durch Klicken auf einen Bogen, erhält man eine Liste dieser."
+        >
           <svg width={width} height={arcHeight}>
             {Object.values(continentConnections).map((con, i) => (
               <path
@@ -97,7 +101,11 @@ export default class GeoMapView extends React.Component {
             ))}
           </svg>
         </div>
-        <div className={style.mapsWrapper}>
+        <div
+          className={style.mapsWrapper}
+          data-step="3"
+          data-intro="Die roten Punkte deuten an, wo sich die kooperierenden Institutionen auf den Kontinenten befinden. Der grüne Punkt repräsentiert hier das Museum für Naturkunde, welches den Ausgang für jede Kooperation bildet."
+        >
           {continents
             .filter(c => c.institutionCount > 0)
             .map(c => {
@@ -133,7 +141,7 @@ export default class GeoMapView extends React.Component {
                             c.mapHeight -
                             mapLatToHeight(c.mapHeight, c, ins.lat)
                           }
-                          r={5}
+                          r={6}
                           key={ins.name + ins.id}
                           className={style.circle}
                         />
@@ -149,15 +157,23 @@ export default class GeoMapView extends React.Component {
           Forschungsprojekte nach Forschungsregionen (Geographische
           Verschlagwortung)
         </span>
-        <div className={style.mapsWrapper}>
+        <div
+          className={style.mapsWrapper}
+          data-step="4"
+          data-intro="Forschungsprojekte haben neben Kooperationen auch Regionen, auf welche der Fokus gelegt wird. Die Anzahl dieser kann man hier aufgeteilt auf die Kontinente sehen. Klicken Sie auf einen Kreis, um zu erfahren um welche Forschungsprojekte es sich handelt."
+        >
           {continents.map((c, i) => {
             return (
               <svg width="16.66%" height="100" key={i + "region"}>
                 <circle
                   cx="50%"
                   cy="50%"
+                  className={style.countCircle}
                   r={Math.min(40, c.institutionCount)}
                   fill="#aaa"
+                  onClick={() => {
+                    this.props.showInstDetails(c.name);
+                  }}
                 />
               </svg>
             );

@@ -14,7 +14,8 @@ import {
   tutorialStarted,
   pageReset,
   shareDialogOpened,
-  showSampleList
+  showSampleList,
+  shareUrl
 } from "../../store/actions/actions";
 import { sideBarWidth } from "../../App";
 class ActionButtons extends Component {
@@ -45,13 +46,14 @@ class ActionButtons extends Component {
   }
 
   sendToTouchscreen() {
-    const input = document.getElementById("share_input");
+    const input = document.getElementById("share_name");
     input.select();
-    input.setSelectionRange(0, 99999);
+    input.setSelectionRange(0, 140);
     var today = new Date();
     var date =
       today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
-    console.log(JSON.stringify({ datum: date, link: window.location.search }));
+    const name = input.value ? input.value : date;
+    shareUrl(name);
   }
 
   startPageTour() {
@@ -123,6 +125,12 @@ class ActionButtons extends Component {
                 className={classes.shareInput}
                 value={window.location}
                 readOnly={true}
+              />
+              <input
+                id={"share_name"}
+                className={classes.shareInput}
+                placeholder="Bitte Namen für Ansicht eingeben"
+                readOnly={false}
               />
             </div>
             <div className={classes.shareButtons}>
@@ -208,6 +216,9 @@ const mapDispatchToProps = dispatch => ({
   },
   showSampleList: () => {
     dispatch(showSampleList());
+  },
+  shareUrl: name => {
+    dispatch(shareUrl(name));
   }
 });
 
