@@ -100,7 +100,8 @@ export const initialState = {
     infra: null,
     cat: null,
     kta: null,
-    year: null
+    year: null,
+    inst: null
   },
   projectsMaxSizing: [0, 0],
   legendHovered: "none",
@@ -191,7 +192,7 @@ const reducer = (state = initialState, action) => {
       return showViaWikiRequested(state, action);
 
     case actionTypes.SHOW_SAMPLE_LIST:
-      return showSampleList(state, action);
+      return showSampleList(state);
 
     case actionTypes.SAMPLE_CLICKED:
       return sampleClicked(state, action);
@@ -614,7 +615,7 @@ const sampleClicked = (state, action) => {
   }
 };
 
-const showSampleList = (state, action) => ({
+const showSampleList = state => ({
   ...state,
   sideBarComponent: <SampleStatesList />
 });

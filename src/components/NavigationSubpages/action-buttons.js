@@ -51,7 +51,11 @@ class ActionButtons extends Component {
     input.setSelectionRange(0, 140);
     var today = new Date();
     var date =
-      today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
+      today.getDate() +
+      "." +
+      (1 + today.getMonth()) +
+      "." +
+      today.getFullYear();
     const name = input.value ? input.value : date;
     shareUrl(name);
   }

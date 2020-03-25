@@ -71,9 +71,7 @@ class GraphViewTouch extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    graph: state.main.graph,
-    projects: state.main.projects,
-    institutions: state.main.institutions
+    graph: state.main.graph
   };
 };
 

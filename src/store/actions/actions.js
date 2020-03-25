@@ -135,11 +135,10 @@ export const legendHovered = legendKey => ({
 export const fetchData = () => {
   return dispatch => {
     axios
-      .get("./dump.txt", {
+      .get("/api/graph", {
         transformResponse: res => Flatted.parse(res)
       })
       .then(result => {
-        console.log(result.data);
         batch(() => {
           dispatch(updateData(result.data));
           dispatch(processDataIfReady());
@@ -150,8 +149,7 @@ export const fetchData = () => {
 
 export const fetchSampleList = () => {
   return dispatch => {
-    axios.get("https://localhost/api/sharing").then(result => {
-      console.log(result.data);
+    axios.get("/api/sharing").then(result => {
       batch(() => {
         dispatch(updateSampleList(result.data));
         dispatch(processDataIfReady());
@@ -160,13 +158,31 @@ export const fetchSampleList = () => {
   };
 };
 
+export const fetchIndividualSample = name => {
+  return dispatch => {
+    axios({
+      method: "GET",
+      url: encodeURI("/api/sharing/" + name)
+    })
+      .then(response => {
+        console.log(response);
+        // batch(() => {
+        //   dispatch(sampleClicked(response));
+        // });
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  };
+};
+
 export const shareUrl = name => {
   axios({
     method: "post",
-    url: encodeURI("https://localhost/api/sharing/" + name),
+    url: encodeURI("/api/sharing/" + name),
     data: JSON.stringify(window.location.search)
   }).then(function(response) {
-    console.log(response);
+    console.log(response.status);
   });
 };
 
