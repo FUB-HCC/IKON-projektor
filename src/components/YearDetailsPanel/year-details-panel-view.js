@@ -80,8 +80,12 @@ const YearDetailsPanel = props => {
       {props.projects.length > 0 && props.title === "Unveröffentlicht" && (
         <div className={style.abstractText}>
           {props.projects.map((project, i) => (
-            <span key={i + " " + project.id} className={style.DetailsLink}>
-              {shortenString(project.displaytitle, 58)}
+            <span
+              key={i + " " + project.id}
+              className={style.DetailsLinkUnclickable}
+            >
+              {project.displaytitle}
+              <br />
               <br />
             </span>
           ))}

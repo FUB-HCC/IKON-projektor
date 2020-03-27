@@ -23,9 +23,7 @@ const InstDetailsPanel = props => {
       </div>
 
       <span className={style.infoItemTitle}>
-        {props.title.includes("Kooperation")
-          ? "Forschungsprojekte mit Kooperationen zwischen diesen Kontinenten:"
-          : "Forschungsprojekte  mit dieser Forschungsregion"}
+        {props.description}
         <br />
       </span>
       {props.projects.length > 0 && (
@@ -41,6 +39,20 @@ const InstDetailsPanel = props => {
               }}
             >
               {shortenString(project.displaytitle, 58)}
+              <br />
+            </span>
+          ))}
+        </div>
+      )}
+      {props.institutions.length > 0 && (
+        <div className={style.abstractText}>
+          {props.institutions.map((inst, i) => (
+            <span
+              href="#"
+              key={i + " " + inst.id}
+              className={style.DetailsLinkUnclickable}
+            >
+              {inst.name}
               <br />
             </span>
           ))}

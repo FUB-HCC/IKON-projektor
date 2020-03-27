@@ -63,7 +63,7 @@ export default class GeoMapView extends React.Component {
       return <div />;
     }
 
-    const arcHeight = height * 0.45;
+    const arcHeight = height * 0.46;
     return (
       <div
         className={style.geoMapWrapper}
@@ -82,12 +82,16 @@ export default class GeoMapView extends React.Component {
           <svg width={width} height={arcHeight}>
             {Object.values(continentConnections).map((con, i) => (
               <path
-                d={`M${con.end * width},${arcHeight} C${con.end *
-                  width},${arcHeight -
-                  Math.abs(con.end - con.start) * 0.57 * width} ${con.start *
-                  width},${arcHeight -
-                  Math.abs(con.end - con.start) * 0.57 * width} ${con.start *
-                  width},${arcHeight}`}
+                d={`M${con.start * width} ${arcHeight} A ${(Math.abs(
+                  con.end - con.start
+                ) *
+                  width) /
+                  2} ${(Math.abs(con.end - con.start) * width) /
+                  2}  0 0 1 ${con.end * width} ${arcHeight} M ${con.start *
+                  width} ${arcHeight} A ${(Math.abs(con.end - con.start) *
+                  width) /
+                  2} ${(Math.abs(con.end - con.start) * width) /
+                  2}  0 0 0 ${con.end * width} ${arcHeight}`}
                 stroke="white"
                 strokeWidth={Math.max(3, con.weight * 0.5)}
                 fill="none"
@@ -127,7 +131,14 @@ export default class GeoMapView extends React.Component {
                     </text>
                   </svg>
                   <svg viewBox={"0 0 500 500"}>
-                    <g fill={"#aaa"}>{continentSVGs(c.name)}</g>
+                    <g
+                      className={style.continentSVG}
+                      onClick={() => {
+                        this.props.showInstDetails(c.name + "|c");
+                      }}
+                    >
+                      {continentSVGs(c.name)}
+                    </g>
                     <g
                       transform={`translate(${c.xOffset}, ${c.yOffset})`}
                       fill="transparent"
@@ -141,7 +152,7 @@ export default class GeoMapView extends React.Component {
                             c.mapHeight -
                             mapLatToHeight(c.mapHeight, c, ins.lat)
                           }
-                          r={6}
+                          r={5}
                           key={ins.name + ins.id}
                           className={style.circle}
                         />
@@ -164,15 +175,15 @@ export default class GeoMapView extends React.Component {
         >
           {continents.map((c, i) => {
             return (
-              <svg width="16.66%" height="100" key={i + "region"}>
+              <svg width="16.66%" height="150" key={i + "region"}>
                 <circle
                   cx="50%"
                   cy="50%"
                   className={style.countCircle}
-                  r={Math.min(40, c.institutionCount)}
+                  r={Math.min(38, Math.max(5, c.institutionCount))}
                   fill="#aaa"
                   onClick={() => {
-                    this.props.showInstDetails(c.name);
+                    this.props.showInstDetails(c.name + "|f");
                   }}
                 />
               </svg>

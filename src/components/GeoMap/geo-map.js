@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import GeoMapView from "./geo-map-view";
-import { instClicked } from "../../store/actions/actions";
+import { instClicked, unClicked } from "../../store/actions/actions";
 import { applyFilters } from "../../util/utility";
 
 const edgesFromClique = clique => {
@@ -17,6 +17,9 @@ const mapDispatchToProps = dispatch => {
   return {
     showInstDetails: inst => {
       dispatch(instClicked(inst));
+    },
+    unClicked: () => {
+      dispatch(unClicked());
     }
   };
 };
@@ -27,7 +30,8 @@ const mapStateToProps = state => {
     institutions,
     continents,
     isDataProcessed,
-    filters
+    filters,
+    isClicked
   } = state.main;
   let connections = [];
   let continentConnections = {};
@@ -80,7 +84,8 @@ const mapStateToProps = state => {
     institutions: institutions,
     continents: continentsForView,
     continentConnections: continentConnections,
-    mfn: mfn
+    mfn: mfn,
+    isInstClicked: isClicked.inst
   };
 };
 

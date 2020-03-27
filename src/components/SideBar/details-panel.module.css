@@ -74,6 +74,11 @@
   color: #afca0b;
 }
 
+.DetailsLinkUnclickable {
+  margin-right: 3px;
+  color: #aaa;
+}
+
 .SampleLink {
   margin-right: 3px;
   cursor: pointer;

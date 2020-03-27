@@ -97,8 +97,12 @@ const addExtractedHighlightedFromProject = (projectId, highlighted, state) => {
   return {
     ...highlighted,
     infras: highlighted.infras
-      .concat(project.Sammlungsbezug.map(col => (col ? col.id : 127)))
-      .concat(project.Forschungsinfrastruktur.map(inf => inf.id)),
+      .concat(project.Sammlungsbezug.map(col => (col && col.id ? col.id : 127)))
+      .concat(
+        project.Forschungsinfrastruktur.map(inf =>
+          inf && inf.id ? inf.id : 164
+        )
+      ),
     cats: highlighted.cats.concat(project.targetgroups),
     projects: highlighted.projects.concat([project.id])
   };
@@ -163,12 +167,19 @@ const mapStateToProps = state => {
       .filter(tg => filters.targetgroups.value.includes(tg.id))
       .sort((a, b) => (a.name < b.name ? 1 : -1));
 
-    collectionsForView = collections.filter(col =>
-      filters.collections.value.includes(col.id)
-    );
-    infrastructuresForView = infrastructures.filter(inf =>
-      filters.infrastructures.value.includes(inf.id)
-    );
+    targetgroupsForView = targetgroupsForView.map(tg => ({
+      ...tg,
+      projects: applyFilters(tg.projects, filters),
+      count: tg.ktas.filter(kta =>
+        filters.formats.value.includes(kta.Format[0])
+      ).length
+    }));
+    collectionsForView = collections
+      .filter(col => filters.collections.value.includes(col.id))
+      .map(col => ({ ...col, projects: applyFilters(col.projects, filters) }));
+    infrastructuresForView = infrastructures
+      .filter(inf => filters.infrastructures.value.includes(inf.id))
+      .map(inf => ({ ...inf, projects: applyFilters(inf.projects, filters) }));
     topography = clusterData;
     const highlighted = extractHighlightedFromState(state.main);
     highlightedProjects = highlighted.projects;

@@ -164,6 +164,7 @@ export const continents = [
 ];
 
 export const fieldsIntToString = number => {
+  if (isNaN(number)) return number;
   number = parseInt(number, 10); // pls fix
   return fieldsMapping.find(e => e.field === number)
     ? fieldsMapping.find(e => e.field === number).name

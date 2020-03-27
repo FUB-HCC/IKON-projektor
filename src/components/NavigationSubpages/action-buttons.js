@@ -120,8 +120,7 @@ class ActionButtons extends Component {
         >
           <div className={classes.shareDialog}>
             <div className={classes.shareHeader}>
-              {" "}
-              Die aktuelle Auswahl teilen:{" "}
+              Die aktuelle Auswahl teilen:
             </div>
             <div>
               <input

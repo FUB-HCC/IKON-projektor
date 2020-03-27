@@ -47,3 +47,11 @@
 .arcHover:hover {
   opacity: 1;
 }
+.continentSVG {
+  fill: #aaa;
+  cursor: POINTER;
+}
+
+.continentSVG:hover {
+  fill: #fff;
+}

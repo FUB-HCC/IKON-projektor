@@ -15,7 +15,7 @@ import {
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
 import styles from "./time-line-view.module.css";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, fieldsIntToString } from "../../util/utility";
 import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import TargetgroupBuckets from "./TargetgroupBuckets";
@@ -96,7 +96,11 @@ export default class TimeLineView extends Component {
           >
             <label>
               {this.state.hoveredArea.forschungsbereich
-                ? `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} aktive Projekte in ${this.state.hoveredArea.forschungsbereich}`
+                ? `${this.state.hoveredArea.year}: ${
+                    this.state.hoveredArea.count
+                  } aktive Projekte in ${fieldsIntToString(
+                    this.state.hoveredArea.forschungsbereich
+                  )}`
                 : `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} Wissenstransferaktivitäten mit der Zielgruppe ${this.state.hoveredArea.targetgroup}`}
             </label>
           </p>
