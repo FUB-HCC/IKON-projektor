@@ -28,7 +28,7 @@ const AppBodyStandard = () => (
 
 const AppBodyTouch = () => (
   <>
-    <div className={classes.appBody}>
+    <div className={classes.appBody + " " + classes.noselect}>
       <div className={classes.sidebar}>
         <Sidebar />
       </div>

@@ -16,6 +16,7 @@ import YearDetailsPanel from "../../components/YearDetailsPanel/year-details-pan
 import KtaDetailsPanel from "../../components/KtaDetailsPanel/kta-details-panel";
 import CatDetailsPanel from "../../components/CatDetailsPanel/cat-details-panel";
 import InfraDetailsPanel from "../../components/InfraDetailsPanel/infra-details-panel";
+import SampleStatesList from "../../components/SampleStatesList/sample-states-list";
 
 export const initialState = {
   filters: {
@@ -220,6 +221,12 @@ const reducer = (state = initialState, action) => {
 
     case actionTypes.SHOW_VIA_WIKI_REQUESTED:
       return showViaWikiRequested(state, action);
+
+    case actionTypes.SHOW_SAMPLE_LIST:
+      return showSampleList(state, action);
+
+    case actionTypes.SAMPLE_CLICKED:
+      return sampleClicked(state, action);
 
     default:
       return state;
@@ -748,5 +755,18 @@ const showViaWikiRequested = (state, action) => {
   window.open(action.value, "_blank");
   return state;
 };
+
+const sampleClicked = (state, action) => {
+  if (state.user) {
+    window.open("?uid=" + state.user + "&" + action.value, "_self");
+  } else {
+    window.open(action.value, "_self");
+  }
+};
+
+const showSampleList = (state, action) => ({
+  ...state,
+  sideBarComponent: <SampleStatesList />
+});
 
 export default reducer;

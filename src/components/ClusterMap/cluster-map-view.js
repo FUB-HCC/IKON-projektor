@@ -158,7 +158,7 @@ export default class ClusterMapView extends React.Component {
       >
         <IconExplanation
           posX={20}
-          posY={isTouch ? height - 120 : 20}
+          posY={isTouch ? height - 100 : 20}
           category={categories[0]}
           infrastructure={infrastrukturSorted.find(
             i => i.type === "infrastructure"
@@ -408,9 +408,7 @@ export default class ClusterMapView extends React.Component {
                   });
                 }
                 return (
-                  <g
-                    key={infrastruktur.name}
-                  >
+                  <g key={infrastruktur.name}>
                     <InteractionHandler
                       isInTouchMode={isTouch}
                       onMouseOver={() => onInfraHovered(infrastruktur.name)}
@@ -420,54 +418,58 @@ export default class ClusterMapView extends React.Component {
                       }}
                       longPressThreshold={300}
                     >
-                    <g>
                       <g>
-                        {infrastruktur.type === "collection" ? (
-                          <CollectionIcon
-                            style={{ cursor: "POINTER" }}
-                            id={`inf-${infrastruktur.name}`}
-                            x={x}
-                            y={y}
-                            width={fontSizeText(this.scale) * 1.3}
-                            heigth={fontSizeText(this.scale) * 1.3}
-                            fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                            stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                          />
-                        ) : (
-                          <InfrastructureIcon
-                            style={{ cursor: "POINTER" }}
-                            id={`inf-${infrastruktur.name}`}
-                            x={x}
-                            y={y}
-                            width={fontSizeText(this.scale) * 1.3}
-                            heigth={fontSizeText(this.scale) * 1.3}
-                            fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                            stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                          />
-                        )}
+                        <g>
+                          {infrastruktur.type === "collection" ? (
+                            <CollectionIcon
+                              style={{ cursor: "POINTER" }}
+                              id={`inf-${infrastruktur.name}`}
+                              x={x}
+                              y={y}
+                              width={fontSizeText(this.scale) * 1.3}
+                              heigth={fontSizeText(this.scale) * 1.3}
+                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                            />
+                          ) : (
+                            <InfrastructureIcon
+                              style={{ cursor: "POINTER" }}
+                              id={`inf-${infrastruktur.name}`}
+                              x={x}
+                              y={y}
+                              width={fontSizeText(this.scale) * 1.3}
+                              heigth={fontSizeText(this.scale) * 1.3}
+                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                            />
+                          )}
+                        </g>
+                        <text
+                          x={textX}
+                          y={textY}
+                          stroke={"none"}
+                          textAnchor={anchor}
+                          fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                          fontSize={
+                            fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
+                          }
+                          fontWeight="700"
+                          cursor="POINTER"
+                          transform={`rotate(${textRotate} ${textX} ${textY})`}
+                        >
+                          {splitLongTitles(infrastruktur.name).map(
+                            (titlePart, j) => (
+                              <tspan
+                                x={textX}
+                                y={textY + j * 10}
+                                key={titlePart}
+                              >
+                                {titlePart}
+                              </tspan>
+                            )
+                          )}
+                        </text>
                       </g>
-                      <text
-                        x={textX}
-                        y={textY}
-                        stroke={"none"}
-                        textAnchor={anchor}
-                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                        fontSize={
-                          fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
-                        }
-                        fontWeight="700"
-                        cursor="POINTER"
-                        transform={`rotate(${textRotate} ${textX} ${textY})`}
-                      >
-                        {splitLongTitles(infrastruktur.name).map(
-                          (titlePart, j) => (
-                            <tspan x={textX} y={textY + j * 10} key={titlePart}>
-                              {titlePart}
-                            </tspan>
-                          )
-                        )}
-                      </text>
-                    </g>
                     </InteractionHandler>
                     <g>
                       {lines.map((line, i) => (

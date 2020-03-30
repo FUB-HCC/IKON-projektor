@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import classes from "./navigation-subpages.module.css";
-import logo from "../../assets/ikon_logo.png";
+import logo from "../../assets/mfn_logo.svg";
 import introJs from "intro.js";
 import { changeGraph, tourStarted } from "../../store/actions/actions";
 import { isTouchMode } from "../../util/utility";
@@ -16,7 +16,7 @@ class MFNLogo extends Component {
     return (
       <div
         className={
-          this.props.isTouch ? classes.mfnLogoTouch : classes.leftElement
+          this.props.isTouch ? classes.mfnLogoTouch : classes.mfnLogoNoTouch
         }
         style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
         onClick={this.startTour}
@@ -24,7 +24,7 @@ class MFNLogo extends Component {
         <img
           src={logo}
           alt={"Museum für Naturkunde Berlin"}
-          height={this.props.isTouch ? 120 : ""}
+          height={this.props.isTouch ? 80 : 65}
         />
       </div>
     );

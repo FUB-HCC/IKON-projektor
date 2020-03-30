@@ -94,12 +94,8 @@ class GraphView extends React.Component {
 
   render() {
     const geoMapProps = {
-      width: this.state.width,
-      height: this.state.height,
-      onProjectClick: this.projectClickHandler,
       institutions: this.props.institutions,
-      projects: this.props.filteredProjects,
-      ktas: this.props.ktas
+      projects: this.props.filteredProjects
     };
     let Graph = <ClusterMap />; // render conditional according to state. Petridish rendered as default
     switch (this.props.graph) {
@@ -109,7 +105,6 @@ class GraphView extends React.Component {
             id="step1"
             height={this.state.height}
             width={this.state.width}
-            onProjectClick={this.projectClickHandler}
           />
         );
         break;
@@ -119,12 +114,18 @@ class GraphView extends React.Component {
             id="step2"
             height={this.state.height}
             width={this.state.width}
-            onProjectClick={this.projectClickHandler}
           />
         );
         break;
       case "2":
-        Graph = <GeoMap id="step3" {...geoMapProps} />;
+        Graph = (
+          <GeoMap
+            id="step3"
+            height={this.state.height}
+            width={this.state.width}
+            {...geoMapProps}
+          />
+        );
         break;
       default:
         break;

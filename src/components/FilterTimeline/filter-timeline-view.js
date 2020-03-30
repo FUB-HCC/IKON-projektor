@@ -24,6 +24,7 @@ class FilterTimelineView extends React.Component {
             labelStepSize={4}
             value={currentSelectedRange}
             onChange={changeTimeRangeFilter}
+            onContextMenu={event => event.preventDefault()}
           />
         </div>
       </div>

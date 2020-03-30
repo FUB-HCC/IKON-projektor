@@ -46,6 +46,8 @@ const createLogMsgIfNecessary = (state, action) => {
       case actionTypes.TOUR_STARTED:
       case actionTypes.SHARE_DIALOG_OPENED:
       case actionTypes.SHOW_VIA_WIKI_REQUESTED:
+      case actionTypes.SHOW_SAMPLE_LIST:
+      case actionTypes.SAMPLE_CLICKED:
         sendEvtDataToLogService(state.main.user, action.type, {
           key: "null",
           value: action.value,

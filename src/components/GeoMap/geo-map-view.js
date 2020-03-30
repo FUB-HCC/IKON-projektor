@@ -143,7 +143,7 @@ const edgesFromClique = clique => {
   return pairs;
 };
 
-//EXPECTS: institutions, projects, width, height, onProjectClickHandler
+//EXPECTS: institutions, projects, width, height
 const GeoMapView = props => {
   const { projects, height } = props;
   if (isNaN(height) || projects == null) {
@@ -210,162 +210,81 @@ const GeoMapView = props => {
       }
     }
   });
-
-  let ktas = props.ktas.filter(kta =>
-    props.projects.find(
-      p =>
-        p.id === kta.project_id &&
-        p.cooperating_institutions &&
-        p.cooperating_institutions[0] !== null
-    )
-  );
-
-  ktas = ktas.map(kta => ({
-    ...kta,
-    institutions: props.projects
-      .find(p => p.id === kta.project_id)
-      .cooperating_institutions.map(inst =>
-        institution(inst) ? institution(inst).name : ""
-      )
-  }));
-
-  let ktaInstitutions = institutions
-    .map(inst => ({
-      ...inst,
-      ktaCount: ktas.filter(kta => kta.institutions.includes(inst.name)).length
-    }))
-    .sort((a, b) => b.ktaCount - a.ktaCount)
-    .slice(0, 10);
-  let maxCircle = 15;
-  console.log(maxCircle);
-  const arcHeight = height * 0.4;
+  const arcHeight = height * 0.5;
+  const mfnId = projects[0] ? projects[0].institution_id : 224;
   return (
     <div
-      data-intro="Somit kann in dieser Ansicht einerseits die internationale Verknüpfung des Museums für Naturkunde in der Forschung betrachtet, und andererseits konkret mit Wissenstransferaktivitäten in Bezug gesetzt werden. "
-      data-step="4"
+      style={{ width: width, height: height }}
+      data-intro="In der Ansicht <b>RAUM</b> wird eine weitere internationale Perspektive auf Drittmittelprojekte ermöglicht. <b>Forschungsprojekte </b> werden als <b>Bögen</b> zwischen Kontinenten visualisiert. Hierdurch tritt die internationale Kooperation, die in vielen Projekten stattfindet, in den Vordergrund. Der grüne Punkt repräsentiert hier das Museum für Naturkunde, welches den Ausgang für jedes Projekt bildet."
+      data-step="1"
     >
-      <div
-        className={style.geoViewWrapper}
-        style={{ width: width, height: height }}
-        data-intro="In der Ansicht <b>RAUM</b> wird eine weitere internationale Perspektive auf Wissenstransferaktivitäten und Drittmittelprojekte ermöglicht Hier lässt sich zum Beispiel ablesen, wann und wie Wissenstransfer aus Projekten in Kooperation mit anderen Institutionen durchgeführt wurde."
-        data-step="1"
-      >
-        <span className={style.plotTitle}>Wissenstransferaktivitäten</span>
-        <div
-          className={style.tableWrapper}
-          data-intro="Im oberen Teil der Ansicht werden <b>Wissenstransferaktivitäten</b> angezeigt, welche aus international vernetzten Forschungsprojekten hervorgegangen sind. Die Größe des Kreises deutet die Menge der Wissenstransferaktivitäten in bestehenden Kooperationen an."
-          data-step="2"
-        >
-          <table>
-            {ktaInstitutions.map((inst, i) => {
-              return (
-                <tr>
-                  <td className={style.instText}>{inst.name}</td>
-                  <td>
-                    <svg
-                      height={maxCircle * 2}
-                      fill="transparent"
-                      width={maxCircle * 2}
-                    >
+      <span className={style.plotTitle}>
+        <br /> Forschungsprojekte
+      </span>
+      <div className={style.arcWrapper}>
+        <svg width={width} height={arcHeight}>
+          {Object.values(continentConnections).map(con => (
+            <path
+              d={`M${con.end},${arcHeight} C${con.end},${arcHeight -
+                Math.abs(con.end - con.start) * 0.57} ${con.start},${arcHeight -
+                Math.abs(con.end - con.start) * 0.57} ${
+                con.start
+              },${arcHeight}`}
+              stroke="white"
+              strokeWidth={Math.max(3, con.weight * 0.5)}
+              fill="none"
+              opacity={0.4}
+              className={style.arcHover}
+              key={JSON.stringify([con.start, con.end])}
+            />
+          ))}
+        </svg>
+      </div>
+      <div className={style.mapsWrapper}>
+        {continents
+          .filter(c => c.institutionCount > 0)
+          .map(c => {
+            const instititutionsOnContinent = Object.values(
+              institutionsInProjects
+            ).filter(ins => ins.continent === c.name);
+            return (
+              <div className={style.continentWrapper} key={c.name}>
+                <svg viewBox={"0 0 500 120"}>
+                  <text
+                    fill="#aaa"
+                    x="50%"
+                    y="100"
+                    fontSize="400%"
+                    key={c.name}
+                    textAnchor="middle"
+                  >
+                    {c.name}
+                  </text>
+                </svg>
+                <svg viewBox={"0 0 500 500"}>
+                  <g fill={"#aaa"}>{c.svg}</g>
+                  <g
+                    transform={`translate(${c.xOffset}, ${c.yOffset})`}
+                    fill="transparent"
+                  >
+                    {instititutionsOnContinent.map(ins => (
                       <circle
-                        className={style.ktaCountCircle}
-                        cx={maxCircle}
-                        cy={maxCircle}
-                        r={inst.ktaCount}
+                        fill={ins.id === mfnId ? "#afca0b" : "red"}
+                        stroke="red"
+                        cx={mapLongToWidth(c.mapWidth, c, ins.lon)}
+                        cy={
+                          c.mapHeight - mapLatToHeight(c.mapHeight, c, ins.lat)
+                        }
+                        r={5}
+                        key={ins.name + ins.id}
+                        className={style.circle}
                       />
-                    </svg>
-                  </td>
-                </tr>
-              );
-            })}
-          </table>
-        </div>
-
-        <div className={style.description}>
-          Wissenstransferaktivitäten in Projekten nach Kooperation
-        </div>
-        <span className={style.plotTitle}>Forschungsprojekte</span>
-        <div
-          className={style.arcWrapper}
-          data-intro="Im unteren Teil der Ansicht werden <b>Forschungsprojekte als Bögen</b> zwischen Kontinenten visualisiert. Hierdurch tritt die internationale Kooperation, die in vielen Projekten stattfindet, in den Vordergrund. Der grüne Punkt repräsentiert hier das Museum für Naturkunde, welches den Ausgang für jedes Projekt bildet."
-          data-step="3"
-        >
-          <svg width={width} height={arcHeight}>
-            {Object.values(continentConnections).map(con => (
-              <path
-                d={`M${con.end},${arcHeight} C${con.end},${arcHeight -
-                  Math.abs(con.end - con.start) * 0.63} ${
-                  con.start
-                },${arcHeight - Math.abs(con.end - con.start) * 0.63} ${
-                  con.start
-                },${arcHeight}`}
-                stroke="white"
-                strokeWidth={con.weight * 0.5}
-                fill="none"
-                opacity={0.4}
-                key={JSON.stringify([con.start, con.end])}
-              />
-            ))}
-          </svg>
-        </div>
-        <div className={style.labelWrapper}>
-          {continents
-            .filter(c => c.institutionCount > 0)
-            .map(c => {
-              const instititutionsOnContinent = Object.values(
-                institutionsInProjects
-              ).filter(ins => ins.continent === c.name);
-              return (
-                <div
-                  className={style.continentLabel}
-                  key={c.name}
-                  style={{ left: c.anchorPoint }}
-                >
-                  {c.name + " "}({instititutionsOnContinent.length})
-                  {c.name === "Europa" && (
-                    <div className={style.mfnCircle}>Museum für Naturkunde</div>
-                  )}
-                </div>
-              );
-            })}
-        </div>
-        <div className={style.mapsWrapper}>
-          {continents
-            .filter(c => c.institutionCount > 0)
-            .map(c => {
-              const instititutionsOnContinent = Object.values(
-                institutionsInProjects
-              ).filter(ins => ins.continent === c.name);
-              return (
-                <div className={style.continentWrapper} key={c.name}>
-                  <svg width={width / 6} viewBox={"0 0 500 500"}>
-                    <g fill={"#aaa"}>{c.svg}</g>
-                    <g
-                      transform={`translate(${c.xOffset}, ${c.yOffset})`}
-                      fill="transparent"
-                    >
-                      {instititutionsOnContinent.map(ins => (
-                        <circle
-                          fill={"red"}
-                          cx={mapLongToWidth(c.mapWidth, c, ins.lon)}
-                          cy={
-                            c.mapHeight -
-                            mapLatToHeight(c.mapHeight, c, ins.lat)
-                          }
-                          r={5}
-                          key={ins.name + ins.id}
-                        />
-                      ))}
-                    </g>
-                  </svg>
-                </div>
-              );
-            })}
-        </div>
-
-        <div className={style.description}>
-          Forschungsprojekte nach internationaler Kooperation
-        </div>
+                    ))}
+                  </g>
+                </svg>
+              </div>
+            );
+          })}
       </div>
     </div>
   );

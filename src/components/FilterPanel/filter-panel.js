@@ -1,7 +1,6 @@
 import React from "react";
 import FilterTimeline from "../FilterTimeline/filter-timeline";
 import FilterSelection from "../FilterSelection/filter-selection";
-
 const FilterPanel = props => (
   <div
     id="step5"
@@ -9,7 +8,7 @@ const FilterPanel = props => (
       display: "flex",
       flexDirection: "column",
       justifyContent: "flex-start",
-      height: "100%"
+      height: window.location.pathname.includes("touch") ? "82%" : "100%"
     }}
   >
     <FilterTimeline />

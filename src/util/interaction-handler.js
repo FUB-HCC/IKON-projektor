@@ -27,17 +27,22 @@ class InteractionHandler extends React.Component {
   }
 
   render() {
-    const { isInTouchMode, onMouseOver, onMouseLeave, onClick } = this.props
+    const { isInTouchMode, onMouseOver, onMouseLeave, onClick } = this.props;
     return (
       <g
         onTouchStart={isInTouchMode ? this.onTouchStart : null}
-        onTouchEnd={isInTouchMode ? this.onTouchEnd : null }
-        onClick={isInTouchMode ? (e) => e.stopPropagation() : (e) => {
-          e.stopPropagation();
-          onClick(e)
-        }}
+        onTouchEnd={isInTouchMode ? this.onTouchEnd : null}
+        onClick={
+          isInTouchMode
+            ? e => e.stopPropagation()
+            : e => {
+                e.stopPropagation();
+                onClick(e);
+              }
+        }
         onMouseOver={onMouseOver}
         onMouseLeave={onMouseLeave}
+        onContextMenu={event => event.preventDefault()}
       >
         {this.props.children}
       </g>

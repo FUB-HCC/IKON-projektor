@@ -305,3 +305,12 @@ export const showViaWikiRequested = url => ({
   type: actionTypes.SHOW_VIA_WIKI_REQUESTED,
   value: url
 });
+
+export const sampleClicked = url => ({
+  type: actionTypes.SAMPLE_CLICKED,
+  value: url
+});
+
+export const showSampleList = () => ({
+  type: actionTypes.SHOW_SAMPLE_LIST
+});

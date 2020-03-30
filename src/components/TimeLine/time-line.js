@@ -1,8 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getFieldColor, isTouchMode } from "../../util/utility";
+import { isTouchMode } from "../../util/utility";
 import TimeLineView from "./time-line-view";
 import { yearClicked } from "../../store/actions/actions";
+import missingProjects from "../../assets/missingProjects.json";
 
 class TimeLine extends React.Component {
   componentDidMount() {
@@ -70,7 +71,7 @@ const mapStateToProps = state => {
     state.main.ktas,
     state.main.filteredCategories
   );
-  const processedData = processData(state.main.filteredProjects, graphColors);
+  const processedData = processData(state.main.filteredProjects);
   return {
     dataSplitFbYear: processedData,
     projects: state.main.filteredProjects,
@@ -80,10 +81,8 @@ const mapStateToProps = state => {
     isTouchMode: isTouchMode(state)
   };
 };
-
-//TODO: make conditional
-
-const processData = (data, colors) => {
+// TODO move to datatransforms?
+const processData = data => {
   /*
    Private
    Transforms the data in to a format which can be easily used for the Visulisation.
@@ -94,50 +93,51 @@ const processData = (data, colors) => {
 
  */
 
-  if (!data || data === []) return [[], [], [], []];
+  if (!data || data === []) return [];
 
-  let dataSplitYears = [];
-  for (let projectsKey in data) {
-    if (!(data[projectsKey].forschungsbereichstr in dataSplitYears)) {
-      dataSplitYears[data[projectsKey].forschungsbereichstr] = [];
+  let keys = [...new Set(data.map(b => b.forschungsbereich))].concat(
+    "Unveröffentlicht"
+  );
+  let map = [],
+    years = [];
+  data = data.concat(missingProjects);
+  let projects = data.map(project => {
+    let startDate = project.timeframe[0];
+    let endDate = project.timeframe[1];
+    let years = [];
+    while (startDate <= endDate) {
+      years.push(startDate++);
     }
-
-    let startDate = parseInt(data[projectsKey].funding_start_year);
-    let endDate = parseInt(data[projectsKey].funding_end_year);
-    if (isNaN(endDate) || endDate === "") endDate = new Date().getFullYear();
-
-    let forschungsbereichData =
-      dataSplitYears[data[projectsKey].forschungsbereichstr];
-
-    let year = startDate;
-    while (year <= endDate) {
-      let yearExists = false;
-      for (let yearFbIndex in forschungsbereichData) {
-        // check if year already is existent for the forschungsbereich
-        if (forschungsbereichData[yearFbIndex].year === year) {
-          yearExists = true;
-          forschungsbereichData[yearFbIndex].numberOfActiveProjects =
-            forschungsbereichData[yearFbIndex].numberOfActiveProjects + 1;
-          forschungsbereichData[yearFbIndex].projects.push(data[projectsKey]);
-        }
-      }
-      if (!yearExists) {
-        forschungsbereichData.push({
-          year: year,
-          forschungsbereich: data[projectsKey].forschungsbereichstr,
-          numberOfActiveProjects: 1,
-          projects: [data[projectsKey]],
-          color: getFieldColor(data[projectsKey].forschungsbereichstr)
-        });
-      }
-      year++;
-    }
-    dataSplitYears[
-      data[projectsKey].forschungsbereichstr
-    ] = forschungsbereichData.sort((a, b) => a.year - b.year);
+    return {
+      id: project.id,
+      years: years,
+      fb: project.forschungsbereichstr
+    };
+  });
+  let startYear = Math.min(...data.map(p => p.timeframe[0]).flat());
+  let endYear = Math.max(...data.map(p => p.timeframe[1]).flat());
+  for (let year = startYear; year <= endYear; year++) {
+    let submap = {};
+    submap.year = year;
+    submap.projects = projects
+      .filter(p => p.years.includes(year))
+      .map(p => p.id);
+    keys.map(key => (submap[key] = 0));
+    map.push(submap);
+    years.push(year);
   }
-
-  return dataSplitYears;
+  projects.forEach(function(project) {
+    let fbereich = project.fb;
+    project.years.forEach(function(year) {
+      map[`${year - startYear}`][`${fbereich}`]++;
+    });
+  });
+  let result = {
+    areaChartData: map,
+    areaChartKeys: keys,
+    years: years
+  };
+  return result;
 };
 
 const processKtas = (ktas, filteredTargetgroups) => {
