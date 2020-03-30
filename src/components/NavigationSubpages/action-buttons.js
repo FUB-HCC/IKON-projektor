@@ -41,7 +41,7 @@ class ActionButtons extends Component {
     input.select();
     input.setSelectionRange(0, 99999);
     document.execCommand("copy");
-    //window.alert("Copied link: \n" + input.value);
+    window.alert("Link kopiert: \n" + input.value);
   }
 
   sendToTouchscreen() {
@@ -51,7 +51,10 @@ class ActionButtons extends Component {
     var today = new Date();
     var date =
       today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
-    console.log(JSON.stringify({ datum: date, link: window.location.search }));
+    window.alert(
+      "Link an den Touchscreen gesendet (Diese Funktion wird erst in der nächsten Version unterstützt): \n" +
+        input.value
+    );
   }
 
   startPageTour() {
