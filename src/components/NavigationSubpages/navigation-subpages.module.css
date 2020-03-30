@@ -150,6 +150,7 @@ h3 {
 .shareButtons {
   margin-top: 20px;
   display: flex;
+  font-weight: 700;
   justify-content: space-between !important;
 }
 .shareClipboardLink {

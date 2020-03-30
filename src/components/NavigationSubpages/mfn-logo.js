@@ -19,7 +19,7 @@ class MFNLogo extends Component {
           this.props.isTouch ? classes.mfnLogoTouch : classes.mfnLogoNoTouch
         }
         style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
-        onClick={this.startTour}
+        onClick={this.props.isTouch ? null : this.startTour}
       >
         <img
           src={logo}

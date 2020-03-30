@@ -46,7 +46,7 @@ const TargetgroupBuckets = props => {
                     year.targetgroup = targetgroup;
                     props.showYearDetails(year.year + "|" + targetgroup);
                   }}
-                  longPressThreshold={300}
+                  doubleTapTreshold={500}
                 >
                   <circle
                     cx={props.xScale(year.year)}

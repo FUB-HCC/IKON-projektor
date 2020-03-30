@@ -253,7 +253,7 @@ export default class ClusterMapView extends React.Component {
                     onClick={() => {
                       onCatClicked(targetgroup.id);
                     }}
-                    longPressThreshold={300}
+                    doubleTapTreshold={500}
                   >
                     <g>
                       <circle
@@ -400,7 +400,7 @@ export default class ClusterMapView extends React.Component {
                       onClick={() => {
                         onInfraClicked(infrastruktur.id);
                       }}
-                      longPressThreshold={300}
+                      doubleTapTreshold={500}
                     >
                       <g>
                         <g>
@@ -481,6 +481,7 @@ export default class ClusterMapView extends React.Component {
             </g>
             <g
               data-step="1"
+              id="touchStep1"
               data-intro="Das Herzstück der <b>WISSEN</b> Ansicht ist die Cluster-Darstellung von Drittmittelprojekten auf Basis algorithmischer Vergleiche von Projekt-Abstracts. Projekte sind nach ihren jeweiligen <b>Forschungsgebieten</b> eingefärbt um eine interdisziplinäre Perspektive auf die Forschung am Haus zu unterstützen. Hierdurch können Drittmittelprojekte basierend auf thematischen Gemeinsamkeiten interaktiv exploriert werden."
             >
               {clusterData.map(cluster => {

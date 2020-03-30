@@ -350,7 +350,7 @@ export default class TimeLineView extends Component {
                               )
                             }
                             onMouseLeave={() => this.handleMouseLeave()}
-                            longPressThreshold={300}
+                            doubleTapTreshold={500}
                             key={datum.data.year + " " + d.key}
                           >
                             <line

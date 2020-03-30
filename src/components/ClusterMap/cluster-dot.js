@@ -19,7 +19,7 @@ const ClusterDot = props => {
       onClick={() => (point ? dispatch(projectClicked(point.id)) : null)}
       onMouseOver={() => (point ? dispatch(projectHovered(point.id)) : null)}
       onMouseLeave={() => dispatch(unHovered())}
-      longPressThreshold={300}
+      doubleTapTreshold={500}
       isInTouchMode={isTouchMode}
     >
       <g

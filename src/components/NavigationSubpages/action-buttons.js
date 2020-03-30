@@ -15,13 +15,15 @@ import {
   pageReset,
   shareDialogOpened,
   showSampleList,
-  shareUrl
+  shareUrl,
+  changeGraph
 } from "../../store/actions/actions";
 import { sideBarWidth } from "../../App";
 class ActionButtons extends Component {
   constructor(props) {
     super();
     this.startPageTour = this.startPageTour.bind(this);
+    this.startPageTourTouch = this.startPageTourTouch.bind(this);
     this.dialogOpened = this.dialogOpened.bind(this);
     this.dialogClosed = this.dialogClosed.bind(this);
     this.state = {
@@ -104,8 +106,108 @@ class ActionButtons extends Component {
           }
         }
       })
-      .onexit(() => this.props.legendHovered(null));
-    tour.start();
+      .onexit(() => this.props.legendHovered(null))
+      .start();
+  }
+
+  startPageTourTouch() {
+    this.props.tutorialStarted();
+    var tour = introJs();
+    tour.setOptions({
+      tooltipPosition: "auto",
+      showStepNumbers: false,
+      overlayOpacity: 0.1,
+      tooltipClass: classes.introTooltip,
+      highlightClass: classes.introHighlightClass,
+      nextLabel: "Weiter",
+      prevLabel: "Zurück",
+      skipLabel: "Abbrechen",
+      doneLabel: "Fertig",
+      steps: [
+        {
+          intro:
+            "<h2>Willkommen im MfN.projektor</h2> Touch Interaktion Tutorial",
+          element: "step0"
+        },
+
+        {
+          intro: "Touch Interaktion Tutorial",
+          element: "step1"
+        },
+        {
+          element: "#touchStep1",
+          intro:
+            "Das Herzstück der Ansicht ist die Cluster-Darstellung von Drittmittelprojekten auf Basis algorithmischer Vergleiche von Projekt-Abstracts. Projekte sind nach ihren jeweiligen <b>Forschungsgebieten</b> eingefärbt um eine interdisziplinäre Perspektive auf die Forschung am Haus zu unterstützen. Hierdurch können Drittmittelprojekte basierend auf thematischen Gemeinsamkeiten interaktiv exploriert werden."
+        },
+        {
+          intro:
+            "Als weiteres Element dieser Ansicht kann die Unsicherheits-Landschaft aktiviert werden. Da die Anordnung auf algorithmischen Schätzungen von inhaltlichen Ähnlichkeiten basiert, unterstützt dieses Element die Interpretation der Anordnung. Je heller die Färbung der Landschaft, desto sicherer ist sich der Algorithmus über die Position des jeweiligen Forschungsprojektes, und umgekehrt.",
+          element: "#touchStep2"
+        },
+        {
+          intro:
+            "Die interdisziplinäre Perspektive auf Drittmittelforschung wird durch den äußeren Ring bedeutsam erweitert. Projekte werden hier, basierend auf Informationen aus dem VIA-Wiki, mit Wissenstransferaktivitäten und Infrastrukturen wie Sammlungen und Laborgeräten verknüpft. Hierdurch können einerseits Projekte weitergehend nach Gemeinsamkeiten eingeordnet werden, andererseits Potenziale für Wissenstransfer basierend auf Gemeinsamkeiten entdeckt werden.",
+          element: "#touchStep3"
+        },
+        {
+          intro:
+            "Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben",
+          element: "#touchStep4"
+        },
+        {
+          intro:
+            "Alle Verknüpfungen, die dieses Icon tragen, sind Sammlungen am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben können.",
+          element: "#touchStep5"
+        },
+        {
+          intro:
+            "Alle Verknüpfungen, die dieses Icon tragen, sind Laborgeräte oder andere Infrastruktur am Museum, die in Forschungsprojekten eingesetzt werden können.",
+          element: "#touchStep6"
+        },
+        {
+          intro:
+            "Im oberen Teil werden die Anzahl und Laufzeiten von <b>Drittmittelprojekten</b> basierend auf aktuellen Informationen aus dem <a style='color: #afca0b;' href='https://via.museumfuernaturkunde.berlin/wiki/' target='_blank' rel='noopener noreferrer'>VIA-Wiki</a> und gruppiert nach <b>Forschungsgebieten</b> angezeigt. Um die Interpretation von Trend-Entwicklungen zu unterstützen, werden außerdem in dunkelgrauer Schattierung bisher noch nicht integrierte Daten zu Drittmittelprojekten dargestellt.",
+          element: "touchStep7"
+        }
+      ]
+    });
+    tour
+      .onbeforechange(() => {
+        switch (tour._currentStep) {
+          case 3: {
+            this.props.onShowUncertainty(true);
+            this.props.onHighlightUncertainty(true);
+            break;
+          }
+          case 4: {
+            this.props.onHighlightUncertainty(false);
+            this.props.onShowUncertainty(false);
+            break;
+          }
+          case 5: {
+            this.props.legendHovered("ktas");
+            break;
+          }
+          case 6: {
+            this.props.legendHovered("collections");
+            break;
+          }
+          case 7: {
+            this.props.legendHovered("infrastructures");
+            break;
+          }
+          case 8: {
+            this.props.changeGraph("1");
+            break;
+          }
+          default: {
+            this.props.legendHovered();
+            break;
+          }
+        }
+      })
+      .onexit(() => this.props.legendHovered(null))
+      .start();
   }
 
   render() {
@@ -164,7 +266,10 @@ class ActionButtons extends Component {
             borderTop: isTouch ? "4px solid #0e0e0e" : "none"
           }}
         >
-          <div className={classes.rightElement} onClick={this.startPageTour}>
+          <div
+            className={classes.rightElement}
+            onClick={isTouch ? this.startPageTourTouch : this.startPageTour}
+          >
             <Tutorial className={classes.buttonIcon} /> <p>Tutorial</p>
           </div>
 
@@ -222,7 +327,8 @@ const mapDispatchToProps = dispatch => ({
   },
   shareUrl: name => {
     dispatch(shareUrl(name));
-  }
+  },
+  changeGraph: key => dispatch(changeGraph(key))
 });
 
 export default connect(
