@@ -45,7 +45,7 @@ class ActionButtons extends Component {
     input.select();
     input.setSelectionRange(0, 99999);
     document.execCommand("copy");
-    //window.alert("Copied link: \n" + input.value);
+    window.alert("Link kopiert: \n" + input.value);
   }
 
   sendToTouchscreen() {
