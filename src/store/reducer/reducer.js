@@ -1,13 +1,14 @@
 import * as actionTypes from "../actions/actionTypes";
 import React from "react";
-import { topicToField, fieldsIntToString } from "../../util/utility";
+import { topicToField, continents } from "../../util/utility";
 import {
   processProjectsData,
-  processClusterData,
-  processCategories,
+  processTargetgroups,
   processCollections,
   processInfrastructures,
-  processFormats,
+  processKtas,
+  processMissingProjects,
+  processInstitutions,
   linkCatsToProjectsData
 } from "./data-transforms";
 import FilterPanel from "../../components/FilterPanel/filter-panel";
@@ -16,13 +17,14 @@ import YearDetailsPanel from "../../components/YearDetailsPanel/year-details-pan
 import KtaDetailsPanel from "../../components/KtaDetailsPanel/kta-details-panel";
 import CatDetailsPanel from "../../components/CatDetailsPanel/cat-details-panel";
 import InfraDetailsPanel from "../../components/InfraDetailsPanel/infra-details-panel";
+import InstDetailsPanel from "../../components/InstDetailsPanel/inst-details-panel";
 import SampleStatesList from "../../components/SampleStatesList/sample-states-list";
 
 export const initialState = {
   filters: {
     forschungsgebiet: {
       name: "Forschungsgebiet",
-      filterKey: "forschungsbereichstr",
+      filterKey: "forschungsbereich",
       type: "string",
       uniqueVals: [],
       value: null
@@ -30,13 +32,6 @@ export const initialState = {
     hauptthema: {
       name: "Hauptthema",
       filterKey: "hauptthema",
-      type: "string",
-      uniqueVals: [],
-      value: null
-    },
-    geldgeber: {
-      name: "Geldgeber",
-      filterKey: "geldgeber",
       type: "string",
       uniqueVals: [],
       value: null
@@ -80,22 +75,20 @@ export const initialState = {
       name: "highlevelFilter",
       filterKey: "highlevelFilter",
       type: "array",
-      uniqueVals: ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"],
-      value: ["Zielgruppen", "Formate", "Laborgeräte", "Sammlungen"]
+      uniqueVals: [6, 7, 8, 9],
+      value: [6, 7, 8, 9]
     }
   },
   graph: "0",
   projects: [],
-  filteredProjects: [],
-  filteredCategories: [],
-  filteredCollections: [],
-  filteredInfrastructures: [],
   institutions: [],
+  continents: [],
   ktas: [],
-  ktaMapping: [],
-  categories: [],
+  targetgroups: [],
   infrastructures: [],
   collections: [],
+  missingprojects: [],
+  formats: [],
   isHovered: {
     project: null,
     infra: null,
@@ -108,22 +101,15 @@ export const initialState = {
     infra: null,
     cat: null,
     kta: null,
-    year: null
+    year: null,
+    inst: null
   },
+  projectsMaxSizing: [0, 0],
   legendHovered: "none",
   uncertaintyOn: false,
   uncertaintyHighlighted: false,
   clusterData: undefined,
-  isDataLoaded: {
-    projects: false,
-    institutions: false,
-    cluster: false,
-    ktas: false,
-    targetgroups: false,
-    ktaMapping: false,
-    collections: false,
-    infrastructures: false
-  },
+  isDataLoaded: { data: false, samples: false },
   isDataProcessed: false,
   sideBarComponent: <FilterPanel />
 };
@@ -134,8 +120,7 @@ const reducer = (state = initialState, action) => {
     case actionTypes.CHANGE_GRAPH:
       return {
         ...state,
-        graph: action.value,
-        filteredProjects: applyFilters(state.projects, state.filters)
+        graph: action.value
       };
 
     case actionTypes.CHECKBOX_FILTER_CHANGE:
@@ -144,29 +129,11 @@ const reducer = (state = initialState, action) => {
     case actionTypes.TIMERANGE_FILTER_CHANGE:
       return changeTimeRangeFilter(state, action);
 
-    case actionTypes.UPDATE_CLUSTER_DATA:
-      return updateClusterData(state, action);
+    case actionTypes.UPDATE_DATA:
+      return updateData(state, action);
 
-    case actionTypes.UPDATE_INSTITUTIONS_DATA:
-      return updateInstitutionsData(state, action);
-
-    case actionTypes.UPDATE_PROJECTS_DATA:
-      return updateProjectsData(state, action);
-
-    case actionTypes.UPDATE_KTA_DATA:
-      return updateKtaData(state, action);
-
-    case actionTypes.UPDATE_TARGETGROUPS_DATA:
-      return updateTargetGroupsData(state, action);
-
-    case actionTypes.UPDATE_COLLECTIONS_DATA:
-      return updateCollectionsData(state, action);
-
-    case actionTypes.UPDATE_INFRASTRUCTURE_DATA:
-      return updateInfrastructureData(state, action);
-
-    case actionTypes.UPDATE_KTA_MAPPING_DATA:
-      return updateKtaMappingData(state, action);
+    case actionTypes.UPDATE_SAMPLE_LIST:
+      return updateSampleList(state, action);
 
     case actionTypes.PROCESS_DATA_IF_READY:
       return processDataWhenReady(state);
@@ -204,6 +171,9 @@ const reducer = (state = initialState, action) => {
     case actionTypes.YEAR_CLICKED:
       return yearClicked(state, action);
 
+    case actionTypes.INST_CLICKED:
+      return instClicked(state, action);
+
     case actionTypes.UNCLICKED:
       return unClicked(state);
 
@@ -223,7 +193,7 @@ const reducer = (state = initialState, action) => {
       return showViaWikiRequested(state, action);
 
     case actionTypes.SHOW_SAMPLE_LIST:
-      return showSampleList(state, action);
+      return showSampleList(state);
 
     case actionTypes.SAMPLE_CLICKED:
       return sampleClicked(state, action);
@@ -248,25 +218,25 @@ const changeCheckboxFilter = (state, action) => {
       action.value
     );
   } else if (action.id === "highlevelFilter") {
-    if (action.value === "Zielgruppen") {
+    if (action.value === 6) {
       newFilter.targetgroups.value = toggleAllOfSubset(
         newFilter.targetgroups,
         newFilter.highlevelFilter,
         action.value
       );
-    } else if (action.value === "Formate") {
+    } else if (action.value === 7) {
       newFilter.formats.value = toggleAllOfSubset(
         newFilter.formats,
         newFilter.highlevelFilter,
         action.value
       );
-    } else if (action.value === "Sammlungen") {
+    } else if (action.value === 8) {
       newFilter.collections.value = toggleAllOfSubset(
         newFilter.collections,
         newFilter.highlevelFilter,
         action.value
       );
-    } else if (action.value === "Laborgeräte") {
+    } else if (action.value === 9) {
       newFilter.infrastructures.value = toggleAllOfSubset(
         newFilter.infrastructures,
         newFilter.highlevelFilter,
@@ -276,35 +246,26 @@ const changeCheckboxFilter = (state, action) => {
   }
   return {
     ...state,
-    filteredCategories: applyCategoryFilters(state.categories, newFilter),
-    filteredCollections: applyInfraFilters(state.collections, newFilter),
-    filteredInfrastructures: applyInfraFilters(
-      state.infrastructures,
-      newFilter
-    ),
-    filters: newFilter,
-    filteredProjects: applyFilters(state.projects, newFilter)
+    filters: newFilter
   };
 };
 
 const changeTimeRangeFilter = (state, action) => {
-  const newFilter = {
-    ...state.filters,
-    time: {
-      ...state.filters.time,
-      value: action.value
-    }
-  };
   return {
     ...state,
-    filters: newFilter,
-    filteredProjects: applyFilters(state.projects, newFilter)
+    filters: {
+      ...state.filters,
+      time: {
+        ...state.filters.time,
+        value: action.value
+      }
+    }
   };
 };
 
 const toggleAllFiltersOfField = (filters, fieldValue) => {
   const subjectsOfField = filters.hauptthema.uniqueVals.filter(
-    val => fieldsIntToString(topicToField(val)) === fieldValue
+    val => topicToField(val) === fieldValue
   );
   let newValue = filters.hauptthema.value.filter(
     val => !subjectsOfField.includes(val)
@@ -321,134 +282,30 @@ const toggleAllOfSubset = (subsetFilter, highlevelFilter, actionValue) => {
   return newValue;
 };
 
-const applyFilters = (data, filter) => {
-  let filteredData = data;
-  Object.values(filter).forEach(f => {
-    let newFilteredData = {};
-    filteredData = Object.keys(filteredData).forEach(d => {
-      if (f.type === "string") {
-        if (f.value.some(value => value === filteredData[d][f.filterKey]))
-          newFilteredData[d] = filteredData[d];
-      } else if (f.type === "timeframe") {
-        if (
-          f.value[0] <= filteredData[d][f.filterKey][0] &&
-          f.value[1] >= filteredData[d][f.filterKey][1]
-        ) {
-          newFilteredData[d] = filteredData[d];
-        }
-      } else if (f.type === "array") {
-        newFilteredData[d] = filteredData[d];
-      } else {
-        if (filteredData[d][f.filterKey].includes(f.value))
-          newFilteredData[d] = filteredData[d];
-      }
-    });
-    filteredData = newFilteredData;
-  });
-  return Object.values(filteredData);
-};
-
-const applyCategoryFilters = (categories, filter) => {
-  let newCategories = categories.map(cat => ({
-    ...cat,
-    connections: cat.connections.filter(con =>
-      filter.hauptthema.value.includes(con.project.hauptthema)
-    )
-  }));
-  return newCategories.filter(cat =>
-    filter.targetgroups.value.includes(cat.title)
-  );
-};
-
-const applyInfraFilters = (infras, filter) => {
-  let newInfras = infras.map(inf => ({
-    ...inf,
-    connections: inf.connections.filter(con =>
-      filter.hauptthema.value.includes(con.project.hauptthema)
-    )
-  }));
-  let specialFilter = filter.infrastructures;
-  if (infras[0].type === "collection") {
-    specialFilter = filter.collections;
-  }
-  return newInfras.filter(infra => specialFilter.value.includes(infra.name));
-};
-
 const compare = (a, b) => {
   if (topicToField(a) < topicToField(b)) return -1;
   else return 1;
 };
 
-const updateClusterData = (state, action) => ({
+const updateData = (state, action) => ({
   ...state,
-  clusterData: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    cluster: true
-  }
+  projects: action.value.projects,
+  ktas: action.value.ktas,
+  infrastructures: action.value.infrastructure,
+  collections: action.value.collections,
+  targetgroups: action.value.targetgroups,
+  institutions: action.value.institutions,
+  continents: continents,
+  missingprojects: action.value.missingprojects,
+  formats: action.value.formats,
+  clusterData: action.value.cluster_topography,
+  isDataLoaded: { ...state.isDataLoaded, data: true }
 });
 
-const updateInstitutionsData = (state, action) => ({
+const updateSampleList = (state, action) => ({
   ...state,
-  institutions: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    institutions: true
-  }
-});
-
-const updateKtaData = (state, action) => ({
-  ...state,
-  ktas: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    ktas: true
-  }
-});
-
-const updateTargetGroupsData = (state, action) => ({
-  ...state,
-  categories: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    targetgroups: true
-  }
-});
-
-const updateCollectionsData = (state, action) => ({
-  ...state,
-  collections: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    collections: true
-  }
-});
-
-const updateInfrastructureData = (state, action) => ({
-  ...state,
-  infrastructures: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    infrastructures: true
-  }
-});
-
-const updateKtaMappingData = (state, action) => ({
-  ...state,
-  ktaMapping: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    ktaMapping: true
-  }
-});
-
-const updateProjectsData = (state, action) => ({
-  ...state,
-  projects: action.value,
-  isDataLoaded: {
-    ...state.isDataLoaded,
-    projects: true
-  }
+  sampleList: action.value,
+  isDataLoaded: { ...state.isDataLoaded, samples: true }
 });
 
 export const isAllDataLoaded = state =>
@@ -458,55 +315,53 @@ const processDataWhenReady = state =>
   isAllDataLoaded(state) ? processAllData(state) : state;
 
 const processAllData = state => {
-  const preprocessedClusterData = processClusterData(state);
-  const processedInfrastructures = processInfrastructures(
-    state,
-    preprocessedClusterData
-  );
-  const processedCollections = processCollections(
-    state,
-    preprocessedClusterData
-  );
-  const processedCategories = processCategories(state, preprocessedClusterData);
   const processedProjects = processProjectsData(state);
+  const processedKtas = processKtas(state.ktas);
+  const processedTargetgroups = processTargetgroups(processedProjects, state);
+  const processedInfrastructures = processInfrastructures(
+    processedProjects,
+    state
+  );
+  const processedCollections = processCollections(processedProjects, state);
+  const processedMissingProjects = processMissingProjects(state);
+  const processedInstState = processInstitutions(state);
+  //  const preprocessedClusterData = processClusterData(state);
+  //linkCatsToProjectsData(processedProjects, processedTargetgroups),
   const newState = {
-    projects: linkCatsToProjectsData(processedCategories, processedProjects),
-    ktas: processFormats(state),
-    categories: processedCategories,
+    projects: linkCatsToProjectsData(processedProjects, processedTargetgroups),
+    ktas: processedKtas,
+    targetgroups: processedTargetgroups,
     infrastructures: processedInfrastructures,
     collections: processedCollections,
-    clusterData: preprocessedClusterData
+    clusterData: state.clusterData,
+    missingprojects: processedMissingProjects,
+    institutions: processedInstState.institutions,
+    continents: processedInstState.continents,
+    projectsMaxSizing: [
+      Math.max(...processedProjects.map(p => p.mappoint[0])),
+      Math.max(...processedProjects.map(p => p.mappoint[1]))
+    ],
+    formats: state.formats
   };
-
   const uniqueFields = [];
   const uniqueTopics = [];
-  const uniqueSponsors = [];
-  const uniqueInfrastructures = [];
-  const uniqueCollections = [];
+  const uniqueInfrastructures = newState.infrastructures.map(inf => inf.id);
+  const uniqueCollections = newState.collections.map(col => col.id);
+  const uniqueFormats = newState.formats.map(format => format.id);
   const maxDateRange = [5000, 0];
 
   Object.values(newState.projects).forEach(project => {
     Object.keys(project).forEach(property => {
       const value = project[property];
-      if (property === "forschungsbereichstr") {
+      if (property === "forschungsbereich") {
         if (!uniqueFields.some(e => e === value)) uniqueFields.push(value);
       } else if (property === "hauptthema") {
         if (!uniqueTopics.some(e => e === value)) uniqueTopics.push(value);
-      } else if (property === "geldgeber") {
-        if (!uniqueSponsors.some(e => e === value)) uniqueSponsors.push(value);
       } else if (property === "timeframe") {
         maxDateRange[0] =
           maxDateRange[0] < value[0] ? maxDateRange[0] : value[0];
         maxDateRange[1] =
           maxDateRange[1] > value[1] ? maxDateRange[1] : value[1];
-      } else if (property === "collections") {
-        for (const sammlung of Object.values(value))
-          if (!uniqueCollections.some(e => e === sammlung))
-            uniqueCollections.push(sammlung);
-      } else if (property === "infrastructures") {
-        for (const infrastruktur of Object.values(value))
-          if (!uniqueInfrastructures.some(e => e === infrastruktur))
-            uniqueInfrastructures.push(infrastruktur);
       }
     });
   });
@@ -515,7 +370,7 @@ const processAllData = state => {
     ...state.filters,
     forschungsgebiet: {
       ...state.filters.forschungsgebiet,
-      uniqueVals: uniqueFields.sort(compare),
+      uniqueVals: uniqueFields,
       value: state.filters.forschungsgebiet.value
         ? state.filters.forschungsgebiet.value
         : uniqueFields
@@ -527,13 +382,6 @@ const processAllData = state => {
         ? state.filters.hauptthema.value
         : uniqueTopics
     },
-    geldgeber: {
-      ...state.filters.geldgeber,
-      uniqueVals: uniqueSponsors.sort(compare),
-      value: state.filters.geldgeber.value
-        ? state.filters.geldgeber.value
-        : uniqueSponsors
-    },
     time: {
       ...state.filters.time,
       uniqueVals: maxDateRange,
@@ -541,37 +389,31 @@ const processAllData = state => {
     },
     collections: {
       ...state.filters.collections,
-      uniqueVals: uniqueCollections.sort((a, b) => a.localeCompare(b)),
+      uniqueVals: uniqueCollections,
       value: state.filters.collections.value
         ? state.filters.collections.value
         : uniqueCollections
     },
     formats: {
       ...state.filters.formats,
-      uniqueVals: [
-        ...new Set(newState.ktas.map(kta => kta.format).filter(f => f != null))
-      ],
+      uniqueVals: uniqueFormats,
       value: state.filters.formats.value
         ? state.filters.formats.value
-        : [
-            ...new Set(
-              newState.ktas.map(kta => kta.format).filter(f => f != null)
-            )
-          ]
+        : uniqueFormats
     },
     infrastructures: {
       ...state.filters.infrastructures,
-      uniqueVals: uniqueInfrastructures.sort((a, b) => a.localeCompare(b)),
+      uniqueVals: uniqueInfrastructures,
       value: state.filters.infrastructures.value
         ? state.filters.infrastructures.value
         : uniqueInfrastructures
     },
     targetgroups: {
       ...state.filters.targetgroups,
-      uniqueVals: newState.categories.map(t => t.title),
+      uniqueVals: newState.targetgroups.map(t => t.id),
       value: state.filters.targetgroups.value
         ? state.filters.targetgroups.value
-        : newState.categories.map(t => t.title)
+        : newState.targetgroups.map(t => t.id)
     }
   };
 
@@ -579,13 +421,6 @@ const processAllData = state => {
     ...state,
     ...newState,
     filters: newFilters,
-    filteredProjects: applyFilters(newState.projects, newFilters),
-    filteredCategories: applyCategoryFilters(newState.categories, newFilters),
-    filteredCollections: applyInfraFilters(newState.collections, newFilters),
-    filteredInfrastructures: applyInfraFilters(
-      newState.infrastructures,
-      newFilters
-    ),
     isDataProcessed: true
   };
 };
@@ -663,7 +498,8 @@ const projectClicked = (state, action) => ({
     infra: null,
     cat: null,
     kta: null,
-    year: null
+    year: null,
+    inst: null
   },
   sideBarComponent: <ProjectDetailsPanel />
 });
@@ -675,7 +511,8 @@ const catClicked = (state, action) => ({
     infra: null,
     cat: action.value,
     kta: null,
-    year: null
+    year: null,
+    inst: null
   },
   sideBarComponent: <CatDetailsPanel />
 });
@@ -687,7 +524,8 @@ const infraClicked = (state, action) => ({
     infra: action.value,
     cat: null,
     kta: null,
-    year: null
+    year: null,
+    inst: null
   },
   sideBarComponent: <InfraDetailsPanel />
 });
@@ -699,7 +537,8 @@ const ktaClicked = (state, action) => ({
     infra: null,
     cat: null,
     kta: action.value,
-    year: null
+    year: null,
+    inst: null
   },
   sideBarComponent: <KtaDetailsPanel />
 });
@@ -711,9 +550,23 @@ const yearClicked = (state, action) => ({
     infra: null,
     cat: null,
     kta: null,
-    year: action.value
+    year: action.value,
+    inst: null
   },
   sideBarComponent: <YearDetailsPanel />
+});
+
+const instClicked = (state, action) => ({
+  ...state,
+  isClicked: {
+    project: null,
+    infra: null,
+    cat: null,
+    kta: null,
+    year: null,
+    inst: action.value
+  },
+  sideBarComponent: <InstDetailsPanel />
 });
 
 const unClicked = state => ({
@@ -764,7 +617,7 @@ const sampleClicked = (state, action) => {
   }
 };
 
-const showSampleList = (state, action) => ({
+const showSampleList = state => ({
   ...state,
   sideBarComponent: <SampleStatesList />
 });

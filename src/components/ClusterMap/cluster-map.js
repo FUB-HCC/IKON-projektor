@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
 import ClusterMapView from "./cluster-map-view";
-import concave from "concaveman";
 import {
   unClicked,
   catClicked,
@@ -9,41 +8,27 @@ import {
   catHovered,
   infraHovered
 } from "../../store/actions/actions";
-import { getFieldColor, isTouchMode } from "../../util/utility";
+import { getFieldColor, isTouchMode, applyFilters } from "../../util/utility";
 
-const computeClusters = (clusterData, filteredProjects, categories) => {
-  if (!clusterData || categories.length === 0) return [];
-  const { cluster_data, project_data, transformedPoints } = clusterData;
-  const clusterWords = cluster_data.cluster_words;
-  const clusterIds = [...new Set(project_data.map(p => p.cluster))];
+const computeClusters = (clusterData, projects, targetgroups) => {
+  if (
+    !clusterData ||
+    !projects ||
+    projects.length === 0 ||
+    !targetgroups ||
+    targetgroups.length === 0
+  )
+    return [];
+  const clusterIds = [...new Set(projects.map(p => p.cluster))];
   return clusterIds.map(id => ({
     id: id,
-    words: clusterWords[id],
-    projects: transformedPoints
+    projects: projects
       .filter(p => p.cluster === id)
       .map(p => ({
         ...p,
-        color: filteredProjects.find(project => project.id === p.id)
-          ? getFieldColor(p.project.forschungsbereich)
-          : "none"
-      })),
-    concaveHull: concave(
-      transformedPoints.filter(p => p.cluster === id).map(p => p.location),
-      1
-    )
+        color: getFieldColor(p.forschungsbereich)
+      }))
   }));
-};
-
-const computeInfrastructureSorted = (
-  collections,
-  clusterData,
-  infrastructures
-) => {
-  if (!clusterData) return [];
-  return collections
-    .concat(infrastructures)
-    .sort((a, b) => (a.type < b.type ? 1 : -1))
-    .filter(inf => !inf.name.includes("Kein"));
 };
 
 const extractHighlightedFromState = state => {
@@ -60,23 +45,21 @@ const extractHighlightedFromState = state => {
 
 const addHighlightedFromLegend = (highlighted, state) => {
   switch (state.legendHovered) {
-    case "kta":
+    case "ktas":
       return {
         ...highlighted,
-        cats: highlighted.cats.concat(state.categories.map(cat => cat.id))
+        cats: highlighted.cats.concat(state.targetgroups.map(cat => cat.id))
       };
     case "collections":
       return {
         ...highlighted,
-        infras: highlighted.infras.concat(
-          state.collections.map(col => col.name)
-        )
+        infras: highlighted.infras.concat(state.collections.map(col => col.id))
       };
     case "infrastructures":
       return {
         ...highlighted,
         infras: highlighted.infras.concat(
-          state.infrastructures.map(inf => inf.name)
+          state.infrastructures.map(inf => inf.id)
         )
       };
     default:
@@ -114,19 +97,23 @@ const addExtractedHighlightedFromProject = (projectId, highlighted, state) => {
   return {
     ...highlighted,
     infras: highlighted.infras
-      .concat(project.collections)
-      .concat(project.infrastructures),
-    cats: highlighted.cats.concat(project.cats),
+      .concat(project.Sammlungsbezug.map(col => (col && col.id ? col.id : 127)))
+      .concat(
+        project.Forschungsinfrastruktur.map(inf =>
+          inf && inf.id ? inf.id : 164
+        )
+      ),
+    cats: highlighted.cats.concat(project.targetgroups),
     projects: highlighted.projects.concat([project.id])
   };
 };
 
 const addExtractedHighlightedFromInfra = (InfraId, highlighted, state) => {
-  const infra = getInfraByName(InfraId, state);
+  const infra = getInfraById(InfraId, state);
   return {
     ...highlighted,
-    projects: highlighted.projects.concat(infra.connections.map(con => con.id)),
-    infras: highlighted.infras.concat([infra.name])
+    projects: highlighted.projects.concat(infra.projects.map(p => p.id)),
+    infras: highlighted.infras.concat([infra.id])
   };
 };
 
@@ -134,7 +121,7 @@ const addExtractedHighlightedFromCat = (catId, highlighted, state) => {
   const cat = getCatById(catId, state);
   return {
     ...highlighted,
-    projects: highlighted.projects.concat(cat.connections.map(con => con.id)),
+    projects: highlighted.projects.concat(cat.projects.map(con => con.id)),
     cats: highlighted.cats.concat([cat.id])
   };
 };
@@ -142,50 +129,58 @@ const addExtractedHighlightedFromCat = (catId, highlighted, state) => {
 const getProjectById = (id, state) =>
   state.projects.find(project => project.id === id);
 
-const getInfraByName = (name, state) =>
-  state.infrastructures
-    .concat(state.collections)
-    .find(inf => inf.name === name);
+const getInfraById = (id, state) =>
+  state.infrastructures.concat(state.collections).find(inf => inf.id === id);
 
-const getCatById = (id, state) => state.categories.find(cat => cat.id === id);
+const getCatById = (id, state) => state.targetgroups.find(cat => cat.id === id);
 
 const mapStateToProps = state => {
   const {
     clusterData,
-    filteredCategories,
-    categories,
-    filteredProjects,
-    filteredCollections,
-    filteredInfrastructures,
+    targetgroups,
+    projects,
+    collections,
+    infrastructures,
     filters,
     isDataProcessed,
     highlightedGroup,
-    isClicked
+    isClicked,
+    projectsMaxSizing
   } = state.main;
 
   let clusterDataForView = [];
-  let categoriesForView = [];
+  let targetgroupsForView = [];
+  let collectionsForView = [];
+  let infrastructuresForView = [];
   let topography = [];
-  let infrastrukturSorted = [];
   let highlightedProjects = [];
   let highlightedCats = [];
   let highlightedInfra = [];
   if (isDataProcessed) {
+    let projectsForView = applyFilters(projects, filters);
     clusterDataForView = computeClusters(
       clusterData,
-      filteredProjects,
-      categories
+      projectsForView,
+      targetgroups
     );
-    categoriesForView = filteredCategories.filter(
-      c => c.count > 0 && filters.targetgroups.value.includes(c.title)
-    );
-    topography = clusterData.cluster_topography;
-    infrastrukturSorted = computeInfrastructureSorted(
-      filteredCollections,
-      clusterData,
-      filteredInfrastructures,
-      filters
-    );
+    targetgroupsForView = targetgroups
+      .filter(tg => filters.targetgroups.value.includes(tg.id))
+      .sort((a, b) => (a.name < b.name ? 1 : -1));
+
+    targetgroupsForView = targetgroupsForView.map(tg => ({
+      ...tg,
+      projects: applyFilters(tg.projects, filters),
+      count: tg.ktas.filter(kta =>
+        filters.formats.value.includes(kta.Format[0].id)
+      ).length
+    }));
+    collectionsForView = collections
+      .filter(col => filters.collections.value.includes(col.id))
+      .map(col => ({ ...col, projects: applyFilters(col.projects, filters) }));
+    infrastructuresForView = infrastructures
+      .filter(inf => filters.infrastructures.value.includes(inf.id))
+      .map(inf => ({ ...inf, projects: applyFilters(inf.projects, filters) }));
+    topography = clusterData;
     const highlighted = extractHighlightedFromState(state.main);
     highlightedProjects = highlighted.projects;
     highlightedInfra = highlighted.infras;
@@ -194,10 +189,10 @@ const mapStateToProps = state => {
 
   return {
     clusterData: clusterDataForView,
-    categories: categoriesForView,
+    targetgroups: targetgroupsForView,
     topography: topography,
-    infrastrukturSorted: infrastrukturSorted,
-
+    collections: collectionsForView,
+    infrastructures: infrastructuresForView,
     isAnyClicked: !Object.values(isClicked).every(clickState => !clickState),
     highlightedProjects: highlightedProjects,
     highlightedCats: highlightedCats,
@@ -205,7 +200,8 @@ const mapStateToProps = state => {
     highlightedGroup: highlightedGroup,
     uncertaintyOn: state.main.uncertaintyOn,
     uncertaintyHighlighted: state.main.uncertaintyHighlighted,
-    isTouch: isTouchMode(state)
+    isTouch: isTouchMode(state),
+    projectsMaxSizing: projectsMaxSizing
   };
 };
 

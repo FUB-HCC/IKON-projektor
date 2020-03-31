@@ -1,9 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
-import { isTouchMode } from "../../util/utility";
+import {
+  isTouchMode,
+  applyFilters,
+  applyMissingFilters
+} from "../../util/utility";
 import TimeLineView from "./time-line-view";
 import { yearClicked } from "../../store/actions/actions";
-import missingProjects from "../../assets/missingProjects.json";
 
 class TimeLine extends React.Component {
   componentDidMount() {
@@ -67,14 +70,19 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-  const processedKtas = processKtas(
-    state.main.ktas,
-    state.main.filteredCategories
+  let projectsForView = applyFilters(state.main.projects, state.main.filters);
+  let missingProjectsForView = applyMissingFilters(
+    state.main.missingprojects,
+    state.main.filters
   );
-  const processedData = processData(state.main.filteredProjects);
+  let targetgroupsForView = state.main.targetgroups.filter(tg =>
+    state.main.filters.targetgroups.value.includes(tg.id)
+  );
+  const processedKtas = processKtas(state.main.ktas, targetgroupsForView);
+  const processedData = processData(projectsForView, missingProjectsForView);
   return {
     dataSplitFbYear: processedData,
-    projects: state.main.filteredProjects,
+    projects: projectsForView,
     colors: graphColors,
     ktasYearBuckets: processedKtas,
     areKtaRendered: !isTouchMode(state),
@@ -82,7 +90,7 @@ const mapStateToProps = state => {
   };
 };
 // TODO move to datatransforms?
-const processData = data => {
+const processData = (data, missingData) => {
   /*
    Private
    Transforms the data in to a format which can be easily used for the Visulisation.
@@ -93,14 +101,14 @@ const processData = data => {
 
  */
 
-  if (!data || data === []) return [];
+  if (!data || data === [] || !missingData) return [];
 
   let keys = [...new Set(data.map(b => b.forschungsbereich))].concat(
     "Unveröffentlicht"
   );
   let map = [],
     years = [];
-  data = data.concat(missingProjects);
+  data = data.concat(missingData);
   let projects = data.map(project => {
     let startDate = project.timeframe[0];
     let endDate = project.timeframe[1];
@@ -111,7 +119,7 @@ const processData = data => {
     return {
       id: project.id,
       years: years,
-      fb: project.forschungsbereichstr
+      fb: project.forschungsbereich
     };
   });
   let startYear = Math.min(...data.map(p => p.timeframe[0]).flat());
@@ -140,19 +148,21 @@ const processData = data => {
   return result;
 };
 
-const processKtas = (ktas, filteredTargetgroups) => {
-  if (!ktas || ktas === []) return [];
-
+const processKtas = (ktas, targetgroups) => {
+  if (!ktas || ktas.length === 0) return [];
   let ktasYearBuckets = [];
   for (let ktaKey in ktas) {
-    let startDate = parseInt(ktas[ktaKey].start_date);
-    let endDate = parseInt(ktas[ktaKey].end_date);
-    if (isNaN(startDate) || startDate === "") startDate = 1900;
-    if (isNaN(endDate) || endDate === "") endDate = startDate;
-    if (startDate > 2000 && ktas[ktaKey].targetgroups[0]) {
-      for (let targetgroup in ktas[ktaKey].targetgroups) {
-        let targetgroupName = ktas[ktaKey].targetgroups[targetgroup];
-        if (filteredTargetgroups.some(t => t.title === targetgroupName)) {
+    let startDate =
+      ktas[ktaKey].timeframe[0].getFullYear() > 1970
+        ? ktas[ktaKey].timeframe[0].getFullYear()
+        : ktas[ktaKey].timeframe[1].getFullYear();
+    let endDate = ktas[ktaKey].timeframe[1]
+      ? ktas[ktaKey].timeframe[1].getFullYear()
+      : startDate;
+    if (startDate > 2000 && ktas[ktaKey].Zielgruppe[0]) {
+      for (let targetgroup in ktas[ktaKey].Zielgruppe) {
+        let targetgroupName = ktas[ktaKey].Zielgruppe[targetgroup];
+        if (targetgroups.some(t => t.name === targetgroupName)) {
           if (!(targetgroupName in ktasYearBuckets)) {
             ktasYearBuckets[targetgroupName] = [];
           }

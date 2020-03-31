@@ -15,7 +15,7 @@ import {
 import { axisBottom as d3AxisBottom, axisLeft as d3AxisLeft } from "d3-axis";
 import { select as d3Select } from "d3-selection";
 import styles from "./time-line-view.module.css";
-import { getFieldColor } from "../../util/utility";
+import { getFieldColor, fieldsIntToString } from "../../util/utility";
 import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import TargetgroupBuckets from "./TargetgroupBuckets";
@@ -96,7 +96,11 @@ export default class TimeLineView extends Component {
           >
             <label>
               {this.state.hoveredArea.forschungsbereich
-                ? `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} aktive Projekte in ${this.state.hoveredArea.forschungsbereich}`
+                ? `${this.state.hoveredArea.year}: ${
+                    this.state.hoveredArea.count
+                  } aktive Projekte in ${fieldsIntToString(
+                    this.state.hoveredArea.forschungsbereich
+                  )}`
                 : `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} Wissenstransferaktivitäten mit der Zielgruppe ${this.state.hoveredArea.targetgroup}`}
             </label>
           </p>
@@ -179,6 +183,9 @@ export default class TimeLineView extends Component {
   }
 
   render() {
+    if (this.state.dataSplitYears.length === 0) {
+      return <div />;
+    }
     const stackedAreaHeight = this.state.height * 0.4;
     const targetgroupsHeight = this.state.height * 0.5;
     const stack = d3stack()
@@ -343,7 +350,7 @@ export default class TimeLineView extends Component {
                               )
                             }
                             onMouseLeave={() => this.handleMouseLeave()}
-                            longPressThreshold={300}
+                            doubleTapTreshold={500}
                             key={datum.data.year + " " + d.key}
                           >
                             <line

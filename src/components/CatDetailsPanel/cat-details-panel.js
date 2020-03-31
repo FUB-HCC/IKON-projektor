@@ -7,22 +7,12 @@ import {
   showViaWikiRequested
 } from "../../store/actions/actions";
 
-const findKtasForTagetgroup = state => {
-  return state.main.ktas.filter(kta =>
-    state.main.ktaMapping.find(
-      map =>
-        map.kta_id === kta.id && map.targetgroup_id === state.main.isClicked.cat
-    )
-  );
-};
-
 const mapStateToProps = state => {
   if (state.main.isDataProcessed) {
     return {
-      catData: state.main.categories.find(
+      catData: state.main.targetgroups.find(
         c => c.id === state.main.isClicked.cat
-      ),
-      ktas: findKtasForTagetgroup(state)
+      )
     };
   } else {
     return {};

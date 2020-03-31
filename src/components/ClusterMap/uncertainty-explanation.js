@@ -12,6 +12,7 @@ const UncertaintyExplanation = props => {
     <div
       data-intro="Als weiteres Element dieser Ansicht kann die Unsicherheits-Landschaft aktiviert werden. Da die Anordnung auf algorithmischen Schätzungen von inhaltlichen Ähnlichkeiten basiert, unterstützt dieses Element die Interpretation der Anordnung. Je heller die Färbung der Landschaft, desto sicherer ist sich der Algorithmus über die Position des jeweiligen Forschungsprojektes, und umgekehrt."
       data-step="2"
+      id="uncertaintyLandscape"
       style={{
         position: "absolute",
         left: props.posX + "px",

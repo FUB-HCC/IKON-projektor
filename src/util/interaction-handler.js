@@ -5,23 +5,22 @@ class InteractionHandler extends React.Component {
   constructor() {
     super();
     this.state = {
-      startTime: null
+      lastTap: null
     };
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
   }
 
-  onTouchStart(event) {
-    this.setState({ startTime: event.timeStamp });
-  }
+  onTouchStart(event) {}
 
   onTouchEnd(event) {
     if (
-      event.timeStamp - this.state.startTime >
-      this.props.longPressThreshold
+      event.timeStamp - this.state.lastTap < this.props.doubleTapTreshold &&
+      event.timeStamp - this.state.lastTap > 0
     ) {
       this.props.onClick(event);
     } else {
+      this.setState({ lastTap: event.timeStamp });
       this.props.onMouseOver(event);
     }
   }
@@ -56,7 +55,7 @@ InteractionHandler.propTypes = {
   onMouseOver: PropTypes.func.isRequired,
   onMouseLeave: PropTypes.func,
   onClick: PropTypes.func,
-  longPressThreshold: PropTypes.number
+  doubleTapTreshold: PropTypes.number
 };
 
 export default InteractionHandler;

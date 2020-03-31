@@ -23,13 +23,15 @@ const IconExplanation = props => {
       }}
       data-intro="Die interdisziplinäre Perspektive auf Drittmittelforschung wird durch den äußeren Ring bedeutsam erweitert. Projekte werden hier, basierend auf Informationen aus dem VIA-Wiki, mit Wissenstransferaktivitäten und Infrastrukturen wie Sammlungen und Laborgeräten verknüpft. Hierdurch können einerseits Projekte weitergehend nach Gemeinsamkeiten eingeordnet werden, andererseits Potenziale für Wissenstransfer basierend auf Gemeinsamkeiten entdeckt werden."
       data-step="3"
+      id="iconExplanation"
     >
       <p
         style={{ display: "flex", cursor: "POINTER" }}
         data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
         data-step="4"
+        id="ktasExplanation"
         className={style.legendRow}
-        onMouseEnter={() => dispatch(legendHovered("kta"))}
+        onMouseEnter={() => dispatch(legendHovered("ktas"))}
         onMouseLeave={() => {
           dispatch(legendHovered(null));
         }}
@@ -41,6 +43,7 @@ const IconExplanation = props => {
         style={{ display: "flex", cursor: "POINTER" }}
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Sammlungen am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben können."
         data-step="5"
+        id="collectionExplanation"
         className={style.legendRow}
         onMouseEnter={() => dispatch(legendHovered("collections"))}
         onMouseLeave={() => {
@@ -54,6 +57,7 @@ const IconExplanation = props => {
         style={{ display: "flex", cursor: "POINTER" }}
         data-intro="Alle Verknüpfungen, die dieses Icon tragen, sind Laborgeräte oder andere Infrastruktur am Museum, die in Forschungsprojekten eingesetzt werden können."
         data-step="6"
+        id="infraExplanation"
         className={style.legendRow}
         onMouseEnter={() => dispatch(legendHovered("infrastructures"))}
         onMouseLeave={() => {

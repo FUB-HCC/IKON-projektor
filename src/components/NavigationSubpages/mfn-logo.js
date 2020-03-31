@@ -19,7 +19,7 @@ class MFNLogo extends Component {
           this.props.isTouch ? classes.mfnLogoTouch : classes.mfnLogoNoTouch
         }
         style={{ backgroundColor: "#1c1d1f", textAlign: "center" }}
-        onClick={this.startTour}
+        onClick={this.props.isTouch ? null : this.startTour}
       >
         <img
           src={logo}
@@ -70,7 +70,7 @@ class MFNLogo extends Component {
         {
           element: "#step3",
           intro:
-            "In der Ansicht <b>RAUM</b> rückt die internationale Seite der Forschung am MfN in den Vordergrund. Die Bögen zwischen Kontinenten drücken die durch Projekte verbundenen Partnerinstitutionen aus. Langfristig findet man hier folgende Eindrücke."
+            "In der Ansicht <b>RAUM</b> rückt die internationale Seite der Forschung am MfN in den Vordergrund. Die Bögen zwischen Kontinenten drücken die durch Projekte verbundenen Partnerinstitutionen aus. In den Karten ist angedeutet, wie sich diese geographisch verteilen. In der untersten Zeile werden die Forschungsprojekte nach Forschungsregionen aufgeteilt."
         },
         {
           element: "#step4",
@@ -78,7 +78,7 @@ class MFNLogo extends Component {
             "Der <b>Tutorial-Button</b> bietet für jede der drei Ansichten eine eigene Einführung an. Mit dem <b>Teilen-Button</b> kann jeder Zustand der Visualisierung als URL geteilt werden. Der <b>Zurücksetzen-Button</b> stellt den ungefilterten Anfangszustand wieder her."
         },
         {
-          element: "#step5",
+          element: "#filtersIntro",
           intro:
             "Jede Ansicht kann mithilfe der <b>Filter</b>  angepasst werden — und jeder resultierende Zustand wird auch bei einem Wechsel der Ansicht beibehalten. Über den <b>Zeitraum</b>-Slider kann der gesamte Betrachtungszeitraum eingeschränkt werden. Die <b>Forschungsgebiet</b>-Auswahl ermöglicht eine Unterteilung der dargestellten Drittmittelprojekte nach thematischen Kriterien. Über die <b>Wissenstransfer</b>- und <b>Infrastruktur</b>-Auswahl kann die Ansicht weiter verfeinert werden."
         },

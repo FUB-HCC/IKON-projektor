@@ -3,64 +3,60 @@ import { connect } from "react-redux";
 import FilterSet from "./filter-set-view";
 import { checkboxFilterChange } from "../../store/actions/actions";
 import style from "./filter-selection.module.css";
-import {
-  fieldsIntToString,
-  isTouchMode,
-  topicToField
-} from "../../util/utility";
+import { isTouchMode, topicToField } from "../../util/utility";
 
-const getFilterSets = filters => {
+const getFilterSets = state => {
   return [
     {
       name: "Forschungsgebiet",
       subsets: [
         {
           name: "Naturwissenschaften",
+          nameId: 1,
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) === "Naturwissenschaften"
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
+            val => topicToField(val) === 1
           ),
           subFilterId: "hauptthema"
         },
         {
           name: "Lebenswissenschaften",
+          nameId: 2,
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) === "Lebenswissenschaften"
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
+            val => topicToField(val) === 2
           ),
           subFilterId: "hauptthema"
         },
         {
           name: "Geistes- und Sozialwissenschaften",
+          nameId: 3,
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) ===
-              "Geistes- und Sozialwissenschaften"
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
+            val => topicToField(val) === 3
           ),
           subFilterId: "hauptthema"
         },
         {
           name: "Ingenieurwissenschaften",
+          nameId: 4,
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val =>
-              fieldsIntToString(topicToField(val)) === "Ingenieurwissenschaften"
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
+            val => topicToField(val) === 4
           ),
           subFilterId: "hauptthema"
         },
         {
           name: "Sonstige",
+          nameId: 5,
           filterId: "forschungsgebiet",
           isTogglable: true,
-          subFilters: filters.hauptthema.uniqueVals.filter(
-            val => fieldsIntToString(topicToField(val)) === "Sonstige"
+          subFilters: state.main.filters.hauptthema.uniqueVals.filter(
+            val => topicToField(val) === 5
           ),
           subFilterId: "hauptthema"
         }
@@ -71,17 +67,19 @@ const getFilterSets = filters => {
       subsets: [
         {
           name: "Zielgruppen",
+          nameId: 6,
           filterId: "highlevelFilter",
           isTogglable: true,
-          subFilters: filters.targetgroups.uniqueVals,
+          subFilters: state.main.targetgroups,
           subFilterId: "targetgroups"
         },
         {
           name: "Formate",
+          nameId: 7,
           filterId: "highlevelFilter",
           subFilterId: "formats",
           isTogglable: true,
-          subFilters: filters.formats.uniqueVals
+          subFilters: state.main.formats
         }
       ]
     },
@@ -90,15 +88,17 @@ const getFilterSets = filters => {
       subsets: [
         {
           name: "Sammlungen",
+          nameId: 8,
           filterId: "highlevelFilter",
-          subFilters: filters.collections.uniqueVals,
+          subFilters: state.main.collections,
           subFilterId: "collections",
           isTogglable: true
         },
         {
           name: "Laborgeräte",
+          nameId: 9,
           filterId: "highlevelFilter",
-          subFilters: filters.infrastructures.uniqueVals,
+          subFilters: state.main.infrastructures,
           subFilterId: "infrastructures",
           isTogglable: true
         }
@@ -114,30 +114,35 @@ const getFilterSetsTouch = filters => {
       subsets: [
         {
           name: "Naturwissenschaften",
+          nameId: 1,
           filterId: "forschungsgebiet",
           isTogglable: true,
           subFilters: []
         },
         {
           name: "Lebenswissenschaften",
+          nameId: 2,
           filterId: "forschungsgebiet",
           isTogglable: true,
           subFilters: []
         },
         {
           name: "Geistes- und Sozialwissenschaften",
+          nameId: 3,
           filterId: "forschungsgebiet",
           isTogglable: true,
           subFilters: []
         },
         {
           name: "Ingenieurwissenschaften",
+          nameId: 4,
           filterId: "forschungsgebiet",
           isTogglable: true,
           subFilters: []
         },
         {
           name: "Sonstige",
+          nameId: 5,
           filterId: "forschungsgebiet",
           isTogglable: true,
           subFilters: []
@@ -149,12 +154,14 @@ const getFilterSetsTouch = filters => {
       subsets: [
         {
           name: "Zielgruppen",
+          nameId: 6,
           filterId: "highlevelFilter",
           isTogglable: true,
           subFilters: []
         },
         {
           name: "Formate",
+          nameId: 7,
           filterId: "highlevelFilter",
           isTogglable: true,
           subFilters: []
@@ -166,12 +173,14 @@ const getFilterSetsTouch = filters => {
       subsets: [
         {
           name: "Sammlungen",
+          nameId: 8,
           filterId: "highlevelFilter",
           isTogglable: true,
           subFilters: []
         },
         {
           name: "Laborgeräte",
+          nameId: 9,
           filterId: "highlevelFilter",
           isTogglable: true,
           subFilters: []
@@ -206,7 +215,7 @@ const mapStateToProps = state => {
   return {
     filterSets: isTouch
       ? getFilterSetsTouch(state.main.filters)
-      : getFilterSets(state.main.filters),
+      : getFilterSets(state),
     filters: state.main.filters
   };
 };

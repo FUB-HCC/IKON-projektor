@@ -37,11 +37,7 @@ const KtaDetailsPanel = props => {
       </div>
     );
   }
-  const project = props.kta
-    ? props.categories.map(cat =>
-        cat.connections.find(con => con.id === props.kta.project_id)
-      ).project
-    : [];
+  const project = props.kta.Drittmittelprojekt[0];
   return (
     <div className={style.DetailsWrapper}>
       <div className={style.DetailsTitle}>
@@ -59,20 +55,20 @@ const KtaDetailsPanel = props => {
         />
         <span className={style.titleTopic}>Wissenstransferaktivität</span>{" "}
         <br />
-        <span className={style.titleText}>{props.kta.title}</span>
+        <span className={style.titleText}>{props.kta.fulltext}</span>
       </div>
       <span className={style.infoItemTitle}>
         Zielgruppen: <br />
       </span>
       <div className={style.abstractText}>
-        {props.categories.map(cat => (
+        {props.targetgroups.map(tg => (
           <span
             href="#"
-            onClick={() => props.showCatDetails(cat.id)}
-            key={cat.id}
+            onClick={() => props.showCatDetails(tg.id)}
+            key={tg.id}
             className={style.DetailsLink}
           >
-            {cat.title}
+            {tg.name}
             <br />
           </span>
         ))}
@@ -81,13 +77,13 @@ const KtaDetailsPanel = props => {
         <span className={style.infoItemTitle}>
           Format: <br />
         </span>
-        {props.kta.format}
+        {props.kta.Format.map(format => format.name).join(", ")}
       </p>
       <p className={style.infoItems}>
         <span className={style.infoItemTitle}>
           Organisationseinheit: <br />
         </span>
-        {props.kta.organisational_unit}
+        {props.kta.Organisationseinheit}
       </p>
       <p className={style.infoItems}>
         <span className={style.infoItemTitle}>
@@ -100,7 +96,7 @@ const KtaDetailsPanel = props => {
         <br />
       </span>
       <div className={style.abstractText}>
-        {props.kta.description.split("https://")[0]}
+        {props.kta.Beschreibung[0].split("https://")[0]}
       </div>
       {project && (
         <span className={style.infoItemTitle}>
@@ -119,13 +115,13 @@ const KtaDetailsPanel = props => {
               color: getFieldColor(project.forschungsbereich)
             }}
           >
-            {shortenString(project.title, 60)}
+            {shortenString(project.displaytitle, 58)}
           </span>
         )}
       </p>
       <div
         className={style.DetailsViaLink}
-        onClick={() => props.openViaWiki(props.kta.href)}
+        onClick={() => props.openViaWiki(props.kta.fullurl)}
       >
         Anzeigen im VIA-Wiki
       </div>

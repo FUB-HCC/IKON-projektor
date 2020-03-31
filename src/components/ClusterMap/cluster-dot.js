@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { ReactComponent as SelectedIcon } from "../../assets/Selected-Project.svg";
 import { ReactComponent as UnselectedIcon } from "../../assets/Unselected-Project.svg";
 import { useDispatch } from "react-redux";
-import InteractionHandler from '../../util/interaction-handler'
+import InteractionHandler from "../../util/interaction-handler";
 import {
   projectClicked,
   projectHovered,
@@ -16,11 +16,10 @@ const ClusterDot = props => {
   const scale = isHighlighted ? 1.2 : 1;
   return (
     <InteractionHandler
-      onClick={() => point.projectData ? dispatch(projectClicked(point.id)) : null}
-      onMouseOver={() =>
-        point.projectData ? dispatch(projectHovered(point.id)) : null}
+      onClick={() => (point ? dispatch(projectClicked(point.id)) : null)}
+      onMouseOver={() => (point ? dispatch(projectHovered(point.id)) : null)}
       onMouseLeave={() => dispatch(unHovered())}
-      longPressThreshold={300}
+      doubleTapTreshold={500}
       isInTouchMode={isTouchMode}
     >
       <g

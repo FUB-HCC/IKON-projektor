@@ -1,7 +1,7 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
 import { batch } from "react-redux";
-
+const Flatted = require("flatted/esm");
 export const changeGraph = value => {
   return {
     type: actionTypes.CHANGE_GRAPH,
@@ -100,6 +100,13 @@ export const yearClicked = data => {
   };
 };
 
+export const instClicked = data => {
+  return {
+    type: actionTypes.INST_CLICKED,
+    value: data
+  };
+};
+
 export const unClicked = () => {
   return {
     type: actionTypes.UNCLICKED
@@ -125,149 +132,72 @@ export const legendHovered = legendKey => ({
   value: legendKey
 });
 
-export const fetchClusterData = () => {
-  return dispatch => {
-    axios.get("/api/clustering").then(result => {
-      batch(() => {
-        dispatch(updateClusterData(result.data));
-        dispatch(processDataIfReady());
-      });
-    });
-  };
-};
-
-export const fetchInstitutionsData = () => {
-  return dispatch => {
-    axios.get("/api/institutions").then(result => {
-      batch(() => {
-        dispatch(updateInstitutionsData(result.data));
-        dispatch(processDataIfReady());
-      });
-    });
-  };
-};
-
-export const fetchProjectsData = () => {
-  return dispatch => {
-    axios.get("/api/projects").then(result => {
-      batch(() => {
-        dispatch(updateProjectsData(result.data));
-        dispatch(processDataIfReady());
-      });
-    });
-  };
-};
-
-export const fetchKTAData = () => {
+export const fetchData = () => {
   return dispatch => {
     axios
-      .get("/api/knowledgeTransferActivities")
+      .get("/api/graph", {
+        transformResponse: res => Flatted.parse(res)
+      })
       .then(result => {
         batch(() => {
-          dispatch(updateKTAData(result.data));
+          dispatch(updateData(result.data));
           dispatch(processDataIfReady());
         });
       });
   };
 };
 
-export const fetchKTAMappingData = () => {
+export const fetchSampleList = () => {
   return dispatch => {
-    axios.get("/api/ktastargetgroups").then(result => {
+    axios.get("/api/sharing").then(result => {
       batch(() => {
-        dispatch(updateKTAMappingData(result.data));
+        dispatch(updateSampleList(result.data));
         dispatch(processDataIfReady());
       });
     });
   };
 };
 
-export const fetchTargetGroupsData = () => {
+export const fetchIndividualSample = name => {
   return dispatch => {
-    axios.get("/api/targetgroups").then(result => {
-      batch(() => {
-        dispatch(updateTargetGroupsData(result.data));
-        dispatch(processDataIfReady());
+    axios({
+      method: "GET",
+      url: encodeURI("/api/sharing/" + name)
+    })
+      .then(response => {
+        batch(() => {
+          dispatch(sampleClicked(response.data));
+        });
+      })
+      .catch(function(error) {
+        console.log(error);
       });
-    });
   };
 };
 
-export const fetchInfrastructureData = () => {
-  return dispatch => {
-    axios.get("/api/infrastructure").then(result => {
-      batch(() => {
-        dispatch(updateInfrastructureData(result.data));
-        dispatch(processDataIfReady());
-      });
-    });
-  };
+export const shareUrl = name => {
+  axios({
+    method: "post",
+    url: encodeURI("/api/sharing/" + name),
+    data: JSON.stringify(window.location.search)
+  }).then(function(response) {
+    if (response.status === 200) {
+      window.alert("Die Ansicht wurde an den Touch Screen geschickt.");
+    }
+  });
 };
 
-export const fetchCollectionsData = () => {
-  return dispatch => {
-    axios.get("/api/collections").then(result => {
-      batch(() => {
-        dispatch(updateCollectionsData(result.data));
-        dispatch(processDataIfReady());
-      });
-    });
-  };
-};
-
-export const updateClusterData = clusterData => {
+export const updateData = data => {
   return {
-    type: actionTypes.UPDATE_CLUSTER_DATA,
-    value: clusterData
+    type: actionTypes.UPDATE_DATA,
+    value: data
   };
 };
 
-export const updateInstitutionsData = institutionsData => {
+export const updateSampleList = data => {
   return {
-    type: actionTypes.UPDATE_INSTITUTIONS_DATA,
-    value: institutionsData
-  };
-};
-
-export const updateProjectsData = projectsData => {
-  return {
-    type: actionTypes.UPDATE_PROJECTS_DATA,
-    value: projectsData
-  };
-};
-
-export const updateKTAData = ktaData => {
-  return {
-    type: actionTypes.UPDATE_KTA_DATA,
-    value: ktaData
-  };
-};
-
-export const updateTargetGroupsData = targetgroups => {
-  return {
-    type: actionTypes.UPDATE_TARGETGROUPS_DATA,
-    value: targetgroups
-  };
-};
-
-export const updateInfrastructureData = infrastructures => {
-  return {
-    type: actionTypes.UPDATE_INFRASTRUCTURE_DATA,
-    value: infrastructures
-  };
-};
-
-export const updateCollectionsData = collections => {
-  return {
-    type: actionTypes.UPDATE_COLLECTIONS_DATA,
-    value: collections
-  };
-};
-
-export const updateKTAMappingData = ktaMappingData => {
-  return {
-    type: actionTypes.UPDATE_KTA_MAPPING_DATA,
-    value: ktaMappingData
+    type: actionTypes.UPDATE_SAMPLE_LIST,
+    value: data
   };
 };
 

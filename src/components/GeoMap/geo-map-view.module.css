@@ -1,6 +1,10 @@
+.geoMapWrapper {
+  padding-left: 20px;
+}
+
 .arcWrapper {
   width: 100%;
-  height: 50%;
+  height: 44%;
 }
 
 .mapsWrapper {
@@ -16,7 +20,7 @@
 
 .plotTitle {
   color: #717071;
-  font-size: 130%;
+  font-size: 110%;
 }
 
 .circle {
@@ -27,7 +31,14 @@
 .circle:hover {
   stroke-width: 15px;
 }
-
+.countCircle {
+  cursor: pointer;
+  fill: #aaa;
+}
+.countCircle:hover {
+  fill: #fff;
+  transition: fill 1s;
+}
 .arcHover {
   opacity: 0.4;
   transition: opacity 1s;
@@ -35,4 +46,12 @@
 }
 .arcHover:hover {
   opacity: 1;
+}
+.continentSVG {
+  fill: #aaa;
+  cursor: POINTER;
+}
+
+.continentSVG:hover {
+  fill: #fff;
 }

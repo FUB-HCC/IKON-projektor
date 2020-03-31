@@ -6,28 +6,28 @@ import {
   showViaWikiRequested
 } from "../../store/actions/actions";
 
-const filterProjectsByInfra = (infrastructure, projects) =>
-  projects.filter(
-    project =>
-      project.infrastructures.includes(infrastructure.name) ||
-      project.collections.includes(infrastructure.name)
-  );
-
 const mapStateToProps = state => {
   const {
     isDataProcessed,
     isClicked,
     collections,
-    infrastructures,
-    projects
+    infrastructures
   } = state.main;
   if (isDataProcessed && isClicked.infra) {
-    const selectedInfrastructure =
-      collections.find(c => c.name === isClicked.infra) ||
-      infrastructures.find(i => i.name === isClicked.infra);
+    let type = "Sammlung";
+    let selectedInfrastructure = collections.find(
+      c => c.id === isClicked.infra
+    );
+    if (!selectedInfrastructure) {
+      selectedInfrastructure = infrastructures.find(
+        i => i.id === isClicked.infra
+      );
+      type = "Labor";
+    }
+
     return {
       infraData: selectedInfrastructure,
-      connectedProjects: filterProjectsByInfra(selectedInfrastructure, projects)
+      type: type
     };
   } else {
     return {};

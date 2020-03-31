@@ -3,16 +3,7 @@ import { connect, batch } from "react-redux";
 import ClusterMap from "../../components/ClusterMap/cluster-map";
 import TimeGraph from "../../components/TimeLine/time-line";
 import classes from "./graph-view-touch.module.css";
-import {
-  fetchClusterData,
-  fetchInstitutionsData,
-  fetchProjectsData,
-  fetchKTAData,
-  fetchKTAMappingData,
-  fetchTargetGroupsData,
-  fetchCollectionsData,
-  fetchInfrastructureData
-} from "../../store/actions/actions";
+import { fetchData, fetchSampleList } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
 import { sideBarWidth } from "../../App";
 
@@ -36,14 +27,8 @@ class GraphViewTouch extends React.Component {
     window.addEventListener("resize", this.resize.bind(this));
     this.resize();
     batch(() => {
-      this.props.fetchClusterData();
-      this.props.fetchProjectsData();
-      this.props.fetchInstitutionsData();
-      this.props.fetchKtaData();
-      this.props.fetchKtaMappingData();
-      this.props.fetchTargetGroupsData();
-      this.props.fetchCollectionsData();
-      this.props.fetchInfrastructureData();
+      this.props.fetchData();
+      this.props.fetchSampleList();
     });
   }
 
@@ -68,15 +53,13 @@ class GraphViewTouch extends React.Component {
     const Graph = (
       <>
         <TimeGraph
-          id="step2"
-          height={this.state.height * 0.5}
-          width={this.state.width}
+          height={this.state.height ? this.state.height * 0.5 : 500}
+          width={this.state.width ? this.state.width : 1000}
+          id="timelineView"
+          data-intro="test"
+          data-step="8"
         />
-        <ClusterMap
-          id="step1"
-          height={this.state.height * 0.8}
-          width={this.state.width}
-        />
+        <ClusterMap height={this.state.height * 0.8} width={this.state.width} />
       </>
     );
 
@@ -86,22 +69,14 @@ class GraphViewTouch extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    graph: state.main.graph,
-    filteredProjects: state.main.filteredProjects,
-    institutions: state.main.institutions
+    graph: state.main.graph
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchClusterData: () => dispatch(fetchClusterData()),
-    fetchProjectsData: () => dispatch(fetchProjectsData()),
-    fetchInstitutionsData: () => dispatch(fetchInstitutionsData()),
-    fetchKtaData: () => dispatch(fetchKTAData()),
-    fetchKtaMappingData: () => dispatch(fetchKTAMappingData()),
-    fetchTargetGroupsData: () => dispatch(fetchTargetGroupsData()),
-    fetchCollectionsData: () => dispatch(fetchCollectionsData()),
-    fetchInfrastructureData: () => dispatch(fetchInfrastructureData())
+    fetchData: () => dispatch(fetchData()),
+    fetchSampleList: () => dispatch(fetchSampleList())
   };
 };
 

@@ -22,53 +22,49 @@ const CatDetailsPanel = props => {
           <Exit height={35} width={35} />
         </div>
         <span className={style.titleTopic}>Zielgruppe</span> <br />
-        <span className={style.titleText}>{props.catData.title}</span>
+        <span className={style.titleText}>{props.catData.name}</span>
       </div>
       <span className={style.infoItemTitle}>
         Wissenstransferaktivitäten mit dieser Zielgruppe:
         <br />
       </span>
-      <div className={style.abstractText}>
-        {props.ktas.map((kta, i) => (
-          <span
-            href="#"
-            onClick={() => props.showKtaDetails(kta.id)}
-            key={i + " " + kta.id}
-            className={style.DetailsLink}
-          >
-            {shortenString(kta.title, 60)}
-            <br />
-          </span>
-        ))}
-      </div>
-      {props.catData.project_ids.length > 0 && (
+
+      {props.catData.ktas && (
+        <div className={style.abstractText}>
+          {props.catData.ktas.map(kta => (
+            <span
+              href="#"
+              onClick={() => props.showKtaDetails(kta.id)}
+              key={kta.id}
+              className={style.DetailsLink}
+            >
+              {shortenString(kta.fulltext, 58)}
+              <br />
+            </span>
+          ))}
+        </div>
+      )}
+      {props.catData.projects.length > 0 && (
         <span className={style.infoItemTitle}>
           Assoziierte Forschungsprojekte: <br />
         </span>
       )}
-      {props.catData.project_ids.length > 0 && (
+      {props.catData.projects.length > 0 && (
         <div
           className={style.abstractText}
-          style={{ minHeight: props.catData.project_ids.length * 3 + "%" }}
+          style={{ minHeight: props.catData.projects.length * 3 + "%" }}
         >
-          {props.catData.project_ids.map(project => (
+          {props.catData.projects.map(project => (
             <span
               href="#"
-              onClick={() => props.showProjectDetails(project)}
-              key={project}
+              onClick={() => props.showProjectDetails(project.id)}
+              key={project.id}
               className={style.DetailsLink}
               style={{
-                color: getFieldColor(
-                  props.catData.connections.find(con => con.id === project)
-                    .project.forschungsbereich
-                )
+                color: getFieldColor(project.forschungsbereich)
               }}
             >
-              {shortenString(
-                props.catData.connections.find(con => con.id === project).title,
-                60
-              )}
-
+              {shortenString(project.displaytitle, 58)}
               <br />
             </span>
           ))}
@@ -78,8 +74,7 @@ const CatDetailsPanel = props => {
         className={style.DetailsViaLink}
         onClick={() =>
           props.openViaWiki(
-            "https://via.museumfuernaturkunde.berlin/wiki/" +
-              props.catData.title
+            "https://via.museumfuernaturkunde.berlin/wiki/" + props.catData.name
           )
         }
       >
