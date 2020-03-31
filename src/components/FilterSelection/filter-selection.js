@@ -79,7 +79,7 @@ const getFilterSets = state => {
           filterId: "highlevelFilter",
           subFilterId: "formats",
           isTogglable: true,
-          subFilters: state.main.filters.formats.uniqueVals
+          subFilters: state.main.formats
         }
       ]
     },

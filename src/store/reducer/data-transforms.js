@@ -2,16 +2,19 @@ import { fieldsStringToInt } from "../../util/utility";
 import _ from "lodash";
 
 export const processProjectsData = state => {
-  const projectData = transformPoints(state.projects);
+  const projectData = state.projects;
   return projectData.map(project => {
     project.hauptthema =
       project["Forschungsthema, Expertise, Kompetenzen"][0] &&
       project["Forschungsthema, Expertise, Kompetenzen"][0].split("/")[1]
         ? project["Forschungsthema, Expertise, Kompetenzen"][0].split("/")[1]
         : "Sonstige";
-
+    project.forschungsregionen = project["Geographische Verschlagwortung"].map(
+      geo => getContinentFromProject(geo)
+    );
+    console.log(project["Geographische Verschlagwortung"]);
     project.timeframe = project.timeframe.map(d =>
-      d && d.raw ? new Date(d.timestamp * 1000).getFullYear() : d
+      d ? new Date(parseInt(d) * 1000).getFullYear() : 1970
     );
     if (
       project["Forschungsthema, Expertise, Kompetenzen"][0] &&
@@ -36,12 +39,41 @@ export const processProjectsData = state => {
   });
 };
 
+const getContinentFromProject = geo => {
+  switch (parseInt(geo.charAt(0))) {
+    case 1: {
+      return "Australien";
+    }
+    case 2: {
+      return "Nordamerika";
+    }
+    case 3: {
+      return "Südamerika";
+    }
+    case 4: {
+      return "Europa";
+    }
+    case 5: {
+      return "Asien";
+    }
+    case 6: {
+      return "Afrika";
+    }
+    case 7: {
+      return "Australien";
+    }
+    default: {
+      return "Europa";
+    }
+  }
+};
+
 export const processMissingProjects = state => {
   return state.missingprojects.map(mproject => ({
     ...mproject,
     forschungsbereich: "Unveröffentlicht",
     timeframe: mproject.timeframe.map(d =>
-      d && d.raw ? new Date(d.timestamp * 1000).getFullYear() : 2000
+      d ? new Date(parseInt(d * 1000)).getFullYear() : 2000
     )
   }));
 };
@@ -59,22 +91,6 @@ export const linkCatsToProjectsData = (projects, targetgroups) => {
       )
       .map(targetgroup => targetgroup.id)
   }));
-};
-
-// export const processClusterData = state => ({
-//   ...state.clusterData,
-//   transformedPoints: transformPoints(state)
-// });
-
-const transformPoints = projects => {
-  const minX = _.min(projects.map(c => c.mappoint[0]));
-  const minY = _.min(projects.map(c => c.mappoint[1]));
-  return projects.map(p => {
-    return {
-      ...p,
-      mappoint: [p.mappoint[0] - minX, p.mappoint[1] - minY]
-    };
-  });
 };
 
 export const processTargetgroups = (processedProjects, state) => {
@@ -116,10 +132,10 @@ export const processKtas = ktas =>
     ...kta,
     timeframe: [
       kta["Gestartet am"] && kta["Gestartet am"].length > 0
-        ? new Date(kta["Gestartet am"][0].timestamp * 1000)
+        ? new Date(parseInt(kta["Gestartet am"][0].timestamp) * 1000)
         : new Date(0),
       kta["Endet am"] && kta["Endet am"].length > 0
-        ? new Date(kta["Endet am"][0].timestamp * 1000)
+        ? new Date(parseInt(kta["Endet am"][0].timestamp) * 1000)
         : new Date(0)
     ]
   }));
@@ -134,7 +150,7 @@ const disambiguateContinents = (candidates, institution) =>
     (a, b) => distance(a, institution) - distance(b, institution)
   );
 const getContinentOfInstitution = (continentList, institution) => {
-  if (!institution) return null;
+  if (!institution || !institution.lon) return null;
   const candidates = continentList.filter(
     con =>
       con.longMin < institution.lon &&

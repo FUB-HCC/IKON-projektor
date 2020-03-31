@@ -171,7 +171,7 @@ const mapStateToProps = state => {
       ...tg,
       projects: applyFilters(tg.projects, filters),
       count: tg.ktas.filter(kta =>
-        filters.formats.value.includes(kta.Format[0])
+        filters.formats.value.includes(kta.Format[0].id)
       ).length
     }));
     collectionsForView = collections

@@ -17,7 +17,6 @@ const YearDetailsPanel = props => {
       </div>
     );
   }
-  console.log(typeof props.title);
   const color = getFieldColor(parseInt(props.title));
   return (
     <div className={style.DetailsWrapper}>

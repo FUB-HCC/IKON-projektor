@@ -30,7 +30,7 @@ const mapStateToProps = state => {
       title: title,
       projects: projects.filter(
         p =>
-          p.forschungsbereich === title &&
+          p.forschungsbereich === parseInt(title) &&
           p.timeframe[0] <= year &&
           year <= p.timeframe[1]
       ),

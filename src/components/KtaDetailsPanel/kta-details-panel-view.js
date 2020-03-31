@@ -77,7 +77,7 @@ const KtaDetailsPanel = props => {
         <span className={style.infoItemTitle}>
           Format: <br />
         </span>
-        {props.kta.Format}
+        {props.kta.Format.map(format => format.name).join(", ")}
       </p>
       <p className={style.infoItems}>
         <span className={style.infoItemTitle}>

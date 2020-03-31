@@ -10,7 +10,7 @@ const mapStateToProps = state => {
       return {
         title: "Forschungsregion " + region,
         description: "Forschungsprojekte  mit dieser Forschungsregion:",
-        projects: projects.filter(p => p.Forschungsregion === region),
+        projects: projects.filter(p => p.forschungsregionen.includes(region)),
         institutions: []
       };
     } else if (isClicked.inst.includes("|c")) {

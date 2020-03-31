@@ -88,6 +88,7 @@ export const initialState = {
   infrastructures: [],
   collections: [],
   missingprojects: [],
+  formats: [],
   isHovered: {
     project: null,
     infra: null,
@@ -296,6 +297,7 @@ const updateData = (state, action) => ({
   institutions: action.value.institutions,
   continents: continents,
   missingprojects: action.value.missingprojects,
+  formats: action.value.formats,
   clusterData: action.value.cluster_topography,
   isDataLoaded: { ...state.isDataLoaded, data: true }
 });
@@ -324,6 +326,7 @@ const processAllData = state => {
   const processedMissingProjects = processMissingProjects(state);
   const processedInstState = processInstitutions(state);
   //  const preprocessedClusterData = processClusterData(state);
+  //linkCatsToProjectsData(processedProjects, processedTargetgroups),
   const newState = {
     projects: linkCatsToProjectsData(processedProjects, processedTargetgroups),
     ktas: processedKtas,
@@ -337,15 +340,14 @@ const processAllData = state => {
     projectsMaxSizing: [
       Math.max(...processedProjects.map(p => p.mappoint[0])),
       Math.max(...processedProjects.map(p => p.mappoint[1]))
-    ]
+    ],
+    formats: state.formats
   };
   const uniqueFields = [];
   const uniqueTopics = [];
   const uniqueInfrastructures = newState.infrastructures.map(inf => inf.id);
   const uniqueCollections = newState.collections.map(col => col.id);
-  const uniqueFormats = [
-    ...new Set(newState.ktas.map(kta => kta.Format[0]).filter(f => f != null))
-  ].sort((a, b) => a.localeCompare(b));
+  const uniqueFormats = newState.formats.map(format => format.id);
   const maxDateRange = [5000, 0];
 
   Object.values(newState.projects).forEach(project => {

@@ -52,7 +52,13 @@ class GraphViewTouch extends React.Component {
   render() {
     const Graph = (
       <>
-        <TimeGraph height={this.state.height * 0.5} width={this.state.width} />
+        <TimeGraph
+          height={this.state.height ? this.state.height * 0.5 : 500}
+          width={this.state.width ? this.state.width : 1000}
+          id="timelineView"
+          data-intro="test"
+          data-step="8"
+        />
         <ClusterMap height={this.state.height * 0.8} width={this.state.width} />
       </>
     );

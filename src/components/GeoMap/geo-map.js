@@ -40,7 +40,12 @@ const mapStateToProps = state => {
   let mfn = {};
   if (isDataProcessed) {
     projectsForView = applyFilters(projects, filters);
-    continentsForView = continents;
+    continentsForView = continents.map(continent => ({
+      ...continent,
+      forschungsregionCount: projectsForView.filter(p =>
+        p.forschungsregionen.includes(continent.name)
+      ).length
+    }));
     const continent = inst =>
       institutions.find(institution => institution.id === inst.id)
         ? institutions.find(institution => institution.id === inst.id).continent

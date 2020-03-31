@@ -135,7 +135,7 @@ export const legendHovered = legendKey => ({
 export const fetchData = () => {
   return dispatch => {
     axios
-      .get("/api/graph", {
+      .get("./test.json", {
         transformResponse: res => Flatted.parse(res)
       })
       .then(result => {
@@ -165,10 +165,9 @@ export const fetchIndividualSample = name => {
       url: encodeURI("/api/sharing/" + name)
     })
       .then(response => {
-        console.log(response);
-        // batch(() => {
-        //   dispatch(sampleClicked(response));
-        // });
+        batch(() => {
+          dispatch(sampleClicked(response.data));
+        });
       })
       .catch(function(error) {
         console.log(error);
@@ -182,7 +181,9 @@ export const shareUrl = name => {
     url: encodeURI("/api/sharing/" + name),
     data: JSON.stringify(window.location.search)
   }).then(function(response) {
-    console.log(response.status);
+    if (response.status === 200) {
+      window.alert("Die Ansicht wurde an den Touch Screen geschickt.");
+    }
   });
 };
 

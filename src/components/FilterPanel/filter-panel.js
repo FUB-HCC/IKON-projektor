@@ -3,7 +3,7 @@ import FilterTimeline from "../FilterTimeline/filter-timeline";
 import FilterSelection from "../FilterSelection/filter-selection";
 const FilterPanel = props => (
   <div
-    id="step5"
+    id="filtersIntro"
     style={{
       display: "flex",
       flexDirection: "column",
