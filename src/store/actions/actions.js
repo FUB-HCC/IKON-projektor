@@ -135,7 +135,7 @@ export const legendHovered = legendKey => ({
 export const fetchData = () => {
   return dispatch => {
     axios
-      .get("./test.json", {
+      .get("/api/graph", {
         transformResponse: res => Flatted.parse(res)
       })
       .then(result => {
