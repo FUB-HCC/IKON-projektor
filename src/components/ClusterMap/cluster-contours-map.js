@@ -40,7 +40,7 @@ const constructContours = (topography, contoursSize) =>
 const computeColorMap = topography =>
   d3ScaleLinear()
     .domain(d3extent(topography))
-    .range(["#000", "#888"]);
+    .range(["#000", "#aaa"]);
 
 class ClusterContoursMap extends React.Component {
   constructor(props) {
@@ -82,7 +82,10 @@ class ClusterContoursMap extends React.Component {
     const lineFunction = d3GeoPath();
     const scale = Math.min(height, width);
     return (
-      <g fill="transparent">
+      <g
+        fill="transparent"
+        transform={`rotate(-90 ${width / 2} ${height / 2})`}
+      >
         {this.contours.map(cont => {
           const scaledContours = scaleContours(
             cont,
@@ -98,7 +101,11 @@ class ClusterContoursMap extends React.Component {
               className="isoline"
               key={cont.value}
               d={lineFunction(scaledContours)}
-              fill={this.colorMap(cont.value)}
+              fill={
+                cont.value === -0.15000000000000002
+                  ? "#0e0e0e"
+                  : this.colorMap(cont.value)
+              }
             />
           );
         })}

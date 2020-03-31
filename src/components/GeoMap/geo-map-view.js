@@ -63,7 +63,7 @@ export default class GeoMapView extends React.Component {
       return <div />;
     }
 
-    const arcHeight = height * 0.46;
+    const arcHeight = height * 0.44;
     return (
       <div
         className={style.geoMapWrapper}
