@@ -171,7 +171,7 @@ export default class ClusterMapView extends React.Component {
               uncertaintyHighlighted={uncertaintyHighlighted}
             />
           )}
-          <g>
+          <g id="einzelklickIntro">
             {targetgroups.map((targetgroup, i) => {
               const startAngle = each * i - targetgroups.length * each;
               const angle = startAngle * (Math.PI / 180);
@@ -321,7 +321,7 @@ export default class ClusterMapView extends React.Component {
               );
             })}
 
-            <g>
+            <g id="doppelklickIntro">
               {collections.concat(infrastructures).map((infrastruktur, i) => {
                 const startAngle = each * i;
                 const angle = startAngle * (Math.PI / 180);

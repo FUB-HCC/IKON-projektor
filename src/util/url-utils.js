@@ -138,6 +138,7 @@ export const pushStateToUrl = newState => {
     c: newState.filters.collections.value,
     in: newState.filters.infrastructures.value,
     ta: newState.filters.targetgroups.value,
+    fo: newState.filters.formats.value,
     hlf: newState.filters.highlevelFilter.value,
     cl: getTupleFromIsClicked(newState.isClicked),
     un: newState.uncertaintyOn ? 1 : 0
@@ -214,7 +215,8 @@ export const parseStateFromUrl = urlParams => {
           value: deminifiedUrlState.ta
         },
         formats: {
-          ...initialState.filters.formats
+          ...initialState.filters.formats,
+          value: deminifiedUrlState.fo
         }
       },
       uncertaintyOn: deminifiedUrlState.un === 1 ? true : false,

@@ -1,5 +1,4 @@
 import { fieldsStringToInt } from "../../util/utility";
-import _ from "lodash";
 
 export const processProjectsData = state => {
   const projectData = state.projects;
@@ -12,7 +11,6 @@ export const processProjectsData = state => {
     project.forschungsregionen = project["Geographische Verschlagwortung"].map(
       geo => getContinentFromProject(geo)
     );
-    console.log(project["Geographische Verschlagwortung"]);
     project.timeframe = project.timeframe.map(d =>
       d ? new Date(parseInt(d) * 1000).getFullYear() : 1970
     );
@@ -42,7 +40,7 @@ export const processProjectsData = state => {
 const getContinentFromProject = geo => {
   switch (parseInt(geo.charAt(0))) {
     case 1: {
-      return "Australien";
+      return "Südamerika";
     }
     case 2: {
       return "Nordamerika";

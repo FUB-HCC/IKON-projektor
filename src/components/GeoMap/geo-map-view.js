@@ -180,7 +180,7 @@ export default class GeoMapView extends React.Component {
                   cx="50%"
                   cy="50%"
                   className={style.countCircle}
-                  r={Math.min(38, Math.max(5, c.forschungsregionCount))}
+                  r={Math.min(38, c.forschungsregionCount)}
                   fill="#aaa"
                   onClick={() => {
                     this.props.showInstDetails(c.name + "|f");

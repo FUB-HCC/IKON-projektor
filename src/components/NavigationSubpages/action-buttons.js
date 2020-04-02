@@ -134,7 +134,7 @@ class ActionButtons extends Component {
         {
           intro:
             "Diese Version des MfN.projektor ist komplett per Touch-Interaktionen bedienbar. Einzelne Elemente können per einmaliger Berührung angewählt werden, wodurch Kurzinformationen wie Titel, Anzahl oder bestehende Verbindungen zu anderen Elementen angezeigt werden. Per zwei schnell aufeinanderfolgenden Berührungen werden Elemente ausgewählt, und im Detail in der Seitenleiste links angezeigt.",
-          element: "step0"
+          element: "interaktionIntro"
         },
         {
           intro:
@@ -181,11 +181,24 @@ class ActionButtons extends Component {
             "Im oberen Teil werden die Anzahl und Laufzeiten von <b>Drittmittelprojekten</b> basierend auf aktuellen Informationen aus dem <a style='color: #afca0b;' href='https://via.museumfuernaturkunde.berlin/wiki/' target='_blank' rel='noopener noreferrer'>VIA-Wiki</a> und gruppiert nach <b>Forschungsgebieten</b> angezeigt. Um die Interpretation von Trend-Entwicklungen zu unterstützen, werden außerdem in dunkelgrauer Schattierung bisher noch nicht integrierte Daten zu Drittmittelprojekten dargestellt.",
           element: "#timelineView"
         }
+      ],
+      hints: [
+        {
+          element: "#doppelklickIntro",
+          hint:
+            "Durch einen Doppelklick auf ein Element werden detailierte Infromationen zu Verbindungen oder Forschungsprojekten angezeigt.",
+          position: "left"
+        },
+        {
+          element: "#einzelklickIntro",
+          hint:
+            "Durch eine einzelne Berührung eines Element werden dessen  Verbindungen hervorgehoben.",
+          position: "left"
+        }
       ]
     });
     tour
       .onbeforechange(() => {
-        console.log(tour._introItems[tour._currentStep].element.id);
         switch (tour._introItems[tour._currentStep].element.id) {
           case "geteilteAnsichten": {
             this.props.showSampleList();
@@ -223,7 +236,10 @@ class ActionButtons extends Component {
           }
         }
       })
-      .onexit(() => this.props.legendHovered(null))
+      .onexit(() => {
+        this.props.legendHovered();
+        tour.addHints();
+      })
       .start();
   }
 

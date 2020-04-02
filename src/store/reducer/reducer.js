@@ -347,7 +347,12 @@ const processAllData = state => {
   const uniqueTopics = [];
   const uniqueInfrastructures = newState.infrastructures.map(inf => inf.id);
   const uniqueCollections = newState.collections.map(col => col.id);
-  const uniqueFormats = newState.formats.map(format => format.id);
+  const uniqueTargetgroups = newState.targetgroups
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(t => t.id);
+  const uniqueFormats = newState.formats
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(format => format.id);
   const maxDateRange = [5000, 0];
 
   Object.values(newState.projects).forEach(project => {
@@ -410,7 +415,7 @@ const processAllData = state => {
     },
     targetgroups: {
       ...state.filters.targetgroups,
-      uniqueVals: newState.targetgroups.map(t => t.id),
+      uniqueVals: uniqueTargetgroups,
       value: state.filters.targetgroups.value
         ? state.filters.targetgroups.value
         : newState.targetgroups.map(t => t.id)
