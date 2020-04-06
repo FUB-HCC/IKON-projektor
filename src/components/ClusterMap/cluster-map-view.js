@@ -93,7 +93,7 @@ export default class ClusterMapView extends React.Component {
 
   render() {
     const {
-      targetgroups,
+      categories,
       width,
       height,
       collections,
@@ -116,7 +116,7 @@ export default class ClusterMapView extends React.Component {
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (
-      !targetgroups ||
+      !categories ||
       !collections ||
       !infrastructures ||
       !width ||
@@ -129,8 +129,8 @@ export default class ClusterMapView extends React.Component {
     const shiftY = height / 2;
     const radius = clusterSize(scale) - arcMarginSides(width, scale);
     const each =
-      360 / (targetgroups.length + collections.length + infrastructures.length);
-    const conMax = Math.max(...targetgroups.map(o => o.count), 0);
+      360 / (categories.length + collections.length + infrastructures.length);
+    const conMax = Math.max(...categories.map(o => o.count), 0);
     return (
       <div
         className={style.clusterMapWrapper}
@@ -143,7 +143,7 @@ export default class ClusterMapView extends React.Component {
         <IconExplanation
           posX={20}
           posY={isTouch ? height - 100 : 20}
-          category={targetgroups[0]}
+          category={categories[0]}
           infrastructure={infrastructures}
           collection={collections}
         />
@@ -172,13 +172,13 @@ export default class ClusterMapView extends React.Component {
             />
           )}
           <g id="einzelklickIntro">
-            {targetgroups.map((targetgroup, i) => {
-              const startAngle = each * i - targetgroups.length * each;
+            {categories.map((category, i) => {
+              const startAngle = each * i - categories.length * each;
               const angle = startAngle * (Math.PI / 180);
-              const conLen = targetgroup.count;
+              const conLen = category.count;
               const x = shiftX + radius * Math.cos(angle);
               const y = shiftY + radius * Math.sin(angle);
-              const isHighlighted = highlightedCats.includes(targetgroup.id);
+              const isHighlighted = highlightedCats.includes(category.id);
               const higlightOffset = isHighlighted ? 7 : 0;
               const textX =
                 shiftX +
@@ -199,8 +199,8 @@ export default class ClusterMapView extends React.Component {
               const area = (conLen * 1.2) / conMax;
               const rad = Math.sqrt(area / Math.PI) * circleScaling(scale) || 1;
               let lines = [];
-              if (targetgroup.projects.length > 0) {
-                lines = targetgroup.projects.map(project => {
+              if (category.projects.length > 0) {
+                lines = category.projects.map(project => {
                   const target = this.getPointLocation(
                     project.mappoint,
                     width,
@@ -244,19 +244,19 @@ export default class ClusterMapView extends React.Component {
                 });
               }
               return (
-                <g key={targetgroup.id}>
+                <g key={category.id}>
                   <InteractionHandler
                     isInTouchMode={isTouch}
-                    onMouseOver={() => onCatHovered(targetgroup.id)}
+                    onMouseOver={() => onCatHovered(category.id)}
                     onMouseLeave={() => onUnHovered()}
                     onClick={() => {
-                      onCatClicked(targetgroup.id);
+                      onCatClicked(category.id);
                     }}
                     doubleTapTreshold={500}
                   >
                     <g>
                       <circle
-                        id={`targetgroup-${targetgroup.id}`}
+                        id={`category-${category.id}`}
                         r={rad}
                         cx={x}
                         cy={y}
@@ -287,13 +287,11 @@ export default class ClusterMapView extends React.Component {
                         cursor="POINTER"
                         transform={`rotate(${textRotate} ${textX} ${textY})`}
                       >
-                        {splitLongTitles(targetgroup.name).map(
-                          (titlePart, i) => (
-                            <tspan x={textX} y={textY + i * 10} key={titlePart}>
-                              {titlePart}
-                            </tspan>
-                          )
-                        )}
+                        {splitLongTitles(category.name).map((titlePart, i) => (
+                          <tspan x={textX} y={textY + i * 10} key={titlePart}>
+                            {titlePart}
+                          </tspan>
+                        ))}
                       </text>
                     </g>
                   </InteractionHandler>

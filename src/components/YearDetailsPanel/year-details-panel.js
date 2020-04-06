@@ -36,7 +36,8 @@ const mapStateToProps = state => {
       ),
       ktas: ktas.filter(
         kta =>
-          kta.Zielgruppe.includes(title) &&
+          (kta.Zielgruppe.includes(title) ||
+            kta.Format.find(format => format.name === title)) &&
           kta.timeframe[0].getFullYear() <= year &&
           year <= kta.timeframe[1].getFullYear()
       )

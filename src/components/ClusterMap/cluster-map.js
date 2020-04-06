@@ -10,15 +10,16 @@ import {
 } from "../../store/actions/actions";
 import { getFieldColor, isTouchMode, applyFilters } from "../../util/utility";
 
-const computeClusters = (clusterData, projects, targetgroups) => {
+const computeClusters = (clusterData, projects, categories) => {
   if (
     !clusterData ||
     !projects ||
     projects.length === 0 ||
-    !targetgroups ||
-    targetgroups.length === 0
+    !categories ||
+    categories.length === 0
   )
     return [];
+
   const clusterIds = [...new Set(projects.map(p => p.cluster))];
   return clusterIds.map(id => ({
     id: id,
@@ -48,7 +49,9 @@ const addHighlightedFromLegend = (highlighted, state) => {
     case "ktas":
       return {
         ...highlighted,
-        cats: highlighted.cats.concat(state.targetgroups.map(cat => cat.id))
+        cats: highlighted.cats
+          .concat(state.targetgroups.map(cat => cat.id))
+          .concat(state.formats.map(cat => cat.id))
       };
     case "collections":
       return {
@@ -97,13 +100,9 @@ const addExtractedHighlightedFromProject = (projectId, highlighted, state) => {
   return {
     ...highlighted,
     infras: highlighted.infras
-      .concat(project.Sammlungsbezug.map(col => (col && col.id ? col.id : 127)))
-      .concat(
-        project.Forschungsinfrastruktur.map(inf =>
-          inf && inf.id ? inf.id : 164
-        )
-      ),
-    cats: highlighted.cats.concat(project.targetgroups),
+      .concat(project.Sammlungsbezug.map(col => col.id))
+      .concat(project.Forschungsinfrastruktur.map(inf => inf.id)),
+    cats: highlighted.cats.concat(project.targetgroups).concat(project.formats),
     projects: highlighted.projects.concat([project.id])
   };
 };
@@ -132,12 +131,16 @@ const getProjectById = (id, state) =>
 const getInfraById = (id, state) =>
   state.infrastructures.concat(state.collections).find(inf => inf.id === id);
 
-const getCatById = (id, state) => state.targetgroups.find(cat => cat.id === id);
+const getCatById = (id, state) =>
+  state.targetgroups.find(cat => cat.id === id)
+    ? state.targetgroups.find(cat => cat.id === id)
+    : state.formats.find(cat => cat.id === id);
 
 const mapStateToProps = state => {
   const {
     clusterData,
     targetgroups,
+    formats,
     projects,
     collections,
     infrastructures,
@@ -149,7 +152,7 @@ const mapStateToProps = state => {
   } = state.main;
 
   let clusterDataForView = [];
-  let targetgroupsForView = [];
+  let categoriesForView = [];
   let collectionsForView = [];
   let infrastructuresForView = [];
   let topography = [];
@@ -163,16 +166,17 @@ const mapStateToProps = state => {
       projectsForView,
       targetgroups
     );
-    targetgroupsForView = targetgroups
-      .filter(tg => filters.targetgroups.value.includes(tg.id))
-      .sort((a, b) => (a.name < b.name ? 1 : -1));
+    categoriesForView = filters.highlevelFilter.value.includes(6)
+      ? targetgroups
+          .filter(tg => filters.targetgroups.value.includes(tg.id))
+          .sort((a, b) => (a.name < b.name ? 1 : -1))
+      : formats
+          .filter(format => filters.formats.value.includes(format.id))
+          .sort((a, b) => (a.name < b.name ? 1 : -1));
 
-    targetgroupsForView = targetgroupsForView.map(tg => ({
-      ...tg,
-      projects: applyFilters(tg.projects, filters),
-      count: tg.ktas.filter(kta =>
-        filters.formats.value.includes(kta.Format[0].id)
-      ).length
+    categoriesForView = categoriesForView.map(cat => ({
+      ...cat,
+      projects: applyFilters(cat.projects, filters)
     }));
     collectionsForView = collections
       .filter(col => filters.collections.value.includes(col.id))
@@ -189,7 +193,7 @@ const mapStateToProps = state => {
 
   return {
     clusterData: clusterDataForView,
-    targetgroups: targetgroupsForView,
+    categories: categoriesForView,
     topography: topography,
     collections: collectionsForView,
     infrastructures: infrastructuresForView,

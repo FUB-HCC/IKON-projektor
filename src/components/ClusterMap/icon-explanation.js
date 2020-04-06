@@ -27,7 +27,7 @@ const IconExplanation = props => {
     >
       <p
         style={{ display: "flex", cursor: "POINTER" }}
-        data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
+        data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen oder Formaten vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Kategorie haben"
         data-step="4"
         id="ktasExplanation"
         className={style.legendRow}

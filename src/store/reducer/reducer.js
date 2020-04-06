@@ -4,6 +4,7 @@ import { topicToField, continents } from "../../util/utility";
 import {
   processProjectsData,
   processTargetgroups,
+  processFormats,
   processCollections,
   processInfrastructures,
   processKtas,
@@ -76,7 +77,7 @@ export const initialState = {
       filterKey: "highlevelFilter",
       type: "array",
       uniqueVals: [6, 7, 8, 9],
-      value: [6, 7, 8, 9]
+      value: [6, 8, 9]
     }
   },
   graph: "0",
@@ -297,7 +298,7 @@ const updateData = (state, action) => ({
   institutions: action.value.institutions,
   continents: continents,
   missingprojects: action.value.missingprojects,
-  formats: action.value.formats,
+  formats: action.value.formats.filter(format => format.ktas.length > 1),
   clusterData: action.value.cluster_topography,
   isDataLoaded: { ...state.isDataLoaded, data: true }
 });
@@ -318,6 +319,7 @@ const processAllData = state => {
   const processedProjects = processProjectsData(state);
   const processedKtas = processKtas(state.ktas);
   const processedTargetgroups = processTargetgroups(processedProjects, state);
+  const processedFormats = processFormats(processedProjects, state);
   const processedInfrastructures = processInfrastructures(
     processedProjects,
     state
@@ -328,7 +330,11 @@ const processAllData = state => {
   //  const preprocessedClusterData = processClusterData(state);
   //linkCatsToProjectsData(processedProjects, processedTargetgroups),
   const newState = {
-    projects: linkCatsToProjectsData(processedProjects, processedTargetgroups),
+    projects: linkCatsToProjectsData(
+      processedProjects,
+      processedTargetgroups,
+      processedFormats
+    ),
     ktas: processedKtas,
     targetgroups: processedTargetgroups,
     infrastructures: processedInfrastructures,
@@ -341,7 +347,7 @@ const processAllData = state => {
       Math.max(...processedProjects.map(p => p.mappoint[0])),
       Math.max(...processedProjects.map(p => p.mappoint[1]))
     ],
-    formats: state.formats
+    formats: processedFormats
   };
   const uniqueFields = [];
   const uniqueTopics = [];
@@ -399,13 +405,6 @@ const processAllData = state => {
         ? state.filters.collections.value
         : uniqueCollections
     },
-    formats: {
-      ...state.filters.formats,
-      uniqueVals: uniqueFormats,
-      value: state.filters.formats.value
-        ? state.filters.formats.value
-        : uniqueFormats
-    },
     infrastructures: {
       ...state.filters.infrastructures,
       uniqueVals: uniqueInfrastructures,
@@ -413,12 +412,17 @@ const processAllData = state => {
         ? state.filters.infrastructures.value
         : uniqueInfrastructures
     },
+    formats: {
+      ...state.filters.formats,
+      uniqueVals: uniqueFormats,
+      value: state.filters.formats.value ? state.filters.formats.value : []
+    },
     targetgroups: {
       ...state.filters.targetgroups,
       uniqueVals: uniqueTargetgroups,
       value: state.filters.targetgroups.value
         ? state.filters.targetgroups.value
-        : newState.targetgroups.map(t => t.id)
+        : uniqueTargetgroups
     }
   };
 

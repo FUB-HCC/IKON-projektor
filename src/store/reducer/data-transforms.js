@@ -76,7 +76,7 @@ export const processMissingProjects = state => {
   }));
 };
 
-export const linkCatsToProjectsData = (projects, targetgroups) => {
+export const linkCatsToProjectsData = (projects, targetgroups, formats) => {
   return projects.map(project => ({
     ...project,
     targetgroups: targetgroups
@@ -87,7 +87,16 @@ export const linkCatsToProjectsData = (projects, targetgroups) => {
             kta.Drittmittelprojekt[0].id === project.id
         )
       )
-      .map(targetgroup => targetgroup.id)
+      .map(targetgroup => targetgroup.id),
+    formats: formats
+      .filter(format =>
+        format.ktas.find(
+          kta =>
+            kta.Drittmittelprojekt[0] &&
+            kta.Drittmittelprojekt[0].id === project.id
+        )
+      )
+      .map(format => format.id)
   }));
 };
 
@@ -98,6 +107,20 @@ export const processTargetgroups = (processedProjects, state) => {
       .map(kta => kta.Drittmittelprojekt[0].id);
     return {
       ...targetgroup,
+      projects: [
+        ...new Set(processedProjects.filter(p => projectIds.includes(p.id)))
+      ]
+    };
+  });
+};
+
+export const processFormats = (processedProjects, state) => {
+  return state.formats.map(format => {
+    const projectIds = format.ktas
+      .filter(kta => kta.Drittmittelprojekt && kta.Drittmittelprojekt[0])
+      .map(kta => kta.Drittmittelprojekt[0].id);
+    return {
+      ...format,
       projects: [
         ...new Set(processedProjects.filter(p => projectIds.includes(p.id)))
       ]

@@ -2,16 +2,16 @@ import React from "react";
 import styles from "./time-line-view.module.css";
 import InteractionHandler from "../../util/interaction-handler";
 
-const TargetgroupBuckets = props => {
+const CategoryBuckets = props => {
   let maxNumberWtas = Math.max(
     ...Object.values(props.ktasYearBuckets)
       .map(tg => tg.map(year => year.numberOfWtas))
       .flat()
   );
-  return Object.keys(props.ktasYearBuckets).map(targetgroup => {
+  return Object.keys(props.ktasYearBuckets).map(category => {
     return (
-      <div className={styles.wtaBucketName} key={targetgroup}>
-        <span>{targetgroup}</span> <br />
+      <div className={styles.wtaBucketName} key={category}>
+        <span>{category}</span> <br />
         <svg height={props.height} width={props.width}>
           <line
             x1="0"
@@ -24,9 +24,9 @@ const TargetgroupBuckets = props => {
               fill: "none"
             }}
           />
-          {props.ktasYearBuckets[targetgroup].map(year => {
+          {props.ktasYearBuckets[category].map(year => {
             return (
-              <g key={targetgroup + year.year}>
+              <g key={category + year.year}>
                 <InteractionHandler
                   isInTouchMode={false}
                   onMouseOver={event => {
@@ -36,15 +36,15 @@ const TargetgroupBuckets = props => {
                         y: props.height,
                         year: year.year,
                         count: year.numberOfWtas,
-                        targetgroup: targetgroup
+                        category: category
                       },
                       event
                     );
                   }}
                   onMouseLeave={() => props.handleMouseLeave()}
                   onClick={() => {
-                    year.targetgroup = targetgroup;
-                    props.showYearDetails(year.year + "|" + targetgroup);
+                    year.category = category;
+                    props.showYearDetails(year.year + "|" + category);
                   }}
                   doubleTapTreshold={500}
                 >
@@ -66,4 +66,4 @@ const TargetgroupBuckets = props => {
     );
   });
 };
-export default TargetgroupBuckets;
+export default CategoryBuckets;

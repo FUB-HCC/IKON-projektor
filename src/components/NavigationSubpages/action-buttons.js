@@ -163,7 +163,7 @@ class ActionButtons extends Component {
         },
         {
           intro:
-            "Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben",
+            "Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen oder Formaten vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Kategorie haben",
           element: "#ktasExplanation"
         },
         {
