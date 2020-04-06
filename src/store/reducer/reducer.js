@@ -328,8 +328,6 @@ const processAllData = state => {
   const processedCollections = processCollections(processedProjects, state);
   const processedMissingProjects = processMissingProjects(state);
   const processedInstState = processInstitutions(state);
-  //  const preprocessedClusterData = processClusterData(state);
-  //linkCatsToProjectsData(processedProjects, processedTargetgroups),
   const newState = {
     projects: linkCatsToProjectsData(
       processedProjects,
