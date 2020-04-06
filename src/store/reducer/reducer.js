@@ -103,7 +103,8 @@ export const initialState = {
     cat: null,
     kta: null,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   projectsMaxSizing: [0, 0],
   legendHovered: "none",
@@ -508,7 +509,8 @@ const projectClicked = (state, action) => ({
     cat: null,
     kta: null,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <ProjectDetailsPanel />
 });
@@ -521,7 +523,8 @@ const catClicked = (state, action) => ({
     cat: action.value,
     kta: null,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <CatDetailsPanel />
 });
@@ -534,7 +537,8 @@ const infraClicked = (state, action) => ({
     cat: null,
     kta: null,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <InfraDetailsPanel />
 });
@@ -547,7 +551,8 @@ const ktaClicked = (state, action) => ({
     cat: null,
     kta: action.value,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <KtaDetailsPanel />
 });
@@ -560,7 +565,8 @@ const yearClicked = (state, action) => ({
     cat: null,
     kta: null,
     year: action.value,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <YearDetailsPanel />
 });
@@ -573,7 +579,8 @@ const instClicked = (state, action) => ({
     cat: null,
     kta: null,
     year: null,
-    inst: action.value
+    inst: action.value,
+    samples: null
   },
   sideBarComponent: <InstDetailsPanel />
 });
@@ -585,7 +592,8 @@ const unClicked = state => ({
     infra: null,
     cat: null,
     kta: null,
-    year: null
+    year: null,
+    samples: null
   },
   sideBarComponent: <FilterPanel />
 });
@@ -628,6 +636,14 @@ const sampleClicked = (state, action) => {
 
 const showSampleList = state => ({
   ...state,
+  isClicked: {
+    project: null,
+    infra: null,
+    cat: null,
+    kta: null,
+    year: null,
+    samples: 1
+  },
   sideBarComponent: <SampleStatesList />
 });
 
