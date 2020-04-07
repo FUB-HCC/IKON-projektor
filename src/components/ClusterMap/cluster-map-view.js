@@ -171,7 +171,7 @@ export default class ClusterMapView extends React.Component {
               uncertaintyHighlighted={uncertaintyHighlighted}
             />
           )}
-          <g id="einzelklickIntro">
+          <g>
             {categories.map((category, i) => {
               const startAngle = each * i - categories.length * each;
               const angle = startAngle * (Math.PI / 180);

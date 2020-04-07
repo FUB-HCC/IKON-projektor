@@ -124,6 +124,7 @@ class ActionButtons extends Component {
       prevLabel: "Zurück",
       skipLabel: "Abbrechen",
       doneLabel: "Fertig",
+      hintButtonLabel: "Ok",
       steps: [
         {
           intro:
@@ -186,13 +187,7 @@ class ActionButtons extends Component {
         {
           element: "#doppelklickIntro",
           hint:
-            "Durch einen Doppelklick auf ein Element werden detailierte Infromationen zu Verbindungen oder Forschungsprojekten angezeigt.",
-          position: "left"
-        },
-        {
-          element: "#einzelklickIntro",
-          hint:
-            "Durch eine einzelne Berührung eines Element werden dessen  Verbindungen hervorgehoben.",
+            "Mit einer einzelnen Berührung eines Element werden dessen  Verbindungen hervorgehoben.<br/> <br/>Durch einen Doppelklick auf ein Element werden Informationen zu Verbindungen oder Forschungsprojekten im Seiten-Panel angezeigt.",
           position: "left"
         }
       ]
@@ -302,6 +297,7 @@ class ActionButtons extends Component {
           <div
             className={classes.rightElement}
             onClick={isTouch ? this.startPageTourTouch : this.startPageTour}
+            id="tutorialButton"
           >
             <Tutorial className={classes.buttonIcon} /> <p>Tutorial</p>
           </div>

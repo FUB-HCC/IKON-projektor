@@ -126,7 +126,8 @@ const CheckBox = props => (
         htmlFor={props.nameId}
         style={{
           border: props.color + " 2px solid",
-          borderRadius: "50%",
+          borderRadius:
+            props.nameId === 6 || props.nameId === 7 ? "50%" : "20%",
           backgroundColor: props.checked ? props.color : "rgba(0,0,0,0)",
           marginRight: props.iconMargin + "px",
           marginLeft: props.iconMargin * 0.5 + "px",
