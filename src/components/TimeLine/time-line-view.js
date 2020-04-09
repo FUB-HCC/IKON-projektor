@@ -198,7 +198,7 @@ export default class TimeLineView extends Component {
     const stackedData = stack(this.state.dataSplitYears.areaChartData);
     const { areKtaRendered, isTouchMode } = this.props;
     const color = d => {
-      return d.key === "Unveröffentlicht" ? "#555" : getFieldColor(d.key);
+      return d.key === "Unveröffentlicht" ? "#444" : getFieldColor(d.key);
     };
     const toYear = int => {
       return new Date(int.toString()).setHours(0, 0, 0, 0);

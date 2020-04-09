@@ -3,7 +3,6 @@ import FilterTimeline from "../FilterTimeline/filter-timeline";
 import FilterSelection from "../FilterSelection/filter-selection";
 const FilterPanel = props => (
   <div
-    id="filtersIntro"
     style={{
       display: "flex",
       flexDirection: "column",
