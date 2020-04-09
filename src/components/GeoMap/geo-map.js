@@ -3,6 +3,7 @@ import GeoMapView from "./geo-map-view";
 import { instClicked, unClicked } from "../../store/actions/actions";
 import { applyFilters } from "../../util/utility";
 
+/* gets all unique pairs of a list */
 const edgesFromClique = clique => {
   let pairs = [];
   clique.forEach((v1, i) => {
@@ -55,6 +56,7 @@ const mapStateToProps = state => {
       inst.name.includes("Museum für Naturkunde Berlin")
     );
 
+    /* Makes a list of all connections between institutions through research projects that have at least two institutions as cooperation partners. mfn is inclded in the list as the "home node" of all projects */
     projectsForView.forEach(project => {
       if (project.Kooperationspartner.length > 0) {
         connections = connections.concat(

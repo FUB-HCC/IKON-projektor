@@ -1,5 +1,6 @@
 import { fieldsStringToInt } from "../../util/utility";
 
+/* the property "Forschungsthema, Expertise, Kompetenzen" of projects is split into "hauptthema" and "forschungsbereich" by which they are later sorted. the date format is changed and the research regions of a project are translated into continents */
 export const processProjectsData = state => {
   const projectData = state.projects;
   return projectData.map(project => {
@@ -100,6 +101,7 @@ export const linkCatsToProjectsData = (projects, targetgroups, formats) => {
   }));
 };
 
+/* targetgroups as well as formats get a list of projects that they are indirectly connected to through knowledge transfer activities to make the linking in the graph visualization easier. */
 export const processTargetgroups = (processedProjects, state) => {
   return state.targetgroups.map(targetgroup => {
     const projectIds = targetgroup.ktas
@@ -128,6 +130,7 @@ export const processFormats = (processedProjects, state) => {
   });
 };
 
+/* infrastructures and collections are typed to enable different icons. Also the connected projects are replaced with the newly processed ones.*/
 export const processInfrastructures = (processedProjects, state) => {
   return state.infrastructures.map(infrastructure => ({
     ...infrastructure,
@@ -148,6 +151,7 @@ export const processCollections = (processedProjects, state) => {
   }));
 };
 
+/* reformats the start and end date of ktas*/
 export const processKtas = ktas =>
   ktas.map(kta => ({
     ...kta,
@@ -170,6 +174,8 @@ const disambiguateContinents = (candidates, institution) =>
   candidates.sort(
     (a, b) => distance(a, institution) - distance(b, institution)
   );
+
+/* checks if an institution is within the bounding box of a continent. if it is in two bounding boxes, the distance to the center of the continent decides */
 const getContinentOfInstitution = (continentList, institution) => {
   if (!institution || !institution.lon) return null;
   const candidates = continentList.filter(
@@ -190,6 +196,7 @@ const getContinentOfInstitution = (continentList, institution) => {
   return institution.continent;
 };
 
+/* For each institution the continent is found, and the weight of that continent is increased. This is for the geomap*/
 export const processInstitutions = state => {
   let newContinents = state.continents;
   return {

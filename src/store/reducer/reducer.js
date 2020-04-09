@@ -316,6 +316,7 @@ export const isAllDataLoaded = state =>
 const processDataWhenReady = state =>
   isAllDataLoaded(state) ? processAllData(state) : state;
 
+/* The received data is transformed in the beginning (e.g. sorted, some attributes slightly changed), the filters get their initial filling too */
 const processAllData = state => {
   const processedProjects = processProjectsData(state);
   const processedKtas = processKtas(state.ktas);

@@ -31,13 +31,13 @@ const continentSVGs = continent => {
       return <Europe />;
   }
 };
+/* these functions translate the geolocations of institutions to the svg maps*/
 const mapLongToWidth = (width, continent, lon) => {
   return (
     ((lon - continent.longMin) * width) /
     (continent.longMax - continent.longMin)
   );
 };
-
 const distanceToEquator = lat => Math.asinh(Math.tan(lat * (Math.PI / 180)));
 const mapLatToHeight = (height, continent, lat) =>
   ((distanceToEquator(lat) - distanceToEquator(continent.latMin)) * height) /
@@ -63,7 +63,7 @@ export default class GeoMapView extends React.Component {
       return <div />;
     }
 
-    const arcHeight = height * 0.44;
+    const arcHeight = height * 0.46;
     return (
       <div
         className={style.geoMapWrapper}

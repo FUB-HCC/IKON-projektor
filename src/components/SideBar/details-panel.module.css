@@ -79,14 +79,6 @@
   color: #aaa;
 }
 
-.SampleLink {
-  margin-right: 3px;
-  cursor: pointer;
-  line-height: 200%;
-  color: #afca0b;
-  display: block;
-}
-
 .DetailsViaLink {
   color: #afca0b;
   margin-top: 5px;
@@ -110,4 +102,23 @@
   overflow-y: scroll;
   overflow-x: hidden;
   background: linear-gradient(transparent 75%, #141414);
+}
+.sampleHeader {
+  font-size: 12px;
+  text-align: left;
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+.sampleName {
+  font-weight: bolder;
+  font-size: 14px;
+  padding-bottom: 15px;
+}
+.sampleName:active {
+  color: #afca0b;
+}
+.sampleDate {
+  font-family: IBM_Plex_Mono;
+  font-size: 12px;
+  padding-bottom: 10px;
 }

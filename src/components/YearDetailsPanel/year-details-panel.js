@@ -27,7 +27,7 @@ const mapStateToProps = state => {
     }
     return {
       year: year,
-      title: title,
+      title: isNaN(title) ? title : parseInt(title),
       projects: projects.filter(
         p =>
           p.forschungsbereich === parseInt(title) &&

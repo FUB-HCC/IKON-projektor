@@ -1,10 +1,11 @@
 import React from "react";
 import style from "../SideBar/details-panel.module.css";
 import { ReactComponent as Exit } from "../../assets/Exit.svg";
+import { shortenString } from "../../util/utility";
 
 const SampleStatesListView = props => {
   return (
-    <div className={style.DetailsWrapper}>
+    <div className={style.DetailsWrapper} style={{ height: "83%" }}>
       <div className={style.DetailsTitle}>
         <div
           className={style.DetailsExit}
@@ -16,19 +17,28 @@ const SampleStatesListView = props => {
           Beispielabfragen und geteilte Ansichten
         </span>
       </div>
-      <div className={style.infoItems}>
-        {props.sampleList.map((sample, i) => {
-          return (
-            <span
-              className={style.SampleLink}
-              key={sample + " " + i}
-              onClick={() => props.onClickSample(sample)}
-            >
-              {sample}
-            </span>
-          );
-        })}
-      </div>
+      <table className={style.infoItems}>
+        <tbody>
+          <tr>
+            <th className={style.sampleHeader}>NAME</th>
+            <th className={style.sampleHeader}>GETEILT AM</th>
+          </tr>
+          {props.sampleList.map((sample, i) => {
+            return (
+              <tr
+                key={sample + " " + i}
+                onClick={() => props.onClickSample(sample)}
+              >
+                <td width="80%" className={style.sampleName}>
+                  {" "}
+                  {shortenString(sample.split("|")[0], 40)}
+                </td>
+                <td className={style.sampleDate}>{sample.split("|")[1]}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };

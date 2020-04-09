@@ -5,6 +5,7 @@ import { checkboxFilterChange } from "../../store/actions/actions";
 import style from "./filter-selection.module.css";
 import { isTouchMode, topicToField } from "../../util/utility";
 
+/* filter sets for browser version. highlevel fiters are fixed, subfilters dependend on the data */
 const getFilterSets = state => {
   return [
     {
@@ -107,6 +108,7 @@ const getFilterSets = state => {
   ];
 };
 
+/* In the touch version just the highlevel filters are used*/
 const getFilterSetsTouch = filters => {
   return [
     {

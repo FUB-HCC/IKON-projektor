@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+/* Handles interaction with elements when the application is opened on a touchscreen */
 class InteractionHandler extends React.Component {
   constructor() {
     super();
@@ -12,7 +13,7 @@ class InteractionHandler extends React.Component {
   }
 
   onTouchStart(event) {}
-
+  /* if two taps happen in doubleTapTreshold click event is triggered. Treeshold can be customized on each element. */
   onTouchEnd(event) {
     if (
       event.timeStamp - this.state.lastTap < this.props.doubleTapTreshold &&

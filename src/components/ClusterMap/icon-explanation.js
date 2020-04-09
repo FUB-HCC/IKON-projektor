@@ -6,6 +6,7 @@ import style from "./cluster-map-view.module.css";
 import { useDispatch } from "react-redux";
 import { legendHovered } from "../../store/actions/actions";
 
+/* legend for the labels in the outer circle of clustervis is drawn as a fixed position div over the cluster vis. When one is hovered all links of the type are highlighted. */
 const IconExplanation = props => {
   const dispatch = useDispatch();
   return (

@@ -10,6 +10,7 @@ import {
 } from "../../store/actions/actions";
 import { getFieldColor, isTouchMode, applyFilters } from "../../util/utility";
 
+/* project list is divided into clusters */
 const computeClusters = (clusterData, projects, categories) => {
   if (
     !clusterData ||
@@ -31,7 +32,7 @@ const computeClusters = (clusterData, projects, categories) => {
       }))
   }));
 };
-
+/* helper functions to determine whcih elements in the visualization should b highlighted in the MfN green */
 const extractHighlightedFromState = state => {
   let highlighted = {
     projects: [],
@@ -148,6 +149,7 @@ const mapStateToProps = state => {
     isDataProcessed,
     highlightedGroup,
     isClicked,
+    isHovered,
     projectsMaxSizing
   } = state.main;
 
@@ -160,6 +162,7 @@ const mapStateToProps = state => {
   let highlightedCats = [];
   let highlightedInfra = [];
   if (isDataProcessed) {
+    // filters are applied to all lists and data is prepared for the vis
     let projectsForView = applyFilters(projects, filters);
     clusterDataForView = computeClusters(
       clusterData,
@@ -205,6 +208,7 @@ const mapStateToProps = state => {
     uncertaintyOn: state.main.uncertaintyOn,
     uncertaintyHighlighted: state.main.uncertaintyHighlighted,
     isTouch: isTouchMode(state),
+    isProjectHovered: isHovered.project,
     projectsMaxSizing: projectsMaxSizing
   };
 };

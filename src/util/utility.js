@@ -1,3 +1,5 @@
+/* all kinds of helper functions and fixed data arrays (e.g. for ordering or colouring elements) */
+
 const fieldsMapping = [
   { name: "Naturwissenschaften", field: 1, color: "#ad494a" },
   { name: "Lebenswissenschaften", field: 2, color: "#e69e57" },
@@ -165,7 +167,6 @@ export const continents = [
 
 export const fieldsIntToString = number => {
   if (isNaN(number)) return number;
-  number = parseInt(number, 10); // pls fix
   return fieldsMapping.find(e => e.field === number)
     ? fieldsMapping.find(e => e.field === number).name
     : number;
@@ -216,40 +217,20 @@ export const getQueryStringParams = query => {
         }, {})
     : {};
 };
-
+/* filters projects according to time filter and topics/subjects filter */
 export const applyFilters = (data, filter) => {
   let filteredData = data;
   Object.values(filter).forEach(f => {
     let newFilteredData = {};
     filteredData = Object.keys(filteredData).forEach(d => {
-      if (f.type === "string") {
+      if (
+        f.type === "string" &&
+        typeof filteredData[d][f.filterKey] !== "undefined" &&
+        filteredData[d][f.filterKey] !== "Unveröffentlicht"
+      ) {
         if (f.value.some(value => value === filteredData[d][f.filterKey]))
           newFilteredData[d] = filteredData[d];
       } else if (f.type === "timeframe") {
-        if (
-          f.value[0] <= filteredData[d][f.filterKey][0] &&
-          f.value[1] >= filteredData[d][f.filterKey][1]
-        ) {
-          newFilteredData[d] = filteredData[d];
-        }
-      } else if (f.type === "array") {
-        newFilteredData[d] = filteredData[d];
-      } else {
-        if (filteredData[d][f.filterKey].includes(f.value))
-          newFilteredData[d] = filteredData[d];
-      }
-    });
-    filteredData = newFilteredData;
-  });
-  return Object.values(filteredData);
-};
-
-export const applyMissingFilters = (data, filter) => {
-  let filteredData = data;
-  Object.values(filter).forEach(f => {
-    let newFilteredData = {};
-    filteredData = Object.keys(filteredData).forEach(d => {
-      if (f.type === "timeframe") {
         if (
           f.value[0] <= filteredData[d][f.filterKey][0] &&
           f.value[1] >= filteredData[d][f.filterKey][1]

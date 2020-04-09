@@ -8,6 +8,7 @@ import { fetchData, fetchSampleList } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
 import { sideBarWidth } from "../../App";
 
+/* wrapper for visualization when in browser mode. Depending on state different visualizations are rendered */
 class GraphView extends React.Component {
   constructor(props) {
     super(props);

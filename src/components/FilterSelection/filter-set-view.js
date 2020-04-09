@@ -92,6 +92,7 @@ class FilterSet extends Component {
     );
   }
 
+  /* state of collapsed/unfolded subfilters */
   toggledFilterList(nameId, state, change) {
     if (state.find(e => e === nameId)) {
       state.splice(state.indexOf(nameId), 1);
@@ -104,6 +105,7 @@ class FilterSet extends Component {
 
 export default FilterSet;
 
+/* normal html checkbox is replaced by own css. formats and targetgroups have round "radiobuttons" as they work like a switch. */
 const CheckBox = props => (
   <div
     className={style.checkBoxWrapper}

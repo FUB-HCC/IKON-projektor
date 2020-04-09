@@ -7,6 +7,7 @@ import { fetchData, fetchSampleList } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
 import { sideBarWidth } from "../../App";
 
+/* wrapper for visualization when in touch mode. Only the timeline stacked-area chart and the cluster visualization are rendered above each other */
 class GraphViewTouch extends React.Component {
   constructor(props) {
     super(props);

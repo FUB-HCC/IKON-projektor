@@ -152,6 +152,7 @@ const getSideBarComponentFromTuple = tuple => {
   return <FilterPanel />;
 };
 
+/*turns state of filters, visualization and sidebar into minified url*/
 export const pushStateToUrl = newState => {
   if (!newState.isDataProcessed || !newState.isDataLoaded.data) {
     return;
@@ -187,6 +188,7 @@ export const pushStateToUrl = newState => {
   }
 };
 
+/*turns minified url back into readable state*/
 export const parseStateFromUrl = urlParams => {
   const stateString = urlParams.state;
   const userId = urlParams.uid;

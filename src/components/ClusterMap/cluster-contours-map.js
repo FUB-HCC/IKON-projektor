@@ -34,8 +34,7 @@ const scaleContours = (
 const constructContours = (topography, contoursSize) =>
   d3Contours()
     .size([contoursSize, contoursSize])
-    .smooth([false])
-    .thresholds(20)(topography);
+    .smooth([false])(topography);
 
 const computeColorMap = topography =>
   d3ScaleLinear()
@@ -82,10 +81,7 @@ class ClusterContoursMap extends React.Component {
     const lineFunction = d3GeoPath();
     const scale = Math.min(height, width);
     return (
-      <g
-        fill="transparent"
-        transform={`rotate(-90 ${width / 2} ${height / 2})`}
-      >
+      <g fill="transparent" transform={`rotate(90 ${width / 2} ${height / 2})`}>
         {this.contours.map(cont => {
           const scaledContours = scaleContours(
             cont,

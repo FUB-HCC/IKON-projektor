@@ -1,10 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import {
-  isTouchMode,
-  applyFilters,
-  applyMissingFilters
-} from "../../util/utility";
+import { isTouchMode, applyFilters } from "../../util/utility";
 import TimeLineView from "./time-line-view";
 import { yearClicked } from "../../store/actions/actions";
 
@@ -71,7 +67,7 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   let projectsForView = applyFilters(state.main.projects, state.main.filters);
-  let missingProjectsForView = applyMissingFilters(
+  let missingProjectsForView = applyFilters(
     state.main.missingprojects,
     state.main.filters
   );
@@ -93,16 +89,12 @@ const mapStateToProps = state => {
     isTouchMode: isTouchMode(state)
   };
 };
-// TODO move to datatransforms?
+
 const processData = (data, missingData) => {
   /*
    Private
-   Transforms the data in to a format which can be easily used for the Visulisation.
-
-     inData - the newProjects.json set or a subset of it
-
-     Returns the visData.
-
+   Transforms the data in to a format which can be easily used for the visualization.
+   published and unpublished research projects are binned into years
  */
 
   if (!data || data === [] || !missingData) return [];
@@ -153,6 +145,7 @@ const processData = (data, missingData) => {
 };
 
 const processKtas = (ktas, categories) => {
+  /* ktas are counted per category (targetgroup or format) and year */
   if (!ktas || ktas.length === 0) return [];
   let ktasYearBuckets = [];
   for (let ktaKey in ktas) {

@@ -1,5 +1,6 @@
 import React from "react";
 
+/* Renders a popover div with fixed position over the current visualization */
 const HoverPopover = props => {
   let { locationX, locationY, width, height } = props;
   if (!width) {
@@ -12,10 +13,9 @@ const HoverPopover = props => {
   return (
     <div
       style={{
-        width: width, // TODO dynamically style width
-        height: height, // TODO dynamically style height
+        width: width,
+        height: height,
         margin: `5em`,
-        // marginTop: '-3em',
         marginLeft: "-4em",
         position: "absolute",
         left: locationX + "px",

@@ -50,8 +50,6 @@ class ActionButtons extends Component {
 
   sendToTouchscreen() {
     const input = document.getElementById("share_name");
-    input.select();
-    input.setSelectionRange(0, 140);
     var today = new Date();
     var date =
       today.getDate() +
@@ -59,10 +57,12 @@ class ActionButtons extends Component {
       (1 + today.getMonth()) +
       "." +
       today.getFullYear();
-    const name = input.value ? input.value : date;
+    const name = input.value
+      ? input.value.substring(0, 48) + "|" + date
+      : "Unbenannt|" + date;
     shareUrl(name);
   }
-
+  /* is executed when in browser mode and tutorial button is clicked. Gives a short tutorial made with intro.js according to the page you are on ("WISSEN", "ZEIT", "RAUM") */
   startPageTour() {
     this.props.tutorialStarted();
     var tour = introJs();
@@ -111,6 +111,7 @@ class ActionButtons extends Component {
       .start();
   }
 
+  /* is executed when in touch mode and tutorial button is clicked. Gives a  tutorial made with intro.js including a short operation manual and information about all elements. */
   startPageTourTouch() {
     this.props.tutorialStarted();
     var tour = introJs();

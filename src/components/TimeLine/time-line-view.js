@@ -42,7 +42,7 @@ export default class TimeLineView extends Component {
       index: 0
     };
     this.handleAreaClick = this.handleAreaClick.bind(this);
-    this.renderProjectsHover = this.renderProjectsHover.bind(this);
+    this.renderHoverField = this.renderHoverField.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.handleAreaMouseEnter = this.handleAreaMouseEnter.bind(this);
     this.handleCircleMouseEnter = this.handleCircleMouseEnter.bind(this);
@@ -70,7 +70,7 @@ export default class TimeLineView extends Component {
     this.props.showYearDetails(year + "|" + key);
   }
 
-  renderProjectsHover() {
+  renderHoverField() {
     return (
       this.state.hoveredArea &&
       this.state.mouseLocation && (
@@ -108,7 +108,7 @@ export default class TimeLineView extends Component {
       )
     );
   }
-
+  /* grid lines in the starry sky viz are highlighted when a circle is hovered. the green line is drawn in a fixed position svg behind the other content */
   highlightGridLine() {
     return (
       this.state.hoveredArea &&
@@ -134,6 +134,7 @@ export default class TimeLineView extends Component {
       )
     );
   }
+  /* same goes for the gridlines drawn in grey for every year in which ktas with a category have been dated */
   renderGridline(lines) {
     return (
       <svg
@@ -188,13 +189,14 @@ export default class TimeLineView extends Component {
     }
     const stackedAreaHeight = this.state.height * 0.4;
     const categoriesHeight = this.state.height * 0.5;
+
+    // turns the preprocessed data into a d3 stack
     const stack = d3stack()
       .keys(this.state.dataSplitYears.areaChartKeys)
       .order(d3StackOrderNone)
       .offset(d3StackOffsetNone);
     const stackedData = stack(this.state.dataSplitYears.areaChartData);
     const { areKtaRendered, isTouchMode } = this.props;
-
     const color = d => {
       return d.key === "Unveröffentlicht" ? "#555" : getFieldColor(d.key);
     };
@@ -238,7 +240,7 @@ export default class TimeLineView extends Component {
       Object.values(this.state.ktasYearBuckets)
     );
 
-    //getting all distinct years that have category Bucket
+    //getting all distinct years that have category bucket
     const lines = [...new Set(ktasYears.map(line => x(toYear(line.year))))];
 
     return (
@@ -368,7 +370,7 @@ export default class TimeLineView extends Component {
                 );
               })}
           </SVGWithMargin>
-          {this.renderProjectsHover()}
+          {this.renderHoverField()}
         </div>
       </div>
     );
