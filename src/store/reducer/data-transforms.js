@@ -1,6 +1,6 @@
 import { fieldsStringToInt } from "../../util/utility";
-import _ from "lodash";
 
+/* the property "Forschungsthema, Expertise, Kompetenzen" of projects is split into "hauptthema" and "forschungsbereich" by which they are later sorted. the date format is changed and the research regions of a project are translated into continents */
 export const processProjectsData = state => {
   const projectData = state.projects;
   return projectData.map(project => {
@@ -12,7 +12,6 @@ export const processProjectsData = state => {
     project.forschungsregionen = project["Geographische Verschlagwortung"].map(
       geo => getContinentFromProject(geo)
     );
-    console.log(project["Geographische Verschlagwortung"]);
     project.timeframe = project.timeframe.map(d =>
       d ? new Date(parseInt(d) * 1000).getFullYear() : 1970
     );
@@ -42,7 +41,7 @@ export const processProjectsData = state => {
 const getContinentFromProject = geo => {
   switch (parseInt(geo.charAt(0))) {
     case 1: {
-      return "Australien";
+      return "Südamerika";
     }
     case 2: {
       return "Nordamerika";
@@ -78,7 +77,7 @@ export const processMissingProjects = state => {
   }));
 };
 
-export const linkCatsToProjectsData = (projects, targetgroups) => {
+export const linkCatsToProjectsData = (projects, targetgroups, formats) => {
   return projects.map(project => ({
     ...project,
     targetgroups: targetgroups
@@ -89,10 +88,20 @@ export const linkCatsToProjectsData = (projects, targetgroups) => {
             kta.Drittmittelprojekt[0].id === project.id
         )
       )
-      .map(targetgroup => targetgroup.id)
+      .map(targetgroup => targetgroup.id),
+    formats: formats
+      .filter(format =>
+        format.ktas.find(
+          kta =>
+            kta.Drittmittelprojekt[0] &&
+            kta.Drittmittelprojekt[0].id === project.id
+        )
+      )
+      .map(format => format.id)
   }));
 };
 
+/* targetgroups as well as formats get a list of projects that they are indirectly connected to through knowledge transfer activities to make the linking in the graph visualization easier. */
 export const processTargetgroups = (processedProjects, state) => {
   return state.targetgroups.map(targetgroup => {
     const projectIds = targetgroup.ktas
@@ -107,6 +116,21 @@ export const processTargetgroups = (processedProjects, state) => {
   });
 };
 
+export const processFormats = (processedProjects, state) => {
+  return state.formats.map(format => {
+    const projectIds = format.ktas
+      .filter(kta => kta.Drittmittelprojekt && kta.Drittmittelprojekt[0])
+      .map(kta => kta.Drittmittelprojekt[0].id);
+    return {
+      ...format,
+      projects: [
+        ...new Set(processedProjects.filter(p => projectIds.includes(p.id)))
+      ]
+    };
+  });
+};
+
+/* infrastructures and collections are typed to enable different icons. Also the connected projects are replaced with the newly processed ones.*/
 export const processInfrastructures = (processedProjects, state) => {
   return state.infrastructures.map(infrastructure => ({
     ...infrastructure,
@@ -127,6 +151,7 @@ export const processCollections = (processedProjects, state) => {
   }));
 };
 
+/* reformats the start and end date of ktas*/
 export const processKtas = ktas =>
   ktas.map(kta => ({
     ...kta,
@@ -149,6 +174,8 @@ const disambiguateContinents = (candidates, institution) =>
   candidates.sort(
     (a, b) => distance(a, institution) - distance(b, institution)
   );
+
+/* checks if an institution is within the bounding box of a continent. if it is in two bounding boxes, the distance to the center of the continent decides */
 const getContinentOfInstitution = (continentList, institution) => {
   if (!institution || !institution.lon) return null;
   const candidates = continentList.filter(
@@ -169,6 +196,7 @@ const getContinentOfInstitution = (continentList, institution) => {
   return institution.continent;
 };
 
+/* For each institution the continent is found, and the weight of that continent is increased. This is for the geomap*/
 export const processInstitutions = state => {
   let newContinents = state.continents;
   return {

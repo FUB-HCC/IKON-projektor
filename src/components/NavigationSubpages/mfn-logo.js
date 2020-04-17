@@ -36,7 +36,7 @@ class MFNLogo extends Component {
       activePopover: -1
     });
   }
-
+  /* intro.js tour that is started when the mfn-logo is clicked in browser mode. Gives an introduction to all pages, the sidepanel and navbar. */
   startTour() {
     this.props.tourStarted();
     var tour = introJs();

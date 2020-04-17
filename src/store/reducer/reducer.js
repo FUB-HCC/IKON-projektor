@@ -4,6 +4,7 @@ import { topicToField, continents } from "../../util/utility";
 import {
   processProjectsData,
   processTargetgroups,
+  processFormats,
   processCollections,
   processInfrastructures,
   processKtas,
@@ -76,7 +77,7 @@ export const initialState = {
       filterKey: "highlevelFilter",
       type: "array",
       uniqueVals: [6, 7, 8, 9],
-      value: [6, 7, 8, 9]
+      value: [6, 8, 9]
     }
   },
   graph: "0",
@@ -102,7 +103,8 @@ export const initialState = {
     cat: null,
     kta: null,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   projectsMaxSizing: [0, 0],
   legendHovered: "none",
@@ -297,7 +299,7 @@ const updateData = (state, action) => ({
   institutions: action.value.institutions,
   continents: continents,
   missingprojects: action.value.missingprojects,
-  formats: action.value.formats,
+  formats: action.value.formats.filter(format => format.ktas.length > 1),
   clusterData: action.value.cluster_topography,
   isDataLoaded: { ...state.isDataLoaded, data: true }
 });
@@ -314,10 +316,12 @@ export const isAllDataLoaded = state =>
 const processDataWhenReady = state =>
   isAllDataLoaded(state) ? processAllData(state) : state;
 
+/* The received data is transformed in the beginning (e.g. sorted, some attributes slightly changed), the filters get their initial filling too */
 const processAllData = state => {
   const processedProjects = processProjectsData(state);
   const processedKtas = processKtas(state.ktas);
   const processedTargetgroups = processTargetgroups(processedProjects, state);
+  const processedFormats = processFormats(processedProjects, state);
   const processedInfrastructures = processInfrastructures(
     processedProjects,
     state
@@ -325,10 +329,12 @@ const processAllData = state => {
   const processedCollections = processCollections(processedProjects, state);
   const processedMissingProjects = processMissingProjects(state);
   const processedInstState = processInstitutions(state);
-  //  const preprocessedClusterData = processClusterData(state);
-  //linkCatsToProjectsData(processedProjects, processedTargetgroups),
   const newState = {
-    projects: linkCatsToProjectsData(processedProjects, processedTargetgroups),
+    projects: linkCatsToProjectsData(
+      processedProjects,
+      processedTargetgroups,
+      processedFormats
+    ),
     ktas: processedKtas,
     targetgroups: processedTargetgroups,
     infrastructures: processedInfrastructures,
@@ -341,13 +347,18 @@ const processAllData = state => {
       Math.max(...processedProjects.map(p => p.mappoint[0])),
       Math.max(...processedProjects.map(p => p.mappoint[1]))
     ],
-    formats: state.formats
+    formats: processedFormats
   };
   const uniqueFields = [];
   const uniqueTopics = [];
   const uniqueInfrastructures = newState.infrastructures.map(inf => inf.id);
   const uniqueCollections = newState.collections.map(col => col.id);
-  const uniqueFormats = newState.formats.map(format => format.id);
+  const uniqueTargetgroups = newState.targetgroups
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(t => t.id);
+  const uniqueFormats = newState.formats
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(format => format.id);
   const maxDateRange = [5000, 0];
 
   Object.values(newState.projects).forEach(project => {
@@ -394,13 +405,6 @@ const processAllData = state => {
         ? state.filters.collections.value
         : uniqueCollections
     },
-    formats: {
-      ...state.filters.formats,
-      uniqueVals: uniqueFormats,
-      value: state.filters.formats.value
-        ? state.filters.formats.value
-        : uniqueFormats
-    },
     infrastructures: {
       ...state.filters.infrastructures,
       uniqueVals: uniqueInfrastructures,
@@ -408,12 +412,17 @@ const processAllData = state => {
         ? state.filters.infrastructures.value
         : uniqueInfrastructures
     },
+    formats: {
+      ...state.filters.formats,
+      uniqueVals: uniqueFormats,
+      value: state.filters.formats.value ? state.filters.formats.value : []
+    },
     targetgroups: {
       ...state.filters.targetgroups,
-      uniqueVals: newState.targetgroups.map(t => t.id),
+      uniqueVals: uniqueTargetgroups,
       value: state.filters.targetgroups.value
         ? state.filters.targetgroups.value
-        : newState.targetgroups.map(t => t.id)
+        : uniqueTargetgroups
     }
   };
 
@@ -499,7 +508,8 @@ const projectClicked = (state, action) => ({
     cat: null,
     kta: null,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <ProjectDetailsPanel />
 });
@@ -512,7 +522,8 @@ const catClicked = (state, action) => ({
     cat: action.value,
     kta: null,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <CatDetailsPanel />
 });
@@ -525,7 +536,8 @@ const infraClicked = (state, action) => ({
     cat: null,
     kta: null,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <InfraDetailsPanel />
 });
@@ -538,7 +550,8 @@ const ktaClicked = (state, action) => ({
     cat: null,
     kta: action.value,
     year: null,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <KtaDetailsPanel />
 });
@@ -551,7 +564,8 @@ const yearClicked = (state, action) => ({
     cat: null,
     kta: null,
     year: action.value,
-    inst: null
+    inst: null,
+    samples: null
   },
   sideBarComponent: <YearDetailsPanel />
 });
@@ -564,7 +578,8 @@ const instClicked = (state, action) => ({
     cat: null,
     kta: null,
     year: null,
-    inst: action.value
+    inst: action.value,
+    samples: null
   },
   sideBarComponent: <InstDetailsPanel />
 });
@@ -576,7 +591,8 @@ const unClicked = state => ({
     infra: null,
     cat: null,
     kta: null,
-    year: null
+    year: null,
+    samples: null
   },
   sideBarComponent: <FilterPanel />
 });
@@ -619,6 +635,14 @@ const sampleClicked = (state, action) => {
 
 const showSampleList = state => ({
   ...state,
+  isClicked: {
+    project: null,
+    infra: null,
+    cat: null,
+    kta: null,
+    year: null,
+    samples: 1
+  },
   sideBarComponent: <SampleStatesList />
 });
 

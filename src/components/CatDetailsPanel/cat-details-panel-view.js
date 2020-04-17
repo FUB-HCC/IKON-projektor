@@ -21,11 +21,11 @@ const CatDetailsPanel = props => {
         <div className={style.DetailsExit} onClick={props.returnToFilterView}>
           <Exit height={35} width={35} />
         </div>
-        <span className={style.titleTopic}>Zielgruppe</span> <br />
+        <span className={style.titleTopic}>{props.type}</span> <br />
         <span className={style.titleText}>{props.catData.name}</span>
       </div>
       <span className={style.infoItemTitle}>
-        Wissenstransferaktivitäten mit dieser Zielgruppe:
+        Wissenstransferaktivitäten:
         <br />
       </span>
 

@@ -1,6 +1,7 @@
 import React from "react";
 import ClusterDot from "./cluster-dot";
 
+/* Clusters are not visible in the current state of the visualization. Yet the projects are separated by clusters in the data structure as this might change again. */
 const Cluster = props => {
   const {
     cluster,

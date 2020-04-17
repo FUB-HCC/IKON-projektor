@@ -50,8 +50,6 @@ class ActionButtons extends Component {
 
   sendToTouchscreen() {
     const input = document.getElementById("share_name");
-    input.select();
-    input.setSelectionRange(0, 140);
     var today = new Date();
     var date =
       today.getDate() +
@@ -59,10 +57,12 @@ class ActionButtons extends Component {
       (1 + today.getMonth()) +
       "." +
       today.getFullYear();
-    const name = input.value ? input.value : date;
+    const name = input.value
+      ? input.value.substring(0, 48) + "|" + date
+      : "Unbenannt|" + date;
     shareUrl(name);
   }
-
+  /* is executed when in browser mode and tutorial button is clicked. Gives a short tutorial made with intro.js according to the page you are on ("WISSEN", "ZEIT", "RAUM") */
   startPageTour() {
     this.props.tutorialStarted();
     var tour = introJs();
@@ -111,11 +111,13 @@ class ActionButtons extends Component {
       .start();
   }
 
+  /* is executed when in touch mode and tutorial button is clicked. Gives a  tutorial made with intro.js including a short operation manual and information about all elements. */
   startPageTourTouch() {
     this.props.tutorialStarted();
     var tour = introJs();
     tour.setOptions({
-      tooltipPosition: "auto",
+      positionPrecedence: ["bottom", "left", "right", "top"],
+      scrollPadding: "0px",
       showStepNumbers: false,
       overlayOpacity: 0.1,
       tooltipClass: classes.introTooltip,
@@ -123,7 +125,8 @@ class ActionButtons extends Component {
       nextLabel: "Weiter",
       prevLabel: "Zurück",
       skipLabel: "Abbrechen",
-      doneLabel: "Fertig",
+      doneLabel: "Benutzen",
+      hintButtonLabel: "Ok",
       steps: [
         {
           intro:
@@ -133,18 +136,18 @@ class ActionButtons extends Component {
 
         {
           intro:
-            "Diese Version des MfN.projektor ist komplett per Touch-Interaktionen bedienbar. Einzelne Elemente können per einmaliger Berührung angewählt werden, wodurch Kurzinformationen wie Titel, Anzahl oder bestehende Verbindungen zu anderen Elementen angezeigt werden. Per zwei schnell aufeinanderfolgenden Berührungen werden Elemente ausgewählt, und im Detail in der Seitenleiste links angezeigt.",
-          element: "step0"
+            "Diese Version des MfN.projektor ist komplett per Touch-Interaktionen bedienbar. Einzelne Elemente können per <b>einmaligem Antippen</b> angewählt werden, wodurch Kurzinformationen wie Titel, Anzahl oder bestehende Verbindungen zu anderen Elementen angezeigt werden. Per <b>zweimaliges schnell aufeinanderfolgendes Antippen</b> werden Elemente ausgewählt, und im Detail in der Seitenleiste links angezeigt.",
+          element: "interaktionIntro"
         },
         {
           intro:
-            "Ein besonderes Feature des MfN.projektor ist das Teilen von Ansichten: Wenn durch Filtern oder Auswahl von Elementen in der Browser-Version besonders erkenntnisreiche Ansichten erstellt wurden, können diese über den <b>Teilen</b>-Button an diesen Bildschirm geschickt werden! Alle auf diese Art geteilten Ansichten werden in diesem Fenster angezeigt.",
+            "Ein besonderes Feature des MfN.projektor ist das Teilen von Ansichten: Wenn durch Filtern oder Auswahl von Elementen in der <b>Browser-Version</b> besonders erkenntnisreiche Ansichten erstellt wurden, können diese über den <b>Teilen</b>-Button an diesen Bildschirm geschickt werden! Alle auf diese Art geteilten Ansichten werden in dem <b>Geteilte Ansichten</b> Fenster angezeigt.",
           element: "#geteilteAnsichten"
         },
         {
-          element: "#filtersIntro",
+          element: "#detailsPanelID",
           intro:
-            "Die Ansicht kann mithilfe der <b>Filter</b>  angepasst werden. Über den <b>Zeitraum</b>-Slider kann der gesamte Betrachtungszeitraum eingeschränkt werden. Die <b>Forschungsgebiet</b>-Auswahl ermöglicht eine Unterteilung der dargestellten Drittmittelprojekte nach thematischen Kriterien. Über die <b>Wissenstransfer</b>- und <b>Infrastruktur</b>-Auswahl können die jeweiligen Verbindungen ein- oder ausgeschaltet werdem."
+            "Die Ansicht kann mithilfe der <b>Filter</b>  angepasst werden. Über den <b>Zeitraum</b>-Slider kann der gesamte Betrachtungszeitraum eingeschränkt werden. Die <b>Forschungsgebiet</b>-Auswahl ermöglicht eine Unterteilung der dargestellten Drittmittelprojekte nach thematischen Kriterien. Über die <b>Wissenstransfer</b>- und <b>Infrastruktur</b>-Auswahl können die jeweiligen Verbindungen ein-, aus- oder oder umgeschaltet werdem."
         },
         {
           element: "#clusterViewIntro",
@@ -153,45 +156,57 @@ class ActionButtons extends Component {
         },
         {
           intro:
-            "Als weiteres Element dieser Ansicht kann die Unsicherheits-Landschaft aktiviert werden. Da die Anordnung auf algorithmischen Schätzungen von inhaltlichen Ähnlichkeiten basiert, unterstützt dieses Element die Interpretation der Anordnung. Je heller die Färbung der Landschaft, desto sicherer ist sich der Algorithmus über die Position des jeweiligen Forschungsprojektes, und umgekehrt.",
+            "Als weiteres Element dieser Ansicht kann die <b>Unsicherheits-Landschaft</b> aktiviert werden. Da die Anordnung auf algorithmischen Schätzungen von inhaltlichen Ähnlichkeiten basiert, unterstützt dieses Element die Interpretation der Anordnung. Je heller die Färbung der Landschaft, desto sicherer ist sich der Algorithmus über die Position des jeweiligen Forschungsprojektes, und umgekehrt.",
           element: "#uncertaintyLandscape"
         },
         {
           intro:
-            "Die interdisziplinäre Perspektive auf Drittmittelforschung wird durch den äußeren Ring bedeutsam erweitert. Projekte werden hier, basierend auf Informationen aus dem VIA-Wiki, mit Wissenstransferaktivitäten und Infrastrukturen wie Sammlungen und Laborgeräten verknüpft. Hierdurch können einerseits Projekte weitergehend nach Gemeinsamkeiten eingeordnet werden, andererseits Potenziale für Wissenstransfer basierend auf Gemeinsamkeiten entdeckt werden.",
+            "Die interdisziplinäre Perspektive auf Drittmittelforschung wird durch den äußeren Ring bedeutsam erweitert. Projekte werden hier, basierend auf Informationen aus dem <b>VIA-Wiki</b>, mit <b>Wissenstransferaktivitäten</b> und <b>Infrastrukturen</b> wie Sammlungen und Laborgeräten verknüpft. Hierdurch können einerseits Projekte weitergehend nach Gemeinsamkeiten eingeordnet werden, andererseits Potenziale für Wissenstransfer basierend auf Gemeinsamkeiten entdeckt werden.",
           element: "#iconExplanation"
         },
         {
           intro:
-            "Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben",
+            "Die Größe der Kreise und die Zahl neben den unterschiedlichen <b>Zielgruppen oder Formaten</b> vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Kategorie haben.",
           element: "#ktasExplanation"
         },
         {
           intro:
-            "Alle Verknüpfungen, die dieses Icon tragen, sind Sammlungen am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben können.",
+            "Alle Verknüpfungen, die dieses Icon tragen, sind <b>Sammlungen</b> am Museum für Naturkunde, zu denen Forschungsprojekten einen Bezug haben.",
           element: "#collectionExplanation"
         },
         {
           intro:
-            "Alle Verknüpfungen, die dieses Icon tragen, sind Laborgeräte oder andere Infrastruktur am Museum, die in Forschungsprojekten eingesetzt werden können.",
+            "Alle Verknüpfungen, die dieses Icon tragen, sind <b>Laborgeräte oder weitere Infrastrukturen</b> am Museum, die in Forschungsprojekten eingesetzt werden können.",
           element: "#infraExplanation"
         },
         {
           intro:
             "Im oberen Teil werden die Anzahl und Laufzeiten von <b>Drittmittelprojekten</b> basierend auf aktuellen Informationen aus dem <a style='color: #afca0b;' href='https://via.museumfuernaturkunde.berlin/wiki/' target='_blank' rel='noopener noreferrer'>VIA-Wiki</a> und gruppiert nach <b>Forschungsgebieten</b> angezeigt. Um die Interpretation von Trend-Entwicklungen zu unterstützen, werden außerdem in dunkelgrauer Schattierung bisher noch nicht integrierte Daten zu Drittmittelprojekten dargestellt.",
           element: "#timelineView"
+        },
+        {
+          intro:
+            "Hiermit ist diese Einführung beendet. Sie können sie jederzeit über den <b>Tutorial</b> Button erneut aufrufen.",
+          element: "step0"
+        }
+      ],
+      hints: [
+        {
+          element: "#doppelklickIntro",
+          hint:
+            "Einzelne Elemente können per <b>einmaligem Antippen</b> angewählt werden, wodurch Kurzinformationen wie Titel, Anzahl oder bestehende Verbindungen zu anderen Elementen angezeigt werden. <br/><br/> Per <b>zweimaliges schnell aufeinanderfolgendes Antippen</b> werden Elemente ausgewählt, und im Detail in der Seitenleiste links angezeigt.",
+          position: "left"
         }
       ]
     });
     tour
       .onbeforechange(() => {
-        console.log(tour._introItems[tour._currentStep].element.id);
         switch (tour._introItems[tour._currentStep].element.id) {
           case "geteilteAnsichten": {
             this.props.showSampleList();
             break;
           }
-          case "filtersIntro": {
+          case "detailsPanelID": {
             this.props.unClicked();
             break;
           }
@@ -223,7 +238,10 @@ class ActionButtons extends Component {
           }
         }
       })
-      .onexit(() => this.props.legendHovered(null))
+      .onexit(() => {
+        this.props.legendHovered();
+        tour.addHints();
+      })
       .start();
   }
 
@@ -286,6 +304,7 @@ class ActionButtons extends Component {
           <div
             className={classes.rightElement}
             onClick={isTouch ? this.startPageTourTouch : this.startPageTour}
+            id="tutorialButton"
           >
             <Tutorial className={classes.buttonIcon} /> <p>Tutorial</p>
           </div>

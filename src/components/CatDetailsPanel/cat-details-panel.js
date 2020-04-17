@@ -13,6 +13,11 @@ const mapStateToProps = state => {
       catData: state.main.targetgroups.find(
         c => c.id === state.main.isClicked.cat
       )
+        ? state.main.targetgroups.find(c => c.id === state.main.isClicked.cat)
+        : state.main.formats.find(c => c.id === state.main.isClicked.cat),
+      type: state.main.targetgroups.find(c => c.id === state.main.isClicked.cat)
+        ? "Zielgruppe"
+        : "Format"
     };
   } else {
     return {};

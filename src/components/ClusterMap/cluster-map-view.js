@@ -1,15 +1,14 @@
 import React from "react";
-
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 import IconExplanation from "./icon-explanation";
-
 import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import ClusterContoursMap from "./cluster-contours-map";
 import InteractionHandler from "../../util/interaction-handler";
+
 const arcMarginSides = (width, scale) => Math.min(0.2 * width, 0.2 * scale);
 const arcMarginTop = (height, scale) => Math.min(0.02 * height, 0.02 * scale);
 const clusterSize = scale => 0.55 * scale;
@@ -24,6 +23,8 @@ const circleScaling = scale => 0.02 * scale;
 const strokeWidth = scale => 0.001 * scale;
 const contoursSize = 200;
 
+/* splitting titles of categories and
+infrastructure to fit in outer circle */
 const splitLongTitles = title => {
   var words = title.split(/[\s-]+/);
   var newtext = [words[0]];
@@ -44,12 +45,10 @@ const splitLongTitles = title => {
 export default class ClusterMapView extends React.Component {
   constructor(props) {
     super();
-    this.state = {
-      hoverText: false
-    };
     this.renderHover = this.renderHover.bind(this);
   }
 
+  // translate mappoint of projects to current screen size
   getPointLocation = (pt, width, height) => {
     const [x, y] = pt;
     const normalizedX = x / this.props.projectsMaxSizing[0];
@@ -61,15 +60,27 @@ export default class ClusterMapView extends React.Component {
     ];
   };
 
-  renderHover() {
+  renderHover(pId) {
+    let text = "";
+    let mouseLocation = [0, 0];
+    if (pId) {
+      let project = this.props.clusterData
+        .map(cluster => cluster.projects.find(project => project.id === pId))
+        .find(p => p);
+      text = project.displaytitle;
+      mouseLocation = this.getPointLocation(
+        project.mappoint,
+        this.props.width,
+        this.props.height
+      );
+    }
     return (
-      this.state.hoverText &&
-      this.state.mouseLocation && (
+      pId && (
         <HoverPopover
           width={"15em"}
           height="20px"
-          locationX={this.state.mouseLocation[0]}
-          locationY={this.state.mouseLocation[1]}
+          locationX={mouseLocation[0]}
+          locationY={mouseLocation[1] - 30}
         >
           <p
             style={{
@@ -84,7 +95,7 @@ export default class ClusterMapView extends React.Component {
               padding: "5px 10px"
             }}
           >
-            <label>{this.state.hoverText}</label>
+            <label>{text}</label>
           </p>
         </HoverPopover>
       )
@@ -93,7 +104,7 @@ export default class ClusterMapView extends React.Component {
 
   render() {
     const {
-      targetgroups,
+      categories,
       width,
       height,
       collections,
@@ -111,12 +122,13 @@ export default class ClusterMapView extends React.Component {
       isAnyClicked,
       uncertaintyOn,
       uncertaintyHighlighted,
-      isTouch
+      isTouch,
+      isProjectHovered
     } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
     if (
-      !targetgroups ||
+      !categories ||
       !collections ||
       !infrastructures ||
       !width ||
@@ -129,8 +141,8 @@ export default class ClusterMapView extends React.Component {
     const shiftY = height / 2;
     const radius = clusterSize(scale) - arcMarginSides(width, scale);
     const each =
-      360 / (targetgroups.length + collections.length + infrastructures.length);
-    const conMax = Math.max(...targetgroups.map(o => o.count), 0);
+      360 / (categories.length + collections.length + infrastructures.length);
+    const conMax = Math.max(...categories.map(o => o.count), 0);
     return (
       <div
         className={style.clusterMapWrapper}
@@ -143,7 +155,7 @@ export default class ClusterMapView extends React.Component {
         <IconExplanation
           posX={20}
           posY={isTouch ? height - 100 : 20}
-          category={targetgroups[0]}
+          category={categories[0]}
           infrastructure={infrastructures}
           collection={collections}
         />
@@ -172,13 +184,14 @@ export default class ClusterMapView extends React.Component {
             />
           )}
           <g>
-            {targetgroups.map((targetgroup, i) => {
-              const startAngle = each * i - targetgroups.length * each;
+            {categories.map((category, i) => {
+              /* computing the position of the label + icon + count */
+              const startAngle = each * i - categories.length * each;
               const angle = startAngle * (Math.PI / 180);
-              const conLen = targetgroup.count;
+              const conLen = category.count;
               const x = shiftX + radius * Math.cos(angle);
               const y = shiftY + radius * Math.sin(angle);
-              const isHighlighted = highlightedCats.includes(targetgroup.id);
+              const isHighlighted = highlightedCats.includes(category.id);
               const higlightOffset = isHighlighted ? 7 : 0;
               const textX =
                 shiftX +
@@ -198,9 +211,12 @@ export default class ClusterMapView extends React.Component {
 
               const area = (conLen * 1.2) / conMax;
               const rad = Math.sqrt(area / Math.PI) * circleScaling(scale) || 1;
+
+              /* for each link between a category and a project an svg path to connect them is computed (default: grey, highlighted: green, uncertainty on: transparent only visible on hover/click)
+              same goes for the links between infrastructure and projects below */
               let lines = [];
-              if (targetgroup.projects.length > 0) {
-                lines = targetgroup.projects.map(project => {
+              if (category.projects.length > 0) {
+                lines = category.projects.map(project => {
                   const target = this.getPointLocation(
                     project.mappoint,
                     width,
@@ -244,19 +260,19 @@ export default class ClusterMapView extends React.Component {
                 });
               }
               return (
-                <g key={targetgroup.id}>
+                <g key={category.id}>
                   <InteractionHandler
                     isInTouchMode={isTouch}
-                    onMouseOver={() => onCatHovered(targetgroup.id)}
+                    onMouseOver={() => onCatHovered(category.id)}
                     onMouseLeave={() => onUnHovered()}
                     onClick={() => {
-                      onCatClicked(targetgroup.id);
+                      onCatClicked(category.id);
                     }}
                     doubleTapTreshold={500}
                   >
                     <g>
                       <circle
-                        id={`targetgroup-${targetgroup.id}`}
+                        id={`category-${category.id}`}
                         r={rad}
                         cx={x}
                         cy={y}
@@ -287,13 +303,11 @@ export default class ClusterMapView extends React.Component {
                         cursor="POINTER"
                         transform={`rotate(${textRotate} ${textX} ${textY})`}
                       >
-                        {splitLongTitles(targetgroup.name).map(
-                          (titlePart, i) => (
-                            <tspan x={textX} y={textY + i * 10} key={titlePart}>
-                              {titlePart}
-                            </tspan>
-                          )
-                        )}
+                        {splitLongTitles(category.name).map((titlePart, i) => (
+                          <tspan x={textX} y={textY + i * 10} key={titlePart}>
+                            {titlePart}
+                          </tspan>
+                        ))}
                       </text>
                     </g>
                   </InteractionHandler>
@@ -321,7 +335,7 @@ export default class ClusterMapView extends React.Component {
               );
             })}
 
-            <g>
+            <g id="doppelklickIntro">
               {collections.concat(infrastructures).map((infrastruktur, i) => {
                 const startAngle = each * i;
                 const angle = startAngle * (Math.PI / 180);
@@ -498,7 +512,7 @@ export default class ClusterMapView extends React.Component {
             </g>
           </g>
         </svg>
-        {this.renderHover()}
+        {this.renderHover(isProjectHovered)}
       </div>
     );
   }

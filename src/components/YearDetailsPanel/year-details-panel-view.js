@@ -17,7 +17,7 @@ const YearDetailsPanel = props => {
       </div>
     );
   }
-  const color = getFieldColor(parseInt(props.title));
+  const color = getFieldColor(props.title);
   return (
     <div className={style.DetailsWrapper}>
       <div
@@ -38,7 +38,7 @@ const YearDetailsPanel = props => {
 
       <span className={style.infoItemTitle}>
         {props.ktas.length > 0
-          ? "Wissenstransferaktivitäten mit dieser Zielgruppe "
+          ? "Wissenstransferaktivitäten mit dieser Kategorie "
           : "Forschungsprojekte in diesem Forschungsbereich "}
         im Jahr {props.year}:
         <br />

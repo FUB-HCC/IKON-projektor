@@ -18,7 +18,7 @@ import styles from "./time-line-view.module.css";
 import { getFieldColor, fieldsIntToString } from "../../util/utility";
 import SVGWithMargin from "./SVGWithMargin";
 import HoverPopover from "../HoverPopover/HoverPopover";
-import TargetgroupBuckets from "./TargetgroupBuckets";
+import CategoryBuckets from "./CategoryBuckets";
 import InteractionHandler from "../../util/interaction-handler";
 
 export default class TimeLineView extends Component {
@@ -42,7 +42,7 @@ export default class TimeLineView extends Component {
       index: 0
     };
     this.handleAreaClick = this.handleAreaClick.bind(this);
-    this.renderProjectsHover = this.renderProjectsHover.bind(this);
+    this.renderHoverField = this.renderHoverField.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.handleAreaMouseEnter = this.handleAreaMouseEnter.bind(this);
     this.handleCircleMouseEnter = this.handleCircleMouseEnter.bind(this);
@@ -70,7 +70,7 @@ export default class TimeLineView extends Component {
     this.props.showYearDetails(year + "|" + key);
   }
 
-  renderProjectsHover() {
+  renderHoverField() {
     return (
       this.state.hoveredArea &&
       this.state.mouseLocation && (
@@ -101,14 +101,14 @@ export default class TimeLineView extends Component {
                   } aktive Projekte in ${fieldsIntToString(
                     this.state.hoveredArea.forschungsbereich
                   )}`
-                : `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} Wissenstransferaktivitäten mit der Zielgruppe ${this.state.hoveredArea.targetgroup}`}
+                : `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} Wissenstransferaktivitäten mit der Kategorie ${this.state.hoveredArea.category}`}
             </label>
           </p>
         </HoverPopover>
       )
     );
   }
-
+  /* grid lines in the starry sky viz are highlighted when a circle is hovered. the green line is drawn in a fixed position svg behind the other content */
   highlightGridLine() {
     return (
       this.state.hoveredArea &&
@@ -134,6 +134,7 @@ export default class TimeLineView extends Component {
       )
     );
   }
+  /* same goes for the gridlines drawn in grey for every year in which ktas with a category have been dated */
   renderGridline(lines) {
     return (
       <svg
@@ -187,16 +188,17 @@ export default class TimeLineView extends Component {
       return <div />;
     }
     const stackedAreaHeight = this.state.height * 0.4;
-    const targetgroupsHeight = this.state.height * 0.5;
+    const categoriesHeight = this.state.height * 0.5;
+
+    // turns the preprocessed data into a d3 stack
     const stack = d3stack()
       .keys(this.state.dataSplitYears.areaChartKeys)
       .order(d3StackOrderNone)
       .offset(d3StackOffsetNone);
     const stackedData = stack(this.state.dataSplitYears.areaChartData);
     const { areKtaRendered, isTouchMode } = this.props;
-
     const color = d => {
-      return d.key === "Unveröffentlicht" ? "#555" : getFieldColor(d.key);
+      return d.key === "Unveröffentlicht" ? "#444" : getFieldColor(d.key);
     };
     const toYear = int => {
       return new Date(int.toString()).setHours(0, 0, 0, 0);
@@ -232,13 +234,13 @@ export default class TimeLineView extends Component {
       .y0(d => y(d[0]))
       .y1(d => y(d[1]));
 
-    //all years with wta in targetgroup in one array
+    //all years with wta in category in one array
     const ktasYears = [].concat.apply(
       [],
       Object.values(this.state.ktasYearBuckets)
     );
 
-    //getting all distinct years that have targetgroup Bucket
+    //getting all distinct years that have category bucket
     const lines = [...new Set(ktasYears.map(line => x(toYear(line.year))))];
 
     return (
@@ -257,16 +259,16 @@ export default class TimeLineView extends Component {
               {this.highlightGridLine()}
 
               <div
-                data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
+                data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> bzw. <b>Formaten</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe oder einem bestimmten Format in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
                 data-step="2"
                 className={styles.ktaBucketsWrapper}
-                style={{ height: targetgroupsHeight }}
+                style={{ height: categoriesHeight }}
               >
                 <span className={styles.plotTitle}>
                   Wissenstransferaktivitäten <br />
                   <br />
                 </span>
-                <TargetgroupBuckets
+                <CategoryBuckets
                   ktasYearBuckets={this.state.ktasYearBuckets}
                   height={this.state.height * 0.03}
                   width={this.state.width}
@@ -368,7 +370,7 @@ export default class TimeLineView extends Component {
                 );
               })}
           </SVGWithMargin>
-          {this.renderProjectsHover()}
+          {this.renderHoverField()}
         </div>
       </div>
     );

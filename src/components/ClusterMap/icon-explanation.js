@@ -6,6 +6,7 @@ import style from "./cluster-map-view.module.css";
 import { useDispatch } from "react-redux";
 import { legendHovered } from "../../store/actions/actions";
 
+/* legend for the labels in the outer circle of clustervis is drawn as a fixed position div over the cluster vis. When one is hovered all links of the type are highlighted. */
 const IconExplanation = props => {
   const dispatch = useDispatch();
   return (
@@ -27,7 +28,7 @@ const IconExplanation = props => {
     >
       <p
         style={{ display: "flex", cursor: "POINTER" }}
-        data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Zielgruppe haben"
+        data-intro="Die Größe der Kreise und die Zahl neben den unterschiedlichen Zielgruppen oder Formaten vermittelt die Anzahl der Wissenstransferaktivitäten, die diese Kategorie haben"
         data-step="4"
         id="ktasExplanation"
         className={style.legendRow}

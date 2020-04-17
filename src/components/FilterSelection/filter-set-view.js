@@ -92,6 +92,7 @@ class FilterSet extends Component {
     );
   }
 
+  /* state of collapsed/unfolded subfilters */
   toggledFilterList(nameId, state, change) {
     if (state.find(e => e === nameId)) {
       state.splice(state.indexOf(nameId), 1);
@@ -104,6 +105,7 @@ class FilterSet extends Component {
 
 export default FilterSet;
 
+/* normal html checkbox is replaced by own css. formats and targetgroups have round "radiobuttons" as they work like a switch. */
 const CheckBox = props => (
   <div
     className={style.checkBoxWrapper}
@@ -126,7 +128,8 @@ const CheckBox = props => (
         htmlFor={props.nameId}
         style={{
           border: props.color + " 2px solid",
-          borderRadius: "50%",
+          borderRadius:
+            props.nameId === 6 || props.nameId === 7 ? "50%" : "20%",
           backgroundColor: props.checked ? props.color : "rgba(0,0,0,0)",
           marginRight: props.iconMargin + "px",
           marginLeft: props.iconMargin * 0.5 + "px",

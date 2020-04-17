@@ -6,6 +6,7 @@ import {
   highlightUncertainty
 } from "../../store/actions/actions";
 
+/* legend for uncertaintyLandscape is drawn as a fixed position div over the cluster vis. when uncertainty landscape is toggled in through checkbox */
 const UncertaintyExplanation = props => {
   const dispatch = useDispatch();
   return (
@@ -30,6 +31,11 @@ const UncertaintyExplanation = props => {
           onMouseEnter={() => dispatch(highlightUncertainty(true))}
           onMouseLeave={() => dispatch(highlightUncertainty(false))}
           style={{ cursor: "POINTER" }}
+          onClick={() =>
+            window.alert(
+              "Wir setzen maschinelles Lernen ein, um Forschungsprojekte hinsichtlich inhaltlicher Ähnlichkeiten anzuordnen. Die Unsicherheitslandschaft zeigt an, wie treffend der Algorithmus die Anordnung einschätzt."
+            )
+          }
         >
           <p
             style={{
@@ -51,15 +57,7 @@ const UncertaintyExplanation = props => {
           </svg>
           <br />
           Anordnung{" "}
-          <svg
-            width="15"
-            height="15"
-            onClick={() =>
-              window.alert(
-                "Wir setzen maschinelles Lernen ein, um Forschungsprojekte hinsichtlich inhaltlicher Ähnlichkeiten anzuordnen. Die Unsicherheitslandschaft zeigt an, wie treffend der Algorithmus die Anordnung einschätzt."
-              )
-            }
-          >
+          <svg width="15" height="15">
             <circle className={style.tooltipIcon} r="6" cx={6} cy={6} />
             <text
               x="3"

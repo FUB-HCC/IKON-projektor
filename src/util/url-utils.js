@@ -4,6 +4,7 @@ import InfraDetailsPanel from "../components/InfraDetailsPanel/infra-details-pan
 import KtaDetailsPanel from "../components/KtaDetailsPanel/kta-details-panel";
 import YearDetailsPanel from "../components/YearDetailsPanel/year-details-panel";
 import InstDetailsPanel from "../components/InstDetailsPanel/inst-details-panel";
+import SampleStatesList from "../components/SampleStatesList/sample-states-list";
 import FilterPanel from "../components/FilterPanel/filter-panel";
 import { history } from "../index";
 import { initialState } from "../store/reducer/reducer";
@@ -29,6 +30,9 @@ const getTupleFromIsClicked = isClicked => {
   if (isClicked.inst) {
     return [6, isClicked.inst];
   }
+  if (isClicked.samples) {
+    return [7, isClicked.samples];
+  }
   return [0, null];
 };
 
@@ -41,7 +45,8 @@ const getIsClickedFromTuple = tuple => {
       cat: null,
       kta: null,
       year: null,
-      inst: null
+      inst: null,
+      samples: null
     };
   }
   if (key === 2) {
@@ -51,7 +56,8 @@ const getIsClickedFromTuple = tuple => {
       cat: value,
       kta: null,
       year: null,
-      inst: null
+      inst: null,
+      samples: null
     };
   }
   if (key === 3) {
@@ -61,7 +67,8 @@ const getIsClickedFromTuple = tuple => {
       cat: null,
       kta: null,
       year: null,
-      inst: null
+      inst: null,
+      samples: null
     };
   }
   if (key === 4) {
@@ -71,7 +78,8 @@ const getIsClickedFromTuple = tuple => {
       cat: null,
       kta: value,
       year: null,
-      inst: null
+      inst: null,
+      samples: null
     };
   }
   if (key === 5) {
@@ -81,7 +89,8 @@ const getIsClickedFromTuple = tuple => {
       cat: null,
       kta: null,
       year: value,
-      inst: null
+      inst: null,
+      samples: null
     };
   }
   if (key === 6) {
@@ -91,7 +100,19 @@ const getIsClickedFromTuple = tuple => {
       cat: null,
       kta: null,
       year: null,
-      inst: value
+      inst: value,
+      samples: null
+    };
+  }
+  if (key === 7) {
+    return {
+      project: null,
+      infra: null,
+      cat: null,
+      kta: null,
+      year: null,
+      inst: null,
+      samples: value
     };
   }
   return {
@@ -99,7 +120,9 @@ const getIsClickedFromTuple = tuple => {
     infra: null,
     cat: null,
     kta: null,
-    year: null
+    year: null,
+    inst: null,
+    samples: value
   };
 };
 
@@ -123,9 +146,13 @@ const getSideBarComponentFromTuple = tuple => {
   if (key === 6) {
     return <InstDetailsPanel />;
   }
+  if (key === 7) {
+    return <SampleStatesList />;
+  }
   return <FilterPanel />;
 };
 
+/*turns state of filters, visualization and sidebar into minified url*/
 export const pushStateToUrl = newState => {
   if (!newState.isDataProcessed || !newState.isDataLoaded.data) {
     return;
@@ -138,6 +165,7 @@ export const pushStateToUrl = newState => {
     c: newState.filters.collections.value,
     in: newState.filters.infrastructures.value,
     ta: newState.filters.targetgroups.value,
+    fo: newState.filters.formats.value,
     hlf: newState.filters.highlevelFilter.value,
     cl: getTupleFromIsClicked(newState.isClicked),
     un: newState.uncertaintyOn ? 1 : 0
@@ -160,6 +188,7 @@ export const pushStateToUrl = newState => {
   }
 };
 
+/*turns minified url back into readable state*/
 export const parseStateFromUrl = urlParams => {
   const stateString = urlParams.state;
   const userId = urlParams.uid;
@@ -214,7 +243,8 @@ export const parseStateFromUrl = urlParams => {
           value: deminifiedUrlState.ta
         },
         formats: {
-          ...initialState.filters.formats
+          ...initialState.filters.formats,
+          value: deminifiedUrlState.fo
         }
       },
       uncertaintyOn: deminifiedUrlState.un === 1 ? true : false,

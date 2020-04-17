@@ -1,10 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import {
-  isTouchMode,
-  applyFilters,
-  applyMissingFilters
-} from "../../util/utility";
+import { isTouchMode, applyFilters } from "../../util/utility";
 import TimeLineView from "./time-line-view";
 import { yearClicked } from "../../store/actions/actions";
 
@@ -71,14 +67,18 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   let projectsForView = applyFilters(state.main.projects, state.main.filters);
-  let missingProjectsForView = applyMissingFilters(
+  let missingProjectsForView = applyFilters(
     state.main.missingprojects,
     state.main.filters
   );
-  let targetgroupsForView = state.main.targetgroups.filter(tg =>
-    state.main.filters.targetgroups.value.includes(tg.id)
-  );
-  const processedKtas = processKtas(state.main.ktas, targetgroupsForView);
+  let categoriesForView = state.main.filters.highlevelFilter.value.includes(6)
+    ? state.main.targetgroups.filter(tg =>
+        state.main.filters.targetgroups.value.includes(tg.id)
+      )
+    : state.main.formats.filter(format =>
+        state.main.filters.formats.value.includes(format.id)
+      );
+  const processedKtas = processKtas(state.main.ktas, categoriesForView);
   const processedData = processData(projectsForView, missingProjectsForView);
   return {
     dataSplitFbYear: processedData,
@@ -89,16 +89,12 @@ const mapStateToProps = state => {
     isTouchMode: isTouchMode(state)
   };
 };
-// TODO move to datatransforms?
+
 const processData = (data, missingData) => {
   /*
    Private
-   Transforms the data in to a format which can be easily used for the Visulisation.
-
-     inData - the newProjects.json set or a subset of it
-
-     Returns the visData.
-
+   Transforms the data in to a format which can be easily used for the visualization.
+   published and unpublished research projects are binned into years
  */
 
   if (!data || data === [] || !missingData) return [];
@@ -148,10 +144,14 @@ const processData = (data, missingData) => {
   return result;
 };
 
-const processKtas = (ktas, targetgroups) => {
+const processKtas = (ktas, categories) => {
+  /* ktas are counted per category (targetgroup or format) and year */
   if (!ktas || ktas.length === 0) return [];
   let ktasYearBuckets = [];
   for (let ktaKey in ktas) {
+    let ktaCategories = []
+      .concat(ktas[ktaKey].Zielgruppe)
+      .concat(ktas[ktaKey].Format.map(format => format.name));
     let startDate =
       ktas[ktaKey].timeframe[0].getFullYear() > 1970
         ? ktas[ktaKey].timeframe[0].getFullYear()
@@ -159,32 +159,31 @@ const processKtas = (ktas, targetgroups) => {
     let endDate = ktas[ktaKey].timeframe[1]
       ? ktas[ktaKey].timeframe[1].getFullYear()
       : startDate;
-    if (startDate > 2000 && ktas[ktaKey].Zielgruppe[0]) {
-      for (let targetgroup in ktas[ktaKey].Zielgruppe) {
-        let targetgroupName = ktas[ktaKey].Zielgruppe[targetgroup];
-        if (targetgroups.some(t => t.name === targetgroupName)) {
-          if (!(targetgroupName in ktasYearBuckets)) {
-            ktasYearBuckets[targetgroupName] = [];
+    if (startDate > 2000 && ktaCategories.length > 0) {
+      for (let category in ktaCategories) {
+        let categoryName = ktaCategories[category];
+        if (categories.some(t => t.name === categoryName)) {
+          if (!(categoryName in ktasYearBuckets)) {
+            ktasYearBuckets[categoryName] = [];
           }
 
           let year = startDate;
           while (year <= endDate) {
             let yearExists = false;
-            for (let yearTgIndex in ktasYearBuckets[targetgroupName]) {
+            for (let yearTgIndex in ktasYearBuckets[categoryName]) {
               // check if year already is existent for the forschungsbereich
-              if (ktasYearBuckets[targetgroupName][yearTgIndex].year === year) {
+              if (ktasYearBuckets[categoryName][yearTgIndex].year === year) {
                 yearExists = true;
-                ktasYearBuckets[targetgroupName][yearTgIndex].numberOfWtas =
-                  ktasYearBuckets[targetgroupName][yearTgIndex].numberOfWtas +
-                  1;
-                ktasYearBuckets[targetgroupName][yearTgIndex].ktas.push(
+                ktasYearBuckets[categoryName][yearTgIndex].numberOfWtas =
+                  ktasYearBuckets[categoryName][yearTgIndex].numberOfWtas + 1;
+                ktasYearBuckets[categoryName][yearTgIndex].ktas.push(
                   ktas[ktaKey]
                 );
               }
             }
 
             if (!yearExists) {
-              ktasYearBuckets[targetgroupName].push({
+              ktasYearBuckets[categoryName].push({
                 year: year,
                 numberOfWtas: 1,
                 ktas: [ktas[ktaKey]]
@@ -192,9 +191,9 @@ const processKtas = (ktas, targetgroups) => {
             }
             year++;
           }
-          ktasYearBuckets[targetgroupName] = ktasYearBuckets[
-            targetgroupName
-          ].sort((a, b) => a.year - b.year);
+          ktasYearBuckets[categoryName] = ktasYearBuckets[categoryName].sort(
+            (a, b) => a.year - b.year
+          );
         }
       }
     }
