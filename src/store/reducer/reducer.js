@@ -329,6 +329,12 @@ const processAllData = state => {
   const processedCollections = processCollections(processedProjects, state);
   const processedMissingProjects = processMissingProjects(state);
   const processedInstState = processInstitutions(state);
+
+  var unflattened = [];
+  while (state.clusterData.length > 0)
+    unflattened.push(state.clusterData.splice(0, 200));
+  const processedClusterData = unflattened.reverse().flat();
+
   const newState = {
     projects: linkCatsToProjectsData(
       processedProjects,
@@ -339,7 +345,7 @@ const processAllData = state => {
     targetgroups: processedTargetgroups,
     infrastructures: processedInfrastructures,
     collections: processedCollections,
-    clusterData: state.clusterData,
+    clusterData: processedClusterData,
     missingprojects: processedMissingProjects,
     institutions: processedInstState.institutions,
     continents: processedInstState.continents,

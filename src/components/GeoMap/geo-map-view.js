@@ -108,7 +108,7 @@ export default class GeoMapView extends React.Component {
         <div
           className={style.mapsWrapper}
           data-step="3"
-          data-intro="Die roten Punkte deuten an, wo sich die kooperierenden Institutionen auf den Kontinenten befinden. Der grüne Punkt repräsentiert hier das Museum für Naturkunde, welches den Ausgang für jede Kooperation bildet."
+          data-intro="Die roten Punkte deuten an, wo sich die kooperierenden Institutionen auf den Kontinenten befinden. Durch das Anklicken eines Kontinents kann eine Liste dieser Institutionen aufgerufen werden."
         >
           {continents
             .filter(c => c.institutionCount > 0)
@@ -171,7 +171,7 @@ export default class GeoMapView extends React.Component {
         <div
           className={style.mapsWrapper}
           data-step="4"
-          data-intro="Forschungsprojekte haben neben Kooperationen auch Regionen, auf welche der Fokus gelegt wird. Die Anzahl dieser kann man hier aufgeteilt auf die Kontinente sehen. Klicken Sie auf einen Kreis, um zu erfahren um welche Forschungsprojekte es sich handelt."
+          data-intro="Forschungsprojekte haben neben internationalen Kooperationspartnern auch Regionen, auf welche der Forschungsfokus gelegt wird. Die Anzahl dieser kann man hier aufgeteilt auf die Kontinente sehen. Klicken Sie auf einen Kreis, um zu erfahren um welche Forschungsprojekte es sich handelt."
         >
           {continents.map((c, i) => {
             return (

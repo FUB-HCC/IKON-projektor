@@ -31,7 +31,9 @@ class GraphViewTouch extends React.Component {
       this.props.fetchData();
       this.props.fetchSampleList();
     });
-    document.getElementById("tutorialButton").click();
+    setTimeout(() => {
+      document.getElementById("tutorialButton").click();
+    }, 3000);
   }
 
   resize() {

@@ -11,12 +11,13 @@ const scaleContours = (
   contoursSize,
   clusterSize,
   clusterX,
-  clusterY
+  clusterY,
+  scale
 ) => {
   const coords = cont.coordinates;
-  const factor = clusterSize(Math.min(height, width));
-  const ClusterPosX = clusterX(width, Math.min(height, width));
-  const ClusterPosY = clusterY(height, Math.min(height, width));
+  const factor = clusterSize(scale);
+  const ClusterPosX = clusterX(width, scale);
+  const ClusterPosY = clusterY(height, scale);
   const scaledCoords = coords.map(cGroup =>
     cGroup.map(c =>
       c.map(point => [
@@ -34,12 +35,13 @@ const scaleContours = (
 const constructContours = (topography, contoursSize) =>
   d3Contours()
     .size([contoursSize, contoursSize])
+    .thresholds(10)
     .smooth([false])(topography);
 
 const computeColorMap = topography =>
   d3ScaleLinear()
     .domain(d3extent(topography))
-    .range(["#000", "#aaa"]);
+    .range(["#0a0a0a", "#aaa"]);
 
 class ClusterContoursMap extends React.Component {
   constructor(props) {
@@ -78,10 +80,11 @@ class ClusterContoursMap extends React.Component {
         topography: topography
       });
     }
+    const emptyColourValue = topography[0];
     const lineFunction = d3GeoPath();
     const scale = Math.min(height, width);
     return (
-      <g fill="transparent" transform={`rotate(90 ${width / 2} ${height / 2})`}>
+      <g fill="transparent">
         {this.contours.map(cont => {
           const scaledContours = scaleContours(
             cont,
@@ -90,7 +93,8 @@ class ClusterContoursMap extends React.Component {
             contoursSize,
             clusterSize,
             clusterX,
-            clusterY
+            clusterY,
+            scale
           );
           return (
             <path
@@ -98,9 +102,9 @@ class ClusterContoursMap extends React.Component {
               key={cont.value}
               d={lineFunction(scaledContours)}
               fill={
-                cont.value === -0.15000000000000002
-                  ? "#0e0e0e"
-                  : this.colorMap(cont.value)
+                cont.value > emptyColourValue
+                  ? this.colorMap(cont.value)
+                  : "#0e0e0e"
               }
             />
           );
