@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "MfN.projektor",
+  "name": "Visualisierung von Forschungsprojekten am Museum für Naturkunde Berlin",
   "icons": [
     {
       "src": "favicon.ico",
