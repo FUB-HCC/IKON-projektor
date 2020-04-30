@@ -188,7 +188,27 @@ export default class GeoMapView extends React.Component {
                       {c.name}
                     </text>
                   </svg>
-                  <svg viewBox={"0 0 500 500"}>
+                  <svg
+                    viewBox={"0 0 500 500"}
+                    onMouseOver={evt => {
+                      this.setState({
+                        hovered:
+                          c.institutionCount +
+                          " Kooperationspartner in " +
+                          c.name,
+                        mouseLocation: [
+                          evt.nativeEvent.clientX,
+                          evt.nativeEvent.clientY
+                        ]
+                      });
+                    }}
+                    onMouseLeave={() => {
+                      this.setState({
+                        hovered: false,
+                        mouseLocation: [0, 0]
+                      });
+                    }}
+                  >
                     <g
                       className={style.continentSVG}
                       onClick={() => {

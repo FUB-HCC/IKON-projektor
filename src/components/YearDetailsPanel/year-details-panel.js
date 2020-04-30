@@ -15,16 +15,6 @@ const mapStateToProps = state => {
   } = state.main;
   if (isDataProcessed && projects) {
     const [year, title] = isClicked.year.split("|");
-    if (title === "Unveröffentlicht") {
-      return {
-        year: year,
-        title: title,
-        projects: missingprojects.filter(
-          p => p.timeframe[0] <= year && year <= p.timeframe[1]
-        ),
-        ktas: []
-      };
-    }
     return {
       year: year,
       title: isNaN(title) ? title : parseInt(title),

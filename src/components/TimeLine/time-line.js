@@ -67,10 +67,6 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   let projectsForView = applyFilters(state.main.projects, state.main.filters);
-  let missingProjectsForView = applyFilters(
-    state.main.missingprojects,
-    state.main.filters
-  );
   let categoriesForView = state.main.filters.highlevelFilter.value.includes(6)
     ? state.main.targetgroups.filter(tg =>
         state.main.filters.targetgroups.value.includes(tg.id)
@@ -79,7 +75,7 @@ const mapStateToProps = state => {
         state.main.filters.formats.value.includes(format.id)
       );
   const processedKtas = processKtas(state.main.ktas, categoriesForView);
-  const processedData = processData(projectsForView, missingProjectsForView);
+  const processedData = processData(projectsForView);
   return {
     dataSplitFbYear: processedData,
     projects: projectsForView,
@@ -90,19 +86,19 @@ const mapStateToProps = state => {
   };
 };
 
-const processData = (data, missingData) => {
+const processData = data => {
   /*
    Private
    Transforms the data in to a format which can be easily used for the visualization.
    published and unpublished research projects are binned into years
  */
 
-  if (!data || data === [] || !missingData) return [];
+  if (!data || data === []) return [];
 
-  let keys = [1, 2, 3, 4, 5, "Unveröffentlicht"];
+  let keys = [1, 2, 3, 4, 5];
   let map = [],
     years = [];
-  data = data.concat(missingData);
+  data = data;
   let projects = data.map(project => {
     let startDate = project.timeframe[0];
     let endDate = project.timeframe[1];
