@@ -7,6 +7,8 @@ import { ReactComponent as SouthAmerica } from "../../assets/GeoMap/continents/s
 import { ReactComponent as Asia } from "../../assets/GeoMap/continents/asia.svg";
 import { ReactComponent as Australia } from "../../assets/GeoMap/continents/australia.svg";
 
+import HoverPopover from "../HoverPopover/HoverPopover";
+
 const continentSVGs = continent => {
   switch (continent) {
     case "Nordamerika": {
@@ -48,6 +50,40 @@ const mapLatToHeight = (height, continent, lat) =>
 export default class GeoMapView extends React.Component {
   constructor(props) {
     super();
+    this.state = {
+      hovered: false,
+      mouseLocation: [0, 0]
+    };
+    this.renderHover = this.renderHover.bind(this);
+  }
+
+  renderHover(hovered, mouseLocation) {
+    return (
+      hovered && (
+        <HoverPopover
+          width={"15em"}
+          height="20px"
+          locationX={mouseLocation[0]}
+          locationY={mouseLocation[1]}
+        >
+          <p
+            style={{
+              position: "absolute",
+              backgroundColor: "#1c1d1f",
+              margin: "0",
+              fontSize: "10px",
+              color: "#afca0b",
+              fontWeight: "500",
+              letterSpacing: "1px",
+              overflow: "hidden",
+              padding: "5px 10px"
+            }}
+          >
+            <label>{hovered}</label>
+          </p>
+        </HoverPopover>
+      )
+    );
   }
 
   render() {
@@ -63,7 +99,11 @@ export default class GeoMapView extends React.Component {
       return <div />;
     }
 
-    const arcHeight = height * 0.46;
+    const usedContinents = continents.filter(c => c.institutionCount > 0)
+      .length;
+    const contWidth = width / usedContinents;
+    const factor = (width * 6) / usedContinents;
+    const arcHeight = height * 0.47;
     return (
       <div
         className={style.geoMapWrapper}
@@ -80,29 +120,47 @@ export default class GeoMapView extends React.Component {
           data-intro=" <b>Forschungsprojekte </b> werden als <b>Bögen</b> zwischen Kontinenten visualisiert. Hierdurch tritt die internationale Kooperation, die in vielen Projekten stattfindet, in den Vordergrund. Durch Klicken auf einen Bogen, erhält man eine Liste dieser."
         >
           <svg width={width} height={arcHeight}>
-            {Object.values(continentConnections).map((con, i) => (
-              <path
-                d={`M${con.start * width} ${arcHeight} A ${(Math.abs(
-                  con.end - con.start
-                ) *
-                  width) /
-                  2} ${(Math.abs(con.end - con.start) * width) /
-                  2}  0 0 1 ${con.end * width} ${arcHeight} M ${con.start *
-                  width} ${arcHeight} A ${(Math.abs(con.end - con.start) *
-                  width) /
-                  2} ${(Math.abs(con.end - con.start) * width) /
-                  2}  0 0 0 ${con.end * width} ${arcHeight}`}
-                stroke="white"
-                strokeWidth={Math.max(3, con.weight * 0.5)}
-                fill="none"
-                opacity={0.4}
-                className={style.arcHover}
-                key={JSON.stringify([con.start, con.end])}
-                onClick={() => {
-                  this.props.showInstDetails(con.name);
-                }}
-              />
-            ))}
+            {Object.values(continentConnections)
+              .filter(con => con.weight > 0)
+              .map((con, i) => (
+                <path
+                  d={`M${con.end * factor},${arcHeight} C${con.end *
+                    factor},${arcHeight -
+                    Math.abs(con.end - con.start) * 0.55 * factor} ${con.start *
+                    factor},${arcHeight -
+                    Math.abs(con.end - con.start) * 0.55 * factor} ${con.start *
+                    factor},${arcHeight}`}
+                  stroke="white"
+                  strokeWidth={Math.max(3, con.weight * 0.5)}
+                  fill="none"
+                  opacity={0.4}
+                  className={style.arcHover}
+                  key={JSON.stringify([con.start, con.end])}
+                  onClick={() => {
+                    this.props.showInstDetails(con.name);
+                  }}
+                  onMouseOver={evt => {
+                    this.setState({
+                      hovered:
+                        con.weight +
+                        " Kooperationen mit Institutionen in " +
+                        con.name.split("|")[0] +
+                        " und " +
+                        con.name.split("|")[1],
+                      mouseLocation: [
+                        evt.nativeEvent.clientX,
+                        evt.nativeEvent.clientY
+                      ]
+                    });
+                  }}
+                  onMouseLeave={() => {
+                    this.setState({
+                      hovered: false,
+                      mouseLocation: [0, 0]
+                    });
+                  }}
+                />
+              ))}
           </svg>
         </div>
         <div
@@ -118,12 +176,12 @@ export default class GeoMapView extends React.Component {
               ).filter(ins => ins.continent === c.name);
               return (
                 <div className={style.continentWrapper} key={c.name}>
-                  <svg viewBox={"0 0 500 120"}>
+                  <svg viewBox={"0 0 500 120"} width={contWidth}>
                     <text
                       fill="#aaa"
                       x="50%"
                       y="100"
-                      fontSize="400%"
+                      fontSize="300%"
                       key={c.name}
                       textAnchor="middle"
                     >
@@ -173,23 +231,44 @@ export default class GeoMapView extends React.Component {
           data-step="4"
           data-intro="Forschungsprojekte haben neben internationalen Kooperationspartnern auch Regionen, auf welche der Forschungsfokus gelegt wird. Die Anzahl dieser kann man hier aufgeteilt auf die Kontinente sehen. Klicken Sie auf einen Kreis, um zu erfahren um welche Forschungsprojekte es sich handelt."
         >
-          {continents.map((c, i) => {
-            return (
-              <svg width="16.66%" height="150" key={i + "region"}>
-                <circle
-                  cx="50%"
-                  cy="50%"
-                  className={style.countCircle}
-                  r={Math.min(38, c.forschungsregionCount)}
-                  fill="#aaa"
-                  onClick={() => {
-                    this.props.showInstDetails(c.name + "|f");
-                  }}
-                />
-              </svg>
-            );
-          })}
+          {continents
+            .filter(c => c.institutionCount > 0)
+            .map((c, i) => {
+              return (
+                <svg width={contWidth} height="150" key={i + "region"}>
+                  <circle
+                    cx="50%"
+                    cy="50%"
+                    className={style.countCircle}
+                    r={Math.min(40, c.forschungsregionCount * 1.2)}
+                    fill="#aaa"
+                    onClick={() => {
+                      this.props.showInstDetails(c.name + "|f");
+                    }}
+                    onMouseOver={evt => {
+                      this.setState({
+                        hovered:
+                          c.forschungsregionCount +
+                          "  Forschungsregionen in " +
+                          c.name,
+                        mouseLocation: [
+                          evt.nativeEvent.clientX,
+                          evt.nativeEvent.clientY
+                        ]
+                      });
+                    }}
+                    onMouseLeave={() => {
+                      this.setState({
+                        hovered: false,
+                        mouseLocation: [0, 0]
+                      });
+                    }}
+                  />
+                </svg>
+              );
+            })}
         </div>
+        {this.renderHover(this.state.hovered, this.state.mouseLocation)}
       </div>
     );
   }

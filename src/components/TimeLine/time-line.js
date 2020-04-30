@@ -99,9 +99,7 @@ const processData = (data, missingData) => {
 
   if (!data || data === [] || !missingData) return [];
 
-  let keys = [...new Set(data.map(b => b.forschungsbereich))].concat(
-    "Unveröffentlicht"
-  );
+  let keys = [1, 2, 3, 4, 5, "Unveröffentlicht"];
   let map = [],
     years = [];
   data = data.concat(missingData);
