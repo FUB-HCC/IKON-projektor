@@ -58,7 +58,7 @@ const YearDetailsPanel = props => {
           ))}
         </div>
       )}
-      {props.projects.length > 0 && props.title !== "Unveröffentlicht" && (
+      {props.projects.length > 0 && (
         <div className={style.abstractText}>
           {props.projects.map((project, i) => (
             <span
@@ -71,20 +71,6 @@ const YearDetailsPanel = props => {
               }}
             >
               {shortenString(project.displaytitle, 58)}
-              <br />
-            </span>
-          ))}
-        </div>
-      )}
-      {props.projects.length > 0 && props.title === "Unveröffentlicht" && (
-        <div className={style.abstractText}>
-          {props.projects.map((project, i) => (
-            <span
-              key={i + " " + project.id}
-              className={style.DetailsLinkUnclickable}
-            >
-              {project.displaytitle}
-              <br />
               <br />
             </span>
           ))}

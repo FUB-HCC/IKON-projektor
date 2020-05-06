@@ -35,8 +35,8 @@ const scaleContours = (
 const constructContours = (topography, contoursSize) =>
   d3Contours()
     .size([contoursSize, contoursSize])
-    .thresholds(10)
-    .smooth([false])(topography);
+    .thresholds(30)
+    .smooth([true])(topography);
 
 const computeColorMap = topography =>
   d3ScaleLinear()

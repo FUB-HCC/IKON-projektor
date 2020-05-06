@@ -8,7 +8,8 @@ const Cluster = props => {
     getLocation,
     radius,
     highlightedProjects,
-    isTouchMode
+    isTouchMode,
+    filteredProjects
   } = props;
   const projects = cluster.projects.map(project => ({
     ...project,
@@ -22,6 +23,7 @@ const Cluster = props => {
       {projects.map((project, i) => (
         <ClusterDot
           point={project}
+          isVisible={filteredProjects.includes(project.id)}
           color={project.color}
           icon={project.icon}
           key={i + "project"}

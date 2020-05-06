@@ -50,8 +50,8 @@ const UncertaintyExplanation = props => {
           </p>
           <svg width="190px" height="20">
             <linearGradient id="grad1" x1="20%" y1="0%" x2="120%" y2="0%">
-              <stop offset="0%" stopColor="#000" />
-              <stop offset="100%" stopColor="#888" />
+              <stop offset="0%" stopColor="#0a0a0a" />
+              <stop offset="100%" stopColor="#999" />
             </linearGradient>
             <rect width="190" height="20" fill="url(#grad1)" stroke="none" />
           </svg>

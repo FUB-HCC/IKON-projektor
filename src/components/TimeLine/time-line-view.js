@@ -45,6 +45,7 @@ export default class TimeLineView extends Component {
     this.renderHoverField = this.renderHoverField.bind(this);
     this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.handleAreaMouseEnter = this.handleAreaMouseEnter.bind(this);
+    this.handlePatternMouseEnter = this.handlePatternMouseEnter.bind(this);
     this.handleCircleMouseEnter = this.handleCircleMouseEnter.bind(this);
   }
 
@@ -101,7 +102,9 @@ export default class TimeLineView extends Component {
                   } aktive Projekte in ${fieldsIntToString(
                     this.state.hoveredArea.forschungsbereich
                   )}`
-                : `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} Wissenstransferaktivitäten mit der Kategorie ${this.state.hoveredArea.category}`}
+                : this.state.hoveredArea.year
+                ? `${this.state.hoveredArea.year}: ${this.state.hoveredArea.count} Wissenstransferaktivitäten mit der Kategorie ${this.state.hoveredArea.category}`
+                : `${this.state.hoveredArea.text}`}
             </label>
           </p>
         </HoverPopover>
@@ -113,6 +116,7 @@ export default class TimeLineView extends Component {
     return (
       this.state.hoveredArea &&
       !this.state.hoveredArea.forschungsbereich &&
+      !this.state.hoveredArea.text &&
       this.state.mouseLocation && (
         <svg
           key="highlightedGridline"
@@ -172,6 +176,15 @@ export default class TimeLineView extends Component {
     });
   }
 
+  handlePatternMouseEnter(evt) {
+    this.setState({
+      hoveredArea: {
+        text: "Unsichere Datenlage"
+      },
+      mouseLocation: [evt.nativeEvent.clientX, evt.nativeEvent.clientY]
+    });
+  }
+
   handleCircleMouseEnter(circle, evt) {
     this.setState({
       hoveredArea: circle,
@@ -198,7 +211,7 @@ export default class TimeLineView extends Component {
     const stackedData = stack(this.state.dataSplitYears.areaChartData);
     const { areKtaRendered, isTouchMode } = this.props;
     const color = d => {
-      return d.key === "Unveröffentlicht" ? "#444" : getFieldColor(d.key);
+      return getFieldColor(d.key);
     };
     const toYear = int => {
       return new Date(int.toString()).setHours(0, 0, 0, 0);
@@ -208,8 +221,8 @@ export default class TimeLineView extends Component {
         .map(year => year.projects.length)
         .flat()
     );
-    const minYear = toYear(Math.min(...this.state.dataSplitYears.years));
-    const maxYear = toYear(Math.max(...this.state.dataSplitYears.years));
+    const minYear = toYear(2006);
+    const maxYear = toYear(2025);
 
     const x = d3ScaleTime()
       .range([0, this.state.width])
@@ -224,10 +237,10 @@ export default class TimeLineView extends Component {
       .scale(x)
       .ticks(this.state.dataSplitYears.years.length / 2);
 
-    // Add an axis for our y scale that has 3 ticks
+    // Add an axis for our y scale that has 4 ticks
     const yAxis = d3AxisLeft()
       .scale(y)
-      .ticks(3);
+      .ticks(4);
 
     const area = d3area()
       .x(d => x(toYear(d.data.year)))
@@ -286,7 +299,7 @@ export default class TimeLineView extends Component {
           )}
 
           <SVGWithMargin
-            data-intro="Im unteren Teil werden die Anzahl und Laufzeiten von <b>Drittmittelprojekten</b> basierend auf aktuellen Informationen aus dem <a style='color: #afca0b;' href='https://via.museumfuernaturkunde.berlin/wiki/' target='_blank' rel='noopener noreferrer'>VIA-Wiki</a> und gruppiert nach <b>Forschungsgebieten</b> angezeigt. Um die Interpretation von Trend-Entwicklungen zu unterstützen, werden außerdem in grauer Schattierung bisher noch nicht integrierte Daten zu Drittmittelprojekten dargestellt."
+            data-intro="Im unteren Teil werden die Anzahl und Laufzeiten von <b>Drittmittelprojekten</b> basierend auf aktuellen Informationen aus dem <b style='color: #afca0b;'>VIA-Wiki</b> und gruppiert nach <b>Forschungsgebieten</b> angezeigt. Der gemusterte Bereich zeigt hierbei an, dass noch nicht alle tatsächlich am MfN laufenden Projekte in dem VIA Wiki Datensatz vorliegen und unterstützt somit die Interpretation der Entwicklung der Forschungsgebiete."
             data-step="3"
             className={styles.timelineContainer}
             contentContainerBackgroundRectClassName={
@@ -329,12 +342,69 @@ export default class TimeLineView extends Component {
               className={styles.yAxis}
               ref={node => d3Select(node).call(yAxis)}
             />
+            <g>
+              <pattern
+                id="pattern-circles"
+                x={(x(toYear(2018)) - x(toYear(2017))) / 8}
+                y="0"
+                width={(x(toYear(2018)) - x(toYear(2017))) / 2}
+                height={(x(toYear(2018)) - x(toYear(2017))) / 2}
+                patternUnits="userSpaceOnUse"
+                patternContentUnits="userSpaceOnUse"
+              >
+                <circle
+                  id="pattern-circle"
+                  cx={(x(toYear(2018)) - x(toYear(2017))) / 8}
+                  cy={(x(toYear(2018)) - x(toYear(2017))) / 8}
+                  r="1"
+                  fill="#e8e8e8"
+                />
+                <circle
+                  id="pattern-circle"
+                  cx={(3 * (x(toYear(2018)) - x(toYear(2017)))) / 8}
+                  cy={(x(toYear(2018)) - x(toYear(2017))) / 8}
+                  r="1"
+                  fill="#989898"
+                />
+                <circle
+                  id="pattern-circle"
+                  cx={(3 * (x(toYear(2018)) - x(toYear(2017)))) / 8}
+                  cy={(3 * (x(toYear(2018)) - x(toYear(2017)))) / 8}
+                  r="1"
+                  fill="#e8e8e8"
+                />
+                <circle
+                  id="pattern-circle"
+                  cx={(x(toYear(2018)) - x(toYear(2017))) / 8}
+                  cy={(3 * (x(toYear(2018)) - x(toYear(2017)))) / 8}
+                  r="1"
+                  fill="#989898"
+                />
+              </pattern>
+              <InteractionHandler
+                onMouseOver={event => this.handlePatternMouseEnter(event)}
+                onMouseLeave={() => this.handleMouseLeave()}
+                onClick={event => this.handlePatternMouseEnter(event)}
+                doubleTapTreshold={800}
+              >
+                <rect
+                  fill="url(#pattern-circles)"
+                  x={x(toYear(2018))}
+                  y={y(maxProjects)}
+                  width={x(maxYear) - x(toYear(2018))}
+                  height={y(0) - y(maxProjects)}
+                />
+              </InteractionHandler>
+            </g>
 
             {stackedData &&
               stackedData.map((d, i) => {
                 return (
                   <g key={d.key}>
-                    <path style={{ fill: color(d) }} d={area(d)} />
+                    <path
+                      style={{ fill: color(d), transition: "d 1s" }}
+                      d={area(d)}
+                    />
                     {d.map(datum => {
                       return (
                         y(datum[1]) && (
