@@ -9,8 +9,7 @@ class TimeLine extends React.Component {
     this.Graph.updateTimeGraph(
       {
         dataSplitFbYear: this.props.dataSplitFbYear,
-        projects: this.props.projects,
-        ktasYearBuckets: this.props.ktasYearBuckets
+        projects: this.props.projects
       },
       this.props.width,
       this.props.height,
@@ -22,8 +21,7 @@ class TimeLine extends React.Component {
     this.Graph.updateTimeGraph(
       {
         dataSplitFbYear: this.props.dataSplitFbYear,
-        projects: this.props.projects,
-        ktasYearBuckets: this.props.ktasYearBuckets
+        projects: this.props.projects
       },
       this.props.height,
       this.props.width,
@@ -42,7 +40,6 @@ class TimeLine extends React.Component {
         width={this.props.width}
         height={this.props.height}
         margin={20}
-        areKtaRendered={this.props.areKtaRendered}
         isTouchMode={this.props.isTouchMode}
       />
     );
@@ -67,21 +64,11 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   let projectsForView = applyFilters(state.main.projects, state.main.filters);
-  let categoriesForView = state.main.filters.highlevelFilter.value.includes(6)
-    ? state.main.targetgroups.filter(tg =>
-        state.main.filters.targetgroups.value.includes(tg.id)
-      )
-    : state.main.formats.filter(format =>
-        state.main.filters.formats.value.includes(format.id)
-      );
-  const processedKtas = processKtas(state.main.ktas, categoriesForView);
   const processedData = processData(projectsForView);
   return {
     dataSplitFbYear: processedData,
     projects: projectsForView,
     colors: graphColors,
-    ktasYearBuckets: processedKtas,
-    areKtaRendered: !isTouchMode(state),
     isTouchMode: isTouchMode(state)
   };
 };
@@ -135,63 +122,6 @@ const processData = data => {
     years: years
   };
   return result;
-};
-
-const processKtas = (ktas, categories) => {
-  /* ktas are counted per category (targetgroup or format) and year */
-  if (!ktas || ktas.length === 0) return [];
-  let ktasYearBuckets = [];
-  for (let ktaKey in ktas) {
-    let ktaCategories = []
-      .concat(ktas[ktaKey].Zielgruppe)
-      .concat(ktas[ktaKey].Format.map(format => format.name));
-    let startDate =
-      ktas[ktaKey].timeframe[0].getFullYear() > 1970
-        ? ktas[ktaKey].timeframe[0].getFullYear()
-        : ktas[ktaKey].timeframe[1].getFullYear();
-    let endDate = ktas[ktaKey].timeframe[1]
-      ? ktas[ktaKey].timeframe[1].getFullYear()
-      : startDate;
-    if (startDate > 2000 && ktaCategories.length > 0) {
-      for (let category in ktaCategories) {
-        let categoryName = ktaCategories[category];
-        if (categories.some(t => t.name === categoryName)) {
-          if (!(categoryName in ktasYearBuckets)) {
-            ktasYearBuckets[categoryName] = [];
-          }
-
-          let year = startDate;
-          while (year <= endDate) {
-            let yearExists = false;
-            for (let yearTgIndex in ktasYearBuckets[categoryName]) {
-              // check if year already is existent for the forschungsbereich
-              if (ktasYearBuckets[categoryName][yearTgIndex].year === year) {
-                yearExists = true;
-                ktasYearBuckets[categoryName][yearTgIndex].numberOfWtas =
-                  ktasYearBuckets[categoryName][yearTgIndex].numberOfWtas + 1;
-                ktasYearBuckets[categoryName][yearTgIndex].ktas.push(
-                  ktas[ktaKey]
-                );
-              }
-            }
-
-            if (!yearExists) {
-              ktasYearBuckets[categoryName].push({
-                year: year,
-                numberOfWtas: 1,
-                ktas: [ktas[ktaKey]]
-              });
-            }
-            year++;
-          }
-          ktasYearBuckets[categoryName] = ktasYearBuckets[categoryName].sort(
-            (a, b) => a.year - b.year
-          );
-        }
-      }
-    }
-  }
-  return ktasYearBuckets;
 };
 
 export default connect(

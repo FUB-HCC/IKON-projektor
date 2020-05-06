@@ -64,44 +64,14 @@ const getFilterSets = state => {
       ]
     },
     {
-      name: "Wissenstransfer",
+      name: "Labels",
       subsets: [
         {
-          name: "Zielgruppen",
+          name: "Labels",
           nameId: 6,
-          filterId: "highlevelFilter",
+          filterId: "labelToggle",
           isTogglable: true,
-          subFilters: state.main.targetgroups,
-          subFilterId: "targetgroups"
-        },
-        {
-          name: "Formate",
-          nameId: 7,
-          filterId: "highlevelFilter",
-          subFilterId: "formats",
-          isTogglable: true,
-          subFilters: state.main.formats
-        }
-      ]
-    },
-    {
-      name: "Infrastruktur",
-      subsets: [
-        {
-          name: "Sammlungen",
-          nameId: 8,
-          filterId: "highlevelFilter",
-          subFilters: state.main.collections,
-          subFilterId: "collections",
-          isTogglable: true
-        },
-        {
-          name: "Laborgeräte",
-          nameId: 9,
-          filterId: "highlevelFilter",
-          subFilters: state.main.infrastructures,
-          subFilterId: "infrastructures",
-          isTogglable: true
+          subFilters: []
         }
       ]
     }
@@ -152,38 +122,12 @@ const getFilterSetsTouch = filters => {
       ]
     },
     {
-      name: "Wissenstransfer",
+      name: "Labels",
       subsets: [
         {
-          name: "Zielgruppen",
+          name: "Labels",
           nameId: 6,
-          filterId: "highlevelFilter",
-          isTogglable: true,
-          subFilters: []
-        },
-        {
-          name: "Formate",
-          nameId: 7,
-          filterId: "highlevelFilter",
-          isTogglable: true,
-          subFilters: []
-        }
-      ]
-    },
-    {
-      name: "Infrastruktur",
-      subsets: [
-        {
-          name: "Sammlungen",
-          nameId: 8,
-          filterId: "highlevelFilter",
-          isTogglable: true,
-          subFilters: []
-        },
-        {
-          name: "Laborgeräte",
-          nameId: 9,
-          filterId: "highlevelFilter",
+          filterId: "labelToggle",
           isTogglable: true,
           subFilters: []
         }

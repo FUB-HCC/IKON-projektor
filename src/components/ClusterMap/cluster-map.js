@@ -2,22 +2,20 @@ import { connect } from "react-redux";
 import ClusterMapView from "./cluster-map-view";
 import {
   unClicked,
-  catClicked,
-  infraClicked,
+  labelClicked,
   unHovered,
-  catHovered,
-  infraHovered
+  labelHovered
 } from "../../store/actions/actions";
 import { getFieldColor, isTouchMode, applyFilters } from "../../util/utility";
 
 /* project list is divided into clusters */
-const computeClusters = (clusterData, projects, categories) => {
+const computeClusters = (clusterData, projects, labels) => {
   if (
     !clusterData ||
     !projects ||
     projects.length === 0 ||
-    !categories ||
-    categories.length === 0
+    !labels ||
+    labels.length === 0
   )
     return [];
 
@@ -36,8 +34,7 @@ const computeClusters = (clusterData, projects, categories) => {
 const extractHighlightedFromState = state => {
   let highlighted = {
     projects: [],
-    cats: [],
-    infras: []
+    labels: []
   };
   highlighted = addExtractedHighlighted(state.isHovered, highlighted, state);
   highlighted = addExtractedHighlighted(state.isClicked, highlighted, state);
@@ -47,24 +44,10 @@ const extractHighlightedFromState = state => {
 
 const addHighlightedFromLegend = (highlighted, state) => {
   switch (state.legendHovered) {
-    case "ktas":
+    case "labels":
       return {
         ...highlighted,
-        cats: highlighted.cats
-          .concat(state.targetgroups.map(cat => cat.id))
-          .concat(state.formats.map(cat => cat.id))
-      };
-    case "collections":
-      return {
-        ...highlighted,
-        infras: highlighted.infras.concat(state.collections.map(col => col.id))
-      };
-    case "infrastructures":
-      return {
-        ...highlighted,
-        infras: highlighted.infras.concat(
-          state.infrastructures.map(inf => inf.id)
-        )
+        labels: highlighted.labels.concat(state.labels.map(l => l.id))
       };
     default:
       return highlighted;
@@ -79,16 +62,9 @@ const addExtractedHighlighted = (selectedState, highlighted, state) => {
       state
     );
   }
-  if (selectedState.infra) {
-    highlighted = addExtractedHighlightedFromInfra(
-      selectedState.infra,
-      highlighted,
-      state
-    );
-  }
-  if (selectedState.cat) {
-    highlighted = addExtractedHighlightedFromCat(
-      selectedState.cat,
+  if (selectedState.label) {
+    highlighted = addExtractedHighlightedFromLabel(
+      selectedState.label,
       highlighted,
       state
     );
@@ -100,51 +76,30 @@ const addExtractedHighlightedFromProject = (projectId, highlighted, state) => {
   const project = getProjectById(projectId, state);
   return {
     ...highlighted,
-    infras: highlighted.infras
-      .concat(project.Sammlungsbezug.map(col => col.id))
-      .concat(project.Forschungsinfrastruktur.map(inf => inf.id)),
-    cats: highlighted.cats.concat(project.targetgroups).concat(project.formats),
+    labels: highlighted.labels.concat(project.labels),
     projects: highlighted.projects.concat([project.id])
   };
 };
 
-const addExtractedHighlightedFromInfra = (InfraId, highlighted, state) => {
-  const infra = getInfraById(InfraId, state);
+const addExtractedHighlightedFromLabel = (labelId, highlighted, state) => {
+  const label = getLabelById(labelId, state);
   return {
     ...highlighted,
-    projects: highlighted.projects.concat(infra.projects.map(p => p.id)),
-    infras: highlighted.infras.concat([infra.id])
-  };
-};
-
-const addExtractedHighlightedFromCat = (catId, highlighted, state) => {
-  const cat = getCatById(catId, state);
-  return {
-    ...highlighted,
-    projects: highlighted.projects.concat(cat.projects.map(con => con.id)),
-    cats: highlighted.cats.concat([cat.id])
+    projects: highlighted.projects.concat(label.projects.map(con => con.id)),
+    labels: highlighted.labels.concat([label.id])
   };
 };
 
 const getProjectById = (id, state) =>
   state.projects.find(project => project.id === id);
 
-const getInfraById = (id, state) =>
-  state.infrastructures.concat(state.collections).find(inf => inf.id === id);
-
-const getCatById = (id, state) =>
-  state.targetgroups.find(cat => cat.id === id)
-    ? state.targetgroups.find(cat => cat.id === id)
-    : state.formats.find(cat => cat.id === id);
+const getLabelById = (id, state) => state.labels.find(l => l.id === id);
 
 const mapStateToProps = state => {
   const {
     clusterData,
-    targetgroups,
-    formats,
+    labels,
     projects,
-    collections,
-    infrastructures,
     filters,
     isDataProcessed,
     highlightedGroup,
@@ -154,43 +109,32 @@ const mapStateToProps = state => {
   } = state.main;
 
   let clusterDataForView = [];
-  let labels = [];
+  let labelsForView = [];
   let topography = [];
   let highlightedProjects = [];
-  let highlightedCats = [];
-  let highlightedInfra = [];
+  let highlightedLabels = [];
   let projectsForView = [];
   let filteredLabels = [];
   if (isDataProcessed) {
     // filters are applied to all lists and data is prepared for the vis
     projectsForView = applyFilters(projects, filters).map(p => p.id);
-    clusterDataForView = computeClusters(clusterData, projects, targetgroups);
-    filteredLabels = filters.highlevelFilter.value.includes(6)
-      ? filters.targetgroups.value
-          .concat(filters.collections.value)
-          .concat(filters.infrastructures.value)
-      : filters.formats.value
-          .concat(filters.collections.value)
-          .concat(filters.infrastructures.value);
-    labels = filters.highlevelFilter.value.includes(6)
-      ? targetgroups.concat(collections).concat(infrastructures)
-      : formats.concat(collections).concat(infrastructures);
+    clusterDataForView = computeClusters(clusterData, projects, labels);
+    filteredLabels = filters.labels.value;
+    labelsForView = labels;
     topography = clusterData;
     const highlighted = extractHighlightedFromState(state.main);
     highlightedProjects = highlighted.projects;
-    highlightedInfra = highlighted.infras;
-    highlightedCats = highlighted.cats;
+    highlightedLabels = highlighted.labels;
   }
 
   return {
     clusterData: clusterDataForView,
     topography: topography,
-    labels: labels,
+    labels: labelsForView,
     filteredLabels: filteredLabels,
     isAnyClicked: !Object.values(isClicked).every(clickState => !clickState),
     highlightedProjects: highlightedProjects,
-    highlightedCats: highlightedCats,
-    highlightedInfra: highlightedInfra,
+    highlightedLabels: highlightedLabels,
     highlightedGroup: highlightedGroup,
     uncertaintyOn: state.main.uncertaintyOn,
     uncertaintyHighlighted: state.main.uncertaintyHighlighted,
@@ -206,20 +150,14 @@ const mapDispatchToProps = dispatch => {
     onUnClicked: () => {
       dispatch(unClicked());
     },
-    onCatClicked: cat => {
-      dispatch(catClicked(cat));
-    },
-    onInfraClicked: infra => {
-      dispatch(infraClicked(infra));
+    onLabelClicked: label => {
+      dispatch(labelClicked(label));
     },
     onUnHovered: () => {
       dispatch(unHovered());
     },
-    onCatHovered: cat => {
-      dispatch(catHovered(cat));
-    },
-    onInfraHovered: infra => {
-      dispatch(infraHovered(infra));
+    onLabelHovered: label => {
+      dispatch(labelHovered(label));
     }
   };
 };

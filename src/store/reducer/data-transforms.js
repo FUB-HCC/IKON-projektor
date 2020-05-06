@@ -67,20 +67,10 @@ const getContinentFromProject = geo => {
   }
 };
 
-export const processMissingProjects = state => {
-  return state.missingprojects.map(mproject => ({
-    ...mproject,
-    forschungsbereich: "Unveröffentlicht",
-    timeframe: mproject.timeframe.map(d =>
-      d ? new Date(parseInt(d * 1000)).getFullYear() : 2000
-    )
-  }));
-};
-
-export const linkCatsToProjectsData = (projects, targetgroups, formats) => {
+export const linkLabelsToProjectsData = (projects, labels) => {
   return projects.map(project => ({
     ...project,
-    targetgroups: targetgroups
+    labels: labels
       .filter(targetgroup =>
         targetgroup.ktas.find(
           kta =>
@@ -88,82 +78,24 @@ export const linkCatsToProjectsData = (projects, targetgroups, formats) => {
             kta.Drittmittelprojekt[0].id === project.id
         )
       )
-      .map(targetgroup => targetgroup.id),
-    formats: formats
-      .filter(format =>
-        format.ktas.find(
-          kta =>
-            kta.Drittmittelprojekt[0] &&
-            kta.Drittmittelprojekt[0].id === project.id
-        )
-      )
-      .map(format => format.id)
+      .map(targetgroup => targetgroup.id)
   }));
 };
 
 /* targetgroups as well as formats get a list of projects that they are indirectly connected to through knowledge transfer activities to make the linking in the graph visualization easier. */
-export const processTargetgroups = (processedProjects, state) => {
-  return state.targetgroups.map(targetgroup => {
-    const projectIds = targetgroup.ktas
+export const processLabels = (processedProjects, state) => {
+  return state.labels.map(label => {
+    const projectIds = label.ktas
       .filter(kta => kta.Drittmittelprojekt && kta.Drittmittelprojekt[0])
       .map(kta => kta.Drittmittelprojekt[0].id);
     return {
-      ...targetgroup,
+      ...label,
       projects: [
         ...new Set(processedProjects.filter(p => projectIds.includes(p.id)))
       ]
     };
   });
 };
-
-export const processFormats = (processedProjects, state) => {
-  return state.formats.map(format => {
-    const projectIds = format.ktas
-      .filter(kta => kta.Drittmittelprojekt && kta.Drittmittelprojekt[0])
-      .map(kta => kta.Drittmittelprojekt[0].id);
-    return {
-      ...format,
-      projects: [
-        ...new Set(processedProjects.filter(p => projectIds.includes(p.id)))
-      ]
-    };
-  });
-};
-
-/* infrastructures and collections are typed to enable different icons. Also the connected projects are replaced with the newly processed ones.*/
-export const processInfrastructures = (processedProjects, state) => {
-  return state.infrastructures.map(infrastructure => ({
-    ...infrastructure,
-    projects: processedProjects.filter(project =>
-      infrastructure.projects.find(p => p.id === project.id)
-    ),
-    type: "infrastructure"
-  }));
-};
-
-export const processCollections = (processedProjects, state) => {
-  return state.collections.map(collection => ({
-    ...collection,
-    projects: processedProjects.filter(project =>
-      collection.projects.find(p => p.id === project.id)
-    ),
-    type: "collection"
-  }));
-};
-
-/* reformats the start and end date of ktas*/
-export const processKtas = ktas =>
-  ktas.map(kta => ({
-    ...kta,
-    timeframe: [
-      kta["Gestartet am"] && kta["Gestartet am"].length > 0
-        ? new Date(parseInt(kta["Gestartet am"][0].timestamp) * 1000)
-        : new Date(0),
-      kta["Endet am"] && kta["Endet am"].length > 0
-        ? new Date(parseInt(kta["Endet am"][0].timestamp) * 1000)
-        : new Date(0)
-    ]
-  }));
 
 const distance = (continent, institution) =>
   Math.sqrt(

@@ -36,24 +36,10 @@ export const projectHovered = projectId => {
   };
 };
 
-export const catHovered = catId => {
+export const labelHovered = labelId => {
   return {
-    type: actionTypes.CAT_HOVERED,
-    value: catId
-  };
-};
-
-export const infraHovered = infraName => {
-  return {
-    type: actionTypes.INFRA_HOVERED,
-    value: infraName
-  };
-};
-
-export const ktaHovered = ktaId => {
-  return {
-    type: actionTypes.KTA_HOVERED,
-    value: ktaId
+    type: actionTypes.LABEL_HOVERED,
+    value: labelId
   };
 };
 
@@ -78,24 +64,10 @@ export const projectClicked = projectId => {
   };
 };
 
-export const catClicked = catId => {
+export const labelClicked = labelId => {
   return {
-    type: actionTypes.CAT_CLICKED,
-    value: catId
-  };
-};
-
-export const infraClicked = infraName => {
-  return {
-    type: actionTypes.INFRA_CLICKED,
-    value: infraName
-  };
-};
-
-export const ktaClicked = ktaId => {
-  return {
-    type: actionTypes.KTA_CLICKED,
-    value: ktaId
+    type: actionTypes.LABEL_CLICKED,
+    value: labelId
   };
 };
 
@@ -148,7 +120,7 @@ export const legendHovered = legendKey => ({
 export const fetchData = () => {
   return dispatch => {
     axios
-      .get("/api/graph", {
+      .get("test.json", {
         transformResponse: res => Flatted.parse(res)
       })
       .then(result => {
@@ -159,61 +131,11 @@ export const fetchData = () => {
       });
   };
 };
-/* fetches an array with all the names of visualization-states that have been shared with the touchscreen from the backend so far*/
-export const fetchSampleList = () => {
-  return dispatch => {
-    axios.get("/api/sharing").then(result => {
-      batch(() => {
-        dispatch(updateSampleList(result.data));
-        dispatch(processDataIfReady());
-      });
-    });
-  };
-};
-
-/* with "api/sharing/<STATENAME>" the state url of a specific vis. is fetched from the backend */
-export const fetchIndividualSample = name => {
-  return dispatch => {
-    axios({
-      method: "GET",
-      url: encodeURI("/api/sharing/" + name)
-    })
-      .then(response => {
-        batch(() => {
-          dispatch(sampleClicked(response.data));
-        });
-      })
-      .catch(function(error) {
-        console.log(error);
-      });
-  };
-};
-
-/* can only be triggered in browser version, sends the current state url to the backend, the "name" can be set in the shareDialog and the current date will be added to it (e.g. "ANSICHTNAME|8.4.2020")*/
-export const shareUrl = name => {
-  axios({
-    method: "post",
-    url: encodeURI("/api/sharing/" + name),
-    data: JSON.stringify(window.location.search)
-  }).then(function(response) {
-    if (response.status === 200) {
-      window.alert("Die Ansicht wurde an den Touch Screen geschickt.");
-    }
-  });
-};
 
 /* fills the states with just fetched and unprocessed data from api/graph first */
 export const updateData = data => {
   return {
     type: actionTypes.UPDATE_DATA,
-    value: data
-  };
-};
-
-/* fills state with data= the shared states names list after it has been fetched from backend */
-export const updateSampleList = data => {
-  return {
-    type: actionTypes.UPDATE_SAMPLE_LIST,
     value: data
   };
 };
@@ -252,20 +174,3 @@ export const pageReset = () => {
     type: actionTypes.PAGE_RESET
   };
 };
-
-/* triggered when a "Anzeigen im VIA-Wiki" button is clicked in the details panel of e.g. a project. the url is encoded and opened on a new tab*/
-export const showViaWikiRequested = url => ({
-  type: actionTypes.SHOW_VIA_WIKI_REQUESTED,
-  value: url
-});
-
-/* loads the state of the clicked sample that was fetched from the backend with fetchIndividualSample before */
-export const sampleClicked = url => ({
-  type: actionTypes.SAMPLE_CLICKED,
-  value: url
-});
-
-/* is triggered when "Geteilte Ansichten" button is clicked, sets sidebar component to sample list, changes the "isClicked" state */
-export const showSampleList = () => ({
-  type: actionTypes.SHOW_SAMPLE_LIST
-});

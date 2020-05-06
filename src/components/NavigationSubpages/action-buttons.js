@@ -14,8 +14,6 @@ import {
   tutorialStarted,
   pageReset,
   shareDialogOpened,
-  showSampleList,
-  shareUrl,
   changeGraph,
   unClicked
 } from "../../store/actions/actions";
@@ -48,20 +46,6 @@ class ActionButtons extends Component {
     window.alert("Link kopiert: \n" + input.value);
   }
 
-  sendToTouchscreen() {
-    const input = document.getElementById("share_name");
-    var today = new Date();
-    var date =
-      today.getDate() +
-      "." +
-      (1 + today.getMonth()) +
-      "." +
-      today.getFullYear();
-    const name = input.value
-      ? input.value.substring(0, 48) + "|" + date
-      : "Unbenannt|" + date;
-    shareUrl(name);
-  }
   /* is executed when in browser mode and tutorial button is clicked. Gives a short tutorial made with intro.js according to the page you are on ("WISSEN", "ZEIT", "RAUM") */
   startPageTour() {
     this.props.tutorialStarted();
@@ -266,12 +250,6 @@ class ActionButtons extends Component {
                 value={window.location}
                 readOnly={true}
               />
-              <input
-                id={"share_name"}
-                className={classes.shareInput}
-                placeholder="Bitte Namen für Ansicht eingeben"
-                readOnly={false}
-              />
             </div>
             <div className={classes.shareButtons}>
               <span
@@ -279,12 +257,6 @@ class ActionButtons extends Component {
                 onClick={this.copiedToClipboard}
               >
                 In die Zwischenablage kopieren
-              </span>
-              <span
-                className={classes.shareClipboardLink}
-                onClick={this.sendToTouchscreen}
-              >
-                An den Touchscreen schicken
               </span>
             </div>
             <div className={classes.closeShare} onClick={this.dialogClosed}>
@@ -310,11 +282,7 @@ class ActionButtons extends Component {
           </div>
 
           {isTouch && (
-            <div
-              className={classes.rightElement}
-              onClick={this.props.showSampleList}
-              id="geteilteAnsichten"
-            >
+            <div className={classes.rightElement} id="geteilteAnsichten">
               <Download className={classes.buttonIcon} />
               <p>Geteilte Ansichten</p>
             </div>
@@ -358,12 +326,6 @@ const mapDispatchToProps = dispatch => ({
   },
   shareDialogOpened: () => {
     dispatch(shareDialogOpened());
-  },
-  showSampleList: () => {
-    dispatch(showSampleList());
-  },
-  shareUrl: name => {
-    dispatch(shareUrl(name));
   },
   unClicked: () => {
     dispatch(unClicked());

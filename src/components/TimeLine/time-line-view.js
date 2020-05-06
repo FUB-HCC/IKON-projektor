@@ -30,7 +30,6 @@ export default class TimeLineView extends Component {
         areaChartKeys: ["Sonstige"],
         years: [2006]
       },
-      ktasYearBuckets: [],
       height: props.height,
       width: props.width - 15,
       margin: props.margin,
@@ -61,7 +60,6 @@ export default class TimeLineView extends Component {
 
     this.setState({
       dataSplitYears: data.dataSplitFbYear,
-      ktasYearBuckets: data.ktasYearBuckets,
       projectsData: data.projects,
       firstUpdate: false
     });
@@ -111,59 +109,6 @@ export default class TimeLineView extends Component {
       )
     );
   }
-  /* grid lines in the starry sky viz are highlighted when a circle is hovered. the green line is drawn in a fixed position svg behind the other content */
-  highlightGridLine() {
-    return (
-      this.state.hoveredArea &&
-      !this.state.hoveredArea.forschungsbereich &&
-      !this.state.hoveredArea.text &&
-      this.state.mouseLocation && (
-        <svg
-          key="highlightedGridline"
-          style={{
-            height: this.props.height * 0.9,
-            width: this.props.width,
-            position: "absolute",
-            zIndex: -3
-          }}
-        >
-          <line
-            x1={this.state.hoveredArea.x + "px"}
-            y1="0%"
-            x2={this.state.hoveredArea.x + "px"}
-            y2="100%"
-            stroke="#afca0b"
-          />
-        </svg>
-      )
-    );
-  }
-  /* same goes for the gridlines drawn in grey for every year in which ktas with a category have been dated */
-  renderGridline(lines) {
-    return (
-      <svg
-        key="gridline"
-        style={{
-          height: this.props.height * 0.9,
-          width: this.props.width,
-          position: "absolute",
-          zIndex: -1
-        }}
-      >
-        {lines.map((line, i) => (
-          <line
-            x1={line + this.state.margin + "px"}
-            y1="0px"
-            x2={line + this.state.margin + "px"}
-            y2="100%"
-            stroke="#fff2"
-            fill="none"
-            key={i}
-          />
-        ))}
-      </svg>
-    );
-  }
 
   handleAreaMouseEnter(year, count, fb, evt) {
     this.setState({
@@ -200,8 +145,7 @@ export default class TimeLineView extends Component {
     if (this.state.dataSplitYears.length === 0) {
       return <div />;
     }
-    const stackedAreaHeight = this.state.height * 0.4;
-    const categoriesHeight = this.state.height * 0.5;
+    const stackedAreaHeight = this.state.height * 0.5;
 
     // turns the preprocessed data into a d3 stack
     const stack = d3stack()
@@ -247,15 +191,6 @@ export default class TimeLineView extends Component {
       .y0(d => y(d[0]))
       .y1(d => y(d[1]));
 
-    //all years with wta in category in one array
-    const ktasYears = [].concat.apply(
-      [],
-      Object.values(this.state.ktasYearBuckets)
-    );
-
-    //getting all distinct years that have category bucket
-    const lines = [...new Set(ktasYears.map(line => x(toYear(line.year))))];
-
     return (
       <div
         data-intro="In der Ansicht <b>ZEIT</b> wird eine weitere integrative Perspektive auf die Verläufe von Wissenstransferaktivitäten und Drittmittelprojekten über die Jahre dargestellt. Hierdurch können zum Beispiel Trends gefunden werden, welche in der Planung von Wissentransfer berücksichtigt werden könnten."
@@ -266,38 +201,6 @@ export default class TimeLineView extends Component {
           data-intro="Durch diese Ansicht auf <b>Wissenstransferaktivitäten</b> und <b>Drittmittelprojekte</b> wird ermöglicht, beide Elemente des Museums für Naturkunde integrativ und längerfristig zu betrachten."
           data-step="4"
         >
-          {areKtaRendered && (
-            <>
-              {this.renderGridline(lines)}
-              {this.highlightGridLine()}
-
-              <div
-                data-intro="Im oberen Teil dieser Ansicht werden Wissenstransferaktivitäten gruppiert nach <b>Zielgruppen</b> bzw. <b>Formaten</b> angezeigt. Die Größe der Kreise deutet die Menge an Aktivitäten mit einer bestimmten Zielgruppe oder einem bestimmten Format in einem Jahr an. Hierdurch werden längerfristige Perspektiven auf Wissenstransfer ermöglicht."
-                data-step="2"
-                className={styles.ktaBucketsWrapper}
-                style={{ height: categoriesHeight }}
-              >
-                <span className={styles.plotTitle}>
-                  Wissenstransferaktivitäten <br />
-                  <br />
-                </span>
-                <CategoryBuckets
-                  ktasYearBuckets={this.state.ktasYearBuckets}
-                  height={this.state.height * 0.03}
-                  width={this.state.width}
-                  showYearDetails={this.props.showYearDetails}
-                  fullHeight={this.state.height}
-                  xScale={year =>
-                    x(new Date(year.toString()).setHours(0, 0, 0, 0)) +
-                    this.state.margin
-                  }
-                  handleCircleMouseEnter={this.handleCircleMouseEnter}
-                  handleMouseLeave={this.handleMouseLeave}
-                />
-              </div>
-            </>
-          )}
-
           <SVGWithMargin
             data-intro="Im unteren Teil werden die Anzahl und Laufzeiten von <b>Drittmittelprojekten</b> basierend auf aktuellen Informationen aus dem <b style='color: #afca0b;'>VIA-Wiki</b> und gruppiert nach <b>Forschungsgebieten</b> angezeigt. Der gemusterte Bereich zeigt hierbei an, dass noch nicht alle tatsächlich am MfN laufenden Projekte in dem VIA Wiki Datensatz vorliegen und unterstützt somit die Interpretation der Entwicklung der Forschungsgebiete."
             data-step="3"
@@ -310,26 +213,10 @@ export default class TimeLineView extends Component {
             margin={this.state.margin}
             width={this.state.width}
           >
-            {areKtaRendered && (
-              <text
-                fill="#717071"
-                x={-this.state.margin}
-                y="5px"
-                fontSize="130%"
-              >
-                Forschungsprojekte
-              </text>
-            )}
-            {!areKtaRendered && (
-              <text
-                fill="#717071"
-                x={this.state.margin}
-                y="5px"
-                fontSize="130%"
-              >
-                Anzahl Projekte je Forschungsgebiet pro Jahr
-              </text>
-            )}
+            <text fill="#717071" x={this.state.margin} y="5px" fontSize="130%">
+              Anzahl Projekte je Forschungsgebiet pro Jahr
+            </text>
+
             {/* a transform style prop to our xAxis to translate it to the bottom of the SVG's content. */}
             <g
               className={styles.xAxis}

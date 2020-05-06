@@ -37,27 +37,10 @@ const YearDetailsPanel = props => {
       </div>
 
       <span className={style.infoItemTitle}>
-        {props.ktas.length > 0
-          ? "Wissenstransferaktivitäten mit dieser Kategorie "
-          : "Forschungsprojekte in diesem Forschungsbereich "}
-        im Jahr {props.year}:
+        {"Forschungsprojekte in diesem Forschungsbereich im Jahr "}
+        {props.year}:
         <br />
       </span>
-      {props.ktas.length > 0 && (
-        <div className={style.abstractText}>
-          {props.ktas.map((kta, i) => (
-            <span
-              href="#"
-              onClick={() => props.showKtaDetails(kta.id)}
-              key={i + " " + kta.id}
-              className={style.DetailsLink}
-            >
-              {shortenString(kta.fulltext, 58)}
-              <br />
-            </span>
-          ))}
-        </div>
-      )}
       {props.projects.length > 0 && (
         <div className={style.abstractText}>
           {props.projects.map((project, i) => (

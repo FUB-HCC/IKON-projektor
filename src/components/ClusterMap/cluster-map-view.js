@@ -2,9 +2,6 @@ import React from "react";
 
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
-import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
-import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
-import IconExplanation from "./icon-explanation";
 import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import ClusterContoursMap from "./cluster-contours-map";
@@ -107,14 +104,11 @@ export default class ClusterMapView extends React.Component {
     const {
       width,
       height,
-      onCatHovered,
-      onInfraHovered,
+      onLabelHovered,
       onUnHovered,
-      onCatClicked,
-      onInfraClicked,
+      onLabelClicked,
       onUnClicked,
-      highlightedInfra,
-      highlightedCats,
+      highlightedLabels,
       highlightedProjects,
       clusterData,
       isAnyClicked,
@@ -149,7 +143,6 @@ export default class ClusterMapView extends React.Component {
           marginTop: arcMarginTop(height, scale)
         }}
       >
-        <IconExplanation posX={20} posY={isTouch ? height - 100 : 20} />
         <UncertaintyExplanation
           posX={width - 170}
           posY={20}
@@ -177,13 +170,12 @@ export default class ClusterMapView extends React.Component {
           <g>
             {labels.map((label, i) => {
               /* computing the position of the label + icon + count */
-              const startAngle =
-                each * i - labels.filter(l => l.count).length * each;
+              const startAngle = each * i;
               const angle = startAngle * (Math.PI / 180);
 
               var x = shiftX + radius * Math.cos(angle);
               var y = shiftY + radius * Math.sin(angle);
-              var isHighlighted = highlightedCats.includes(label.id);
+              var isHighlighted = highlightedLabels.includes(label.id);
               const higlightOffset = isHighlighted ? 7 : 0;
               const textX =
                 shiftX +
@@ -200,16 +192,10 @@ export default class ClusterMapView extends React.Component {
 
               const area = (label.count * 1.2) / conMax;
               const rad = Math.sqrt(area / Math.PI) * circleScaling(scale) || 1;
-              if (!label.count) {
-                x = shiftX - 6 + radius * Math.cos(angle);
-                y = radius * Math.sin(angle);
-                isHighlighted = highlightedInfra.includes(label.id);
-              }
-
               const anchor =
-                startAngle < -90 || startAngle > 90 ? "end" : "start";
+                startAngle > 90 && startAngle < 270 ? "end" : "start";
               const textRotate =
-                startAngle < -90 || startAngle > 90
+                startAngle > 90 && startAngle < 270
                   ? startAngle + 180
                   : startAngle;
 
@@ -274,9 +260,9 @@ export default class ClusterMapView extends React.Component {
                   {label.count && (
                     <InteractionHandler
                       isInTouchMode={isTouch}
-                      onMouseOver={() => onCatHovered(label.id)}
+                      onMouseOver={() => onLabelHovered(label.id)}
                       onMouseLeave={() => onUnHovered()}
-                      onClick={() => onCatClicked(label.id)}
+                      onClick={() => onLabelClicked(label.id)}
                       doubleTapTreshold={500}
                     >
                       <g>
@@ -322,74 +308,13 @@ export default class ClusterMapView extends React.Component {
                             transition: "fill ,font-size 500ms"
                           }}
                         >
-                          {splitLongTitles(label.name).map((titlePart, i) => (
-                            <tspan x={textX} y={textY + i * 10} key={titlePart}>
-                              {titlePart}
-                            </tspan>
-                          ))}
-                        </text>
-                      </g>
-                    </InteractionHandler>
-                  )}
-                  {!label.count && (
-                    <InteractionHandler
-                      isInTouchMode={isTouch}
-                      onMouseOver={() => onInfraHovered(label.id)}
-                      onMouseLeave={() => onUnHovered()}
-                      onClick={() => onInfraClicked(label.id)}
-                      doubleTapTreshold={500}
-                    >
-                      <g>
-                        <g>
-                          {label.Einleitung ? (
-                            <InfrastructureIcon
-                              id={`inf-${label.id}`}
-                              x={x}
-                              y={y}
-                              width={fontSizeText(this.scale) * 1.3}
-                              heigth={fontSizeText(this.scale) * 1.3}
-                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                              style={{
-                                cursor: "POINTER",
-                                transition: "fill,stroke 500ms"
-                              }}
-                            />
-                          ) : (
-                            <CollectionIcon
-                              id={`inf-${label.id}`}
-                              x={x}
-                              y={y}
-                              width={fontSizeText(this.scale) * 1.3}
-                              heigth={fontSizeText(this.scale) * 1.3}
-                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                              style={{
-                                cursor: "POINTER",
-                                transition: "fill,stroke 500ms"
-                              }}
-                            />
-                          )}
-                        </g>
-                        <text
-                          x={lenX}
-                          y={lenY}
-                          stroke={"none"}
-                          textAnchor={anchor}
-                          fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                          fontSize={
-                            fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
-                          }
-                          fontWeight="700"
-                          cursor="POINTER"
-                          transform={`rotate(${textRotate} ${lenX} ${lenY})`}
-                          style={{
-                            transition: "fill,font-size 500ms"
-                          }}
-                        >
-                          {splitLongTitles(label.fulltext).map(
-                            (titlePart, j) => (
-                              <tspan x={lenX} y={lenY + j * 10} key={titlePart}>
+                          {splitLongTitles("TestLabel" + label.id).map(
+                            (titlePart, i) => (
+                              <tspan
+                                x={textX}
+                                y={textY + i * 10}
+                                key={titlePart}
+                              >
                                 {titlePart}
                               </tspan>
                             )
