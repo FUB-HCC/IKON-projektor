@@ -11,7 +11,16 @@ import {
 } from "../../store/actions/actions";
 
 const ClusterDot = props => {
-  const { x, y, color, isHighlighted, radius, point, isTouchMode } = props;
+  const {
+    x,
+    y,
+    color,
+    isHighlighted,
+    radius,
+    point,
+    isTouchMode,
+    isVisible
+  } = props;
   const dispatch = useDispatch();
   const scale = isHighlighted ? 1.2 : 1;
   return (
@@ -45,9 +54,13 @@ const ClusterDot = props => {
           x="0px"
           y="0px"
           viewBox="0 0 100 100"
-          fill={isHighlighted ? color : "none"}
-          stroke={isHighlighted ? "#7c7c7c" : "none"}
           cursor="POINTER"
+          stroke={isHighlighted ? "#7c7c7c" : "transparent"}
+          fill={color}
+          style={{
+            opacity: isHighlighted ? "1" : "0",
+            transition: "opacity 800ms"
+          }}
         />
         <UnselectedIcon
           width={(radius / 12) * scale}
@@ -57,9 +70,10 @@ const ClusterDot = props => {
           x="0px"
           y="0px"
           viewBox="0 0 100 100"
-          fill={isHighlighted ? "none" : color}
+          fill={color}
           stroke="#7c7c7c"
           cursor="POINTER"
+          style={{ opacity: isVisible ? "1" : "0", transition: "opacity 1s" }}
         />
         )}
       </g>

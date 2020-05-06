@@ -132,6 +132,7 @@ export default class GeoMapView extends React.Component {
                     factor},${arcHeight}`}
                   stroke="white"
                   strokeWidth={Math.max(3, con.weight * 0.5)}
+                  style={{ transition: "stroke-Width 1s" }}
                   fill="none"
                   opacity={0.4}
                   className={style.arcHover}
@@ -261,6 +262,7 @@ export default class GeoMapView extends React.Component {
                     cy="50%"
                     className={style.countCircle}
                     r={Math.min(40, c.forschungsregionCount * 1.2)}
+                    style={{ transition: "r 1s" }}
                     fill="#aaa"
                     onClick={() => {
                       this.props.showInstDetails(c.name + "|f");

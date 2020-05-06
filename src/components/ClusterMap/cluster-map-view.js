@@ -1,4 +1,5 @@
 import React from "react";
+
 import Cluster from "./cluster";
 import style from "./cluster-map-view.module.css";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
@@ -104,11 +105,8 @@ export default class ClusterMapView extends React.Component {
 
   render() {
     const {
-      categories,
       width,
       height,
-      collections,
-      infrastructures,
       onCatHovered,
       onInfraHovered,
       onUnHovered,
@@ -123,42 +121,35 @@ export default class ClusterMapView extends React.Component {
       uncertaintyOn,
       uncertaintyHighlighted,
       isTouch,
-      isProjectHovered
+      isProjectHovered,
+      filteredProjects,
+      labels,
+      filteredLabels,
+      topography
     } = this.props;
     this.scale = Math.min(height, width);
     const scale = this.scale;
-    if (
-      !categories ||
-      !collections ||
-      !infrastructures ||
-      !width ||
-      !height ||
-      scale <= 0
-    ) {
+    if (!labels || !width || !height || scale <= 0) {
       return <div />;
     }
+
     const shiftX = width / 2;
     const shiftY = height / 2;
+
     const radius = clusterSize(scale) - arcMarginSides(width, scale);
-    const each =
-      360 / (categories.length + collections.length + infrastructures.length);
-    const conMax = Math.max(...categories.map(o => o.count), 0);
+    const each = 360 / labels.length;
+    const conMax = Math.max(...labels.map(o => (o.count ? o.count : 0)), 0);
+
     return (
       <div
         className={style.clusterMapWrapper}
         style={{
-          width: this.props.width,
-          height: this.props.height,
+          width: width,
+          height: height,
           marginTop: arcMarginTop(height, scale)
         }}
       >
-        <IconExplanation
-          posX={20}
-          posY={isTouch ? height - 100 : 20}
-          category={categories[0]}
-          infrastructure={infrastructures}
-          collection={collections}
-        />
+        <IconExplanation posX={20} posY={isTouch ? height - 100 : 20} />
         <UncertaintyExplanation
           posX={width - 170}
           posY={20}
@@ -173,9 +164,9 @@ export default class ClusterMapView extends React.Component {
         >
           {uncertaintyOn && (
             <ClusterContoursMap
-              width={this.props.width}
-              height={this.props.height}
-              topography={this.props.topography}
+              width={width}
+              height={height}
+              topography={topography}
               contoursSize={contoursSize}
               clusterSize={clusterSize}
               clusterX={clusterPosX}
@@ -184,14 +175,15 @@ export default class ClusterMapView extends React.Component {
             />
           )}
           <g>
-            {categories.map((category, i) => {
+            {labels.map((label, i) => {
               /* computing the position of the label + icon + count */
-              const startAngle = each * i - categories.length * each;
+              const startAngle =
+                each * i - labels.filter(l => l.count).length * each;
               const angle = startAngle * (Math.PI / 180);
-              const conLen = category.count;
-              const x = shiftX + radius * Math.cos(angle);
-              const y = shiftY + radius * Math.sin(angle);
-              const isHighlighted = highlightedCats.includes(category.id);
+
+              var x = shiftX + radius * Math.cos(angle);
+              var y = shiftY + radius * Math.sin(angle);
+              var isHighlighted = highlightedCats.includes(label.id);
               const higlightOffset = isHighlighted ? 7 : 0;
               const textX =
                 shiftX +
@@ -205,18 +197,26 @@ export default class ClusterMapView extends React.Component {
                 shiftX + (radius + countOffsetFromArc(scale)) * Math.cos(angle);
               const lenY =
                 shiftY + (radius + countOffsetFromArc(scale)) * Math.sin(angle);
-              const anchor = startAngle < -90 ? "end" : "start";
-              const textRotate =
-                startAngle < -90 ? startAngle + 180 : startAngle;
 
-              const area = (conLen * 1.2) / conMax;
+              const area = (label.count * 1.2) / conMax;
               const rad = Math.sqrt(area / Math.PI) * circleScaling(scale) || 1;
+              if (!label.count) {
+                x = shiftX - 6 + radius * Math.cos(angle);
+                y = radius * Math.sin(angle);
+                isHighlighted = highlightedInfra.includes(label.id);
+              }
 
-              /* for each link between a category and a project an svg path to connect them is computed (default: grey, highlighted: green, uncertainty on: transparent only visible on hover/click)
-              same goes for the links between infrastructure and projects below */
+              const anchor =
+                startAngle < -90 || startAngle > 90 ? "end" : "start";
+              const textRotate =
+                startAngle < -90 || startAngle > 90
+                  ? startAngle + 180
+                  : startAngle;
+
+              /* for each link between a label (targetgroup,format,infrastructure or collection) and a project an svg path to connect them is computed (default: grey, highlighted: green, uncertainty on: transparent only visible on hover/click) */
               let lines = [];
-              if (category.projects.length > 0) {
-                lines = category.projects.map(project => {
+              if (label.projects.length > 0) {
+                lines = label.projects.map(project => {
                   const target = this.getPointLocation(
                     project.mappoint,
                     width,
@@ -237,6 +237,9 @@ export default class ClusterMapView extends React.Component {
                   const source = [sourceX, sourceY];
                   const lineHighlighted =
                     isHighlighted && highlightedProjects.includes(project.id);
+                  const lineVisible =
+                    filteredProjects.includes(project.id) &&
+                    filteredLabels.includes(label.id);
 
                   return [
                     {
@@ -255,62 +258,147 @@ export default class ClusterMapView extends React.Component {
                       x: Math.round(target[0]),
                       y: Math.round(target[1])
                     },
-                    lineHighlighted
+                    lineHighlighted,
+                    lineVisible
                   ];
                 });
               }
               return (
-                <g key={category.id}>
-                  <InteractionHandler
-                    isInTouchMode={isTouch}
-                    onMouseOver={() => onCatHovered(category.id)}
-                    onMouseLeave={() => onUnHovered()}
-                    onClick={() => {
-                      onCatClicked(category.id);
-                    }}
-                    doubleTapTreshold={500}
-                  >
-                    <g>
-                      <circle
-                        id={`category-${category.id}`}
-                        r={rad}
-                        cx={x}
-                        cy={y}
-                        cursor="POINTER"
-                        stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                      />
-                      <text
-                        x={lenX}
-                        y={lenY}
-                        textAnchor="middle"
-                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                        fontSize={
-                          fontSizeCount(this.scale) * (isHighlighted ? 1.3 : 1)
-                        }
-                        fontWeight="700"
-                        cursor="POINTER"
-                      >
-                        {conLen}
-                      </text>
-                      <text
-                        textAnchor={anchor}
-                        fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                        fontSize={
-                          fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
-                        }
-                        fontWeight="700"
-                        cursor="POINTER"
-                        transform={`rotate(${textRotate} ${textX} ${textY})`}
-                      >
-                        {splitLongTitles(category.name).map((titlePart, i) => (
-                          <tspan x={textX} y={textY + i * 10} key={titlePart}>
-                            {titlePart}
-                          </tspan>
-                        ))}
-                      </text>
-                    </g>
-                  </InteractionHandler>
+                <g
+                  key={label.id}
+                  style={{
+                    opacity: filteredLabels.includes(label.id) ? "1" : "0.3",
+                    transition: "opacity 500ms"
+                  }}
+                >
+                  {label.count && (
+                    <InteractionHandler
+                      isInTouchMode={isTouch}
+                      onMouseOver={() => onCatHovered(label.id)}
+                      onMouseLeave={() => onUnHovered()}
+                      onClick={() => onCatClicked(label.id)}
+                      doubleTapTreshold={500}
+                    >
+                      <g>
+                        <circle
+                          id={`label-${label.id}`}
+                          r={rad}
+                          cx={x}
+                          cy={y}
+                          cursor="POINTER"
+                          stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                          fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                          style={{
+                            transition: "fill,stroke 500ms"
+                          }}
+                        />
+                        <text
+                          x={lenX}
+                          y={lenY}
+                          textAnchor="middle"
+                          fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                          fontSize={
+                            fontSizeCount(this.scale) *
+                            (isHighlighted ? 1.3 : 1)
+                          }
+                          fontWeight="700"
+                          cursor="POINTER"
+                          style={{
+                            transition: "fill,font-size 500ms"
+                          }}
+                        >
+                          {label.count}
+                        </text>
+                        <text
+                          textAnchor={anchor}
+                          fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                          fontSize={
+                            fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
+                          }
+                          fontWeight="700"
+                          cursor="POINTER"
+                          transform={`rotate(${textRotate} ${textX} ${textY})`}
+                          style={{
+                            transition: "fill ,font-size 500ms"
+                          }}
+                        >
+                          {splitLongTitles(label.name).map((titlePart, i) => (
+                            <tspan x={textX} y={textY + i * 10} key={titlePart}>
+                              {titlePart}
+                            </tspan>
+                          ))}
+                        </text>
+                      </g>
+                    </InteractionHandler>
+                  )}
+                  {!label.count && (
+                    <InteractionHandler
+                      isInTouchMode={isTouch}
+                      onMouseOver={() => onInfraHovered(label.id)}
+                      onMouseLeave={() => onUnHovered()}
+                      onClick={() => onInfraClicked(label.id)}
+                      doubleTapTreshold={500}
+                    >
+                      <g>
+                        <g>
+                          {label.Einleitung ? (
+                            <InfrastructureIcon
+                              id={`inf-${label.id}`}
+                              x={x}
+                              y={y}
+                              width={fontSizeText(this.scale) * 1.3}
+                              heigth={fontSizeText(this.scale) * 1.3}
+                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                              style={{
+                                cursor: "POINTER",
+                                transition: "fill,stroke 500ms"
+                              }}
+                            />
+                          ) : (
+                            <CollectionIcon
+                              id={`inf-${label.id}`}
+                              x={x}
+                              y={y}
+                              width={fontSizeText(this.scale) * 1.3}
+                              heigth={fontSizeText(this.scale) * 1.3}
+                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                              style={{
+                                cursor: "POINTER",
+                                transition: "fill,stroke 500ms"
+                              }}
+                            />
+                          )}
+                        </g>
+                        <text
+                          x={lenX}
+                          y={lenY}
+                          stroke={"none"}
+                          textAnchor={anchor}
+                          fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
+                          fontSize={
+                            fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
+                          }
+                          fontWeight="700"
+                          cursor="POINTER"
+                          transform={`rotate(${textRotate} ${lenX} ${lenY})`}
+                          style={{
+                            transition: "fill,font-size 500ms"
+                          }}
+                        >
+                          {splitLongTitles(label.fulltext).map(
+                            (titlePart, j) => (
+                              <tspan x={lenX} y={lenY + j * 10} key={titlePart}>
+                                {titlePart}
+                              </tspan>
+                            )
+                          )}
+                        </text>
+                      </g>
+                    </InteractionHandler>
+                  )}
+
                   <g>
                     {lines.map((line, i) => (
                       <g key={i}>
@@ -322,11 +410,14 @@ export default class ClusterMapView extends React.Component {
                           stroke={
                             line[4]
                               ? "rgba(175, 202, 11, 0.5)"
-                              : uncertaintyOn
-                              ? "transparent"
+                              : uncertaintyOn || !line[5]
+                              ? "rgba(0,0,0,0)"
                               : "rgba(255,255,255,0.1)"
                           }
                           d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
+                          style={{
+                            transition: "stroke 500ms"
+                          }}
                         />
                       </g>
                     ))}
@@ -334,164 +425,6 @@ export default class ClusterMapView extends React.Component {
                 </g>
               );
             })}
-
-            <g id="doppelklickIntro">
-              {collections.concat(infrastructures).map((infrastruktur, i) => {
-                const startAngle = each * i;
-                const angle = startAngle * (Math.PI / 180);
-                const x = shiftX - 6 + radius * Math.cos(angle);
-                const y = radius * Math.sin(angle);
-                const isHighlighted = highlightedInfra.includes(
-                  infrastruktur.id
-                );
-                const higlightOffset = isHighlighted ? 7 : 0;
-                const textX =
-                  shiftX +
-                  (radius + higlightOffset + countOffsetFromArc(scale)) *
-                    Math.cos(angle);
-                const textY =
-                  shiftY +
-                  (radius + higlightOffset + countOffsetFromArc(scale)) *
-                    Math.sin(angle);
-                const anchor = startAngle > 90 ? "end" : "start";
-                const textRotate =
-                  startAngle > 90 ? startAngle + 180 : startAngle;
-
-                let lines = [];
-                if (infrastruktur.projects.length > 0) {
-                  lines = infrastruktur.projects.map(project => {
-                    const target = this.getPointLocation(
-                      project.mappoint,
-                      width,
-                      height
-                    );
-                    const angleDeg = startAngle;
-                    const angle = angleDeg * (Math.PI / 180);
-                    const sourceX =
-                      shiftX +
-                      (radius + connectionOffsetFromArc(scale)) *
-                        Math.cos(angle);
-                    const sourceY =
-                      shiftY +
-                      (radius + connectionOffsetFromArc(scale)) *
-                        Math.sin(angle);
-                    const midRadius = radius / 1.5;
-                    const midX = shiftX + midRadius * Math.cos(angle);
-                    const midY = shiftY + midRadius * Math.sin(angle);
-                    const mid = [midX, midY];
-                    const source = [sourceX, sourceY];
-                    const lineHighlighted =
-                      isHighlighted && highlightedProjects.includes(project.id);
-
-                    return [
-                      {
-                        x: Math.round(source[0]),
-                        y: Math.round(source[1])
-                      },
-                      {
-                        x: Math.round(mid[0]),
-                        y: Math.round(mid[1])
-                      },
-                      {
-                        x: Math.round(target[0]),
-                        y: Math.round(target[1])
-                      },
-                      {
-                        x: Math.round(target[0]),
-                        y: Math.round(target[1])
-                      },
-                      lineHighlighted
-                    ];
-                  });
-                }
-                return (
-                  <g key={infrastruktur.id}>
-                    <InteractionHandler
-                      isInTouchMode={isTouch}
-                      onMouseOver={() => onInfraHovered(infrastruktur.id)}
-                      onMouseLeave={() => onUnHovered()}
-                      onClick={() => {
-                        onInfraClicked(infrastruktur.id);
-                      }}
-                      doubleTapTreshold={500}
-                    >
-                      <g>
-                        <g>
-                          {infrastruktur.Einleitung ? (
-                            <InfrastructureIcon
-                              style={{ cursor: "POINTER" }}
-                              id={`inf-${infrastruktur.id}`}
-                              x={x}
-                              y={y}
-                              width={fontSizeText(this.scale) * 1.3}
-                              heigth={fontSizeText(this.scale) * 1.3}
-                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                            />
-                          ) : (
-                            <CollectionIcon
-                              style={{ cursor: "POINTER" }}
-                              id={`inf-${infrastruktur.id}`}
-                              x={x}
-                              y={y}
-                              width={fontSizeText(this.scale) * 1.3}
-                              heigth={fontSizeText(this.scale) * 1.3}
-                              fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                              stroke={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                            />
-                          )}
-                        </g>
-                        <text
-                          x={textX}
-                          y={textY}
-                          stroke={"none"}
-                          textAnchor={anchor}
-                          fill={isHighlighted ? "#afca0b" : "#6B6B6B"}
-                          fontSize={
-                            fontSizeText(this.scale) * (isHighlighted ? 1.3 : 1)
-                          }
-                          fontWeight="700"
-                          cursor="POINTER"
-                          transform={`rotate(${textRotate} ${textX} ${textY})`}
-                        >
-                          {splitLongTitles(infrastruktur.fulltext).map(
-                            (titlePart, j) => (
-                              <tspan
-                                x={textX}
-                                y={textY + j * 10}
-                                key={titlePart}
-                              >
-                                {titlePart}
-                              </tspan>
-                            )
-                          )}
-                        </text>
-                      </g>
-                    </InteractionHandler>
-                    <g>
-                      {lines.map((line, i) => (
-                        <g key={i}>
-                          <path
-                            pointerEvents="none"
-                            key={i + "b"}
-                            strokeWidth={strokeWidth(scale) * 2}
-                            fill="transparent"
-                            stroke={
-                              line[4]
-                                ? "rgba(175, 202, 11, 0.5)"
-                                : uncertaintyOn
-                                ? "transparent"
-                                : "rgba(255,255,255,0.1)"
-                            }
-                            d={`M${line[0].x},${line[0].y}C${line[1].x},${line[1].y},${line[2].x},${line[2].y},${line[3].x},${line[3].y} `}
-                          />
-                        </g>
-                      ))}
-                    </g>
-                  </g>
-                );
-              })}
-            </g>
             <g
               data-step="1"
               id="clusterViewIntro"
@@ -506,6 +439,7 @@ export default class ClusterMapView extends React.Component {
                     getLocation={p => this.getPointLocation(p, width, height)}
                     radius={radius}
                     highlightedProjects={highlightedProjects}
+                    filteredProjects={filteredProjects}
                   />
                 );
               })}

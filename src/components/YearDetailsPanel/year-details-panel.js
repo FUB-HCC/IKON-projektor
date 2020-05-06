@@ -6,13 +6,7 @@ import {
   ktaClicked
 } from "../../store/actions/actions";
 const mapStateToProps = state => {
-  const {
-    isClicked,
-    projects,
-    ktas,
-    isDataProcessed,
-    missingprojects
-  } = state.main;
+  const { isClicked, projects, ktas, isDataProcessed } = state.main;
   if (isDataProcessed && projects) {
     const [year, title] = isClicked.year.split("|");
     return {

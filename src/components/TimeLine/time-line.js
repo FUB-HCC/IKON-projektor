@@ -98,7 +98,6 @@ const processData = data => {
   let keys = [1, 2, 3, 4, 5];
   let map = [],
     years = [];
-  data = data;
   let projects = data.map(project => {
     let startDate = project.timeframe[0];
     let endDate = project.timeframe[1];
@@ -112,8 +111,8 @@ const processData = data => {
       fb: project.forschungsbereich
     };
   });
-  let startYear = Math.min(...data.map(p => p.timeframe[0]).flat());
-  let endYear = Math.max(...data.map(p => p.timeframe[1]).flat());
+  let startYear = 2006;
+  let endYear = 2026;
   for (let year = startYear; year <= endYear; year++) {
     let submap = {};
     submap.year = year;

@@ -401,7 +401,10 @@ export default class TimeLineView extends Component {
               stackedData.map((d, i) => {
                 return (
                   <g key={d.key}>
-                    <path style={{ fill: color(d) }} d={area(d)} />
+                    <path
+                      style={{ fill: color(d), transition: "d 1s" }}
+                      d={area(d)}
+                    />
                     {d.map(datum => {
                       return (
                         y(datum[1]) && (

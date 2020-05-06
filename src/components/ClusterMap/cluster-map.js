@@ -154,39 +154,27 @@ const mapStateToProps = state => {
   } = state.main;
 
   let clusterDataForView = [];
-  let categoriesForView = [];
-  let collectionsForView = [];
-  let infrastructuresForView = [];
+  let labels = [];
   let topography = [];
   let highlightedProjects = [];
   let highlightedCats = [];
   let highlightedInfra = [];
+  let projectsForView = [];
+  let filteredLabels = [];
   if (isDataProcessed) {
     // filters are applied to all lists and data is prepared for the vis
-    let projectsForView = applyFilters(projects, filters);
-    clusterDataForView = computeClusters(
-      clusterData,
-      projectsForView,
-      targetgroups
-    );
-    categoriesForView = filters.highlevelFilter.value.includes(6)
-      ? targetgroups
-          .filter(tg => filters.targetgroups.value.includes(tg.id))
-          .sort((a, b) => (a.name < b.name ? 1 : -1))
-      : formats
-          .filter(format => filters.formats.value.includes(format.id))
-          .sort((a, b) => (a.name < b.name ? 1 : -1));
-
-    categoriesForView = categoriesForView.map(cat => ({
-      ...cat,
-      projects: applyFilters(cat.projects, filters)
-    }));
-    collectionsForView = collections
-      .filter(col => filters.collections.value.includes(col.id))
-      .map(col => ({ ...col, projects: applyFilters(col.projects, filters) }));
-    infrastructuresForView = infrastructures
-      .filter(inf => filters.infrastructures.value.includes(inf.id))
-      .map(inf => ({ ...inf, projects: applyFilters(inf.projects, filters) }));
+    projectsForView = applyFilters(projects, filters).map(p => p.id);
+    clusterDataForView = computeClusters(clusterData, projects, targetgroups);
+    filteredLabels = filters.highlevelFilter.value.includes(6)
+      ? filters.targetgroups.value
+          .concat(filters.collections.value)
+          .concat(filters.infrastructures.value)
+      : filters.formats.value
+          .concat(filters.collections.value)
+          .concat(filters.infrastructures.value);
+    labels = filters.highlevelFilter.value.includes(6)
+      ? targetgroups.concat(collections).concat(infrastructures)
+      : formats.concat(collections).concat(infrastructures);
     topography = clusterData;
     const highlighted = extractHighlightedFromState(state.main);
     highlightedProjects = highlighted.projects;
@@ -196,10 +184,9 @@ const mapStateToProps = state => {
 
   return {
     clusterData: clusterDataForView,
-    categories: categoriesForView,
     topography: topography,
-    collections: collectionsForView,
-    infrastructures: infrastructuresForView,
+    labels: labels,
+    filteredLabels: filteredLabels,
     isAnyClicked: !Object.values(isClicked).every(clickState => !clickState),
     highlightedProjects: highlightedProjects,
     highlightedCats: highlightedCats,
@@ -209,7 +196,8 @@ const mapStateToProps = state => {
     uncertaintyHighlighted: state.main.uncertaintyHighlighted,
     isTouch: isTouchMode(state),
     isProjectHovered: isHovered.project,
-    projectsMaxSizing: projectsMaxSizing
+    projectsMaxSizing: projectsMaxSizing,
+    filteredProjects: projectsForView
   };
 };
 

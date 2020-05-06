@@ -11,6 +11,7 @@
   margin-right: 5px;
   position: relative;
   bottom: 2px;
+  transition: fill 500ms;
 }
 .tooltipIcon:hover {
   fill: #afca0b;
@@ -27,6 +28,9 @@
   stroke: #6b6b6b;
   fill: #6b6b6b;
   color: #6b6b6b;
+  transition: stroke 500ms;
+  transition: fill 500ms;
+  transition: color 500ms;
 }
 
 /* Customize the label (the checkboxWrapper) */
