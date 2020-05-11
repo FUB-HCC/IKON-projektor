@@ -253,7 +253,7 @@ export default class ClusterMapView extends React.Component {
                 <g
                   key={label.id}
                   style={{
-                    opacity: filteredLabels.includes(label.id) ? "1" : "0.3",
+                    opacity: filteredLabels.includes(label.id) ? "1" : "0",
                     transition: "opacity 500ms"
                   }}
                 >
