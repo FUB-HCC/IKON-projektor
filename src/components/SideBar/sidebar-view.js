@@ -27,6 +27,7 @@ class SideBarView extends React.Component {
   }
 
   render() {
+    if (this.props.graph === "3") return <div />;
     return (
       <div
         className={style.sideBarWrapper}

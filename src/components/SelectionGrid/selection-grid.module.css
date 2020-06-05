@@ -16,9 +16,14 @@
   background-color: #000;
 }
 .allOrderingsWrapper {
-  padding-top: 6px;
-  padding-left: 3px;
+  padding: 15px;
   line-height: 0%;
+  padding-left: 30px;
+}
+
+.selectionDetailWrapper {
+  padding: 15px;
+  padding-right: 30px;
 }
 
 .chooseButton {
@@ -36,6 +41,19 @@
 
 .chooseButtonWrapper {
   display: flex;
-  padding-top: 40px;
   justify-content: space-around;
+  flex-direction: row;
+  padding-top: 10px;
+}
+
+.sliderWrapper {
+  color: #888;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  padding-top: 30px;
+}
+.RangeSliderStyle {
+  margin-left: 50px;
+  width: 50% !important;
 }

@@ -6,6 +6,7 @@ const mapStateToProps = state => {
   return {
     sideBarComponent: state.main.sideBarComponent,
     isDataProcessed: state.main.isDataProcessed,
+    graph: state.main.graph,
     isTouch: isTouchMode(state)
   };
 };

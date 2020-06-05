@@ -168,7 +168,8 @@ export const pushStateToUrl = newState => {
     fo: newState.filters.formats.value,
     hlf: newState.filters.highlevelFilter.value,
     cl: getTupleFromIsClicked(newState.isClicked),
-    un: newState.uncertaintyOn ? 1 : 0
+    un: newState.uncertaintyOn ? 1 : 0,
+    or: newState.selectedOrdering
   };
 
   let minifiedUrlData = {
@@ -250,7 +251,8 @@ export const parseStateFromUrl = urlParams => {
       uncertaintyOn: deminifiedUrlState.un === 1 ? true : false,
       isClicked: getIsClickedFromTuple(deminifiedUrlState.cl),
       sideBarComponent: getSideBarComponentFromTuple(deminifiedUrlState.cl),
-      user: userId
+      user: userId,
+      selectedOrdering: deminifiedUrlState.or
     }
   };
 };

@@ -75,3 +75,13 @@
 .checkmark:after {
   display: none;
 }
+
+.buttonOverview {
+  background-color: #888;
+  z-index: 99;
+  font-family: IBM_Plex_Mono;
+  border: 10px solid #888;
+  border-radius: 5px;
+  cursor: POINTER;
+  text-align: center;
+}

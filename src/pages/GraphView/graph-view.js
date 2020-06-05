@@ -4,6 +4,7 @@ import ClusterMap from "../../components/ClusterMap/cluster-map";
 import GeoMap from "../../components/GeoMap/geo-map";
 import TimeGraph from "../../components/TimeLine/time-line";
 import SelectionGrid from "../../components/SelectionGrid/selection-grid";
+import TechnicalUi from "../../components/TechnicalUI/technical-ui";
 import classes from "./graph-view.module.css";
 import { fetchData, fetchSampleList } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
@@ -112,6 +113,11 @@ class GraphView extends React.Component {
       case "3":
         Graph = (
           <SelectionGrid height={this.state.height} width={this.state.width} />
+        );
+        break;
+      case "4":
+        Graph = (
+          <TechnicalUi height={this.state.height} width={this.state.width} />
         );
         break;
       default:

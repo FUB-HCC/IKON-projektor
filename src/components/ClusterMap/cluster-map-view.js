@@ -53,8 +53,8 @@ export default class ClusterMapView extends React.Component {
   // translate mappoint of projects to current screen size
   getPointLocation = (pt, width, height) => {
     const [x, y] = pt;
-    const normalizedX = x / this.props.projectsMaxSizing[0];
-    const normalizedY = y / this.props.projectsMaxSizing[1];
+    const normalizedX = x * 0.9;
+    const normalizedY = y * 0.9;
 
     return [
       normalizedX * clusterSize(this.scale) + clusterPosX(width, this.scale),
@@ -151,7 +151,7 @@ export default class ClusterMapView extends React.Component {
         }}
       >
         <IconExplanation posX={20} posY={isTouch ? height - 100 : 20} />
-        <OverviewButton posX={20} posY={height - 80} />
+        <OverviewButton posX={20} posY={height - 200} />
         <UncertaintyExplanation
           posX={width - 170}
           posY={20}

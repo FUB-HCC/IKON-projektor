@@ -112,6 +112,7 @@ export const initialState = {
   uncertaintyOn: false,
   uncertaintyHighlighted: false,
   selectedOrdering: "1",
+  gridSize: 5,
   clusterData: undefined,
   isDataLoaded: { data: false, samples: false },
   isDataProcessed: false,
@@ -202,8 +203,11 @@ const reducer = (state = initialState, action) => {
     case actionTypes.SAMPLE_CLICKED:
       return sampleClicked(state, action);
 
-    case actionTypes.TO_OVERVIEW:
-      return openOverview(state, action);
+    case actionTypes.SELECT_VIS:
+      return selectVis(state, action);
+
+    case actionTypes.CHANGE_GRID_SIZE:
+      return changeGridSize(state, action);
     default:
       return state;
   }
@@ -322,7 +326,15 @@ const processDataWhenReady = state =>
 
 /* The received data is transformed in the beginning (e.g. sorted, some attributes slightly changed), the filters get their initial filling too */
 const processAllData = state => {
-  const processedProjects = processProjectsData(state);
+  const processedProjects = processProjectsData(state).map(
+    (project, index) => ({
+      ...project,
+      mappoint: [
+        locations[state.selectedOrdering].projects[index][0],
+        locations[state.selectedOrdering].projects[index][1]
+      ]
+    })
+  );
   const processedKtas = processKtas(state.ktas);
   const processedTargetgroups = processTargetgroups(processedProjects, state);
   const processedFormats = processFormats(processedProjects, state);
@@ -630,12 +642,12 @@ const resetPage = state => {
   }
 };
 
-const openOverview = (state, action) => {
+const selectVis = (state, action) => {
   const processedProjects = state.projects.map((project, index) => ({
     ...project,
     mappoint: [
-      locations[action.value].projects[index][0] / 2.2 + 1,
-      locations[action.value].projects[index][1] / 2.2 + 1
+      locations[action.value].projects[index][0],
+      locations[action.value].projects[index][1]
     ]
   }));
   const processedTargetgroups = processTargetgroups(processedProjects, state);
@@ -653,10 +665,17 @@ const openOverview = (state, action) => {
     infrastructures: processedInfrastructures,
     collections: processedCollections,
     projectsMaxSizing: [
-      Math.max(...processedProjects.map(p => p.mappoint[0])),
-      Math.max(...processedProjects.map(p => p.mappoint[1]))
+      Math.max(...processedProjects.map(p => Math.abs(p.mappoint[0]))),
+      Math.max(...processedProjects.map(p => Math.abs(p.mappoint[1])))
     ],
     selectedOrdering: action.value
+  };
+};
+
+const changeGridSize = (state, action) => {
+  return {
+    ...state,
+    gridSize: action.value
   };
 };
 

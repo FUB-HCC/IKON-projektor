@@ -60,11 +60,12 @@ body {
 }
 
 .bp3-slider-handle.bp3-start,
-.bp3-slider-handle.bp3-end {
+.bp3-slider-handle.bp3-end,
+.bp3-slider-handle {
   border-radius: 50% !important;
   border: solid #aaa 10px;
   color: #aaa !important;
-  top: -2px;
+  top: -2px !important;
 }
 .bp3-slider-label {
   background-color: #1c1d1f !important;

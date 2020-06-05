@@ -16,8 +16,8 @@ export default class SelectionGridDetail extends React.Component {
   }
   getPointLocation(pt, scale) {
     let [x, y] = pt;
-    let newX = (x + 2) * scale;
-    let newY = (y + 2) * scale;
+    let newX = (x + 0.1) * scale;
+    let newY = (y + 0.1) * scale;
     return newX + " " + newY;
   }
   renderHover(hovered, mouseLocation) {
@@ -51,13 +51,14 @@ export default class SelectionGridDetail extends React.Component {
 
   render() {
     const { selectedOrdering, width } = this.props;
-    const scale = width / 4;
+    const scale = width * 0.8;
     if (!selectedOrdering) {
       return <div />;
     }
     return (
-      <div>
+      <div className={style.selectionDetailWrapper}>
         <svg height={width} width={width} fill="transparent">
+          <rect stroke="#222" height={width} width={width} fill="transparent" />
           {selectedOrdering.projects.map((project, i) => (
             <g
               transform={
@@ -66,8 +67,8 @@ export default class SelectionGridDetail extends React.Component {
               key={i + "punkt"}
             >
               <UnselectedIcon
-                width={15}
-                height={15}
+                width={width / 30}
+                height={width / 30}
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
                 x="0"
@@ -95,7 +96,14 @@ export default class SelectionGridDetail extends React.Component {
             </g>
           ))}
         </svg>
-
+        <div className={style.chooseButtonWrapper}>
+          <span
+            className={style.chooseButton}
+            onClick={() => this.props.changeGraph("0")}
+          >
+            Diese Anordnung im Kontext anzeigen
+          </span>
+        </div>
         {this.renderHover(this.state.hovered, this.state.mouseLocation)}
       </div>
     );

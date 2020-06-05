@@ -24,3 +24,5 @@ yarn-error.log*
 
 public/*.json
 public/*.txt
+
+src/assets/*.json

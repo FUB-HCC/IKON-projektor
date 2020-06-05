@@ -271,9 +271,16 @@ export const showSampleList = () => ({
 });
 
 /* opens overview grid*/
-export const toOverview = number => {
+export const selectVis = number => {
   return {
-    type: actionTypes.TO_OVERVIEW,
+    type: actionTypes.SELECT_VIS,
+    value: number
+  };
+};
+/* changes grid size to specified value (squared)*/
+export const changeGridSize = number => {
+  return {
+    type: actionTypes.CHANGE_GRID_SIZE,
     value: number
   };
 };

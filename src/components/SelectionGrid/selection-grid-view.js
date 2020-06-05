@@ -7,12 +7,12 @@ import { menuBarHeight, sideBarWidth, appMargin } from "../../App";
 class SelectionGridView extends React.Component {
   render() {
     const height = window.innerHeight - menuBarHeight - 5 * appMargin;
-    const width = (window.innerWidth - sideBarWidth - 2 * appMargin) * 0.5;
+    const width = window.innerWidth * 0.45;
     if (!this.props.isDataProcessed) {
       return <div />;
     }
     return (
-      <div>
+      <div width={window.innerWidth}>
         <div className={style.wrapper}>
           <SelectionGridOverview
             className={style.sideWrapper}
@@ -20,23 +20,17 @@ class SelectionGridView extends React.Component {
             selectOrdering={this.props.selectOrdering}
             data={this.props.allOrderings}
             height={height}
-            width={width - 10}
+            width={width}
+            size={this.props.size}
+            changeSize={this.props.changeGridSize}
           />
           <SelectionGridDetail
             className={style.sideWrapper}
             selectedOrdering={this.props.selectedOrderingData}
             height={height}
             width={width}
+            changeGraph={this.props.changeGraph}
           />
-        </div>
-        <div className={style.chooseButtonWrapper}>
-          <span
-            className={style.chooseButton}
-            onClick={() => this.props.changeGraph("0")}
-          >
-            {" "}
-            Diese Anordnung auswählen
-          </span>
         </div>
       </div>
     );
