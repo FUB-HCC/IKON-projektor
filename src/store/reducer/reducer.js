@@ -1,5 +1,6 @@
 import * as actionTypes from "../actions/actionTypes";
 import React from "react";
+import locations from "../../assets/current_dump.json";
 import { topicToField, continents } from "../../util/utility";
 import {
   processProjectsData,
@@ -110,6 +111,7 @@ export const initialState = {
   legendHovered: "none",
   uncertaintyOn: false,
   uncertaintyHighlighted: false,
+  selectedOrdering: "1",
   clusterData: undefined,
   isDataLoaded: { data: false, samples: false },
   isDataProcessed: false,
@@ -200,6 +202,8 @@ const reducer = (state = initialState, action) => {
     case actionTypes.SAMPLE_CLICKED:
       return sampleClicked(state, action);
 
+    case actionTypes.TO_OVERVIEW:
+      return openOverview(state, action);
     default:
       return state;
   }
@@ -624,6 +628,36 @@ const resetPage = state => {
   } else {
     window.open(window.location.pathname, "_self");
   }
+};
+
+const openOverview = (state, action) => {
+  const processedProjects = state.projects.map((project, index) => ({
+    ...project,
+    mappoint: [
+      locations[action.value].projects[index][0] / 2.2 + 1,
+      locations[action.value].projects[index][1] / 2.2 + 1
+    ]
+  }));
+  const processedTargetgroups = processTargetgroups(processedProjects, state);
+  const processedFormats = processFormats(processedProjects, state);
+  const processedInfrastructures = processInfrastructures(
+    processedProjects,
+    state
+  );
+  const processedCollections = processCollections(processedProjects, state);
+  return {
+    ...state,
+    projects: processedProjects,
+    targetgroups: processedTargetgroups,
+    formats: processedFormats,
+    infrastructures: processedInfrastructures,
+    collections: processedCollections,
+    projectsMaxSizing: [
+      Math.max(...processedProjects.map(p => p.mappoint[0])),
+      Math.max(...processedProjects.map(p => p.mappoint[1]))
+    ],
+    selectedOrdering: action.value
+  };
 };
 
 const showViaWikiRequested = (state, action) => {

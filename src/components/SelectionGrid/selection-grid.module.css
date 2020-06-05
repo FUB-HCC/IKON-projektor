@@ -1,0 +1,41 @@
+.wrapper {
+  background-color: #0e0e0e;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.sideWrapper {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.plainText {
+  color: #ffffff;
+}
+.selectedOrderWrapper {
+  background-color: #000;
+}
+.allOrderingsWrapper {
+  padding-top: 6px;
+  padding-left: 3px;
+  line-height: 0%;
+}
+
+.chooseButton {
+  background-color: #888;
+  color: #0e0e0e;
+  border-radius: 5px;
+  border-radius: 5px solid #888;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.chooseButton:hover {
+  background-color: #aaa;
+}
+
+.chooseButtonWrapper {
+  display: flex;
+  padding-top: 40px;
+  justify-content: space-around;
+}

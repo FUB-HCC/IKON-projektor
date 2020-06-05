@@ -3,15 +3,15 @@ import { fieldsStringToInt } from "../../util/utility";
 /* the property "Forschungsthema, Expertise, Kompetenzen" of projects is split into "hauptthema" and "forschungsbereich" by which they are later sorted. the date format is changed and the research regions of a project are translated into continents */
 export const processProjectsData = state => {
   const projectData = state.projects;
-  return projectData.map(project => {
+  return projectData.map((project, index) => {
     project.hauptthema =
       project["Forschungsthema, Expertise, Kompetenzen"][0] &&
       project["Forschungsthema, Expertise, Kompetenzen"][0].split("/")[1]
         ? project["Forschungsthema, Expertise, Kompetenzen"][0].split("/")[1]
         : "Sonstige";
-    project.forschungsregionen = project["Geographische Verschlagwortung"].map(
-      geo => getContinentFromProject(geo)
-    );
+    project.forschungsregionen = project[
+      "Geographische Verschlagwortung"
+    ].map(geo => getContinentFromProject(geo));
     project.timeframe = project.timeframe.map(d =>
       d ? new Date(parseInt(d) * 1000).getFullYear() : 1970
     );

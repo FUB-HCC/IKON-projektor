@@ -3,6 +3,7 @@ import { connect, batch } from "react-redux";
 import ClusterMap from "../../components/ClusterMap/cluster-map";
 import GeoMap from "../../components/GeoMap/geo-map";
 import TimeGraph from "../../components/TimeLine/time-line";
+import SelectionGrid from "../../components/SelectionGrid/selection-grid";
 import classes from "./graph-view.module.css";
 import { fetchData, fetchSampleList } from "../../store/actions/actions";
 import { appMargin, menuBarHeight } from "../../App";
@@ -108,6 +109,11 @@ class GraphView extends React.Component {
           />
         );
         break;
+      case "3":
+        Graph = (
+          <SelectionGrid height={this.state.height} width={this.state.width} />
+        );
+        break;
       default:
         break;
     }
@@ -129,7 +135,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(GraphView);
+export default connect(mapStateToProps, mapDispatchToProps)(GraphView);

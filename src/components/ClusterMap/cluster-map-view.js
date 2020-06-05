@@ -5,6 +5,7 @@ import style from "./cluster-map-view.module.css";
 import { ReactComponent as CollectionIcon } from "../../assets/collection.svg";
 import { ReactComponent as InfrastructureIcon } from "../../assets/infrastructure.svg";
 import IconExplanation from "./icon-explanation";
+import OverviewButton from "./overview-button";
 import UncertaintyExplanation from "./uncertainty-explanation";
 import HoverPopover from "../HoverPopover/HoverPopover";
 import ClusterContoursMap from "./cluster-contours-map";
@@ -150,6 +151,7 @@ export default class ClusterMapView extends React.Component {
         }}
       >
         <IconExplanation posX={20} posY={isTouch ? height - 100 : 20} />
+        <OverviewButton posX={20} posY={height - 80} />
         <UncertaintyExplanation
           posX={width - 170}
           posY={20}

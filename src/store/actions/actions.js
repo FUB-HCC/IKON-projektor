@@ -148,7 +148,7 @@ export const legendHovered = legendKey => ({
 export const fetchData = () => {
   return dispatch => {
     axios
-      .get("/api/graph", {
+      .get("test.json", {
         transformResponse: res => Flatted.parse(res)
       })
       .then(result => {
@@ -162,7 +162,7 @@ export const fetchData = () => {
 /* fetches an array with all the names of visualization-states that have been shared with the touchscreen from the backend so far*/
 export const fetchSampleList = () => {
   return dispatch => {
-    axios.get("/api/sharing").then(result => {
+    axios.get("sharing.txt").then(result => {
       batch(() => {
         dispatch(updateSampleList(result.data));
         dispatch(processDataIfReady());
@@ -176,7 +176,7 @@ export const fetchIndividualSample = name => {
   return dispatch => {
     axios({
       method: "GET",
-      url: encodeURI("/api/sharing/" + name)
+      url: encodeURI("sharing.txt" + name)
     })
       .then(response => {
         batch(() => {
@@ -193,7 +193,7 @@ export const fetchIndividualSample = name => {
 export const shareUrl = name => {
   axios({
     method: "post",
-    url: encodeURI("/api/sharing/" + name),
+    url: encodeURI("sharing.txt" + name),
     data: JSON.stringify(window.location.search)
   }).then(function(response) {
     if (response.status === 200) {
@@ -269,3 +269,11 @@ export const sampleClicked = url => ({
 export const showSampleList = () => ({
   type: actionTypes.SHOW_SAMPLE_LIST
 });
+
+/* opens overview grid*/
+export const toOverview = number => {
+  return {
+    type: actionTypes.TO_OVERVIEW,
+    value: number
+  };
+};
